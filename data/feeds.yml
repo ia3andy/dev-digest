@@ -1,0 +1,32 @@
+feeds:
+  - name: AI
+    url: https://bullrich.dev/tldr-rss/ai.rss
+  - name: Tech
+    url: https://bullrich.dev/tldr-rss/tech.rss
+  - name: DevOps
+    url: https://bullrich.dev/tldr-rss/devops.rss
+  - name: Data
+    url: https://bullrich.dev/tldr-rss/data.rss
+  - name: Design
+    url: https://bullrich.dev/tldr-rss/design.rss
+  - name: Crypto
+    url: https://bullrich.dev/tldr-rss/crypto.rss
+  - name: Founders
+    url: https://bullrich.dev/tldr-rss/founders.rss
+
+tag-priorities:
+  ai: 1
+  llm: 1
+  agents: 1
+  quarkus: 1
+  java: 2
+  devops: 2
+  infrastructure: 2
+  security: 2
+  data-engineering: 2
+  frontend: 3
+  design: 3
+  startup: 3
+  crypto: 4
+  blockchain: 4
+  default: 3
