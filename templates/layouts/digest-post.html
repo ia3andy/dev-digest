@@ -1,0 +1,56 @@
+---
+layout: main
+---
+
+{@io.quarkiverse.roq.frontmatter.runtime.model.DocumentPage page}
+
+<article class="digest-page">
+  <header class="digest-header">
+    <h1>{page.title}</h1>
+    <time datetime="{page.date}">{page.date.format('dd MMMM YYYY')}</time>
+  </header>
+
+  {#for section in page.data.sections}
+  <section class="digest-section">
+    <h2 class="digest-section-title">{section.name}</h2>
+
+    {#for article in section.articles}
+    <div class="digest-article" data-article-id="{article.id}" data-tags="{article.tags.join(',')}">
+      <h3 class="digest-article-title">
+        <a href="{article.link}" target="_blank" rel="noopener noreferrer">{article.title}</a>
+      </h3>
+      <p class="digest-one-liner">{article.one-liner}</p>
+
+      <div class="digest-summary">
+        <div class="digest-summary-what">
+          <strong>What:</strong> {article.summary.what}
+        </div>
+        <div class="digest-summary-why">
+          <strong>Why:</strong> {article.summary.why}
+        </div>
+        <div class="digest-summary-takeaway">
+          <strong>Takeaway:</strong> {article.summary.takeaway}
+        </div>
+      </div>
+
+      {#if article.deep-summary??}
+      <details class="digest-deep-summary">
+        <summary>En savoir plus</summary>
+        <div class="digest-deep-content">
+          {article.deep-summary.markdownify}
+        </div>
+      </details>
+      {/if}
+
+      <details class="digest-description">
+        <summary>Article original</summary>
+        <div class="digest-description-content">
+          {article.description.markdownify}
+        </div>
+      </details>
+    </div>
+    {/for}
+
+  </section>
+  {/for}
+</article>
