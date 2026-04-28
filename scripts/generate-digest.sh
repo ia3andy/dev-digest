@@ -78,6 +78,38 @@ find_daily_url() {
     | head -1
 }
 
+# Scrape, enrich, and summarize a single feed. Writes YAML output to $4.
+summarize_feed() {
+  local name="$1" daily_url="$2" target_date="$3" output_file="$4"
+
+  local feed_file="$TEMP_DIR/feed-${name}-${target_date}.xml"
+  echo "--- FEED: $name ---" > "$feed_file"
+  echo "  [$name] Scraping..." >&2
+  jbang "$SCRIPT_DIR/DigestHelper.java" tldr-articles "$daily_url" >> "$feed_file"
+
+  echo "  [$name] Enriching..." >&2
+  local enriched_file="$TEMP_DIR/enriched-${name}-${target_date}.xml"
+  jbang "$SCRIPT_DIR/DigestHelper.java" enrich "$feed_file" "$enriched_file" "$CACHE_DIR"
+
+  echo "  [$name] Summarizing..." >&2
+  local prompt
+  prompt=$(cat "$PROMPT_FILE")
+  timeout 300 claude -p "$prompt
+
+Process this single feed section for date: $target_date
+The feed name is: $name
+
+IMPORTANT INSTRUCTIONS:
+- Output ONLY the YAML for this one section (starting with '  - name: $name'), nothing else.
+- No digest-summary line, no 'sections:' wrapper, no markdown fences.
+- You MUST include ALL non-sponsored articles from the feed. Do not skip or omit any article unless it is clearly an ad or sponsored content.
+- Every article must have a complete summary (what, why, takeaway) and a one-liner. Never leave fields empty.
+- The TLDR description in each <description> tag is your primary source. Always write a full summary from it.
+- Full article content (ARTICLE sections) is bonus context for deep-summaries only. Missing article content is not a reason to skip or weaken any summary." < "$enriched_file" 2>/dev/null \
+    | sed '/^```/d; /^[Hh]ere/d; /^[Pp]rocessing/d; /^[Ll]et me/d; /^I.ll/d' > "$output_file"
+  echo "  [$name] Done." >&2
+}
+
 generate_post() {
   local target_date="$1"
   local post_dir="$POSTS_DIR/${target_date}-dev-digest"
@@ -89,67 +121,63 @@ generate_post() {
 
   echo "Generating digest for $target_date..."
 
-  local combined_file="$TEMP_DIR/feeds-${target_date}.xml"
-  > "$combined_file"
-
-  local found_content=false
+  # Launch each feed in parallel: scrape + enrich + summarize
+  local pids=()
+  local feed_outputs=()
+  local feed_index=0
 
   while IFS='|' read -r name url; do
-    echo "  Fetching $name feed..."
-
     local daily_url
     daily_url=$(find_daily_url "$url" "$target_date")
 
     if [[ -z "$daily_url" ]]; then
-      echo "    No daily page found for $name on $target_date" >&2
+      echo "  No daily page for $name on $target_date"
       continue
     fi
 
-    echo "    Daily page: $daily_url"
-    echo "--- FEED: $name ---" >> "$combined_file"
-    jbang "$SCRIPT_DIR/DigestHelper.java" tldr-articles "$daily_url" >> "$combined_file"
-    found_content=true
+    echo "  $name: $daily_url"
+    local output_file="$TEMP_DIR/section-${feed_index}.yml"
+    feed_outputs+=("$output_file")
+    feed_index=$((feed_index + 1))
+
+    summarize_feed "$name" "$daily_url" "$target_date" "$output_file" &
+    pids+=($!)
   done < <(parse_feeds)
 
-  if [[ "$found_content" != true ]] || [[ ! -s "$combined_file" ]]; then
-    echo "  No feed content fetched for $target_date, skipping."
+  if [[ ${#pids[@]} -eq 0 ]]; then
+    echo "  No feeds found for $target_date, skipping."
     return
   fi
 
-  echo "  Enriching with article content..."
-  local enriched_file="$TEMP_DIR/enriched-${target_date}.xml"
-  jbang "$SCRIPT_DIR/DigestHelper.java" enrich "$combined_file" "$enriched_file" "$CACHE_DIR"
+  echo "  Waiting for ${#pids[@]} feeds..."
+  local failed=0
+  for pid in "${pids[@]}"; do
+    wait "$pid" || failed=$((failed + 1))
+  done
+  [[ $failed -gt 0 ]] && echo "  Warning: $failed feed(s) failed" >&2
 
-  echo "  Summarizing with Claude..."
-  local prompt
-  prompt=$(cat "$PROMPT_FILE")
+  # Combine sections
+  local all_sections=""
+  for output_file in "${feed_outputs[@]}"; do
+    [[ -s "$output_file" ]] && all_sections+="$(cat "$output_file")"$'\n'
+  done
 
-  local claude_output
-  claude_output=$(claude -p "$prompt
-
-Process the RSS feeds above for date: $target_date
-Output ONLY the YAML sections array, nothing else." < "$enriched_file" 2>/dev/null) || {
-    echo "  Error: Claude CLI failed for $target_date" >&2
-    return
-  }
-
-  if [[ -z "$claude_output" ]]; then
-    echo "  Error: empty Claude output for $target_date" >&2
+  if [[ -z "$all_sections" ]]; then
+    echo "  Error: no output for $target_date" >&2
     return
   fi
 
-  claude_output=$(echo "$claude_output" | sed '/^```/d')
-
+  # Generate digest summary
+  echo "  Generating digest summary..."
   local digest_desc
-  digest_desc=$(echo "$claude_output" | grep '^digest-summary:' | sed 's/^digest-summary: *//; s/^"//; s/"$//')
-  if [[ -z "$digest_desc" ]]; then
-    digest_desc="Daily developer news digest"
-  fi
+  digest_desc=$(echo "$all_sections" | timeout 120 claude -p "Write a 1-2 sentence summary of the most important news for developers from these sections. Output ONLY the text, no quotes, no prefix." 2>/dev/null) || digest_desc=""
+  [[ -z "$digest_desc" ]] && digest_desc="Daily developer news digest"
+  digest_desc="${digest_desc//\"/\'}"
+
+  local claude_output="sections:"$'\n'"$all_sections"
 
   local post_image
   post_image=$(echo "$claude_output" | grep '^ *image:' | head -1 | sed 's/.*image: *//; s/^"//; s/"$//')
-
-  claude_output=$(echo "$claude_output" | grep -v '^digest-summary:')
 
   local title_date
   title_date=$(LC_ALL=en_US.UTF-8 date -j -f "%Y-%m-%d" "$target_date" "+%B %d, %Y" 2>/dev/null \
@@ -158,9 +186,8 @@ Output ONLY the YAML sections array, nothing else." < "$enriched_file" 2>/dev/nu
 
   mkdir -p "$post_dir"
   local image_line=""
-  if [[ -n "$post_image" ]]; then
-    image_line="image: \"${post_image}\""
-  fi
+  [[ -n "$post_image" ]] && image_line="image: \"${post_image}\""
+
   cat > "$post_dir/index.md" <<FRONTMATTER
 ---
 title: "Dev Digest - ${title_date}"
@@ -173,6 +200,9 @@ ${image_line}
 ${claude_output}
 ---
 FRONTMATTER
+
+  echo "  Injecting full article content..."
+  jbang "$SCRIPT_DIR/DigestHelper.java" inject-content "$post_dir/index.md" "$CACHE_DIR"
 
   echo "  Written to $post_dir/index.md"
 }
