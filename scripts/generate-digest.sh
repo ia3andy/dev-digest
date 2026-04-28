@@ -133,10 +133,10 @@ Output ONLY the YAML sections array, nothing else." 2>/dev/null) || {
   # Clean up Claude output (remove markdown fences if present)
   claude_output=$(echo "$claude_output" | sed '/^```/d')
 
-  # Format the date in French for the title
+  # Format the date for the title
   local title_date
-  title_date=$(LC_ALL=fr_FR.UTF-8 date -j -f "%Y-%m-%d" "$target_date" "+%d %B %Y" 2>/dev/null \
-    || date -d "$target_date" "+%d %B %Y" 2>/dev/null \
+  title_date=$(LC_ALL=en_US.UTF-8 date -j -f "%Y-%m-%d" "$target_date" "+%B %d, %Y" 2>/dev/null \
+    || date -d "$target_date" "+%B %d, %Y" 2>/dev/null \
     || echo "$target_date")
 
   # Write post

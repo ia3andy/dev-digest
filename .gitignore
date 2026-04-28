@@ -39,10 +39,11 @@ nb-configuration.xml
 # Local environment
 .env
 
-# Plugin directory
-/.quarkus/cli/plugins/
+# Quarkus
+.quarkus/
 # TLS Certificates
 .certs/
 
 # Web Bundler
 node_modules/
+playwright-output/

@@ -18,7 +18,7 @@ sections:
         tags: [<topic tags for this article, lowercase, e.g. ai, java, security>]
         description: |
           <original article description from the RSS, as-is>
-        one-liner: "<1 line condensed summary in French>"
+        one-liner: "<1 line condensed summary in English>"
         summary:
           what: "<the fact, 1-2 lines, no opinion, no context>"
           why: "<non-obvious relevance to a developer reader, not a rephrasing of what>"
@@ -36,6 +36,6 @@ sections:
 - **`description`**: copy the RSS item description as-is, do not modify or translate it.
 - **`tags`**: assign 1-4 lowercase topic tags per article (e.g., `ai`, `java`, `security`, `frontend`, `devops`, `crypto`, `startup`, `design`, `data-engineering`, `infrastructure`, `llm`, `agents`).
 - **IDs**: `<section-name-lowercase>-<1-based-index>` (e.g., `ai-1`, `tech-3`).
-- **Language**: write `one-liner`, `summary`, and `deep-summary` in French. Keep `title` in the original language.
+- **Language**: write `one-liner`, `summary`, and `deep-summary` in English. Keep `title` in the original language.
 - **Markdown**: allowed in `summary` fields and `deep-summary` (bold, lists, inline code).
 - **Sections with no articles** (all filtered out): omit the section entirely.
