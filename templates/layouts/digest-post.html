@@ -4,53 +4,97 @@ layout: main
 
 {@io.quarkiverse.roq.frontmatter.runtime.model.DocumentPage page}
 
-<article class="digest-page">
-  <header class="digest-header">
-    <h1>{page.title}</h1>
-    <time datetime="{page.date}">{page.date.format('dd MMMM YYYY')}</time>
-  </header>
+<article class="article-page">
+  <section class="page-content">
+    <section class="wrap-content">
+      {#include partials/roq-default/page-header.html /}
 
-  {#for section in page.data.sections}
-  <section class="digest-section">
-    <h2 class="digest-section-title">{section.name}</h2>
+      {#for section in page.data.sections}
+        {#for article in section.articles}
+        <div class="digest-article" data-article-id="{article.id}" data-tags="{#for tag in article.tags}{tag}{#if tag_hasNext},{/if}{/for}">
+          <img src="{article.image ?: '/images/article-placeholder.svg'}" alt="{article.title}" class="digest-article-img" loading="lazy"/>
+          <div class="digest-article-content">
+              <div class="digest-article-header">
+                <h3 class="digest-article-title">{article.title}</h3>
+                <div class="digest-article-actions">
+                  <span class="digest-badge">{section.name}</span>
+                  <a href="{article.link}" target="_blank" rel="noopener noreferrer" class="digest-read-btn" title="Read article">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </a>
+                </div>
+              </div>
+              <p class="digest-one-liner">{article.one-liner}</p>
 
-    {#for article in section.articles}
-    <div class="digest-article" data-article-id="{article.id}" data-tags="{#for tag in article.tags}{tag}{#if tag_hasNext},{/if}{/for}">
-      <h3 class="digest-article-title">
-        <a href="{article.link}" target="_blank" rel="noopener noreferrer">{article.title}</a>
-      </h3>
-      <p class="digest-one-liner">{article.one-liner}</p>
+          <div class="digest-summary">
+            <div class="digest-summary-item digest-summary-what">
+              <span class="digest-summary-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              </span>
+              <div><strong>What:</strong> {article.summary.what}</div>
+            </div>
+            <div class="digest-summary-item digest-summary-why">
+              <span class="digest-summary-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .963L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>
+              </span>
+              <div><strong>Why it matters:</strong> {article.summary.why}</div>
+            </div>
+            <div class="digest-summary-item digest-summary-takeaway">
+              <span class="digest-summary-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              </span>
+              <div><strong>Takeaway:</strong> {article.summary.takeaway}</div>
+            </div>
+          </div>
 
-      <div class="digest-summary">
-        <div class="digest-summary-what">
-          <strong>What:</strong> {article.summary.what}
+          {#if article.deep-summary??}
+          <details class="digest-deep-summary">
+            <summary>
+              <span class="digest-deep-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+              Deep dive
+            </summary>
+            <div class="digest-deep-content">
+              {article.deep-summary.markdownify}
+            </div>
+          </details>
+          {/if}
+
+          {#if article.description??}
+          <details class="digest-description">
+            <summary>
+              <span class="digest-deep-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+              </span>
+              Original article
+            </summary>
+            <div class="digest-description-content">
+              {article.description.markdownify}
+            </div>
+          </details>
+          {/if}
+
+          </div>
         </div>
-        <div class="digest-summary-why">
-          <strong>Why:</strong> {article.summary.why}
+        {/for}
+      {/for}
+
+      <div class="page-footer">
+        {#if page.data.author??}
+        {#let author=cdi:authors.get(page.data.author)}
+        {#if author}
+        <div class="author">
+          <img src="{site.image(author.avatar)}" alt="author-{page.data.author}"/>
+          <div class="author-data">
+            <a target="_blank" rel="noopener noreferrer" href="{author.profile}"
+               class="author-name">{author.name}</a>
+            <span class="author-job-title">{author.job}</span>
+          </div>
         </div>
-        <div class="digest-summary-takeaway">
-          <strong>Takeaway:</strong> {article.summary.takeaway}
-        </div>
+        {/if}
+        {/let}
+        {/if}
       </div>
-
-      {#if article.deep-summary??}
-      <details class="digest-deep-summary">
-        <summary>Deep dive</summary>
-        <div class="digest-deep-content">
-          {article.deep-summary.markdownify}
-        </div>
-      </details>
-      {/if}
-
-      <details class="digest-description">
-        <summary>Original article</summary>
-        <div class="digest-description-content">
-          {article.description.markdownify}
-        </div>
-      </details>
-    </div>
-    {/for}
-
+    </section>
   </section>
-  {/for}
 </article>

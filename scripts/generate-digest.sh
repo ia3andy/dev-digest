@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -eu
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -7,9 +7,10 @@ FEEDS_FILE="$PROJECT_DIR/data/feeds.yml"
 PROMPT_FILE="$SCRIPT_DIR/prompt-template.md"
 POSTS_DIR="$PROJECT_DIR/content/digest-posts"
 TEMP_DIR=$(mktemp -d)
+CACHE_DIR="$PROJECT_DIR/.digest-cache"
+mkdir -p "$CACHE_DIR"
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
-# Parse arguments
 TARGET_DATE=""
 DRY_RUN=false
 NO_PUSH=false
@@ -23,7 +24,6 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Find last processed date from existing posts
 find_last_date() {
   ls -d "$POSTS_DIR"/*-dev-digest 2>/dev/null \
     | sort \
@@ -32,7 +32,6 @@ find_last_date() {
     || echo ""
 }
 
-# Get yesterday's date (cross-platform)
 yesterday() {
   if [[ "$(uname)" == "Darwin" ]]; then
     date -v-1d +%Y-%m-%d
@@ -41,10 +40,8 @@ yesterday() {
   fi
 }
 
-# Add N days to a date (cross-platform)
 date_add() {
-  local base_date="$1"
-  local days="$2"
+  local base_date="$1" days="$2"
   if [[ "$(uname)" == "Darwin" ]]; then
     date -j -v+"${days}d" -f "%Y-%m-%d" "$base_date" +%Y-%m-%d
   else
@@ -52,40 +49,35 @@ date_add() {
   fi
 }
 
-# Compare dates: returns 0 if $1 <= $2
 date_le() {
   [[ "$1" < "$2" ]] || [[ "$1" == "$2" ]]
 }
 
-# Extract feed names and URLs from feeds.yml
 parse_feeds() {
   grep -A1 "^  - name:" "$FEEDS_FILE" \
     | paste - - \
     | sed 's/.*name: *//; s/ *url: */|/' \
-    | tr -d '"'
+    | tr -d '"' \
+    | sed 's/[[:space:]]*|/|/; s/|[[:space:]]*/|/'
 }
 
-# Fetch RSS and filter articles by date
-fetch_feed() {
-  local name="$1"
-  local url="$2"
-  local target_date="$3"
-  local output_file="$4"
+find_daily_url() {
+  local rss_url="$1" target_date="$2"
 
   local rss_content
-  rss_content=$(curl -s --max-time 30 "$url" 2>/dev/null || echo "")
-
+  rss_content=$(curl -s --max-time 30 "$rss_url" 2>/dev/null || echo "")
   if [[ -z "$rss_content" ]]; then
-    echo "  Warning: failed to fetch $name ($url)" >&2
+    echo ""
     return
   fi
 
-  echo "--- FEED: $name ---" >> "$output_file"
-  echo "$rss_content" >> "$output_file"
-  echo "" >> "$output_file"
+  echo "$rss_content" \
+    | grep -o '<guid[^>]*>[^<]*</guid>' \
+    | sed 's/<guid[^>]*>//;s/<\/guid>//' \
+    | grep "$target_date" \
+    | head -1
 }
 
-# Generate a post for a single date
 generate_post() {
   local target_date="$1"
   local post_dir="$POSTS_DIR/${target_date}-dev-digest"
@@ -97,30 +89,46 @@ generate_post() {
 
   echo "Generating digest for $target_date..."
 
-  # Fetch all feeds
   local combined_file="$TEMP_DIR/feeds-${target_date}.xml"
   > "$combined_file"
 
+  local found_content=false
+
   while IFS='|' read -r name url; do
-    echo "  Fetching $name..."
-    fetch_feed "$name" "$url" "$target_date" "$combined_file"
+    echo "  Fetching $name feed..."
+
+    local daily_url
+    daily_url=$(find_daily_url "$url" "$target_date")
+
+    if [[ -z "$daily_url" ]]; then
+      echo "    No daily page found for $name on $target_date" >&2
+      continue
+    fi
+
+    echo "    Daily page: $daily_url"
+    echo "--- FEED: $name ---" >> "$combined_file"
+    jbang "$SCRIPT_DIR/DigestHelper.java" tldr-articles "$daily_url" >> "$combined_file"
+    found_content=true
   done < <(parse_feeds)
 
-  if [[ ! -s "$combined_file" ]]; then
+  if [[ "$found_content" != true ]] || [[ ! -s "$combined_file" ]]; then
     echo "  No feed content fetched for $target_date, skipping."
     return
   fi
 
-  # Call Claude CLI
+  echo "  Enriching with article content..."
+  local enriched_file="$TEMP_DIR/enriched-${target_date}.xml"
+  jbang "$SCRIPT_DIR/DigestHelper.java" enrich "$combined_file" "$enriched_file" "$CACHE_DIR"
+
   echo "  Summarizing with Claude..."
   local prompt
   prompt=$(cat "$PROMPT_FILE")
 
   local claude_output
-  claude_output=$(cat "$combined_file" | claude -p "$prompt
+  claude_output=$(claude -p "$prompt
 
 Process the RSS feeds above for date: $target_date
-Output ONLY the YAML sections array, nothing else." 2>/dev/null) || {
+Output ONLY the YAML sections array, nothing else." < "$enriched_file" 2>/dev/null) || {
     echo "  Error: Claude CLI failed for $target_date" >&2
     return
   }
@@ -130,24 +138,38 @@ Output ONLY the YAML sections array, nothing else." 2>/dev/null) || {
     return
   fi
 
-  # Clean up Claude output (remove markdown fences if present)
   claude_output=$(echo "$claude_output" | sed '/^```/d')
 
-  # Format the date for the title
+  local digest_desc
+  digest_desc=$(echo "$claude_output" | grep '^digest-summary:' | sed 's/^digest-summary: *//; s/^"//; s/"$//')
+  if [[ -z "$digest_desc" ]]; then
+    digest_desc="Daily developer news digest"
+  fi
+
+  local post_image
+  post_image=$(echo "$claude_output" | grep '^ *image:' | head -1 | sed 's/.*image: *//; s/^"//; s/"$//')
+
+  claude_output=$(echo "$claude_output" | grep -v '^digest-summary:')
+
   local title_date
   title_date=$(LC_ALL=en_US.UTF-8 date -j -f "%Y-%m-%d" "$target_date" "+%B %d, %Y" 2>/dev/null \
     || date -d "$target_date" "+%B %d, %Y" 2>/dev/null \
     || echo "$target_date")
 
-  # Write post
   mkdir -p "$post_dir"
+  local image_line=""
+  if [[ -n "$post_image" ]]; then
+    image_line="image: \"${post_image}\""
+  fi
   cat > "$post_dir/index.md" <<FRONTMATTER
 ---
 title: "Dev Digest - ${title_date}"
+description: "${digest_desc}"
 layout: digest-post
 date: ${target_date}
 tags: digest
 author: ia3andy
+${image_line}
 ${claude_output}
 ---
 FRONTMATTER
@@ -180,7 +202,6 @@ else
   fi
 fi
 
-# Git operations
 if [[ "$DRY_RUN" == true ]]; then
   echo "Dry run: skipping git operations."
   exit 0
@@ -188,7 +209,6 @@ fi
 
 cd "$PROJECT_DIR"
 if git diff --quiet content/digest-posts/ 2>/dev/null && git diff --cached --quiet content/digest-posts/ 2>/dev/null; then
-  # Check for new untracked files
   if [[ -z "$(git ls-files --others --exclude-standard content/digest-posts/)" ]]; then
     echo "No changes to commit."
     exit 0

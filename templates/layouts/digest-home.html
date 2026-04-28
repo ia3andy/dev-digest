@@ -1,24 +1,23 @@
 ---
-layout: main
+layout: page
+page-class: page-alt page-wide
 paginate:
   collection: digest-posts
   size: 10
 ---
 {@io.quarkiverse.roq.frontmatter.runtime.model.NormalPage page}
 
-<div class="home-content">
+<div class="digest-home-header">
   {#insert /}
 </div>
 
 {#if site.collections.get('digest-posts')}
 {#let posts=site.collections.get('digest-posts').paginated(page.paginator)}
 
-<div class="blog-list">
-  <div class="blog-grid">
-    {#for post in posts}
-    {#roq/postCard post /}
-    {/for}
-  </div>
+<div class="posts-list">
+  {#for post in posts}
+  {#roq/postCard post /}
+  {/for}
 </div>
 
 {/let}
