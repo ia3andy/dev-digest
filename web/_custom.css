@@ -18,3 +18,83 @@
 .roq-hero-logo {
     @apply w-[180px];
 }
+
+/* Digest page */
+.digest-page {
+  @apply max-w-3xl mx-auto;
+}
+
+.digest-header {
+  @apply mb-8;
+}
+
+.digest-header h1 {
+  @apply text-3xl font-bold;
+}
+
+.digest-header time {
+  @apply text-sm text-gray-500 dark:text-gray-400;
+}
+
+.digest-section {
+  @apply mb-8;
+}
+
+.digest-section-title {
+  @apply text-xl font-semibold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700;
+}
+
+.digest-article {
+  @apply mb-6 p-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800;
+}
+
+.digest-article-title {
+  @apply text-lg font-medium mb-1;
+}
+
+.digest-article-title a {
+  @apply text-accent-600 dark:text-accent-400 hover:underline;
+}
+
+.digest-one-liner {
+  @apply text-base font-medium text-gray-700 dark:text-gray-300 mb-3;
+}
+
+.digest-summary {
+  @apply space-y-1 text-sm text-gray-600 dark:text-gray-400 mb-3;
+}
+
+.digest-summary strong {
+  @apply text-gray-800 dark:text-gray-200;
+}
+
+/* Details styling */
+.digest-deep-summary,
+.digest-description {
+  @apply mt-2 border-l-2 border-accent-300 dark:border-accent-700;
+}
+
+.digest-deep-summary > summary,
+.digest-description > summary {
+  @apply cursor-pointer text-sm text-accent-600 dark:text-accent-400 hover:text-accent-800 dark:hover:text-accent-300 pl-3 py-1 select-none;
+}
+
+.digest-deep-summary > summary::-webkit-details-marker,
+.digest-description > summary::-webkit-details-marker {
+  @apply hidden;
+}
+
+.digest-deep-summary > summary::before,
+.digest-description > summary::before {
+  content: "▸ ";
+}
+
+.digest-deep-summary[open] > summary::before,
+.digest-description[open] > summary::before {
+  content: "▾ ";
+}
+
+.digest-deep-content,
+.digest-description-content {
+  @apply pl-3 py-2 text-sm text-gray-600 dark:text-gray-400;
+}
