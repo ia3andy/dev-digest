@@ -1,18 +1,16 @@
 feeds:
   - name: AI
     url: https://tldr.tech/api/rss/ai
-#  - name: Tech
-#    url: https://tldr.tech/api/rss/tech
-#  - name: DevOps
-#    url: https://tldr.tech/api/rss/devops
-#  - name: Data
-#    url: https://tldr.tech/api/rss/data
-#  - name: Design
-#    url: https://tldr.tech/api/rss/design
-#  - name: Crypto
-#    url: https://tldr.tech/api/rss/crypto
-#  - name: Founders
-#    url: https://tldr.tech/api/rss/founders
+  - name: Tech
+    url: https://tldr.tech/api/rss/tech
+  - name: DevOps
+    url: https://tldr.tech/api/rss/devops
+  - name: Data
+    url: https://tldr.tech/api/rss/data
+  - name: Design
+    url: https://tldr.tech/api/rss/design
+  - name: Crypto
+    url: https://tldr.tech/api/rss/crypto
 
 tag-priorities:
   ai: 1
@@ -20,13 +18,18 @@ tag-priorities:
   agents: 1
   quarkus: 1
   java: 2
-  devops: 2
-  infrastructure: 2
-  security: 2
-  data-engineering: 2
+  devops: 4
+  infrastructure: 4
+  security: 4
+  data-engineering: 4
   frontend: 3
-  design: 3
-  startup: 3
+  design: 4
+  startup: 4
   crypto: 4
   blockchain: 4
-  default: 3
+  finance: 4
+  fintech: 4
+  defi: 4
+  ethereum: 4
+  governance: 4
+  default: 4

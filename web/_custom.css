@@ -45,6 +45,20 @@
   @apply text-sm text-gray-500 dark:text-gray-400;
 }
 
+/* Flash prevention: articles hidden until JS assigns priorities */
+.digest-articles {
+  @apply opacity-0 transition-opacity duration-150;
+}
+
+.digest-articles[data-ready] {
+  @apply opacity-100;
+}
+
+/* Priority 5: hidden */
+.digest-article[data-priority="5"] {
+  @apply hidden;
+}
+
 /* Article cards (matching theme post card layout) */
 .digest-article {
   @apply mb-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden;
@@ -78,9 +92,7 @@
 }
 
 .digest-summary {
-  @apply space-y-2 text-sm mb-3 rounded-lg p-3
-    bg-gray-50 dark:bg-gray-900/50
-    border border-gray-100 dark:border-gray-700/50;
+  @apply space-y-2 text-sm px-4 pb-4;
 }
 
 .digest-summary-item {
@@ -178,7 +190,13 @@
 }
 
 .digest-article-actions {
-  @apply flex items-center gap-2 shrink-0;
+  @apply flex items-center gap-1.5 shrink-0 flex-wrap justify-end;
+}
+
+.digest-article-tag {
+  @apply px-1.5 py-0.5 text-[10px] rounded-full
+    bg-gray-100 text-gray-500
+    dark:bg-gray-700 dark:text-gray-400;
 }
 
 /* Read article icon button */
@@ -189,4 +207,95 @@
     hover:bg-accent-50 dark:hover:bg-accent-950
     transition-colors duration-150
     no-underline;
+}
+
+/* Summary collapsible (What / Why / Takeaway) */
+.digest-summary-details {
+  @apply mt-3 rounded-lg overflow-hidden
+    bg-gradient-to-br from-blue-50 to-blue-100/50
+    dark:from-blue-950 dark:to-blue-900/50
+    border border-blue-200 dark:border-blue-800;
+}
+
+.digest-summary-details > summary {
+  @apply cursor-pointer flex items-center gap-2 px-4 py-3
+    text-sm font-medium text-blue-700 dark:text-blue-300
+    hover:bg-blue-100/50 dark:hover:bg-blue-800/30
+    select-none transition-colors duration-150;
+}
+
+.digest-summary-details > summary::-webkit-details-marker {
+  @apply hidden;
+}
+
+.digest-summary-details[open] .digest-deep-icon {
+  @apply rotate-180;
+}
+
+/* Quick links card (priority 4 grouped) */
+.digest-quick-links {
+  @apply mb-4 rounded-xl border border-gray-200 dark:border-gray-700
+    bg-white dark:bg-gray-800 shadow-sm p-5;
+}
+
+.digest-quick-links-title {
+  @apply text-base font-semibold text-gray-900 dark:text-gray-100 mb-3;
+}
+
+.digest-quick-link-item > summary {
+  @apply cursor-pointer flex items-start gap-2 px-4 py-3
+    text-gray-500 dark:text-gray-400
+    hover:bg-gray-50 dark:hover:bg-gray-700/30
+    select-none transition-colors duration-150;
+}
+
+.digest-quick-link-item > summary::-webkit-details-marker {
+  @apply hidden;
+}
+
+.digest-quick-link-item[open] > summary {
+  @apply p-0 hover:bg-transparent dark:hover:bg-transparent;
+}
+
+.digest-quick-link-item[open] > summary .digest-deep-icon {
+  @apply rotate-180 p-2 rounded-md
+    hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+
+.digest-quick-link-item[open] > summary .digest-quick-link-text {
+  @apply hidden;
+}
+
+.digest-quick-link-text {
+  @apply flex flex-col gap-0.5;
+}
+
+.digest-quick-link-title {
+  @apply text-sm font-medium text-accent-600 dark:text-accent-400;
+}
+
+.digest-quick-link-header {
+  @apply flex items-center gap-2;
+}
+
+.digest-quick-link-meta {
+  @apply flex items-center gap-2 flex-wrap;
+}
+
+.digest-quick-link-desc {
+  @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.digest-quick-link-tags {
+  @apply flex gap-1 flex-wrap;
+}
+
+.digest-quick-link-tag {
+  @apply px-1.5 py-0.5 text-[10px] rounded-full
+    bg-gray-100 text-gray-500
+    dark:bg-gray-700 dark:text-gray-400;
+}
+
+.digest-quick-link-expanded {
+  @apply m-4 mt-0;
 }
