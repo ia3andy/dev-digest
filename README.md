@@ -1,61 +1,37 @@
-# tldr-summary
+# Dev Digest
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+A personalized daily tech digest that aggregates [TLDR](https://tldr.tech/) newsletters, enriches articles with AI-generated summaries, and publishes them as a static site.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+Built with [Roq](https://iamroq.dev/) (Quarkus-powered static site generator).
 
-## Running the application in dev mode
+## How it works
 
-You can run your application in dev mode that enables live coding using:
+1. **Fetch** articles from TLDR RSS feeds (AI, Tech, DevOps, Data, Design, Crypto) using a JBang/Playwright pipeline
+2. **Summarize** each article with a structured What / Why it matters / Takeaway format
+3. **Tag and prioritize** articles by topic relevance (configurable in `data/feeds.yml`)
+4. **Publish** as a static site with expandable deep-dives and original article links
 
-```shell script
+## Running locally
+
+```shell
 ./mvnw quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+The site is served at http://localhost:8080 with live reload.
 
-## Packaging and running the application
+## Project structure
 
-The application can be packaged using:
-
-```shell script
-./mvnw package
+```
+content/digest-posts/   Digest entries (one per day, Qute/YAML frontmatter)
+data/feeds.yml          RSS feed sources and tag priority configuration
+templates/layouts/      Qute page templates
+web/                    CSS and client-side JS (priority sorting)
+config/                 Quarkus/Roq configuration
 ```
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+## Configuration
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+Edit `data/feeds.yml` to customize:
 
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/tldr-summary-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Related Guides
-
-- Roq ([guide](https://iamroq.dev/docs/)): Hello, world! I’m Roq — a fun little SSG (Static Site Generator) with a Java soul and Quarkus energy.
-- Roq Default Theme ([guide](https://iamroq.dev/docs/)): The default theme for Roq, a static site generator powered by Quarkus.
-
-## Provided Code
+- **feeds**: which TLDR newsletters to aggregate
+- **tag-priorities**: numeric priority per tag (1 = highest, 4 = lowest) to control article ordering
