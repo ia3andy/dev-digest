@@ -1,6 +1,6 @@
 ---
 title: "Dev Digest - April 27, 2026"
-description: "Google is committing up to $40B in Anthropic to address Claude's compute constraints, while investigations reveal that AI coding tools like Windsurf and Cursor systematically inflate their "AI-written code" metrics, with Windsurf reporting 98% AI-authored code for normal human usage. Meanwhile, Airflow 2 hit end of life with no more security patches, Shopify doubled down on hiring 1,000 AI-native interns, and Cursor's $2.7B revenue at negative 23% margins shows that AI tool economics are fundamentally broken without owning compute."
+description: "Google is committing up to $40B in Anthropic to address Claude's compute constraints, while investigations reveal that AI coding tools like Windsurf and Cursor systematically inflate their 'AI-written code' metrics, with Windsurf reporting 98% AI-authored code for normal human usage. Meanwhile, Airflow 2 hit end of life with no more security patches, Shopify doubled down on hiring 1,000 AI-native interns, and Cursor's $2.7B revenue at negative 23% margins shows that AI tool economics are fundamentally broken without owning compute."
 layout: digest-post
 date: 2026-04-27
 tags: digest
