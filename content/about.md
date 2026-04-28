@@ -1,12 +1,14 @@
 ---
 title: About
-description: A static site generator built with Java and Quarkus. Zero config to get started, full power of the JVM when you need it.
+description: Daily developer news digest, AI-curated from TLDR newsletters
 layout: page
 ---
 
-# About this site
+# About ia3andy Dev Digest
 
-This site is built with [Roq](https://iamroq.dev), a static site generator powered by [Quarkus](https://quarkus.io). It combines the best of tools like Jekyll and Hugo with the Java ecosystem: zero configuration to get started, blazing fast live-reload in dev mode, and full access to Java when you need it.
+A daily developer news digest built with [Roq](https://iamroq.dev). Each day, a script fetches TLDR newsletters (AI, Tech, DevOps, Data, Design, Crypto, Founders), summarizes them using Claude, and publishes the result as a blog post.
+
+The summaries are structured with three distinct perspectives per article: the fact, why it matters, and a concrete takeaway.
 
 ## Authors
 
