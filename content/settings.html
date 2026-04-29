@@ -173,14 +173,25 @@ window.UNSORTED_PRIORITY={cdi:feeds.get('unsorted-priority').raw};
   var startX = 0, startY = 0, offsetX = 0, offsetY = 0;
   var isDragging = false;
 
+  function findInsertBefore(zone, y) {
+    var chips = zone.querySelectorAll('.priority-tag-chip');
+    for (var i = 0; i < chips.length; i++) {
+      if (chips[i] === dragEl || chips[i] === ghost) continue;
+      var rect = chips[i].getBoundingClientRect();
+      if (y < rect.top + rect.height / 2) return chips[i];
+    }
+    return null;
+  }
+
   function getDropTarget(x, y) {
     var els = document.elementsFromPoint(x, y);
     for (var i = 0; i < els.length; i++) {
-      if (els[i].classList.contains('priority-bucket-tags')) return { zone: els[i], before: null };
+      if (els[i].classList.contains('priority-bucket-tags')) return { zone: els[i], before: findInsertBefore(els[i], y) };
       var chip = els[i].closest('.priority-tag-chip');
       if (chip && chip !== dragEl && chip !== ghost) {
+        var zone = chip.closest('.priority-bucket-tags');
         var rect = chip.getBoundingClientRect();
-        return { zone: chip.closest('.priority-bucket-tags'), before: y < rect.top + rect.height / 2 ? chip : chip.nextElementSibling };
+        return { zone: zone, before: y < rect.top + rect.height / 2 ? chip : chip.nextElementSibling };
       }
     }
     return null;
