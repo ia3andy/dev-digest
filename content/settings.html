@@ -205,7 +205,7 @@ window.UNSORTED_PRIORITY={cdi:feeds.get('unsorted-priority').raw};
     dragEl = chip;
     var rect = chip.getBoundingClientRect();
     startX = e.clientX; startY = e.clientY;
-    offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
+    offsetX = rect.width / 2; offsetY = rect.height / 2;
     isDragging = false;
   });
 
