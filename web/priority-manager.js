@@ -86,15 +86,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const defaults = window.DEFAULT_TAG_PRIORITIES || {};
   const overrides = JSON.parse(localStorage.getItem('digest-tag-priorities') || '{}');
   const priorities = { ...defaults, ...overrides };
-  const defaultPriority = priorities['default'] || 3;
+  const storedUnsorted = localStorage.getItem('digest-unsorted-priority');
+  const unsortedPri = window.UNSORTED_PRIORITY || 4;
+  const defaultPriority = storedUnsorted !== null ? parseInt(storedUnsorted) : unsortedPri;
 
   function resolvePriority(tags) {
-    let best = defaultPriority;
-    for (const tag of tags) {
-      const p = priorities[tag];
-      if (p !== undefined && p < best) best = p;
+    if (tags.length === 0) return defaultPriority;
+    const primary = priorities[tags[0]];
+    if (primary !== undefined && primary !== 0) return primary;
+    for (let i = 1; i < tags.length; i++) {
+      const p = priorities[tags[i]];
+      if (p !== undefined && p !== 0) return p;
     }
-    return best;
+    return defaultPriority;
   }
 
   const articles = Array.from(container.querySelectorAll('.digest-article'));

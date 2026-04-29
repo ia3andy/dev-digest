@@ -411,9 +411,36 @@
 }
 
 .priority-bucket-header {
-  @apply px-4 py-2 text-sm font-semibold
+  @apply px-4 py-2 text-sm font-semibold flex items-baseline gap-2
     bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300
     border-b border-gray-200 dark:border-gray-700;
+}
+
+.priority-bucket-hint {
+  @apply text-xs font-normal text-gray-400 dark:text-gray-500;
+}
+
+.priority-tag-row {
+  @apply flex items-center gap-3 flex-wrap justify-center;
+}
+
+.priority-levels {
+  @apply flex gap-1;
+}
+
+.priority-level-btn {
+  @apply px-3 py-1.5 text-xs font-medium rounded-md cursor-pointer
+    border border-gray-300 dark:border-gray-600
+    text-gray-600 dark:text-gray-400
+    bg-white dark:bg-gray-800
+    hover:bg-accent-50 dark:hover:bg-accent-950
+    hover:border-accent-300 dark:hover:border-accent-700
+    transition-colors;
+}
+
+.priority-level-btn.is-active {
+  @apply bg-accent-100 border-accent-400 text-accent-700
+    dark:bg-accent-900 dark:border-accent-600 dark:text-accent-300;
 }
 
 .priority-bucket-tags {

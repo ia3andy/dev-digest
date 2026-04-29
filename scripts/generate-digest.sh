@@ -197,6 +197,9 @@ FRONTMATTER
   echo "  Writing article content files..."
   jbang "$SCRIPT_DIR/DigestHelper.java" write-content "$post_dir/index.md" "$CACHE_DIR" "$FEEDS_FILE"
 
+  echo "  Syncing new tags..."
+  jbang "$SCRIPT_DIR/DigestHelper.java" sync-tags "$POSTS_DIR" "$FEEDS_FILE"
+
   echo "  Written to $post_dir/index.md"
 }
 

@@ -63,6 +63,7 @@ public class DigestHelper {
             case "write-content" -> writeContent(args[1], args[2], args[3]);
             case "clean-all" -> cleanAll(args[1], args[2], args[3]);
             case "refresh-html" -> refreshHtml(args[1], args[2]);
+            case "sync-tags" -> syncTags(args[1], args[2]);
             default -> {
                 System.err.println("Unknown command: " + args[0]);
                 System.exit(1);
@@ -737,17 +738,28 @@ public class DigestHelper {
         return priorities;
     }
 
-    static int computePriority(List<String> tags, Map<String, Integer> tagPriorities) {
-        int defaultPri = tagPriorities.getOrDefault("default", 4);
-        if (tags.isEmpty()) return defaultPri;
-        return tags.stream()
-                .mapToInt(t -> tagPriorities.getOrDefault(t.toLowerCase(), defaultPri))
-                .min().orElse(defaultPri);
+    static int parseUnsortedPriority(String feedsFile) throws IOException {
+        for (String line : Files.readAllLines(Path.of(feedsFile))) {
+            var m = Pattern.compile("unsorted-priority:\\s*(\\d+)").matcher(line);
+            if (m.matches()) return Integer.parseInt(m.group(1));
+        }
+        return 4;
+    }
+
+    static int computePriority(List<String> tags, Map<String, Integer> tagPriorities, int unsortedPriority) {
+        if (tags.isEmpty()) return unsortedPriority;
+        int primary = tagPriorities.getOrDefault(tags.get(0).toLowerCase(), 0);
+        if (primary != 0) return primary;
+        for (int i = 1; i < tags.size(); i++) {
+            int p = tagPriorities.getOrDefault(tags.get(i).toLowerCase(), 0);
+            if (p != 0) return p;
+        }
+        return unsortedPriority;
     }
 
     record ArticleInfo(String id, String link, List<String> tags, int priority) {}
 
-    static List<ArticleInfo> parseArticles(List<String> lines, Map<String, Integer> tagPriorities) {
+    static List<ArticleInfo> parseArticles(List<String> lines, Map<String, Integer> tagPriorities, int unsortedPriority) {
         var articles = new ArrayList<ArticleInfo>();
         String id = null, link = null;
         List<String> tags = new ArrayList<>();
@@ -755,7 +767,7 @@ public class DigestHelper {
         for (String line : lines) {
             var idMatch = Pattern.compile("\\s+- id:\\s*(.+)").matcher(line);
             if (idMatch.matches()) {
-                if (id != null) articles.add(new ArticleInfo(id, link, tags, computePriority(tags, tagPriorities)));
+                if (id != null) articles.add(new ArticleInfo(id, link, tags, computePriority(tags, tagPriorities, unsortedPriority)));
                 id = idMatch.group(1).trim();
                 link = null;
                 tags = new ArrayList<>();
@@ -770,12 +782,13 @@ public class DigestHelper {
                 }
             }
         }
-        if (id != null) articles.add(new ArticleInfo(id, link, tags, computePriority(tags, tagPriorities)));
+        if (id != null) articles.add(new ArticleInfo(id, link, tags, computePriority(tags, tagPriorities, unsortedPriority)));
         return articles;
     }
 
     static void writeContent(String postFile, String cacheDir, String feedsFile) throws Exception {
         var tagPriorities = parseTagPriorities(feedsFile);
+        int unsortedPriority = parseUnsortedPriority(feedsFile);
         var lines = new ArrayList<>(Files.readAllLines(Path.of(postFile)));
 
         String date = "";
@@ -784,7 +797,7 @@ public class DigestHelper {
             if (m.find()) { date = m.group(1); break; }
         }
 
-        var articles = parseArticles(lines, tagPriorities);
+        var articles = parseArticles(lines, tagPriorities, unsortedPriority);
         Path contentDir = Path.of("templates/full-content/" + date);
         Files.createDirectories(contentDir);
 
@@ -928,6 +941,58 @@ public class DigestHelper {
         }
 
         System.err.println("  Refreshed " + refreshed + " / " + urls.size() + " cache entries with contentHtml");
+    }
+
+    static void syncTags(String postsDir, String feedsFile) throws IOException {
+        var existing = parseTagPriorities(feedsFile);
+        var allTags = new TreeSet<String>();
+
+        var postDirs = Files.list(Path.of(postsDir))
+                .filter(Files::isDirectory)
+                .sorted()
+                .toList();
+
+        for (Path postDir : postDirs) {
+            Path postFile = postDir.resolve("index.md");
+            if (!Files.exists(postFile)) continue;
+            for (String line : Files.readAllLines(postFile)) {
+                var m = Pattern.compile("\\s+tags:\\s*\\[(.+)]").matcher(line);
+                if (m.matches()) {
+                    for (String t : m.group(1).split(",")) {
+                        String tag = t.trim().toLowerCase().replaceAll("[^a-z0-9-]", "");
+                        if (!tag.isEmpty() && !tag.equals("default")) allTags.add(tag);
+                    }
+                }
+            }
+        }
+
+        var newTags = new ArrayList<String>();
+        for (String tag : allTags) {
+            if (!existing.containsKey(tag)) newTags.add(tag);
+        }
+
+        if (newTags.isEmpty()) {
+            System.err.println("  No new tags found.");
+            return;
+        }
+
+        var feedLines = new ArrayList<>(Files.readAllLines(Path.of(feedsFile)));
+        int insertAt = feedLines.size();
+        for (int i = feedLines.size() - 1; i >= 0; i--) {
+            String line = feedLines.get(i);
+            if (line.matches("\\s+\\S+:\\s*\\d+")) {
+                insertAt = i + 1;
+                break;
+            }
+        }
+
+        for (String tag : newTags) {
+            feedLines.add(insertAt, "  " + tag + ": 0");
+            insertAt++;
+        }
+
+        Files.writeString(Path.of(feedsFile), String.join("\n", feedLines) + "\n");
+        System.err.println("  Added " + newTags.size() + " new tag(s): " + String.join(", ", newTags));
     }
 
 }

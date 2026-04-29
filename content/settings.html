@@ -4,16 +4,19 @@ description: Customize your digest tag priorities
 layout: main
 ---
 
-<script>window.DEFAULT_TAG_PRIORITIES={cdi:feeds.get('tag-priorities').raw};</script>
+<script>
+window.DEFAULT_TAG_PRIORITIES={cdi:feeds.get('tag-priorities').raw};
+window.UNSORTED_PRIORITY={cdi:feeds.get('unsorted-priority').raw};
+</script>
 
 <article class="article-page">
   <section class="page-content">
     <section class="wrap-content">
       <h1>Tag Priorities</h1>
-      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 text-center">
         Drag tags between buckets to change priority. Drag within a bucket to reorder.
-        Top articles appear first with full details, hidden articles are not shown.
       </p>
+      <div id="unsorted-priority-setting" class="mb-6"></div>
       <div id="priority-settings" class="priority-settings"></div>
     </section>
   </section>
@@ -21,49 +24,105 @@ layout: main
 
 <script>
 (function() {
-  const LEVELS = [
-    { value: 1, label: 'Top', icon: '🔥' },
-    { value: 2, label: 'High', icon: '⬆' },
-    { value: 3, label: 'Normal', icon: '━' },
-    { value: 4, label: 'Compact', icon: '⬇' },
-    { value: 5, label: 'Hidden', icon: '🚫' }
+  var LEVELS = [
+    { value: 1, label: 'Top', icon: '🔥', hint: 'Expanded with full summary' },
+    { value: 2, label: 'High', icon: '⬆', hint: 'Collapsed, click to expand' },
+    { value: 3, label: 'Normal', icon: '━', hint: 'One-line link in "Other news"' },
+    { value: 4, label: 'Compact', icon: '⬇', hint: 'One-line link in "Other news"' },
+    { value: 5, label: 'Hidden', icon: '🚫' },
+    { value: 0, label: 'Unsorted', icon: '📥', hint: 'New tags, rendered per setting above' }
   ];
 
-  const defaults = window.DEFAULT_TAG_PRIORITIES || {};
-  const overrides = JSON.parse(localStorage.getItem('digest-tag-priorities') || '{}');
-  const savedOrder = JSON.parse(localStorage.getItem('digest-tag-order') || '[]');
-  const current = { ...defaults, ...overrides };
+  var defaults = window.DEFAULT_TAG_PRIORITIES || {};
+  var overrides = JSON.parse(localStorage.getItem('digest-tag-priorities') || '{}');
+  var savedOrder = JSON.parse(localStorage.getItem('digest-tag-order') || '[]');
+  var current = Object.assign({}, defaults, overrides);
+  var unsortedPri = window.UNSORTED_PRIORITY || 4;
 
-  const root = document.getElementById('priority-settings');
+  var root = document.getElementById('priority-settings');
   if (!root) return;
 
-  const allTags = Object.keys(defaults).filter(t => t !== 'default');
-  const orderedTags = [...savedOrder.filter(t => allTags.includes(t)), ...allTags.filter(t => !savedOrder.includes(t))];
+  // --- Unsorted priority selector ---
 
-  const buckets = {};
+  var unsortedRoot = document.getElementById('unsorted-priority-setting');
+  if (unsortedRoot) {
+    var row = document.createElement('div');
+    row.className = 'priority-tag-row';
 
-  for (const level of LEVELS) {
-    const bucket = document.createElement('div');
+    var label = document.createElement('span');
+    label.className = 'text-sm text-gray-600 dark:text-gray-400';
+    label.textContent = 'Unsorted tags render as:';
+    row.appendChild(label);
+
+    var levels = document.createElement('div');
+    levels.className = 'priority-levels';
+
+    var storedUnsorted = localStorage.getItem('digest-unsorted-priority');
+    var activeUnsorted = storedUnsorted !== null ? parseInt(storedUnsorted) : unsortedPri;
+
+    var renderLevels = LEVELS.filter(function(l) { return l.value >= 1 && l.value <= 5; });
+    for (var li = 0; li < renderLevels.length; li++) {
+      var level = renderLevels[li];
+      var btn = document.createElement('button');
+      btn.className = 'priority-level-btn';
+      btn.textContent = level.label;
+      btn.dataset.level = level.value;
+      if (level.value === activeUnsorted) btn.classList.add('is-active');
+      btn.addEventListener('click', (function(lv) {
+        return function() {
+          for (var b of levels.querySelectorAll('.priority-level-btn')) b.classList.remove('is-active');
+          this.classList.add('is-active');
+          localStorage.setItem('digest-unsorted-priority', lv);
+        };
+      })(level.value));
+      levels.appendChild(btn);
+    }
+
+    row.appendChild(levels);
+    unsortedRoot.appendChild(row);
+  }
+
+  // --- Buckets ---
+
+  var allTags = Object.keys(defaults).filter(function(t) { return t !== 'unsorted-priority'; });
+  var orderedTags = savedOrder.filter(function(t) { return allTags.indexOf(t) !== -1; });
+  for (var i = 0; i < allTags.length; i++) {
+    if (orderedTags.indexOf(allTags[i]) === -1) orderedTags.push(allTags[i]);
+  }
+
+  var buckets = {};
+
+  for (var idx = 0; idx < LEVELS.length; idx++) {
+    var lev = LEVELS[idx];
+    var bucket = document.createElement('div');
     bucket.className = 'priority-bucket';
-    bucket.dataset.level = level.value;
+    bucket.dataset.level = lev.value;
 
-    const header = document.createElement('div');
+    var header = document.createElement('div');
     header.className = 'priority-bucket-header';
-    header.textContent = level.icon + ' ' + level.label;
+    var headerLabel = document.createElement('span');
+    headerLabel.textContent = lev.icon + ' ' + lev.label;
+    header.appendChild(headerLabel);
+    if (lev.hint) {
+      var hintEl = document.createElement('span');
+      hintEl.className = 'priority-bucket-hint';
+      hintEl.textContent = lev.hint;
+      header.appendChild(hintEl);
+    }
     bucket.appendChild(header);
 
-    const dropzone = document.createElement('div');
+    var dropzone = document.createElement('div');
     dropzone.className = 'priority-bucket-tags';
-    dropzone.dataset.level = level.value;
+    dropzone.dataset.level = lev.value;
     bucket.appendChild(dropzone);
 
     root.appendChild(bucket);
-    buckets[level.value] = dropzone;
+    buckets[lev.value] = dropzone;
   }
 
   function createGripSvg() {
-    const ns = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(ns, 'svg');
+    var ns = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(ns, 'svg');
     svg.setAttribute('width', '14');
     svg.setAttribute('height', '14');
     svg.setAttribute('viewBox', '0 0 24 24');
@@ -72,11 +131,11 @@ layout: main
     svg.setAttribute('stroke-width', '2');
     svg.setAttribute('stroke-linecap', 'round');
     svg.setAttribute('stroke-linejoin', 'round');
-    const coords = [[9,5],[15,5],[9,12],[15,12],[9,19],[15,19]];
-    for (const [cx, cy] of coords) {
-      const c = document.createElementNS(ns, 'circle');
-      c.setAttribute('cx', cx);
-      c.setAttribute('cy', cy);
+    var coords = [[9,5],[15,5],[9,12],[15,12],[9,19],[15,19]];
+    for (var ci = 0; ci < coords.length; ci++) {
+      var c = document.createElementNS(ns, 'circle');
+      c.setAttribute('cx', coords[ci][0]);
+      c.setAttribute('cy', coords[ci][1]);
       c.setAttribute('r', '1');
       svg.appendChild(c);
     }
@@ -84,92 +143,76 @@ layout: main
   }
 
   function createTagChip(tag) {
-    const chip = document.createElement('div');
+    var chip = document.createElement('div');
     chip.className = 'priority-tag-chip';
     chip.dataset.tag = tag;
     chip.setAttribute('touch-action', 'none');
 
-    const grip = document.createElement('span');
+    var grip = document.createElement('span');
     grip.className = 'priority-tag-grip';
     grip.appendChild(createGripSvg());
     chip.appendChild(grip);
 
-    const label = document.createElement('span');
-    label.className = 'priority-tag-label';
-    label.textContent = tag;
-    chip.appendChild(label);
+    var lbl = document.createElement('span');
+    lbl.className = 'priority-tag-label';
+    lbl.textContent = tag;
+    chip.appendChild(lbl);
 
     return chip;
   }
 
-  for (const tag of orderedTags) {
-    const priority = current[tag] || defaults['default'] || 3;
-    const chip = createTagChip(tag);
-    buckets[priority].appendChild(chip);
+  for (var ti = 0; ti < orderedTags.length; ti++) {
+    var tag = orderedTags[ti];
+    var priority = current[tag] !== undefined ? current[tag] : unsortedPri;
+    if (buckets[priority]) buckets[priority].appendChild(createTagChip(tag));
   }
 
   // --- Drag and drop (pointer events for mouse + touch) ---
 
-  let dragEl = null;
-  let ghost = null;
-  let startX = 0, startY = 0;
-  let offsetX = 0, offsetY = 0;
-  let isDragging = false;
-  let placeholder = null;
+  var dragEl = null, ghost = null, placeholder = null;
+  var startX = 0, startY = 0, offsetX = 0, offsetY = 0;
+  var isDragging = false;
 
   function getDropTarget(x, y) {
-    const els = document.elementsFromPoint(x, y);
-    for (const el of els) {
-      if (el.classList.contains('priority-bucket-tags')) return { zone: el, before: null };
-      const chip = el.closest('.priority-tag-chip');
+    var els = document.elementsFromPoint(x, y);
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].classList.contains('priority-bucket-tags')) return { zone: els[i], before: null };
+      var chip = els[i].closest('.priority-tag-chip');
       if (chip && chip !== dragEl && chip !== ghost) {
-        const rect = chip.getBoundingClientRect();
-        const midY = rect.top + rect.height / 2;
-        return { zone: chip.closest('.priority-bucket-tags'), before: y < midY ? chip : chip.nextElementSibling };
+        var rect = chip.getBoundingClientRect();
+        return { zone: chip.closest('.priority-bucket-tags'), before: y < rect.top + rect.height / 2 ? chip : chip.nextElementSibling };
       }
     }
     return null;
   }
 
-  function onPointerDown(e) {
-    const chip = e.target.closest('.priority-tag-chip');
+  root.addEventListener('pointerdown', function(e) {
+    var chip = e.target.closest('.priority-tag-chip');
     if (!chip || !root.contains(chip)) return;
-
     e.preventDefault();
     chip.setPointerCapture(e.pointerId);
-
     dragEl = chip;
-    const rect = chip.getBoundingClientRect();
-    startX = e.clientX;
-    startY = e.clientY;
-    offsetX = e.clientX - rect.left;
-    offsetY = e.clientY - rect.top;
+    var rect = chip.getBoundingClientRect();
+    startX = e.clientX; startY = e.clientY;
+    offsetX = e.clientX - rect.left; offsetY = e.clientY - rect.top;
     isDragging = false;
-  }
+  });
 
-  function onPointerMove(e) {
+  document.addEventListener('pointermove', function(e) {
     if (!dragEl) return;
     e.preventDefault();
-
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-
-    if (!isDragging && Math.abs(dx) + Math.abs(dy) < 8) return;
+    if (!isDragging && Math.abs(e.clientX - startX) + Math.abs(e.clientY - startY) < 8) return;
 
     if (!isDragging) {
       isDragging = true;
-
       ghost = dragEl.cloneNode(true);
       ghost.className = 'priority-tag-chip priority-tag-ghost';
-      const rect = dragEl.getBoundingClientRect();
-      ghost.style.width = rect.width + 'px';
+      ghost.style.width = dragEl.getBoundingClientRect().width + 'px';
       document.body.appendChild(ghost);
-
       placeholder = document.createElement('div');
       placeholder.className = 'priority-tag-placeholder';
-      placeholder.style.height = rect.height + 'px';
+      placeholder.style.height = dragEl.getBoundingClientRect().height + 'px';
       dragEl.parentNode.insertBefore(placeholder, dragEl);
-
       dragEl.style.display = 'none';
     }
 
@@ -177,59 +220,46 @@ layout: main
     ghost.style.top = (e.clientY - offsetY) + 'px';
 
     dragEl.releasePointerCapture(e.pointerId);
-    const target = getDropTarget(e.clientX, e.clientY);
+    var target = getDropTarget(e.clientX, e.clientY);
     dragEl.setPointerCapture(e.pointerId);
 
-    for (const z of Object.values(buckets)) z.classList.remove('priority-bucket-hover');
-
+    for (var k in buckets) buckets[k].classList.remove('priority-bucket-hover');
     if (target) {
       target.zone.classList.add('priority-bucket-hover');
       if (placeholder.parentNode !== target.zone || placeholder.nextElementSibling !== target.before) {
         target.zone.insertBefore(placeholder, target.before);
       }
     }
-  }
+  });
 
-  function onPointerUp(e) {
+  function endDrag(e) {
     if (!dragEl) return;
-
     if (isDragging) {
       dragEl.releasePointerCapture(e.pointerId);
-
-      if (placeholder && placeholder.parentNode) {
-        placeholder.parentNode.insertBefore(dragEl, placeholder);
-      }
-
+      if (placeholder && placeholder.parentNode) placeholder.parentNode.insertBefore(dragEl, placeholder);
       dragEl.style.display = '';
       if (ghost) ghost.remove();
       if (placeholder) placeholder.remove();
-
-      for (const z of Object.values(buckets)) z.classList.remove('priority-bucket-hover');
-
+      for (var k in buckets) buckets[k].classList.remove('priority-bucket-hover');
       saveState();
     }
-
-    ghost = null;
-    placeholder = null;
-    dragEl = null;
-    isDragging = false;
+    ghost = null; placeholder = null; dragEl = null; isDragging = false;
   }
 
-  root.addEventListener('pointerdown', onPointerDown);
-  document.addEventListener('pointermove', onPointerMove);
-  document.addEventListener('pointerup', onPointerUp);
-  document.addEventListener('pointercancel', onPointerUp);
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', endDrag);
 
   function saveState() {
-    const newOverrides = {};
-    const order = [];
-    for (const level of LEVELS) {
-      const zone = buckets[level.value];
-      for (const chip of zone.querySelectorAll('.priority-tag-chip')) {
-        const tag = chip.dataset.tag;
-        order.push(tag);
-        if (level.value !== (defaults[tag] || defaults['default'] || 3)) {
-          newOverrides[tag] = level.value;
+    var newOverrides = {};
+    var order = [];
+    for (var li = 0; li < LEVELS.length; li++) {
+      var zone = buckets[LEVELS[li].value];
+      var chips = zone.querySelectorAll('.priority-tag-chip');
+      for (var ci = 0; ci < chips.length; ci++) {
+        var t = chips[ci].dataset.tag;
+        order.push(t);
+        if (LEVELS[li].value !== (defaults[t] !== undefined ? defaults[t] : 0)) {
+          newOverrides[t] = LEVELS[li].value;
         }
       }
     }
@@ -237,17 +267,22 @@ layout: main
     localStorage.setItem('digest-tag-order', JSON.stringify(order));
   }
 
-  const resetBtn = document.createElement('button');
+  var resetBtn = document.createElement('button');
   resetBtn.className = 'priority-reset-btn';
   resetBtn.textContent = 'Reset to defaults';
-  resetBtn.addEventListener('click', () => {
+  resetBtn.addEventListener('click', function() {
     localStorage.removeItem('digest-tag-priorities');
     localStorage.removeItem('digest-tag-order');
-    for (const zone of Object.values(buckets)) zone.replaceChildren();
-    const defaultOrder = Object.keys(defaults).filter(t => t !== 'default').sort();
-    for (const tag of defaultOrder) {
-      const priority = defaults[tag] || defaults['default'] || 3;
-      buckets[priority].appendChild(createTagChip(tag));
+    localStorage.removeItem('digest-unsorted-priority');
+    for (var k in buckets) buckets[k].replaceChildren();
+    var defaultOrder = Object.keys(defaults).filter(function(t) { return t !== 'unsorted-priority'; });
+    for (var di = 0; di < defaultOrder.length; di++) {
+      var p = defaults[defaultOrder[di]] !== undefined ? defaults[defaultOrder[di]] : 0;
+      if (buckets[p]) buckets[p].appendChild(createTagChip(defaultOrder[di]));
+    }
+    var uBtns = unsortedRoot.querySelectorAll('.priority-level-btn');
+    for (var bi = 0; bi < uBtns.length; bi++) {
+      uBtns[bi].classList.toggle('is-active', parseInt(uBtns[bi].dataset.level) === unsortedPri);
     }
   });
   root.appendChild(resetBtn);

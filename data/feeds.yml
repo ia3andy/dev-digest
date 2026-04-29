@@ -12,6 +12,8 @@ feeds:
   - name: Crypto
     url: https://tldr.tech/api/rss/crypto
 
+unsorted-priority: 4
+
 tag-priorities:
   ai: 1
   llm: 1
@@ -26,10 +28,36 @@ tag-priorities:
   design: 4
   startup: 4
   crypto: 4
-  blockchain: 4
-  finance: 4
-  fintech: 4
-  defi: 4
-  ethereum: 4
-  governance: 4
-  default: 4
+  blockchain: 0
+  finance: 0
+  fintech: 0
+  defi: 0
+  ethereum: 0
+  governance: 0
+  accessibility: 0
+  analytics: 0
+  art: 0
+  business: 0
+  cloud: 0
+  data: 0
+  database: 0
+  dev: 0
+  devtools: 0
+  git: 0
+  google: 0
+  hardware: 0
+  html: 0
+  ios: 0
+  leadership: 0
+  legal: 0
+  mcp: 0
+  mobile: 0
+  observability: 0
+  payments: 0
+  policy: 0
+  regulation: 0
+  research: 0
+  science: 0
+  testing: 0
+  tools: 0
+  vue: 0
