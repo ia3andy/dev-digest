@@ -1,0 +1,30 @@
+<p>There's lots of ways to build a website. Most of them involve designers working in one tool, developers working in another, and a painful handoff process somewhere in between. We recently used <a href="https://www.intentapp.dev/">Intent</a> to design, build and ship a well-crafted <a href="https://arianetworks.com/">website</a> in about three weeks, and the collaboration model that emerged shined a light on how things could (no, should) be.</p>
+<h2>Design First</h2>
+<p>We started the way most Web projects start these days: in Figma. Visual explorations of what the style, wireframes for the structure, then bringing the two together into full page layouts. Our designer set up the grid, typography scales, color variables, buttons, and reusable components. Your typical design system.</p>
+<p><img alt="Aria Design System in Figma"></p>
+<p>This process took about two weeks and was pretty standard. Desktop and mobile comps, a couple rounds of feedback on visuals and copy, iterating until we had a visual style, a rough structure, and directional content. Just a solid Web design process.</p>
+<p><img alt="Aria Web sites page designs in Figma"></p>
+<h2>Development Foundation</h2>
+<p>Once the designs were in a good place, our developer jumped in. But not by staring at a Figma file and manually translating pixels into code. Instead, he opened up <a href="https://www.intentapp.dev/">Intent</a>, set up the project scaffolding (Astro, Tailwind), connected to the Figma MCP, and wrote an agents.md file that pointed to all the artboards.</p>
+<p>Then he kicked off a series of workspaces. The first one pulled the design tokens into Tailwind. The second started laying out the first page using those tokens. After that, he was able to break off into parallel workspaces, one for each page. Desktop layouts first, then separate passes for mobile.</p>
+<p>This whole phase, the front-end infrastructure, took maybe one or two days of actual work. And by the end, every page existed in code, using the design system, at roughly 85% fidelity. Not pixel perfect, but pretty damn close.</p>
+<h2>Parallel Work</h2>
+<p>Once he deployed the site to a staging URL, the three of us started working in <a href="https://www.intentapp.dev/">Intent</a> simultaneously: our designer, our front-end developer, and me handling product/project management. Though we all were using the same tool, we each worked our own way.</p>
+<p>Our designer set up a grid overlay so he could visually verify alignment. He would tell the agent "align to column three" and it would snap things into place (way better than guessing at percentage values). He preffered staying in one workspace to tweak alignment and refine grid positioning across a full page before committing things.</p>
+<p><img alt="Designer Workflow in Intent - setting up a grid"></p>
+<p>Once the pages were structurally solid, he moved on to animations. Entrance effects on homepage elements, scroll-triggered transitions, etc.. Work that normally takes days of back-and-forth between a designer specifying timing curves and a developer implementing them happened in about hours. He still maintained manual control where it mattered, finding the exact easing curve he wanted then telling the agent to use it. The implementation was handled for him so he could focus on how things felt.</p>
+<p><img alt="Designer Workflow in Intent - animation tweaking"></p>
+<p>Meanwhile, I was doing content and product work. Dumping in blog posts from Word docs, adding image assets, making text changes based on feedback from the broader team. My approach was simple: small discrete tasks with a single agent. Fix one thing, commit. Fix another thing, commit. Once I had four or five commits, I'd open a pull request, toss out the workspace, and start a new one. The design tokens and setup our developer created ensured my changes were all inline with our design and development architecture.</p>
+<p><img alt="Working on Aria Web Site in the Intent app"></p>
+<p>Our developer's job during this phase was partly creative and partly managerial. He handled the templatized pages (news, product detail) where variable content meant design rules mattered more. He also kept an eye on pull requests, merged changes, resolved conflicts, and updated the agents.md file when he noticed patterns emerging in the code that should be standardized.</p>
+<p><img alt="Developer Workflow in Intent"></p>
+<p>For example, when he saw icons being added in a way that wouldn't scale, he set up a better pattern and documented it. The next time anyone needed to add icons, the agent just followed the convention automatically. He used <a href="https://www.intentapp.dev/">Intent</a> for conflict resolution too, pulling up conflicting branches and having the agent sort them out. Out of maybe 30 or 40 pull requests across the project, only five needed real manual intervention.</p>
+<p><img alt="Developer Workflow in Intent"></p>
+<p>Same tool, three different workflows, nobody waiting on each other.</p>
+<h2>Crunch Time</h2>
+<p>Every web project has a crunch period right before launch and ours was no different. The broader team started paying attention (as they always do at the very end), and feedback flooded in. But because the three of us could all be in Intent making changes at the same time, the crunch was way more manageable than usual.</p>
+<p><img alt="Crunch time for the Aria Web Site in Slack"></p>
+<p>The biggest win was that any one of us could contribute meaningfully to the codebase without breaking the design system, code structure, or the site. That's a fundamentally different dynamic than waiting for a developer to make every change.</p>
+<h2>A New Way of Working?</h2>
+<p>It wasn't perfect. CSS layout struggles are still a thing. Git seems to keep finding ways to bite you. And there's still a learning curve for non-developers, even with agents handling the hard parts.</p>
+<p>But without the handoff, everyone builds. And that makes all the difference.</p>

@@ -1,0 +1,259 @@
+<h1>Fixing What LLMs Get Wrong</h1>
+<h3>A Field Guide to Verification, Repair, and Self-Improvement</h3>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!0HiA!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F90c13f2a-de2e-4038-9f9d-412d6ac0745b_2960x1554.png" alt="">
+</figure>
+<h2>Part I - The Problem Worth Solving</h2>
+<h3>The Hallucination Tax</h3>
+<p>There is a particular kind of operational failure that only emerges when you deploy a language model against real, private, structured knowledge. The model is fluent. Its grammar is impeccable. Its tone matches your internal documentation. And it is wrong about the things that matter most.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!IsgV!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F684aa129-b7c5-41d6-b5d0-3aff382894d7_1280x1073.png" alt="">
+</figure>
+<p>Not wrong in a detectable way - not grammatically wrong, not logically incoherent, not obviously absurd. Wrong in the way that a confident, articulate person is wrong when they misremember a number or confuse two similar-sounding policies. The answer sounds authoritative because the model's generation process is entirely indifferent to whether the specific fact it's producing is true. It is optimized for plausibility at the token level, not for correctness at the fact level.</p>
+<p>This is the hallucination tax, and every organization building LLM-powered systems against proprietary knowledge pays it.</p>
+<p>Ask an internal assistant what the NovaPilot Starter plan costs and it may confidently return $5,000 per month when the correct figure, encoded in your own knowledge graph, is $2,500. Ask it when a key executive joined and it will synthesize a plausible-sounding date from the statistical texture of similar corporate biographies. It will tell you "NovaAI was founded in 2019" because 2019 is a frequent founding year among AI companies in its training distribution, not because it knows anything specific about NovaAI.</p>
+<p>The cost is not merely embarrassment. In domains where specific numbers govern contracts, where policy thresholds determine eligibility, where dates establish legal precedence - the hallucination tax accumulates as real operational risk.</p>
+<blockquote>
+ <p>The question that shapes this entire discussion is not "why do LLMs hallucinate?" That question has been answered well enough.</p>
+ <p>The productive question is: <em><strong>given that they do, what does a trustworthy system built on top of them actually look like?</strong></em></p>
+</blockquote>
+<p>wait, why are we even talking about it in 2026? we have fine-tuning, we have 30+ types of production-used RAG architectures. that should be enough... or so we thought.</p>
+<h3>Why the Obvious Solutions Are Incomplete</h3>
+<p>The engineering response to hallucination has followed a familiar three-stage progression.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!ddWM!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fef458c2d-ff8d-462c-96b1-0d89872186f2_3060x999.png" alt="">
+</figure>
+<p>The first response was fine-tuning. If the model doesn't know your domain, teach it. Write knowledge into the weights. This approach has an appealing directness - the model that emerges should, in principle, know the facts you care about. In practice, it fails for three reasons. First, the computational cost of fine-tuning frontier models at organizational scale is non-trivial. Second, private-domain knowledge is not static - pricing changes, personnel turns over, policies update - and fine-tuning cannot track a living knowledge base without continuous re-investment. Third, and most subtly, fine-tuning conflates model capability with model knowledge. You are retraining everything to change a few things, which is the engineering equivalent of reprogramming a city's traffic system every time a road is renamed.</p>
+<blockquote>
+ <p>A <a href="https://arxiv.org/abs/2604.05096v2">2026 paper</a> on continuous knowledge drift says continual pretraining or fine-tuning is often effective only at a cost: it is "<strong>computationally expensive</strong>," requires repeated retraining as knowledge evolves, and is vulnerable to catastrophic forgetting.</p>
+</blockquote>
+<p>That matters because enterprise facts are rarely static:</p>
+<ul>
+ <li>prices change</li>
+ <li>org charts change</li>
+ <li>policies change</li>
+ <li>product bundles change</li>
+</ul>
+<blockquote>
+ <p>A <a href="https://arxiv.org/abs/2604.10079v2">separate 2026 study</a>, <em>Why Supervised Fine-Tuning Fails to Learn</em>, reports a persistent <strong>Incomplete Learning Phenomenon</strong>: even after convergence, models can still fail to reproduce part of the very supervised data they were trained on. The paper says incomplete learning is "<strong>widespread and heterogeneous</strong>," and that aggregate metrics can hide unlearned subsets.</p>
+</blockquote>
+<p>Fine-tuning is good for behavioral adaptation and domain shaping, but it is a poor single source of truth for fast-changing factual knowledge. And even when used, it does not guarantee complete or durable fact internalization.</p>
+<p>The second response was retrieval-augmented generation, or RAG. Rather than writing knowledge into the weights, inject it at inference time. Retrieve relevant context from your knowledge store and prepend it to the prompt. This is substantially better. The model can now be grounded in documents or structured data it has never seen before. But RAG has a structural limitation that is easy to miss: it augments generation, it does not verify it. The model with retrieved context still generates freely. If the retrieved context is incomplete, ambiguous, or misaligned with the query, the model fills the gap with its training priors. More critically, RAG does not teach the model anything. The next query starts from the same baseline. The same category of error recurs.</p>
+<blockquote>
+ <p>A <a href="https://aclanthology.org/2025.acl-long.1476/">2025 paper, </a><em><a href="https://aclanthology.org/2025.acl-long.1476/">ASTUTE RAG</a></em>, explicitly argues that "<strong>imperfect retrieval augmentation might be inevitable and quite harmful</strong>." In their controlled analysis, they report that under realistic conditions roughly <strong>70% of retrieved passages did not directly contain the true answer</strong>.</p>
+</blockquote>
+<p>That is a big deal. It means that even if you build a retrieval pipeline, the model is often operating on:</p>
+<ul>
+ <li>incomplete evidence</li>
+ <li>irrelevant evidence</li>
+ <li>mixed evidence</li>
+ <li>conflicting evidence</li>
+</ul>
+<blockquote>
+ <p>A <a href="https://arxiv.org/abs/2601.02993v4">2026 paper, </a><em><a href="https://arxiv.org/abs/2601.02993v4">Stable-RAG</a></em>, shows something even more uncomfortable: RAG systems are "<strong>far from hallucination-free</strong>," and <strong>merely reordering</strong> the same retrieved documents can change the answer. In some cases, the model ignored the gold document even when it was present.</p>
+</blockquote>
+<p>That means the failure is not only retrieval quality. It is also <strong>evidence integration instability</strong> inside the generator.</p>
+<blockquote>
+ <p>A <a href="https://arxiv.org/abs/2512.07015v1">2025 paper, </a><em><a href="https://arxiv.org/abs/2512.07015v1">FVA-RAG</a></em>, identifies <strong>retrieval sycophancy</strong>: if the user asks from a false premise, the retriever may fetch documents aligned with that false framing, causing the model to "<strong>hallucinate with citations</strong>."</p>
+</blockquote>
+<p><strong>RAG is necessary in many real systems, but it is not a truth machine.</strong> It improves access to current information, but does not guarantee:</p>
+<ul>
+ <li>correct retrieval</li>
+ <li>correct selection among retrieved evidence</li>
+ <li>correct reconciliation of conflicting evidence</li>
+</ul>
+<p>The third response was static verification - a catch-and-correct pipeline. Generate an answer, decompose it into claims, check each claim against a knowledge source, flag what is wrong, rewrite the flagged content. This is architecturally sound and operationally useful. In a system built against a knowledge graph, the static verifier compares each extracted claim against the graph's triples and returns a structured verdict: SUPPORTED, CONTRADICTED, UNVERIFIABLE. When a claim contradicts the graph, a repairer rewrites it using the correct evidence.</p>
+<p>Static verification catches errors. It does not prevent them. The model answers the next question with no memory of having been wrong on the last one. Each session starts with the same hallucination propensity, and the verification layer must work just as hard each time. The catch-and-correct pipeline is an error filter, not a learning system.</p>
+<p>These three approaches - fine-tuning, RAG, and static verification - are not wrong. They are incomplete. Each addresses one layer of the problem while leaving another layer untouched. Fine-tuning embeds knowledge but cannot track it. RAG grounds generation but cannot verify it. Static verification catches errors but cannot accumulate lessons.</p>
+<blockquote>
+ <p>The gap these three approaches share is the same gap: <em><strong>none of them improve through experience</strong></em>.</p>
+</blockquote>
+<h3>The Productive Question</h3>
+<p>Here, then, is the constraint that shapes everything that follows:</p>
+<ul>
+ <li>We have a model whose weights we cannot - or prefer not to - continuously update.</li>
+ <li>We have a private knowledge base that is authoritative, structured, and current.</li>
+ <li>We have a verification mechanism that can detect when the model is wrong.</li>
+</ul>
+<blockquote>
+ <p>The open question is whether the system as a whole can improve across sessions - not by retraining the model, but by restructuring how failure is processed and retained.</p>
+</blockquote>
+<p>Phrased more precisely: <em><strong>can we build a pipeline where each hallucination, caught and corrected, produces a durable lesson that makes subsequent answers less likely</strong></em> to contain the same category of error?</p>
+<blockquote>
+ <p>Can a frozen-weight system learn through its architecture rather than through its parameters?</p>
+</blockquote>
+<p>The Reflexion framework, introduced by <a href="https://arxiv.org/abs/2303.11366">Shinn et al. at NeurIPS 2023</a>, is the first rigorous answer to this question. It is not the only answer - and subsequent approaches have extended, refined, and in some cases superseded it - but it is the foundational one, and understanding it deeply is prerequisite to understanding what came after.</p>
+<h2>Part II - Reinforcement Without Gradients</h2>
+<h3>What Traditional RL Requires</h3>
+<p>Reinforcement learning, in its standard formulation, is an optimization algorithm. An agent acts in an environment, receives a reward signal, and updates its policy to maximize cumulative reward. The update mechanism is typically gradient descent through parameter space: the reward signal backpropagates through the model, nudging weights toward configurations that produce better outcomes.</p>
+<blockquote>
+ <p>This <em><strong>works spectacularly well in narrow, simulable domains</strong></em> - games, robotic control, token-level optimization. It works poorly in the context of language model deployment for several compounding reasons.</p>
+</blockquote>
+<p>The sample complexity problem comes first. Gradient-based policy optimization requires a large number of trials before the signal-to-noise ratio in the reward gradient becomes useful. For a language model, each trial is an LLM inference call. At the scale of samples required for meaningful policy improvement, the cost in compute, latency, and dollars is prohibitive for most production environments.</p>
+<p>The reward design problem follows closely. Defining a reward function that accurately captures what "a good answer" means is harder than it appears. A scalar reward - correct or incorrect - provides no gradient information about which part of a complex answer was wrong. The model improved its score, but we cannot easily attribute the improvement to any specific aspect of its behavior. This is the credit assignment problem: when a trajectory spans multiple decisions and produces a single terminal reward, distributing that reward backward through time so that each action receives appropriate credit is computationally expensive and theoretically fraught.</p>
+<p>Finally, and most practically: traditional RL requires differentiable access to the model's parameters. For closed-weight APIs, this access does not exist. The model is a black box. You can observe its outputs; you cannot nudge its internals.</p>
+<p>Traditional RL is the right algorithm if you have a simulable environment, abundant compute, a well-defined reward, and parameter access. In production language model deployment, you typically have none of these.</p>
+<h3>The Reflexion Hypothesis</h3>
+<p>Reflexion begins from a different premise. If gradient descent is unavailable, what else can carry the learning signal? The hypothesis: language itself.</p>
+<p>A large language model is not merely a generator of text. It is a system that conditions its outputs on its inputs with remarkable sensitivity. When the system prompt says "always verify tier names against their specific price points," the model produces different outputs than when it doesn't. That difference is not mediated by weight updates. It is mediated by context. The instruction modifies behavior as surely as a gradient - with less precision, perhaps, but also with considerably less cost.</p>
+<p>Reflexion formalizes this intuition. The core mechanism is a feedback loop: the agent acts, the environment evaluates, the agent reflects on the evaluation in natural language, and that reflection is stored and injected into future action prompts. The weights never change. The policy changes because the context changes.</p>
+<blockquote>
+ <p><strong>Reflexion Hypothesis:</strong></p>
+ <p><strong>LLMs can improve across attempts if failure feedback is translated into natural-language reflections, stored as episodic memory, and reinserted into future prompts.</strong></p>
+</blockquote>
+<p>This is verbal reinforcement learning - reinforcement not through gradient updates but through the accumulation of linguistically encoded experience.</p>
+<p>The mechanism is more subtle than it first appears. The reflection is not simply a correction of the specific wrong answer. It is an abstraction - a generalized lesson derived from the particular failure. The difference between:</p>
+<ul>
+ <li>"NovaAI was founded in 2019 is wrong" and</li>
+ <li>"the model tends to infer founding dates from executive tenure rather than explicit founding records"</li>
+</ul>
+<p>is the difference between error correction and category learning. The former fixes one answer. The latter alters a behavioral pattern across an entire category of future questions.</p>
+<h2>Part III - Anatomy of a Reflexion Agent</h2>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!Hwrq!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe3ca326a-ae61-4628-b4eb-eff42ad13492_3478x2552.png" alt="">
+</figure>
+<h3>The Tripartite System</h3>
+<p>A Reflexion agent is not a single model. It is three models - or, more precisely, three distinct roles that may be instantiated by the same model with different prompting. The distinction is architectural, not necessarily computational.</p>
+<p>These three components are:</p>
+<ul>
+ <li>the Actor,</li>
+ <li>the Evaluator, and</li>
+ <li>the Self-Reflection model.</li>
+</ul>
+<p>Their interaction is precisely defined, and understanding each in isolation before examining how they work together reveals why this architecture is both elegant and practically grounded.</p>
+<p>This is not RL in the classical sense of gradient descent over policy parameters. But it is still reinforcement in the broader sense, because:</p>
+<ul>
+ <li>the agent acts</li>
+ <li>receives external evaluation</li>
+ <li>converts evaluation into a better future policy</li>
+</ul>
+<p>The difference is where the policy lives.</p>
+<h3>The Actor: Trajectory Generator and Policy Carrier</h3>
+<p>The Actor is the policy engine. It is the component that takes the current state of the world - a question, a task, an environment - and produces an action: an answer, a decision, a sequence of tool calls. In the standard language model framing, the Actor is simply an LLM invoked with a system prompt.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!6olN!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb33b6ee7-c732-4149-b5b2-79c85b5be7a8_3074x1807.png" alt="">
+</figure>
+<p>But the Actor is more precisely described as a composite: the model's weights, plus its memory. In Reflexion's formulation, the policy is not stored in weights alone. It is parameterized jointly by the weights and by whatever resides in context. This is the key insight that makes the whole framework coherent: if the policy is the weights-plus-context, then you can modify the policy by modifying the context without touching the weights.</p>
+<p>In a knowledge graph verifier, the Actor's first invocation has no memory. It answers questions about NovaAI using whatever it knows from pretraining, augmented by its system prompt's general instruction to be accurate and specific. It will produce a fluent answer that may or may not be grounded in the actual facts of the company. At this stage, it is V0 - the raw baseline.</p>
+<p>After the first hallucination is caught and reflected upon, the Actor's subsequent invocations carry the accumulated lessons. The system prompt now contains something like:</p>
+<blockquote>
+ <p><em>You have previously made factual errors about NovaAI. Apply these lessons to improve your accuracy:</em></p>
+ <p><em>- The model tends to confuse pricing tiers when product names share tier suffixes. Always verify price amounts before stating them.</em></p>
+</blockquote>
+<p>This is a modified policy. The same model, producing different behavior, not through weight change but through context change. The weights are a fixed substrate; the context is the mutable state space.</p>
+<p>The Actor also produces, as a byproduct of its execution, what the paper calls a trajectory: the sequence of observations, thoughts, and actions taken during a single episode. This trajectory is short-term memory - the immediate working record of what happened during this particular attempt. It resets between episodes but persists within them, providing the raw material for evaluation and reflection.</p>
+<h3>The Evaluator: Credit Assignment Through Structure</h3>
+<blockquote>
+ <p>The <em><strong>credit assignment problem</strong></em> is one of the oldest and most persistent challenges in <em><strong>reinforcement learning.</strong></em></p>
+</blockquote>
+<p>In a multi-step trajectory - a sequence of decisions leading to an outcome - which specific decisions deserve credit or blame for the final result? A simple scalar reward at the end provides a single number that must somehow distribute its signal backward through a sequence of potentially many decisions, most of which had nothing particular to do with why the outcome was good or bad.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!Uuj3!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fb46f9257-5a02-4e06-b896-6c14df189738_2960x1526.png" alt="">
+</figure>
+<p>Language agents face a specific variant of this problem. An LLM answer is not a single decision; it is an aggregation of claims, each of which may be independently true or false.</p>
+<p>The answer "NovaAI was founded in 2021 by Dr. Mara Chen and Lucas Ferreira, and raised $210M in Series C funding in November 2024" contains multiple verifiable assertions. Some may be correct, some wrong. A binary "incorrect" verdict on the full answer tells the system nothing about which claim failed.</p>
+<p>Reflexion addresses this through what amounts to claim-level credit assignment. The Evaluator decomposes the task of evaluation into atomic units: individual claims, each assessed independently against the knowledge source. The result is not a scalar but a structured verdict - a list of results, each specifying which claim is supported, which is contradicted, and which cannot be assessed given available evidence.</p>
+<p>In a knowledge graph implementation, this evaluation pipeline is quite specific. An LLM answer is first decomposed into atomic claims - each claim asserting exactly one verifiable fact with an explicit subject, no pronouns, no aggregation.</p>
+<p>"NovaAI was founded in 2021" is a proper claim. "It was founded in 2021" is not - the pronoun reference breaks the claim's self-containedness.</p>
+<p>This atomicity is essential because the verification step requires mapping each claim to relevant KG triples via entity linking, and entity linking requires that the claim's subject be explicitly named.</p>
+<p>Once claims are extracted, each is passed through an entity linker - a component that identifies the named entities and relation phrases in the claim, fuzzy-matches them against the KG's entity index, and retrieves the most relevant triples. The entity linking step itself is a critical architectural decision: LLM-based entity extraction produces better entity recall than pure fuzzy matching, but pure fuzzy matching is the correct fallback when the LLM extraction fails or returns no entity matches. The two-stage approach - LLM extraction with relation-score boosting, falling back to triple-view fuzzy scoring - balances recall against robustness.</p>
+<p>The resulting evidence is then passed to the verification LLM, which returns a structured verdict:</p>
+<ul>
+ <li>SUPPORTED,</li>
+ <li>CONTRADICTED, or</li>
+ <li>UNVERIFIABLE,</li>
+</ul>
+<p>with a confidence score and a one-sentence reasoning trace.</p>
+<p>Critically, if no relevant triples are found for a claim, the system returns UNVERIFIABLE without an LLM call at all - a short-circuit that avoids fabricating a verdict against empty evidence, and saves a token budget that would otherwise be spent on meaningless inference.</p>
+<p>This structured output is credit assignment made explicit. Instead of "the answer was wrong" the Evaluator produces "this specific claim was wrong, here is the contradicting evidence, here is why." The failure has been localized, the responsible claim identified, the correct value surfaced. The gradient, if we want to use that metaphor, is pointing in a specific direction.</p>
+<h3>The Self-Reflection Model: From Error to Episodic Memory</h3>
+<p>Between the Evaluator's verdict and the Actor's next invocation lies the step that distinguishes Reflexion from mere error correction: the generation of verbal reflections.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!itJg!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fd2c8f4bf-0369-486e-8b6a-bfcbc60cf604_2960x1654.png" alt="">
+</figure>
+<p>The Self-Reflection model - typically the same LLM prompted differently - receives the full context of a failed episode: the original question, the wrong answer, the structured verdict identifying which claims were contradicted and what the correct values are, and the repaired answer. From this, it is asked to produce a generalized lesson.</p>
+<p>The key word is generalized. The reflection prompt explicitly forbids generic advice ("be more careful") and demands category diagnosis: what class of information was hallucinated, why the model likely made that error, and what specific strategy would prevent recurrence. The output might read:</p>
+<blockquote>
+ <p>"The model confused the NovaPilot Growth and Enterprise pricing tiers - a common error when multiple product tiers share a naming pattern. The mistake likely arose from conflating the tier suffix ('Growth', 'Enterprise') with pricing magnitude heuristics rather than consulting explicit price triples. Strategy: when answering any question about product pricing, trace the specific product tier name to its exact price before generating a number."</p>
+</blockquote>
+<p>This reflection performs semantic compression. It takes a particular failure about a particular product at a particular price point and extracts a behavioral principle applicable to any pricing question in the domain. The particular generates the general. This is exactly what learning should look like: not memorizing that "NovaPilot Growth costs $8,000/month" but internalizing "when answering pricing questions, verify tier-specific prices explicitly."</p>
+<p>The reflection is then stored in episodic memory, which is the long-term component of the Reflexion memory architecture.</p>
+<h2>Part IV - Memory, Context, and the Execution Loop</h2>
+<h3>Two Memory Systems</h3>
+<p>Reflexion implements a two-tier memory architecture that maps, with reasonable fidelity, onto how human memory is described in cognitive science.</p>
+<p>Short-term memory - also called the trajectory buffer - holds the contents of the current episode. The question, the raw answer, the extracted claims, the verification verdicts, the repaired output, the latency. This is working memory: rich, detailed, and ephemeral. It is assembled anew with each question and discarded when the episode closes. It provides the immediate context for evaluation and reflection but does not persist to inform future episodes.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!wyZ_!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcc3bef59-bf10-4b6f-be5b-fa7679a6db11_3018x1660.png" alt="">
+</figure>
+<p>Long-term memory - the episodic store - holds the distilled reflections from prior failures. It persists across episodes, is bounded by a sliding window (typically three entries), and is injected into the Actor's system prompt at the start of each new episode. It is compressed, general, and durable.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!mw3X!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2bf24ede-6587-43e4-8078-11929377639d_3010x1722.png" alt="">
+</figure>
+<p>The sliding window is a deliberate design constraint. Three reflections is not a magic number - it reflects a trade-off between memory coverage and context budget. Too few reflections and the agent forgets recent lessons; too many and the prompt grows bloated, the relevant lessons diluted by earlier ones that may no longer apply. The window always retains the most recent entries: as new lessons are added, the oldest are evicted. This recency bias is principled - errors made on earlier questions in a session are less likely to recur than the categories of error encountered most recently.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!XcjG!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fef7e3a46-8191-4533-95ca-61abe88f14d4_3034x1738.png" alt="">
+</figure>
+<p>In our knowledge graph verifier, this memory is shared across an entire evaluation session of forty-five questions. A single `ReflexionMemory` instance persists throughout the run - not resetting between questions. This is the architectural decision that makes V2 a genuine learning system rather than a per-query corrector. Early questions generate reflections. Those reflections alter the system prompt for all subsequent questions. The agent that answers question thirty-eight is not the same agent that answered question one. Its weights are identical. Its context is not.</p>
+<h3>The Injection Pattern: Context as Policy State</h3>
+<p>The mechanics of memory injection reveal something important about how Reflexion achieves its effect. At the start of each episode, the Actor's system prompt is assembled conditionally: if the episodic memory contains reflections, a formatted memory block is appended to the base instructions.</p>
+<p>The formatted block follows a strict template:</p>
+<pre><code>[PRIOR SESSION LEARNING - APPLY THESE LESSONS]
+- Reflection 1
+- Reflection 2
+- Reflection 3
+[END PRIOR SESSION LEARNING]</code></pre>
+<p>The boundary markers - `[PRIOR SESSION LEARNING]` and `[END PRIOR SESSION LEARNING]` - are not decorative. They signal to the model that this content is distinct from the task instructions: it is retrospective guidance, not prospective direction. The model is not being told what the answer is; it is being told what patterns of error to avoid. The distinction matters because it preserves the model's generative freedom while biasing it away from known failure modes.</p>
+<p>This pattern is the operational core of context engineering. The prompt is not a static template that encodes the task. It is a dynamic state object that encodes the task, the constraints, the history, and the learned lessons from prior failures. As the session progresses and more reflections accumulate, the context evolves - and so does the effective policy.</p>
+<p>When weights are frozen, context is the only tunable parameter. Reflexion is, among other things, an argument that this single degree of freedom is sufficient for meaningful learning in bounded domains.</p>
+<h3>The Execution Loop</h3>
+<p>The full execution loop, described abstractly in the paper and concretized in implementation, operates as follows.</p>
+<figure>
+ <img src="https://substackcdn.com/image/fetch/$s_!-WoZ!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F78d70c88-e9a1-43e3-8fa5-edd16720d7bc_2960x1681.png" alt="">
+</figure>
+<p>An episode begins when the Actor receives a question. If the episodic memory is non-empty, the system prompt includes the accumulated reflections from prior failures. The Actor generates a raw answer conditioned on this prompt.</p>
+<p>The raw answer is then decomposed into atomic claims by the Claim Extractor. Each claim is processed independently: entity linking identifies the relevant KG triples, and the Evaluator LLM judges each claim as SUPPORTED, CONTRADICTED, or UNVERIFIABLE. The Evaluator's output is a list of structured verdicts - one per claim.</p>
+<p>If any claims are CONTRADICTED, the Repairer is invoked. It receives the original question, the raw answer, and the full verification results including the KG evidence for each contradicted claim. Its task is surgical: replace the wrong values with the correct ones from the KG evidence, leave supported claims untouched, soften unverifiable claims with epistemic hedges. The output is the final answer.</p>
+<p>Whether or not repair occurred, if any CONTRADICTED verdicts were found, the Self-Reflection model is invoked. It receives the full failure context and generates a verbal lesson. That lesson is appended to the episodic memory, and the sliding window trims anything beyond the maximum retention count.</p>
+<p>The next episode begins with this updated memory. The loop is now closed.</p>
+<p>The loop runs for every question in the session. The V0 pipeline - raw LLM with no verification - has no loop: question in, answer out, nothing learned. The V1 pipeline - static KG verifier - adds verification and repair but still has no loop: the episode closes cleanly with no residue. V2 adds the reflection and memory update, and in doing so, adds the loop. The architecture that produces learning is precisely this closed loop between failure, reflection, and future context.</p>
+<h2>Part V - The Evidence and Its Limits</h2>
+<h3>What the Numbers Say</h3>
+<p>Empirical validation is the necessary counterpart to architectural elegance. The Reflexion paper evaluates the framework across three task domains, each stress-testing a different dimension of agent capability.</p>
+<p>In AlfWorld, a suite of text-based household environment tasks, Reflexion agents using the ReAct prompting strategy improved absolute performance by 22 percentage points over the baseline across 134 tasks in 12 iterative learning steps - completing 130 of 134 tasks total. The improvement arose through the agent's accumulated ability to diagnose two specific failure modes: hallucinated possession of objects (the agent acts as if it holds an item it hasn't retrieved) and inefficient planning (searching for items in a fixed order regardless of prior evidence). Reflections on these failures produced lessons about state tracking and search strategy that transferred across tasks.</p>
+<p>In HotPotQA, a multi-hop question-answering benchmark, Reflexion improved accuracy by 20% over baseline. Crucially, the paper isolates the contribution of reflection from the contribution of episodic memory alone through ablation: adding only the most recent trajectory (episodic memory without reflection) produces an 8% improvement; adding the verbal reflection step on top of that produces the full 20%. Reflection contributes 12 percentage points independently of memory. This is the quantitative argument that verbal reflection is not merely a fancy way of logging history - it extracts something from failure that history alone does not provide.</p>
+<p>In code generation on HumanEval, Reflexion achieved 91% pass@1 accuracy, surpassing GPT-4's 80% - at the time of publication, a state-of-the-art result. The mechanism is worth examining: the coding agent generates self-written unit tests alongside its implementation, runs them, and reflects on failures. The unit test suite acts as the Evaluator, providing grounded, executable feedback rather than LLM-generated judgment. The reflection then diagnoses why the implementation failed specific tests and proposes a corrected approach for the next attempt.</p>
+<p>The ablation study on HumanEval Rust is particularly revealing. Four conditions are compared: base model alone (60% accuracy), test generation without self-reflection (60% - no improvement), self-reflection without test generation (52% - performance degrades), and the full Reflexion combination (68%). The counter-intuitive result - that self-reflection without test-driven grounding actively harms performance - is an important finding. Without reliable evaluation, the agent is reflecting on incorrect premises. It may conclude it failed for reasons it didn't fail, and generate lessons that steer it toward worse behavior. The quality of reflection is bounded by the quality of evaluation.</p>
+<h3>The Boundary Conditions</h3>
+<p>The WebShop experiment is the most instructive failure in the paper. WebShop is an e-commerce navigation task: the agent must search for products matching client specifications in a simulated online store. After four trials with no improvement, the experiment was terminated. The agent failed to generate useful reflections - its lessons were either too generic or misidentified the source of its failures.</p>
+<p>The diagnosis is precise: Reflexion works when failures can be articulated as correctable behaviors. In WebShop, the failure modes were structural. The search space required diverse exploration strategies, not incremental correction of specific wrong moves. When the agent searched for "blue cotton shirt" and failed, the lesson wasn't "don't search for blue cotton shirts differently" - it was that the e-commerce search engine interpreted natural language queries non-deterministically. This is a failure the agent cannot reflect its way out of. The environment is irreducibly stochastic in a way that verbal lessons cannot address.</p>
+<p>This points to the general boundary condition: Reflexion is effective when failure is diagnosable, correctable, and recurrent within recognizable categories. It is less effective - potentially harmful - when failures are random, structurally unavoidable, or require diverse exploration rather than careful correction.</p>
+<p>A second boundary condition concerns model capability. The authors find that the ability to generate useful self-corrections is an emergent property of stronger, larger models. When the framework is applied to a weaker model (StarChat-beta in the appendix), performance does not improve at all - the reflection accuracy on HumanEval Python is statistically indistinguishable between baseline and Reflexion. The self-reflection step requires genuine reasoning capability to produce meaningful category diagnoses. A model that cannot accurately diagnose its own failures will generate lessons that are either trivially generic or actively misleading.</p>
+<p>Finally, Reflexion does not escape the local minima problem inherent to all iterative optimization. If early reflections encode an incorrect causal theory of the failure - if the agent blames the wrong aspect of its behavior - subsequent attempts will optimize against the wrong target. There is no external error signal to correct a bad reflection; the system's self-assessment is authoritative.</p>
+<h2>Part VI - The Deeper Architecture</h2>
+<h3>Verbal Feedback as Semantic Gradient</h3>
+<p>The most persistent insight in Reflexion, beyond any specific empirical result, is the framing of verbal feedback as a semantic analog to the gradient.</p>
+<p>In gradient descent, the gradient is a vector in parameter space that points in the direction of steepest loss increase. The update rule moves parameters in the opposite direction - toward lower loss. The gradient carries directional information: not just "this was wrong" but "adjust these weights in these directions by these magnitudes to make it less wrong."</p>
+<p>A scalar reward, by contrast, carries no directional information. It says "this was better or worse than expected" without specifying what to change or how. The gradient that backpropagates from a scalar reward to the parameters that produced it is computed through the model's computational graph - a process that requires differentiable parameter access and produces updates that may be hard to interpret.</p>
+<p>A verbal reflection is a semantic gradient: it does not point in parameter space, but it points in behavior space. "When answering pricing questions, trace the specific product tier name to its exact price before generating a number" is directional information about behavior. It does not tell the model which weights to adjust; it tells the model which generation patterns to adopt. The directional information is encoded in natural language rather than real-valued vectors, and it is consumed by the model's attention mechanism rather than by a parameter update rule.</p>
+<p>The insight that language models respond to linguistic direction as effectively as gradient descent responds to numerical gradients - within the bounded scope of in-context learning - is what makes Reflexion theoretically coherent rather than merely pragmatically useful. It is not a workaround for the unavailability of gradient access. It is an alternative signal modality that carries complementary information.</p>
+<h3>The Episodic Memory Lifecycle</h3>
+<p>In the full Reflexion framework, the lifecycle of a reflection follows a precise arc: from failure to diagnosis to storage to injection to effect.</p>
+<p><strong>Failure:</strong> the Actor produces an answer that is evaluated as containing contradictions.</p>
+<p><strong>Diagnosis:</strong> the Self-Reflection model produces a generalized lesson - the reflection - from the failure context. The lesson encodes what failed, why it likely failed, and what behavioral strategy would prevent recurrence.</p>
+<p><strong>Storage:</strong> the reflection is appended to the episodic memory. The sliding window trims entries beyond the retention limit, maintaining recency.</p>
+<p><strong>Injection:</strong> at the start of the next episode, the memory is formatted and appended to the Actor's system prompt, inside the session learning block.</p>
+<p><strong>Effect:</strong> the Actor's generation for the next episode is conditioned on this memory. The model's effective behavior is modified without any weight update.</p>
+<p>The lifecycle is self-contained and modular. Each stage is independently observable and testable. If reflections are failing to prevent recurrent errors, the failure can be diagnosed at any stage: Are the reflections being generated with sufficient specificity? Is the injection format being consumed appropriately by the model? Is the category of failure amenable to verbal diagnosis at all? The modularity of the pipeline is not merely an engineering convenience - it is what makes the system debuggable.</p>
+<h3>What This Opens Up</h3>
+<p>Reflexion is, in the framework we're building here, the first answer to the central question. It is not the final one.</p>
+<p>The framework it establishes - frozen weights, structured failure feedback, verbal reflection, episodic memory injection - is a specific architectural choice among several possible choices. The memory is a flat list. The reflections are free-form text. The sliding window is a simple recency heuristic. The evaluation is synchronous and claim-level. These are not the only ways to implement any of these components.</p>
+<p>What happens when the memory is not a flat list but a graph? When reflections are not free text but structured templates with typed fields for error category, confidence, and scope? When evaluation is not post-hoc but interleaved within the generation process? When memory retention is not governed by recency but by estimated future relevance?</p>
+<p>These are not rhetorical questions. They are active research directions, and each represents a distinct architectural approach to the same fundamental problem: how does a frozen-weight system improve its behavior through experience?</p>
+<p>Reflexion establishes the hypothesis: it can. The specific mechanism - verbal reflection stored in episodic memory - is one answer. Subsequent work has proposed others, each with different characteristics, different strengths, and different failure modes.</p>
+<p>The hallucination problem with which we began is not solved by Reflexion. It is meaningfully addressed. The residual gap - what Reflexion does not handle, where it fails, what capabilities it leaves unrealized - is precisely what the subsequent answers in this series will attempt to fill.</p>
+<h2>References</h2>
+<p>Shinn, N., Cassano, F., Gopinath, A., Narasimhan, K., &amp; Yao, S. (2023). Reflexion: Language Agents with Verbal Reinforcement Learning. <em>Neural Information Processing Systems (NeurIPS) 2023</em>.</p>
+<p>Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., &amp; Cao, Y. (2023). ReAct: Synergizing Reasoning and Acting in Language Models. <em>International Conference on Learning Representations (ICLR) 2023</em>.</p>
+<p>Wei, J., Wang, X., Schuurmans, D., Bosma, M., Chi, E., Le, Q., &amp; Zhou, D. (2022). Chain of Thought Prompting Elicits Reasoning in LLMs. <em>arXiv:2201.11903</em>.</p>
+<p>Sutton, R. S. &amp; Barto, A. G. (2018). <em>Reinforcement Learning: An Introduction</em> (2nd ed.). MIT Press.</p>
+<p>Chen, M., Tworek, J., Jun, H. et al. (2021). Evaluating Large Language Models Trained on Code. <em>arXiv:2107.03374</em>.</p>

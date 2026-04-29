@@ -1,0 +1,75 @@
+<p>An engineer has never been more leveraged than today thanks to a fleet of agents. But when it comes to more visual work, like animations, coding agents don't quite know what great feels like.</p>
+<p>My way of getting there is to create a skill file for each aspect of the interface. If you know what great feels like, describe the rules, then give them to your agents so they can follow them.</p>
+<p>The result is an AI that has your taste and knowledge and can produce significantly better results, like the interactive Linear logo I made with Claude Code:</p>
+<h2>Transferring taste</h2>
+<p>With enough experience, you can not only tell what feels better, but also <em>why</em>. By then you've not only built your taste, but also the ability to articulate it.</p>
+<p>The correct animation below feels right, because it animates from a higher initial <code>scale</code> value. It makes the movement feel more gentle, natural, and elegant.</p>
+<p><code>scale(0)</code> on the left feels wrong because it looks like the element comes out of nowhere. A higher initial value resembles the real world more. Just like a balloon, even when deflated it has a visible shape, it never disappears completely.</p>
+<p>That's the <em>why</em>. There's no magic involved. Almost every "taste" decision has a logical reason if you look close enough. This applies to any other discipline really.</p>
+<p>Of course the more creative part of the job is still up to you, but the more you can package into a skill, the more leverage you can get out of your agents.</p>
+<p>Since we know how to articulate why something feels good, we can use that knowledge to guide the agents, just like you would guide a less experienced designer. In this case the scale trick and many others live under "Practical Tips" in my skill:</p>
+<figure>
+ <pre><code>## Practical Tips
+
+| Scenario                        | Solution                                        |
+| ------------------------------- | ----------------------------------------------- |
+| Make buttons feel responsive    | Add `transform: scale(0.97)` on `:active`       |
+| Element appears from nowhere    | Start from `scale(0.95)`, not `scale(0)`        |
+| Shaky/jittery animations        | Add `will-change: transform`                    |
+| Hover causes flicker            | Animate child element, not parent               |
+| Popover scales from wrong point | Set `transform-origin` to trigger location      |
+| Sequential tooltips feel slow   | Skip delay/animation after first tooltip        |
+| Small buttons hard to tap       | Use 44px minimum hit area (pseudo-element)      |
+| Something still feels off       | Add subtle blur (under 20px) to mask it         |</code></pre>
+ <p>Practical tips for building better animations.</p>
+</figure>
+<p>Another example is choosing the right easing, the most important part of any animation. This is strict so the agent doesn't have to guess or make up its own rules. It just follows the flowchart and picks the right easing according to my philosophy.</p>
+<figure>
+ <pre><code>## Easing Decision Flowchart
+
+Is the element entering or exiting the viewport?
+├── Yes → ease-out
+└── No
+    ├── Is it moving/morphing on screen?
+    │   └── Yes → ease-in-out
+    └── Is it a hover change?
+        ├── Yes → ease
+        └── Is it constant motion?
+            ├── Yes → linear
+            └── Default → ease-out</code></pre>
+ <p>Choosing the right easing has never been easier.</p>
+</figure>
+<p>We can then cover all other ingredients of an animation so that the agent knows exactly what to do in each scenario. Duration is another animation piece:</p>
+<figure>
+ <pre><code>## Duration Guidelines
+
+| Element Type                      | Duration  |
+| --------------------------------- | --------- |
+| Micro-interactions                | 100-150ms |
+| Standard UI (tooltips, dropdowns) | 150-250ms |
+| Modals, drawers                   | 200-300ms |
+
+**Rules:**
+- UI animations should stay under 300ms
+- Larger elements animate slower than smaller ones
+- Exit animations can be ~20% faster than entrance
+- Match duration to distance - longer travel = longer duration</code></pre>
+ <p>Duration guidelines for UI animations.</p>
+</figure>
+<p>You can package any "taste" decision into a skill in this way, whether it's layout, icons, or color theory. Here are some rules on typography in one of my skill files:</p>
+<figure>
+ <pre><code>## Typography
+
+1. Cap body text at about 65ch instead of stretching full width so line length stays comfortable to read.
+2. Apply `tabular-nums` to price columns so digits align and the column reads cleanly.
+3. Use the `…` character instead of `...` in markup so truncation follows the container instead of snapping at a fixed character count.
+4. Loosen letter-spacing on uppercase labels; tight uppercase reads cramped.
+5. Declare a fallback stack whose x-height and weight match the primary face so loading does not cause layout shift.
+6. Reserve underlines for links; emphasize non-link text with weight or color so underline stays a reliable affordance and people are not tempted to click inert copy.
+7. Prefer bold for interface emphasis and keep italic for citations and linguistic stress in prose — italic hierarchy reads like print editorial, not UI hierarchy.</code></pre>
+</figure>
+<p>So take a step back, ask yourself why you made a certain decision, articulate clearly why something has to be done this way, set the rules, be <em>strict</em>. To make this process easier, I use the <a href="https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md">skill-creator</a> skill from Anthropic.</p>
+<p>After you've packaged your taste into a skill, you can feed it to your coding agents.</p>
+<p>Here's me asking Claude Code to improve a dialog animation using my animation skill. It gives me a clear list of issues based on the rules I defined and a before and after table of what has changed:</p>
+<h2>Try it out</h2>
+<p>I turned my blog articles into one big design engineering skill that you can try out below. It covers animations, component design, principles from my open source projects like Sonner, and more.</p>

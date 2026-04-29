@@ -1,0 +1,64 @@
+<h1>Xiaomi MiMo-V2.5-Pro</h1>
+<p>A leap in agentic and long horizon coherence.</p>
+<p>Today, we are releasing and open-sourcing MiMo-V2.5-Pro. It is our most capable model to date, delivering significant improvements over its predecessor, MiMo-V2-Pro, in general agentic capabilities, complex software engineering, and long-horizon tasks. MiMo-V2.5-Pro is a 1.02T-parameter Mixture-of-Experts model with 42B active parameters, built on a hybrid-attention architecture with a 1M-token context window.</p>
+<p>In internal testing, V2.5-Pro demonstrated a new level of intelligence that, in turn, pushed our researchers to rethink how they work with it. When paired with a proper harness, V2.5-Pro can sustain complex, long-horizon tasks spanning more than a thousand tool calls. We also see substantial improvements in instruction following within agentic scenarios. It reliably adheres to subtle requirements embedded in context and maintains strong coherence across ultra-long contexts.</p>
+<p>MiMo-V2.5-Pro is now fully rolled out across our API Platform, AI Studio, and other surfaces, with no change in pricing. Simply replace the model tag with <code>mimo-v2.5-pro</code> to get started.</p>
+<h2>Built to Solve Harder</h2>
+<p>MiMo-V2.5-Pro is built for harder goals. We've given it tasks that would take human experts days or weeks, and let it run autonomously. Here's what it delivers:</p>
+<h3>SysY Compiler in Rust</h3>
+<p>Sourced from Peking University's <a href="https://github.com/pku-minic"><em>Compiler Principles</em></a> course project, this task asks the model to implement a complete SysY compiler in Rust from scratch: lexer, parser, AST, Koopa IR codegen, RISC-V assembly backend, and performance optimization. The reference project typically takes a PKU CS major student several weeks. MiMo-V2.5-Pro finished in 4.3 hours across 672 tool calls, scoring a perfect 233/233 against the course's hidden test suite.</p>
+<p>Rather than thrashing through trial and error, the model built the compiler layer by layer: scaffold the full pipeline first, perfect Koopa IR (110/110), then the RISC-V backend (103/103), then performance (20/20). The first compile alone passed 137/233 tests, a 59% cold start that suggests the architecture was designed correctly before a single test was run. At turn 512 a refactoring pass regressed lv9/riscv by two tests; the model diagnosed the failures, recovered, and pushed on. Long-horizon work rewards this kind of structured, self-correcting discipline.</p>
+<h3>A Full-Featured Video Editor</h3>
+<p>With just a few simple prompts, MiMo-V2.5-Pro delivered a working desktop app: multi-track timeline, clip trimming, cross-fades, audio mixing, and export pipeline. The final build is <strong>8,192 lines of code</strong>, produced over <strong>1,868 tool calls</strong> across <strong>11.5 hours</strong> of autonomous work.</p>
+<h3>Analog EDA: FVF-LDO Design &amp; Optimization</h3>
+<p>A graduate-level analog-circuit EDA task: design and optimize a complete FVF-LDO (Flipped-Voltage-Follower low-dropout regulator) from scratch in the TSMC 180nm CMOS process. The model has to size the power transistor, tune the compensation network, and pick bias voltages so that six metrics land within spec simultaneously — phase margin, line regulation, load regulation, quiescent current, PSRR, and transient response. A trained analog designer typically spends several days on a project of this scope.</p>
+<p>We wired MiMo-V2.5-Pro into an ngspice simulation loop with Claude Code as the harness. In about an hour of closed-loop iteration — calling the simulator, reading waveforms, tweaking parameters — the model produced a design where every target metric is met, and the four shown below are improved by an order of magnitude over its own initial attempt.</p>
+<p>Throughout these experiments, V2.5-Pro exhibits a remarkable "harness awareness": it makes full use of the affordances of its harness environment, manages its memory, and shapes how its own context is populated toward the final objective.</p>
+<h2>Frontier Coding Intelligence</h2>
+<p>We further advanced the model's coding intelligence by scaling post-training compute.</p>
+<p>MiMo Coding Bench is our in-house evaluation suite for assessing models' ability to handle diverse coding tasks within agentic frameworks such as Claude Code. It covers repo understanding, project building, code review, structured artifact generation, planning, SWE, and more. MiMo-V2.5-Pro further enhances the user experience in real-world coding scenarios, better handling a wide variety of development needs.</p>
+<p>We welcome developers worldwide to integrate MiMo-V2.5 series into scaffolds such as Claude Code, OpenCode, and Kilo — accessing top-tier intelligence at a lower cost.</p>
+<h2>Token Efficiency</h2>
+<p>Higher intelligence isn't just about higher scores — it's about getting there with fewer tokens. MiMo-V2.5-Pro reaches frontier-tier capability while spending dramatically less on tokens per trajectory. On ClawEval, V2.5-Pro lands at 64% Pass^3 using only ~70K tokens per trajectory — roughly <strong>40–60% fewer tokens</strong> than Claude Opus 4.6, Gemini 3.1 Pro, and GPT-5.4 at comparable capability levels. The upper-left corner of the chart is where you want to be: higher score for lower cost.</p>
+<h2>Token Plan Updates</h2>
+<p>Alongside a stronger model, we've also upgraded our inference infrastructure. The Token Plan now comes with a few meaningful improvements:</p>
+<p>All users who purchased a Token Plan before 14:00 UTC on April 21 will have their used Credit balance reset.</p>
+<h2>Open Source</h2>
+<p>MiMo-V2.5-Pro is now fully open-sourced under a permissive license. Weights, tokenizer, and the full model card are available on Hugging Face.</p>
+<h3>Model specifications</h3>
+<table>
+ <thead>
+  <tr>
+   <th>Model</th>
+   <th>Total Params</th>
+   <th>Active Params</th>
+   <th>Context</th>
+   <th>Precision</th>
+   <th>Download</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>MiMo-V2.5-Pro-Base</td>
+   <td>1.02T</td>
+   <td>42B</td>
+   <td>256K</td>
+   <td>FP8 (E4M3) Mixed</td>
+   <td><a href="https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro-Base">Hugging Face</a></td>
+  </tr>
+  <tr>
+   <td>MiMo-V2.5-Pro</td>
+   <td>1.02T</td>
+   <td>42B</td>
+   <td>1M</td>
+   <td>FP8 (E4M3) Mixed</td>
+   <td><a href="https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro">Hugging Face</a></td>
+  </tr>
+ </tbody>
+</table>
+<h3>Architecture &amp; training</h3>
+<p>MiMo-V2.5-Pro inherits the <strong>hybrid attention</strong> and <strong>Multi-Token Prediction (MTP)</strong> design from <a href="https://github.com/XiaomiMiMo/MiMo-V2-Flash">MiMo-V2-Flash</a>. Local Sliding Window Attention (SWA) and Global Attention (GA) are interleaved at a 6:1 ratio with a 128-token window, which cuts KV-cache storage by nearly 7× at long context while preserving performance through a learnable attention-sink bias. A lightweight MTP module with dense FFNs is natively integrated for training and inference, roughly tripling output throughput and accelerating RL rollouts.</p>
+<p>Pre-training runs on <strong>27T tokens</strong> using <strong>FP8 mixed precision</strong> at a native 32K sequence length, with context extended up to 1M tokens. Post-training follows the three-stage paradigm introduced in MiMo-V2-Flash: (1) <strong>Supervised Fine-Tuning</strong> to establish foundational instruction following on curated data pairs; (2) <strong>Domain-Specialized Training</strong>, where separate teacher models are each optimized via domain-specific RL across math, safety, agentic tool-use, and more; and (3) <strong>Multi-Teacher On-Policy Distillation (MOPD)</strong>, where a single student model learns on-policy from its own rollouts under token-level guidance from every specialist teacher, merging their capabilities into one unified model.</p>
+<p>See the <a href="https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro">model card</a> on Hugging Face for architecture details, evaluation tables, and deployment guides for SGLang and vLLM.</p>
+<h3>Full benchmark results</h3>
+<table></table>

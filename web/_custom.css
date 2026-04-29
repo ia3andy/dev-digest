@@ -185,10 +185,6 @@
   @apply px-4 pb-4 text-sm text-gray-600 dark:text-gray-400 leading-relaxed;
 }
 
-.digest-description-content p {
-  @apply mb-2;
-}
-
 .digest-article-actions {
   @apply flex items-center gap-1.5 shrink-0 flex-wrap justify-start sm:justify-end;
 }

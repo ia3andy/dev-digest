@@ -1,0 +1,1023 @@
+<h1>AIMAC: The AI Model Accessibility Checker</h1>
+<p>AI is writing more code than ever. But is it accessible to <strong>People with Disabilities</strong>?</p>
+<p>We prompted the top AI models to build web pages across 28 categories and audited them for accessibility. We published every generated page, side by side, so you can see how different models tackled the same design challenge. We even measured emdash usage.</p>
+<p>AIMAC is an initiative by the <a href="https://gaad.foundation">GAAD Foundation</a>, in partnership with <a href="https://www.servicenow.com">ServiceNow</a>. Updated Apr 08, 2026.</p>
+<h2>Leaderboard</h2>
+<p>Legend: 🅿️ <a href="https://cobusgreyling.substack.com/p/the-pareto-frontier-for-ai-agents">Pareto Optimal</a> | 🏆 Lowest Debt</p>
+<table>
+ <thead>
+  <tr>
+   <th>Rank ▲</th>
+   <th>Model ▲▼</th>
+   <th>AIMAC Debt ▲▼lower = better</th>
+   <th>Total Cost ▲▼in USD</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>1 🏆</td>
+   <td><a>OpenAI: GPT 5.3 Codex</a></td>
+   <td>0.00 1 *</td>
+   <td>$3.02</td>
+  </tr>
+  <tr>
+   <td>2 🅿️</td>
+   <td><a>OpenAI: GPT 5.4 Mini</a></td>
+   <td>0.00 1 *</td>
+   <td>$0.89</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td><a>OpenAI: GPT 5.4</a></td>
+   <td>0.00 1 *</td>
+   <td>$4.48</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td><a>OpenAI: GPT 5.4 Pro</a></td>
+   <td>1.00</td>
+   <td>$212.75</td>
+  </tr>
+  <tr>
+   <td>5 🅿️</td>
+   <td><a>Arcee AI: Trinity Large Preview (free)</a></td>
+   <td>3.98</td>
+   <td>$0.00</td>
+  </tr>
+  <tr>
+   <td>6</td>
+   <td><a>OpenAI: o3</a></td>
+   <td>4.02</td>
+   <td>$1.13</td>
+  </tr>
+  <tr>
+   <td>7</td>
+   <td><a>Qwen: Qwen3 Max</a></td>
+   <td>4.14</td>
+   <td>$1.07</td>
+  </tr>
+  <tr>
+   <td>8</td>
+   <td><a>Qwen: Qwen3 Coder Plus</a></td>
+   <td>4.36</td>
+   <td>$0.75</td>
+  </tr>
+  <tr>
+   <td>9</td>
+   <td><a>Google: Gemini 3.1 Pro Preview</a></td>
+   <td>4.40</td>
+   <td>$4.16</td>
+  </tr>
+  <tr>
+   <td>10</td>
+   <td><a>Anthropic: Claude Haiku 4.5</a></td>
+   <td>4.47</td>
+   <td>$2.14</td>
+  </tr>
+  <tr>
+   <td>11</td>
+   <td><a>OpenAI: gpt oss 120b</a></td>
+   <td>4.51</td>
+   <td>$0.10</td>
+  </tr>
+  <tr>
+   <td>12</td>
+   <td><a>MoonshotAI: Kimi K2 Thinking</a></td>
+   <td>4.54</td>
+   <td>$0.82</td>
+  </tr>
+  <tr>
+   <td>13</td>
+   <td><a>OpenAI: o4 Mini</a></td>
+   <td>4.58</td>
+   <td>$0.74</td>
+  </tr>
+  <tr>
+   <td>14</td>
+   <td><a>xAI: Grok 4.1 Fast</a></td>
+   <td>4.61</td>
+   <td>$0.08</td>
+  </tr>
+  <tr>
+   <td>15</td>
+   <td><a>Mistral: Mistral Medium 3.1</a></td>
+   <td>4.70</td>
+   <td>$0.45</td>
+  </tr>
+  <tr>
+   <td>16</td>
+   <td><a>AllenAI: Olmo 3.1 32B Instruct</a></td>
+   <td>4.80</td>
+   <td>$0.12</td>
+  </tr>
+  <tr>
+   <td>17</td>
+   <td><a>NVIDIA: Nemotron 3 Super (free)</a></td>
+   <td>4.82</td>
+   <td>$0.00</td>
+  </tr>
+  <tr>
+   <td>18</td>
+   <td><a>Qwen: Qwen3 Coder Next</a></td>
+   <td>4.99</td>
+   <td>$0.41</td>
+  </tr>
+  <tr>
+   <td>19</td>
+   <td><a>MoonshotAI: Kimi K2.5</a></td>
+   <td>5.12</td>
+   <td>$1.07</td>
+  </tr>
+  <tr>
+   <td>20</td>
+   <td><a>MiniMax: MiniMax M2.7</a></td>
+   <td>5.34</td>
+   <td>$1.28</td>
+  </tr>
+  <tr>
+   <td>21</td>
+   <td><a>Z.ai: GLM 4.7 Flash</a></td>
+   <td>5.37</td>
+   <td>$0.11</td>
+  </tr>
+  <tr>
+   <td>22</td>
+   <td><a>Qwen: Qwen3.6 Plus</a></td>
+   <td>5.41</td>
+   <td>$0.99</td>
+  </tr>
+  <tr>
+   <td>23</td>
+   <td><a>Anthropic: Claude Opus 4.6 (Fast)</a></td>
+   <td>5.94</td>
+   <td>$112.18</td>
+  </tr>
+  <tr>
+   <td>24</td>
+   <td><a>Qwen: Qwen3 Max Thinking</a></td>
+   <td>6.00</td>
+   <td>$1.11</td>
+  </tr>
+  <tr>
+   <td>25</td>
+   <td><a>Google: Gemini 3 Flash Preview</a></td>
+   <td>6.84</td>
+   <td>$0.66</td>
+  </tr>
+  <tr>
+   <td>26</td>
+   <td><a>Anthropic: Claude Opus 4.6</a></td>
+   <td>6.90</td>
+   <td>$18.34</td>
+  </tr>
+  <tr>
+   <td>27</td>
+   <td><a>Amazon: Nova 2 Lite</a></td>
+   <td>6.98</td>
+   <td>$0.40</td>
+  </tr>
+  <tr>
+   <td>28</td>
+   <td><a>DeepSeek: DeepSeek V3.2 Speciale</a></td>
+   <td>7.21</td>
+   <td>$0.20</td>
+  </tr>
+  <tr>
+   <td>29</td>
+   <td><a>Arcee AI: Trinity Large Thinking</a></td>
+   <td>7.97</td>
+   <td>$0.25</td>
+  </tr>
+  <tr>
+   <td>30</td>
+   <td><a>DeepSeek: DeepSeek V3.2</a></td>
+   <td>8.18</td>
+   <td>$0.09</td>
+  </tr>
+  <tr>
+   <td>31</td>
+   <td><a>Qwen: Qwen3 Coder Flash</a></td>
+   <td>8.20</td>
+   <td>$0.31</td>
+  </tr>
+  <tr>
+   <td>32</td>
+   <td><a>Mistral: Mistral Large 3 2512</a></td>
+   <td>8.33</td>
+   <td>$0.44</td>
+  </tr>
+  <tr>
+   <td>33</td>
+   <td><a>Mistral: Codestral 2508</a></td>
+   <td>8.40</td>
+   <td>$0.15</td>
+  </tr>
+  <tr>
+   <td>34</td>
+   <td><a>Mistral: Devstral 2 2512</a></td>
+   <td>9.01</td>
+   <td>$0.13</td>
+  </tr>
+  <tr>
+   <td>35</td>
+   <td><a>Qwen: Qwen3.5 397B A17B</a></td>
+   <td>9.16</td>
+   <td>$0.87</td>
+  </tr>
+  <tr>
+   <td>36</td>
+   <td><a>Anthropic: Claude Sonnet 4.6</a></td>
+   <td>9.83</td>
+   <td>$12.64</td>
+  </tr>
+  <tr>
+   <td>37</td>
+   <td><a>DeepSeek: R1 0528</a></td>
+   <td>10.17</td>
+   <td>$0.66</td>
+  </tr>
+  <tr>
+   <td>38</td>
+   <td><a>xAI: Grok 4.20</a></td>
+   <td>11.16</td>
+   <td>$2.07</td>
+  </tr>
+  <tr>
+   <td>39</td>
+   <td><a>Qwen: Qwen3.5 Flash</a></td>
+   <td>11.37</td>
+   <td>$0.09</td>
+  </tr>
+  <tr>
+   <td>40</td>
+   <td><a>Google: Gemma 4 31B</a></td>
+   <td>12.59</td>
+   <td>$0.08</td>
+  </tr>
+  <tr>
+   <td>41</td>
+   <td><a>Kwaipilot: KAT Coder Pro V2</a></td>
+   <td>13.19</td>
+   <td>$0.44</td>
+  </tr>
+  <tr>
+   <td>42</td>
+   <td><a>Z.ai: GLM 5.1</a></td>
+   <td>16.38</td>
+   <td>$2.47</td>
+  </tr>
+  <tr>
+   <td>43</td>
+   <td><a>Mistral: Mistral Small 4</a></td>
+   <td>16.96</td>
+   <td>$0.18</td>
+  </tr>
+ </tbody>
+ <tr>
+  <th>Total</th>
+  <td>$390.28</td>
+ </tr>
+</table>
+<p>1 #1 and #2 and #3 tied with an AIMAC Debt of 0.00. Tiebreaker: #1 averaged fewer violations (0.94 vs 1.02 vs 1.31).</p>
+<p>* GPT 5.3 Codex shows a median AIMAC Debt of 0.00. This means at least half of the 28 categories had zero accessibility violations, but some categories still had minor issues (20 total violations across all categories).</p>
+<h2>Analysis</h2>
+<h3>Introduction</h3>
+<p>95.9% of the <a href="https://tranco-list.eu/">top million websites</a> fail basic accessibility checks. <a href="https://webaim.org/projects/million/">WebAIM</a> has tracked it for seven years. After six years of marginal improvement, 2026 reversed the trend: errors per page jumped 10% to 56.1 and the failure rate climbed back to 95.9%.</p>
+<p>AI is writing more of the world's code every day. <a href="https://www.collinsdictionary.com/dictionary/english/vibe-coding">Vibe Coding</a> was the Collins Dictionary <a href="https://blog.collinsdictionary.com/language-lovers/collins-word-of-the-year-2025-ai-meets-authenticity-as-society-shifts/">Word of the Year</a>. If AI keeps writing code as poorly as the developers it learned from, nothing changes. But if it prioritizes accessibility, the web gets its first real chance to improve.</p>
+<h3>Our one ambitious goal</h3>
+<p><strong>Ensure that AI models write accessible code by default.</strong></p>
+<h3>Which Model is Best?</h3>
+<p><strong><a>GPT 5.3 Codex</a></strong> by OpenAI holds the top spot with a median AIMAC Debt of 0.00, generating just 20 accessibility violations across all 28 categories. <a>GPT 5.4 Mini</a> joins it at #2, also achieving zero debt for just $0.89. <a>GPT 5.4</a> takes #3 (also 0.00) and <a>GPT 5.4 Pro</a> sits at #4 (1.00). Arcee AI's <a>Trinity Large Preview (free)</a> rounds out the top five at #5 with a debt of 3.98. OpenAI holds four of the top five spots.</p>
+<p>Three models now achieve a median AIMAC Debt of 0.00. The cheapest is GPT 5.4 Mini at $0.89. The most expensive model on the benchmark is GPT 5.4 Pro at $212.75.</p>
+<figure>
+ <img alt="OpenAI logo">
+ <figcaption>
+  GPT 5.3 Codex: #1
+ </figcaption>
+</figure>
+<h3>The Pareto Frontier</h3>
+<h4>AIMAC Debt vs Cost</h4>
+<p>Choosing a model isn't simply about which model is most accessible. Some models are very expensive. Benchmarks commonly use Pareto Frontier analysis to compare models on quality vs cost dimensions. Pareto optimal models (teal diamonds) are the efficient picks: to lower the AIMAC Debt grade, you'd pay more; to pay less, your AIMAC Debt grade rises. A gold ring marks the lowest AIMAC Debt.</p>
+<figure>
+ <img alt="Accessibility vs cost comparison of 43 AI models. Lowest debt: GPT 5.3 Codex (0.00, $3.02). 2 models are Pareto optimal. Costs range from free (Trinity Large Preview (free)) to $3.02.">
+</figure>
+<h3>Top 3 Winners</h3>
+<ul>
+ <li>
+  <figure>
+   <img alt="">
+   <figcaption>
+    OpenAI
+   </figcaption>
+  </figure></li>
+ <li>
+  <figure>
+   <img alt="">
+   <figcaption>
+    Arcee AI
+   </figcaption>
+  </figure></li>
+ <li>
+  <figure>
+   <img alt="">
+   <figcaption>
+    Alibaba/Qwen
+   </figcaption>
+  </figure></li>
+</ul>
+<p><strong>1. OpenAI</strong> dominates the top of the leaderboard. Three of their models achieve a median AIMAC Debt of 0.00: <a>GPT 5.3 Codex</a> (#1), <a>GPT 5.4 Mini</a> (#2), and <a>GPT 5.4</a> (#3). A median of 0.00 means at least half of the 28 categories had zero violations, though a few categories still had minor issues. <a>GPT 5.4 Pro</a> rounds out the top four at 1.00. They hold four of the top five spots (#1, #2, #3, #4), and their open-source <a>gpt-oss-120b</a> lands at #11 for just $0.10.</p>
+<p><strong>2. Arcee AI</strong> is a 30-person San Francisco startup that built <a>Trinity Large Preview</a> from scratch for $20 million. It is a 400-billion-parameter sparse model with only 13 billion active per token, Apache 2.0 licensed, and ranks #5 for free. It is the largest permissively-licensed open model from a US company. Their <a>Trinity Large Thinking</a> variant lands at #29 (debt 7.97, $0.25).</p>
+<p><strong>3. Alibaba/Qwen</strong> fields the deepest roster outside OpenAI, with eight models spanning the leaderboard. <a>Qwen3 Max</a> leads the pack at #7 (debt 4.14, $1.07), and <a>Qwen3 Coder Plus</a> follows at #8 (debt 4.36, $0.75). Their lineup covers proprietary flagships, code-tuned variants, and open-weight releases, giving developers more accessibility-tested options than any other non-US provider.</p>
+<h3>Google's Comeback</h3>
+<p><img alt="">Google's Gemini 3 Pro Preview once finished dead last at #39 with an AIMAC Debt of 10.65. We were disappointed because Google has the tools and talent to do better.</p>
+<p>Its replacement, <a>Gemini 3.1 Pro Preview</a>, now sits at #9 with an AIMAC Debt of 4.40. Google is no longer at the bottom. This is exactly the kind of progress we hoped this benchmark would encourage.</p>
+<h3>What About Claude?</h3>
+<p><img alt="">Anthropic has real developer mindshare, and Claude is often the default choice when teams want strong coding help. In this benchmark, their best result is <a>Claude Haiku 4.5</a> at rank #10 (4.47 for $2.14). <a>Claude Opus 4.6 (Fast)</a> ranks #23 (5.94 for $112.18), <a>Claude Opus 4.6</a> ranks #26 (6.90 for $18.34), and <a>Claude Sonnet 4.6</a> sits at #36 (9.83 for $12.64). Sonnet's regression from 4.5 remains sharp: from #19 (debt 4.78) to #36 (debt 9.83).</p>
+<p>Other major providers improved their accessibility results. Anthropic is the only one whose models got worse.</p>
+<p>Sonnet 4.6 generates 1,186 accessibility violations, nearly three times the field average of 403. Opus 4.6 produces 788, nearly double. The same gap shows in Anthropic's <a href="https://github.com/anthropics/claude-code/blob/main/plugins/frontend-design/skills/frontend-design/SKILL.md">frontend-design skill</a>, where accessibility is barely mentioned while the guidance is overwhelmingly visual.</p>
+<p>Anthropic is a Public Benefit Corporation whose <a href="https://www.anthropic.com/company">stated values</a> include acting "for the global good" and being good to their users, whom they define broadly as "anyone impacted by the technology we build." People with disabilities are impacted every time Claude generates inaccessible code. We hope Anthropic will bring the same energy they apply to AI safety to the accessibility of their models' output.</p>
+<p>The broader trend is encouraging. Models are training against automated tools like axe-core, and scores are improving. We are working on new benchmarks that test models that go beyond axe-code testing.</p>
+<h3>Beyond the Rankings</h3>
+<p>As AI models get better at visual design, they face a tradeoff between optimizing for beauty or for accessibility. You can achieve both, but it requires deliberate effort.</p>
+<p>If you're picking a model for your workflow, start with a category page that matches your use case. Each category shows how ~40 models handled the same prompt, alongside their AIMAC Debt. For example, visit the <a>Sports category</a> in grid mode to compare sports designs side by side.</p>
+<p>If you already have a model in mind, use the model detail page to see what its pages look like across all 28 categories. Then drill down into the categories that match your needs. See <a>GPT 5.4 Pro</a> in grid mode for an example.</p>
+<h4>Value vs Premium</h4>
+<p>The #1 model on this benchmark costs $3.02. But the #2 model costs just $0.89. <a>GPT 5.4 Mini</a> achieves zero debt for under a dollar, while <a>GPT 5.4 Pro</a> costs $212.75 for a debt of 1.00. Twenty-eight of 43 models cost under $1, including <a>Grok 4.1 Fast</a> at #14 for 8 cents, OpenAI's <a>gpt-oss-120b</a> at #11 for 10 cents, and <a>Gemma 4 31B</a> at #40 for 8 cents.</p>
+<h4>Closed vs Open (Source/Weights)</h4>
+<p>A closed model holds the top spot. <a>GPT 5.3 Codex</a> (proprietary) remains #1, and three more closed OpenAI models fill spots #2 through #4. <a>Trinity Large Preview</a> (open-source, Apache 2.0) holds #5 for free.</p>
+<p>The upper-middle tier remains packed with value picks across both closed and open-weight releases. <a>Qwen3 Max</a> and <a>Coder Plus</a> rank 7th and 8th. <a>Kimi K2 Thinking</a> sits at #12 for 82 cents. OpenAI's open-weight <a>gpt-oss-120b</a> ranks 11th for 10 cents.</p>
+<p>The smaller models are mostly from China. Qwen, Z.ai, DeepSeek, and MoonshotAI account for 15 of 43 models. Alibaba's Qwen line has eight entries. Despite US chip restrictions, Chinese labs keep shipping.</p>
+<p><strong>DeepSeek</strong> made headlines in January 2025 when their R1 model <a href="https://finance.yahoo.com/news/nvidia-stock-begins-recovery-after-deepseek-ai-frenzy-prompted-near-600-billion-loss-134240328.html">triggered a $600 billion single-day loss</a> in Nvidia's market cap by claiming similar performance to Western models at a fraction of the cost. But on accessibility, their lineup sits near the bottom: <a>R1 0528</a> scores 10.17 (rank #37), <a>V3.2</a> lands at 8.18, and their best result (<a>V3.2 Speciale</a>) still comes in at 7.21. R1 0528 regressed from the original R1 it replaced (which scored 8.08). The efficiency breakthrough has not translated to accessible output.</p>
+<p><strong>Mistral</strong> struggled on this benchmark. <a>Medium 3.1</a> is their lone mid-pack result at 4.70 (rank #15), while the rest cluster near the bottom: <a>Large 3 2512</a> at 8.33 (rank #32), <a>Codestral 2508</a> at 8.40 (rank #33), and <a>Devstral 2 2512</a> at 9.01 (rank #34). Their newest release, <a>Mistral Small 4</a>, finishes dead last at #43 with a debt of 16.96, a sharp regression from the Small 3.2 24B it replaced (which scored 8.48). Only Medium 3.1 cracked the Top 20, and it is not open source. Their open-source Small 4 finishes last.</p>
+<h3>What Trips Models Up</h3>
+<p>Low contrast text dominates both AI-generated and human-built websites. Both columns report the share of pages with at least one instance of each issue. AIMAC uses axe-core across AI-generated pages; WebAIM uses WAVE across the top 1,000,000 home pages.</p>
+<h4>AIMAC: Top 6 issues</h4>
+<p>Share of pages with &gt;= 1 error</p>
+<ul>
+ <li>Low contrast text: 84.8%</li>
+ <li>Empty links: 31.0%</li>
+ <li>Missing form labels: 19.7%</li>
+ <li>Empty buttons: 6.9%</li>
+ <li>Links distinguished only by color: 3.9%</li>
+ <li>Target size too small: 3.7%</li>
+</ul>
+<h4>WebAIM Million 2026: Top 6 issues</h4>
+<p>Share of home pages with &gt;= 1 error</p>
+<ul>
+ <li>Low contrast text: 84%</li>
+ <li>Missing alt text: 53%</li>
+ <li>Missing form labels: 51%</li>
+ <li>Empty links: 46%</li>
+ <li>Empty buttons: 31%</li>
+ <li>Missing document language: 14%</li>
+</ul>
+<h3>Emdash Benchmark</h3>
+<p>We tracked emdash usage as a small writing-style signal, because punctuation can affect how text is read aloud.</p>
+<p><strong>Screen readers handle emdashes differently.</strong> Some announce "em dash" at every occurrence, others treat it as a pause, and some ignore it depending on voice and settings. Ricky Onsman <a href="https://vispero.com/resources/on-dashes-a-i-and-screen-readers/">explored the issue</a> and found this is largely a screen reader behavior difference, not a content authoring bug.</p>
+<p>We sanity-checked this with screen reader users, and none of our friends reported emdash-heavy text as a practical problem in day-to-day reading. So this turned out to be more interesting than impactful, and it does not affect AIMAC rankings.</p>
+<p><strong>Emdash usage varies widely.</strong> Across 43 models, counts range from 0 (<a>Codestral 2508</a>) to 754 (<a>Claude Sonnet 4.6</a>). 1 model uses zero emdashes.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Rank</th>
+   <th>Model</th>
+   <th>Emdash Count</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>1</td>
+   <td><a>Codestral 2508</a> Mistral</td>
+   <td>0</td>
+  </tr>
+  <tr>
+   <td>2</td>
+   <td><a>Devstral 2 2512</a> Mistral</td>
+   <td>4</td>
+  </tr>
+  <tr>
+   <td>3</td>
+   <td><a>Qwen3 Coder Flash</a> Qwen</td>
+   <td>4</td>
+  </tr>
+  <tr>
+   <td>4</td>
+   <td><a>Nova 2 Lite</a> Amazon</td>
+   <td>5</td>
+  </tr>
+  <tr>
+   <td>5</td>
+   <td><a>R1 0528</a> DeepSeek</td>
+   <td>7</td>
+  </tr>
+  <tr>
+   <td>6</td>
+   <td><a>Qwen3.5 Flash</a> Qwen</td>
+   <td>8</td>
+  </tr>
+  <tr>
+   <td>7</td>
+   <td><a>Qwen3 Coder Plus</a> Qwen</td>
+   <td>9</td>
+  </tr>
+  <tr>
+   <td>8</td>
+   <td><a>DeepSeek V3.2</a> DeepSeek</td>
+   <td>10</td>
+  </tr>
+  <tr>
+   <td>9</td>
+   <td><a>GLM 4.7 Flash</a> Z.ai</td>
+   <td>10</td>
+  </tr>
+  <tr>
+   <td>10</td>
+   <td><a>Trinity Large Preview (free)</a> Arcee AI</td>
+   <td>11</td>
+  </tr>
+  <tr>
+   <td>11</td>
+   <td><a>KAT Coder Pro V2</a> Kwaipilot</td>
+   <td>12</td>
+  </tr>
+  <tr>
+   <td>12</td>
+   <td><a>Gemini 3 Flash Preview</a> Google</td>
+   <td>13</td>
+  </tr>
+  <tr>
+   <td>13</td>
+   <td><a>Qwen3.5 397B A17B</a> Qwen</td>
+   <td>16</td>
+  </tr>
+  <tr>
+   <td>14</td>
+   <td><a>Trinity Large Thinking</a> Arcee AI</td>
+   <td>16</td>
+  </tr>
+  <tr>
+   <td>15</td>
+   <td><a>DeepSeek V3.2 Speciale</a> DeepSeek</td>
+   <td>17</td>
+  </tr>
+  <tr>
+   <td>16</td>
+   <td><a>Gemini 3.1 Pro Preview</a> Google</td>
+   <td>17</td>
+  </tr>
+  <tr>
+   <td>17</td>
+   <td><a>Grok 4.1 Fast</a> xAI</td>
+   <td>21</td>
+  </tr>
+  <tr>
+   <td>18</td>
+   <td><a>Mistral Large 3 2512</a> Mistral</td>
+   <td>22</td>
+  </tr>
+  <tr>
+   <td>19</td>
+   <td><a>Gemma 4 31B</a> Google</td>
+   <td>24</td>
+  </tr>
+  <tr>
+   <td>20</td>
+   <td><a>Mistral Medium 3.1</a> Mistral</td>
+   <td>24</td>
+  </tr>
+  <tr>
+   <td>21</td>
+   <td><a>Qwen3 Max</a> Qwen</td>
+   <td>26</td>
+  </tr>
+  <tr>
+   <td>22</td>
+   <td><a>Grok 4.20</a> xAI</td>
+   <td>29</td>
+  </tr>
+  <tr>
+   <td>23</td>
+   <td><a>Mistral Small 4</a> Mistral</td>
+   <td>30</td>
+  </tr>
+  <tr>
+   <td>24</td>
+   <td><a>Qwen3 Max Thinking</a> Qwen</td>
+   <td>38</td>
+  </tr>
+  <tr>
+   <td>25</td>
+   <td><a>GPT 5.4</a> OpenAI</td>
+   <td>40</td>
+  </tr>
+  <tr>
+   <td>26</td>
+   <td><a>gpt oss 120b</a> OpenAI</td>
+   <td>40</td>
+  </tr>
+  <tr>
+   <td>27</td>
+   <td><a>Kimi K2 Thinking</a> MoonshotAI</td>
+   <td>56</td>
+  </tr>
+  <tr>
+   <td>28</td>
+   <td><a>Nemotron 3 Super (free)</a> NVIDIA</td>
+   <td>60</td>
+  </tr>
+  <tr>
+   <td>29</td>
+   <td><a>o4 Mini</a> OpenAI</td>
+   <td>67</td>
+  </tr>
+  <tr>
+   <td>30</td>
+   <td><a>MiniMax M2.7</a> MiniMax</td>
+   <td>68</td>
+  </tr>
+  <tr>
+   <td>31</td>
+   <td><a>Olmo 3.1 32B Instruct</a> AllenAI</td>
+   <td>70</td>
+  </tr>
+  <tr>
+   <td>32</td>
+   <td><a>GPT 5.3 Codex</a> OpenAI</td>
+   <td>71</td>
+  </tr>
+  <tr>
+   <td>33</td>
+   <td><a>Claude Haiku 4.5</a> Anthropic</td>
+   <td>72</td>
+  </tr>
+  <tr>
+   <td>34</td>
+   <td><a>GPT 5.4 Mini</a> OpenAI</td>
+   <td>84</td>
+  </tr>
+  <tr>
+   <td>35</td>
+   <td><a>Kimi K2.5</a> MoonshotAI</td>
+   <td>85</td>
+  </tr>
+  <tr>
+   <td>36</td>
+   <td><a>o3</a> OpenAI</td>
+   <td>85</td>
+  </tr>
+  <tr>
+   <td>37</td>
+   <td><a>GPT 5.4 Pro</a> OpenAI</td>
+   <td>103</td>
+  </tr>
+  <tr>
+   <td>38</td>
+   <td><a>Qwen3.6 Plus</a> Qwen</td>
+   <td>347</td>
+  </tr>
+  <tr>
+   <td>39</td>
+   <td><a>Qwen3 Coder Next</a> Qwen</td>
+   <td>351</td>
+  </tr>
+  <tr>
+   <td>40</td>
+   <td><a>Claude Opus 4.6 (Fast)</a> Anthropic</td>
+   <td>420</td>
+  </tr>
+  <tr>
+   <td>41</td>
+   <td><a>Claude Opus 4.6</a> Anthropic</td>
+   <td>424</td>
+  </tr>
+  <tr>
+   <td>42</td>
+   <td><a>GLM 5.1</a> Z.ai</td>
+   <td>503</td>
+  </tr>
+  <tr>
+   <td>43</td>
+   <td><a>Claude Sonnet 4.6</a> Anthropic</td>
+   <td>754</td>
+  </tr>
+ </tbody>
+</table>
+<h3>Models Tested</h3>
+<p>This analysis covers 43 models from 15 companies:</p>
+<ol>
+ <li><a>Claude Haiku 4.5</a></li>
+ <li><a>Claude Opus 4.6</a></li>
+ <li><a>Claude Opus 4.6 (Fast)</a></li>
+ <li><a>Claude Sonnet 4.6</a></li>
+ <li><a>Codestral 2508</a></li>
+ <li><a>DeepSeek V3.2</a></li>
+ <li><a>DeepSeek V3.2 Speciale</a></li>
+ <li><a>Devstral 2 2512</a></li>
+ <li><a>Gemini 3 Flash Preview</a></li>
+ <li><a>Gemini 3.1 Pro Preview</a></li>
+ <li><a>Gemma 4 31B</a></li>
+ <li><a>GLM 4.7 Flash</a></li>
+ <li><a>GLM 5.1</a></li>
+ <li><a>GPT 5.3 Codex</a></li>
+ <li><a>GPT 5.4</a></li>
+ <li><a>GPT 5.4 Mini</a></li>
+ <li><a>GPT 5.4 Pro</a></li>
+ <li><a>gpt oss 120b</a></li>
+ <li><a>Grok 4.1 Fast</a></li>
+ <li><a>Grok 4.20</a></li>
+ <li><a>KAT Coder Pro V2</a></li>
+ <li><a>Kimi K2 Thinking</a></li>
+ <li><a>Kimi K2.5</a></li>
+ <li><a>MiniMax M2.7</a></li>
+ <li><a>Mistral Large 3 2512</a></li>
+ <li><a>Mistral Medium 3.1</a></li>
+ <li><a>Mistral Small 4</a></li>
+ <li><a>Nemotron 3 Super (free)</a></li>
+ <li><a>Nova 2 Lite</a></li>
+ <li><a>o3</a></li>
+ <li><a>o4 Mini</a></li>
+ <li><a>Olmo 3.1 32B Instruct</a></li>
+ <li><a>Qwen3 Coder Flash</a></li>
+ <li><a>Qwen3 Coder Next</a></li>
+ <li><a>Qwen3 Coder Plus</a></li>
+ <li><a>Qwen3 Max</a></li>
+ <li><a>Qwen3 Max Thinking</a></li>
+ <li><a>Qwen3.5 397B A17B</a></li>
+ <li><a>Qwen3.5 Flash</a></li>
+ <li><a>Qwen3.6 Plus</a></li>
+ <li><a>R1 0528</a></li>
+ <li><a>Trinity Large Preview (free)</a></li>
+ <li><a>Trinity Large Thinking</a></li>
+</ol>
+<h3>Update History</h3>
+<h4>April 9, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>GLM 5: was Rank #5, AIMAC Debt 2.66, Cost $2.03</li>
+ <li>GPT 5.1 Codex Mini: was Rank #6, AIMAC Debt 3.78, Cost $0.39</li>
+ <li>Qwen3.6 Plus Preview (free): was Rank #12, AIMAC Debt 4.44, Cost $0.00</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>Qwen3.6 Plus</a>: Rank #22, AIMAC Debt 5.41, Cost $0.99</li>
+ <li><a>Claude Opus 4.6 (Fast)</a>: Rank #23, AIMAC Debt 5.94, Cost $112.18</li>
+ <li><a>Gemma 4 31B</a>: Rank #40, AIMAC Debt 12.59, Cost $0.08</li>
+ <li><a>GLM 5.1</a>: Rank #42, AIMAC Debt 16.38, Cost $2.47</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>GLM 5.1 replaces GLM 5 as Z.AI's latest flagship. GLM 5.1 was retrained for coding/agentic tasks and achieved SOTA on SWE-Bench Pro, but dropped from #5 to #42 on accessibility.</li>
+ <li>GPT 5.1 Codex Mini retired as OpenAI consolidates around the 5.3/5.4 generation.</li>
+ <li>Qwen3.6 Plus is the GA release of the preview. Free access ends; the paid model costs $0.99.</li>
+ <li>Claude Opus 4.6 (Fast) is Anthropic's fourth model on the benchmark, filling the premium-fast slot.</li>
+ <li>Gemma 4 31B is Google's first open-weight model to pass the 10KB HTML threshold.</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>The version-upgrade regression pattern strikes again: GLM 5 (#5) to GLM 5.1 (#42) is the largest rank drop from a version upgrade we have tracked (37 ranks). It joins KAT V1 to V2 (-28) and Sonnet 4.5 to 4.6 (-18).</li>
+ <li>Z.AI drops out of the Top 3 Winners. Alibaba/Qwen enters, with Qwen3 Max at #7 and eight models across the leaderboard.</li>
+ <li>Trinity Large Preview (free) moves to #5, a free model in the top five.</li>
+</ul>
+<h4>April 1, 2026</h4>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>Trinity Large Thinking</a> (Arcee AI): Rank #30, AIMAC Debt 7.97, Cost $0.25</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>Arcee AI's second model on the benchmark, alongside Trinity Large Preview (free) at #7.</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>Arcee AI now has two models on the benchmark: Trinity Large Preview (free) at #7 and Trinity Large Thinking at #30.</li>
+</ul>
+<h4>March 31, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>Grok 4.20 Beta: was Rank #39, AIMAC Debt 12.53, Cost $2.09</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>Grok 4.20</a>: Rank #38, AIMAC Debt 11.16, Cost $2.07</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>Grok 4.20 GA supersedes the Beta release.</li>
+ <li>Updated WebAIM Million comparison data from 2025 to 2026 following the <a href="https://webaim.org/projects/million/">new report</a> (published March 30, 2026). The 2026 report reversed six years of gradual improvement: errors per page jumped 10% and 95.9% of sites now fail basic checks.</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>xAI's flagship improves slightly (debt 12.53 to 11.16), gaining one rank from #39 to #38.</li>
+ <li>Qwen3.5 Flash shifts from #38 to #39. All other rankings are unchanged.</li>
+</ul>
+<h4>March 30, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>Qwen3.5 Plus 2026 02 15: was Rank #24, AIMAC Debt 5.73, Cost $0.54</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>Qwen3.6 Plus Preview (free)</a>: Rank #12, AIMAC Debt 4.44, Cost $0.00</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>Qwen3.6 Plus Preview supersedes Qwen3.5 Plus.</li>
+ <li>The count of models under $1 remains 27 (both models are under $1).</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>Alibaba's Qwen Plus line improves from #24 to #12, a 12-spot jump.</li>
+ <li>Ranks 12-23 each shift down by one. Top 11 and ranks 25-41 are unchanged.</li>
+</ul>
+<h4>March 28, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>KAT Coder Pro V1: was Rank #12, AIMAC Debt 4.46, Cost $0.22</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>KAT Coder Pro V2</a>: Rank #40, AIMAC Debt 13.19, Cost $0.44</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>KAT Coder Pro V2 supersedes V1. Score regressed sharply from 4.46 to 13.19, rank dropping from #12 to #40. Cost doubled from $0.22 to $0.44.</li>
+ <li>The count of models under $1 remains 27 (both V1 and V2 are under $1).</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>KwaIPilot drops from the upper tier to second-to-last. V1 was a standout budget pick; V2 is one of the weakest models on the benchmark.</li>
+ <li>Ranks 13-39 each shift up by one. Top 11 and last place are unchanged.</li>
+</ul>
+<h4>March 22, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>MiniMax M2.5: was Rank #9, AIMAC Debt 4.04, Cost $0.25</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>MiniMax M2.7</a>: Rank #23, AIMAC Debt 5.34, Cost $1.28</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>MiniMax M2.7 supersedes M2.5. Score regressed from 4.04 to 5.34, rank dropping from #9 to #23. Cost increased from $0.25 to $1.28.</li>
+ <li>The count of models under $1 drops from 28 to 27 because M2.7 costs $1.28 (M2.5 was $0.25).</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>MiniMax falls out of the Top 10 after its M2.5 held #9. The upgrade traded accessibility for other capabilities.</li>
+ <li>Top 8 and bottom 18 ranks are unchanged. Only ranks 9-22 shift up by one.</li>
+</ul>
+<h4>March 17, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>GPT 5.2 Pro: was Rank #3, AIMAC Debt 2.77, Cost $95.45</li>
+ <li>GPT 5.2: was Rank #4, AIMAC Debt 3.05, Cost $6.63</li>
+ <li>Gemini 2.5 Flash Lite: was Rank #23, AIMAC Debt 5.42, Cost $0.09</li>
+ <li>GPT 5 Mini: was Rank #30, AIMAC Debt 7.62, Cost $0.60</li>
+ <li>Mistral Small 3.2 24B: was Rank #35, AIMAC Debt 8.48, Cost $0.03</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>GPT 5.4 Mini</a>: Rank #2, AIMAC Debt 0.00, Cost $0.89</li>
+ <li><a>GPT 5.4</a>: Rank #3, AIMAC Debt 0.00, Cost $4.48</li>
+ <li><a>GPT 5.4 Pro</a>: Rank #4, AIMAC Debt 1.00, Cost $212.75</li>
+ <li><a>Nemotron 3 Super (free)</a>: Rank #21, AIMAC Debt 4.82, Cost $0.00</li>
+ <li><a>Qwen3.5 Flash</a>: Rank #39, AIMAC Debt 11.37, Cost $0.09</li>
+ <li><a>Grok 4.20 Beta</a>: Rank #40, AIMAC Debt 12.53, Cost $2.09</li>
+ <li><a>Mistral Small 4</a>: Rank #41, AIMAC Debt 16.96, Cost $0.18</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>GPT 5.4 Mini achieves a median AIMAC Debt of 0.00 at $0.89, the second model to reach zero debt.</li>
+ <li>GPT 5.4 and GPT 5.4 Pro replace their 5.2 predecessors as the latest versions in each slot. GPT 5.4 Pro costs $212.75, more than double the $95.45 that GPT 5.2 Pro cost, making it the most expensive model on the benchmark by a wide margin.</li>
+ <li>Gemini 2.5 Flash Lite is removed. Google's replacement (Gemini 3.1 Flash Lite Preview) fails the 10KB minimum HTML size requirement, so the Flash Lite slot goes away.</li>
+ <li>Mistral Small 4 (119B) replaces Small 3.2 24B as Mistral's latest Small release, but regresses from #35 (debt 8.48) to dead last at #41 (debt 16.96).</li>
+ <li>Grok 4.20 Beta is xAI's new flagship but lands at #40, while xAI's own Grok 4.1 Fast sits at #18.</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>GPT 5.4 Mini ($0.89) is the value headline: zero accessibility debt for under a dollar.</li>
+ <li>Three OpenAI models now hold spots #2 through #4, with the existing GPT 5.3 Codex still at #1.</li>
+</ul>
+<h4>February 25, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>GPT 5.2 Codex: was Rank #3, AIMAC Debt 3.05, Cost $1.94</li>
+ <li>Gemini 3 Pro Preview: was Rank #39, AIMAC Debt 10.65, Cost $3.35</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>GPT 5.3 Codex</a>: Rank #1, AIMAC Debt 0.00, Cost $3.02</li>
+ <li><a>Gemini 3.1 Pro Preview</a>: Rank #11, AIMAC Debt 4.40, Cost $4.16</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>GPT 5.3 Codex replaces GPT 5.2 Codex per version policy. It achieves a median AIMAC Debt of 0.00 with just 20 total violations across 28 categories, taking #1 from GLM 5.</li>
+ <li>Gemini 3.1 Pro Preview replaces Gemini 3 Pro Preview per version policy. A dramatic improvement from #39 (debt 10.65) to #11 (debt 4.40).</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>OpenAI takes back #1 with the first model to achieve a median AIMAC Debt of 0.00.</li>
+ <li>Google goes from dead last to #11, the largest single-update improvement we have tracked.</li>
+</ul>
+<h4>February 17, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>Aurora Alpha: was Rank #9, AIMAC Debt 4.05, Cost $0.00</li>
+ <li>Claude Sonnet 4.5: was Rank #19, AIMAC Debt 4.78, Cost $6.20</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>Claude Sonnet 4.6</a>: Rank #37, AIMAC Debt 9.83, Cost $12.64</li>
+ <li><a>OLMo 3.1 32B Instruct</a>: Rank #18, AIMAC Debt 4.80, Cost $0.12</li>
+ <li><a>Qwen3.5 Plus 2026 02 15</a>: Rank #23, AIMAC Debt 5.73, Cost $0.54</li>
+ <li><a>Qwen3.5 397B A17B</a>: Rank #36, AIMAC Debt 9.16, Cost $0.87</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>Claude Sonnet 4.6 replaces Sonnet 4.5 per version policy; Sonnet regresses from #19 (Debt 4.78) to #37 (Debt 9.83) in this collection.</li>
+ <li>Aurora Alpha was removed due to a 10KB minimum HTML threshold failure (one or more categories fell below 10KB).</li>
+ <li>OLMo 3.1 32B Instruct adds an open-weight model from AllenAI (Allen Institute for AI), a US-based non-profit AI research lab.</li>
+ <li>Two Qwen 3.5 models expand Qwen coverage with additional product lines.</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>The production leaderboard expands from 37 to 39 models.</li>
+ <li>#1 remains GLM 5 (AIMAC Debt 2.66).</li>
+ <li>27 of 39 models cost under $1.</li>
+</ul>
+<h4>February 12, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>MiniMax M2.1: was Rank #18, AIMAC Debt 4.74, Cost $0.28</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>MiniMax M2.5</a>: Rank #8, AIMAC Debt 4.04, Cost $0.25</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>MiniMax M2.5 supersedes M2.1. Score improved from 4.74 to 4.04, rank jumping from #18 to #8.</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>MiniMax M2.5 returns to the Top 10 with this entry.</li>
+</ul>
+<h4>February 11, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>MiniMax M1: was Rank #5, AIMAC Debt 3.78, Cost $0.82</li>
+ <li>Kimi K2 0905: was Rank #9, AIMAC Debt 4.39, Cost $0.54</li>
+ <li>GLM 4.7: was Rank #13, AIMAC Debt 4.51, Cost $0.44</li>
+ <li>Qwen3 Coder 480B A35B: was Rank #22, AIMAC Debt 6.01, Cost $0.33</li>
+ <li>Claude Opus 4.5: was Rank #25, AIMAC Debt 7.06, Cost $19.92</li>
+ <li>Qwen3 235B A22B Instruct 2507: was Rank #27, AIMAC Debt 7.54, Cost $0.26</li>
+ <li>R1: was Rank #29, AIMAC Debt 8.08, Cost $0.70</li>
+ <li>GLM 4.5 Air: was Rank #36, AIMAC Debt 9.33, Cost $0.33</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>GLM 5</a>: Rank #1, AIMAC Debt 2.66, Cost $2.03</li>
+ <li><a>Trinity Large Preview</a>: Rank #6, AIMAC Debt 3.98, Cost $0.00</li>
+ <li><a>Aurora Alpha</a>: Rank #8, AIMAC Debt 4.05, Cost $0.00</li>
+ <li><a>Qwen3 Coder Next</a>: Rank #20, AIMAC Debt 4.99, Cost $0.41</li>
+ <li><a>Kimi K2.5</a>: Rank #21, AIMAC Debt 5.12, Cost $1.07</li>
+ <li><a>Qwen3 Max Thinking</a>: Rank #24, AIMAC Debt 6.00, Cost $1.11</li>
+ <li><a>Claude Opus 4.6</a>: Rank #26, AIMAC Debt 6.90, Cost $18.34</li>
+ <li><a>R1 0528</a>: Rank #36, AIMAC Debt 10.17, Cost $0.66</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>GLM 5 by Z.ai takes 1st place, dethroning GPT 5.2 Pro. It is MIT-licensed open-source at $2.03 total, compared to GPT 5.2 Pro's $95.45.</li>
+ <li>Trinity Large Preview by Arcee AI enters at #6 for free. It is a US-based open-source model.</li>
+ <li>GLM 4.7 and GLM 4.5 Air are both superseded by GLM 5.</li>
+ <li>Claude Opus 4.6 replaces Opus 4.5. Marginally better debt (6.90 vs 7.06) but ranks #26 due to new entrants.</li>
+ <li>R1 0528 replaces R1. Cheaper with larger context, but scored worse on accessibility (10.17 vs 8.08).</li>
+ <li>MiniMax M1 superseded by M2.1.</li>
+ <li>Kimi K2 0905 superseded by K2.5.</li>
+ <li>Qwen3 235B A22B Instruct 2507 removed. Qwen3 Coder 480B A35B trimmed in favor of Coder Next and Coder Plus variants.</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>Open-source models now lead the leaderboard: GLM 5 at #1 and Trinity Large Preview at #6.</li>
+ <li>OpenAI retains four of the top five spots (#2 through #5) but loses the crown.</li>
+</ul>
+<h4>January 19, 2026</h4>
+<p><strong>Models Removed</strong></p>
+<ul>
+ <li>GPT 5.1 Codex: was Rank #3, AIMAC Debt 3.53, Cost $1.72</li>
+ <li>KAT Coder Pro V1 (free): was Rank #14, AIMAC Debt 4.55, Cost $0.00</li>
+</ul>
+<p><strong>Models Added</strong></p>
+<ul>
+ <li><a>GPT 5.2 Codex</a>: Rank #2, AIMAC Debt 3.05, Cost $1.94</li>
+ <li><a>KAT Coder Pro V1</a>: Rank #10, AIMAC Debt 4.46, Cost $0.22</li>
+ <li><a>GLM 4.7 Flash</a>: Rank #20, AIMAC Debt 5.37, Cost $0.11</li>
+</ul>
+<p><strong>Notes</strong></p>
+<ul>
+ <li>GPT 5.2 Codex succeeds GPT 5.1 Codex in our benchmark. We test the latest version of each model line.</li>
+ <li>KAT Coder Pro V1 replaces the free tier, which OpenRouter deprecated on January 12.</li>
+</ul>
+<p><strong>Impact</strong></p>
+<ul>
+ <li>KAT Coder Pro V1 entering at #10 pushed Claude Haiku 4.5 to #11.</li>
+</ul>
+<h3>Acknowledgments</h3>
+<p>We are grateful to <a href="https://www.servicenow.com">ServiceNow</a> for their partnership, without which AIMAC would not be possible. This project was inspired by the <a href="https://webaim.org/projects/million/">WebAIM Million</a> report. Note: although the Foundation regularly partners with WebAIM on projects such as the Global Digital Accessibility Salary Survey (<a href="https://gaad.foundation/what-we-do/gdass">GDASS</a>), we did not happen to consult with them yet on this project. Any errors in this report are our own. We must acknowledge <a href="https://www.deque.com/">Deque</a> for open sourcing <a href="https://github.com/dequelabs/axe-core">axe-core</a>, the engine powering our testing, and <a href="https://www.microsoft.com">Microsoft</a> for <a href="https://playwright.dev/">Playwright</a>, which powers our browser automation. Microsoft are also partners in AIMAC's next benchmark, which will be accompanied by a research paper written by <a href="https://www.linkedin.com/in/momentine/">Yumeng Ma</a>. We appreciate the collaboration, advice and feedback from <a href="https://www.linkedin.com/in/edsummersnc/">Ed Summers</a>, <a href="https://www.linkedin.com/in/jennifer-mankoff-aa9587226/">Jennifer Mankoff</a>, <a href="https://www.linkedin.com/in/aarongustafson/">Aaron Gustafson</a>, <a href="https://www.linkedin.com/in/charlietriplett/">Charlie Triplett</a>, <a href="https://www.linkedin.com/in/annmariedittell/">AnnMarie Dittell</a>, <a href="https://www.linkedin.com/in/venkateshpotluri/">Venkatesh Potluri</a>, <a href="https://www.linkedin.com/in/wobbrockjo/">Jacob Wobbrock</a> and Mary Bellard.</p>
+<h2>Methodology</h2>
+<h3>What is AIMAC?</h3>
+<p>When you ask an LLM to build a web page, how accessible is the HTML it generates? AIMAC answers that question.</p>
+<p>We prompt 43 models to generate pages across 28 categories with no accessibility guidance. Then we run <a href="https://github.com/dequelabs/axe-core">axe-core</a>, the accessibility testing engine used by Microsoft, Google, and most major tech companies, to count violations against WCAG 2.2 Level AA (the standard required by US and EU accessibility laws). Lower scores mean fewer problems.</p>
+<p>The result is an apples-to-apples comparison of how well models handle accessibility without being told to.</p>
+<h3>Understanding "AIMAC Debt"</h3>
+<p>The <strong>AIMAC Debt</strong> measures automated accessibility violations. Lower is better.</p>
+<h4>What the numbers mean</h4>
+<ul>
+ <li><strong>0.00</strong> is best possible (no critical/serious violations detected by axe-core)</li>
+ <li>Lower single-digit scores generally mean the model generates relatively clean HTML</li>
+ <li>Higher scores mean more severe and/or more numerous violations; double-digit scores indicate substantial accessibility work is needed</li>
+</ul>
+<p>In practice, 80-90% of violations are color-contrast issues (text that's hard to read against its background). The remaining 10-20% are structural: empty buttons, missing form labels, misused ARIA attributes (the HTML attributes that help screen readers understand page structure). Structural issues are often more severe because they completely block assistive technology users.</p>
+<h4>How AIMAC Debt is calculated</h4>
+<ul>
+ <li><strong>Critical violations</strong> (missing form labels, empty buttons): 5 points each</li>
+ <li><strong>Serious violations</strong> (insufficient color contrast): 2 points each</li>
+ <li><strong>Duplicate violations</strong> are dampened to avoid over-counting (details below)</li>
+</ul>
+<p>We report the median debt across all 28 categories to avoid outliers.</p>
+<h4>Technical details: Dampening formula</h4>
+<p>For those interested in the math: we use logarithmic dampening for duplicate violations of the same issue type on a page.</p>
+<p>Formula: <code>score = base_weight × (1 + k × log₂(N))</code></p>
+<p>Where:</p>
+<ul>
+ <li><code>N</code> = number of duplicate violations</li>
+ <li><code>k</code> = dampening factor (0.75 critical, 0.5 serious, 0.33 color-contrast)</li>
+ <li><code>base_weight</code> = 5 critical, 2 serious</li>
+</ul>
+<p>This ensures 100 duplicates from one bad CSS rule don't count as heavily as 100 separate issues, while still encouraging comprehensive fixes.</p>
+<h3>How Reliable Are These Rankings?</h3>
+<p>We tested ranking stability extensively:</p>
+<ul>
+ <li><strong>Top 2 and bottom 4 positions:</strong> Rock-solid across configurations</li>
+ <li><strong>Mid-tier rankings (6-16):</strong> More variable because some models excel at certain page types while struggling with others</li>
+</ul>
+<p>Choosing between mid-ranked models? Check category-specific performance on the detail pages.</p>
+<h3>Excluded Models</h3>
+<p>Pages under 10KB don't contain enough HTML to fairly test for accessibility mistakes. A 5KB page with zero violations isn't "better" than a 50KB page with three. They're solving different problems. We exclude models that produce minimal output to keep comparisons fair.</p>
+<h3>Why This Scoring System?</h3>
+<p>Our scoring reflects real-world impact:</p>
+<ul>
+ <li><strong>Critical violations (5 points vs 2 for serious):</strong> Empty buttons or missing labels completely block screen reader users</li>
+ <li><strong>Duplicate dampening:</strong> One bad CSS color causing 50 violations doesn't overwhelm the score</li>
+ <li><strong>Extra color-contrast dampening:</strong> Color issues are 70-100% of violations, so we reduce their weight to surface other differences</li>
+</ul>
+<p>We validated this with sensitivity testing. Rankings stay consistent across configurations, and there's no penalty for generating complex HTML.</p>
+<h3>Scope of Automated Testing</h3>
+<p>Axe-core catches many issues: color contrast, missing labels, empty buttons, ARIA errors.</p>
+<p>What automated testing can't catch: keyboard navigation problems, screen reader flow issues, real-world usability. Lower AIMAC Debt means a cleaner starting point, not a guarantee of perfect accessibility. Manual testing is still needed.</p>
+<h3>Preventing Benchmark Gaming</h3>
+<p>AIMAC's prompts are public. You can inspect exactly what we ask models to generate.</p>
+<p>To prevent AI companies from training on specific prompt patterns, we use <strong>prompt randomization</strong>. Each category prompt contains example lists (navigation links, section themes) randomly selected from larger pools at runtime.</p>
+<p>With current fragment pools, this yields <strong>hundreds of billions of prompt variants per category</strong> (tens of trillions across all 28 categories). Memorization is computationally infeasible.</p>
+<p>The core instructions stay constant; only stylistic examples vary. AIMAC Debt reflects genuine capability, not prompt memorization.</p>
+<h3>Understanding the Total Cost</h3>
+<p>The <strong>Total Cost</strong> column shows what we paid to generate all 28 HTML pages for each model. This is the actual API cost in USD for the complete test suite.</p>
+<h3>For Benchmark Authors</h3>
+<p>While preparing to publish, we hit some visualization challenges that led us to consider <a href="https://datasette.io/">Datasette</a>, Simon Willison's tool for exploring and publishing data. We haven't implemented it yet, but the problems we encountered seem common to benchmarks, so we're sharing what we learned.</p>
+<h4>Data publication</h4>
+<p><strong>Why publish your data?</strong></p>
+<p>Benchmark authors face a perplexing set of tradeoffs. Which models to include? How many prompts to test? How many variants? Worst of all, we can't know which version of a model we're testing because models get updated without public versioning. Companies change system prompts, infrastructure, or other API elements without warning. No benchmark will ever be truly repeatable. Publishing your data with an interactive website is a service to everyone, allowing the hive mind to improve the benchmark by highlighting gaps.</p>
+<p>Datasette with its <a href="https://datasette.io/plugins">154 plugins</a> could let us embed an interactive database viewer directly on this page. It doesn't yet have Pareto or slope chart plugins, but general visualization plugins exist (datasette-vega, datasette-plot). Any interactive charting would need careful accessibility testing, which is why we deferred it.</p>
+<h4>Pareto Optimality</h4>
+<p><strong>Sure, it's a great model, but is it Pareto optimal?</strong></p>
+<p>AI models are expensive. Benchmarks need a way to measure quality per dollar. Pareto Front charts are popular because they plot cost on one axis and quality on the other, quickly showing which models offer the best value.</p>
+<p>When you divide such a chart into quadrants, the Pareto-optimal region combines maximum capability with minimum cost. That region represents the best tradeoff.</p>
+<p>Most viewers instinctively interpret the top-right quadrant as "best." But in this benchmark, both axes reward lower values: lower debt means better accessibility, and lower cost is preferable. Plotted directly, that makes the bottom-left quadrant the Pareto-optimal one.</p>
+<p><strong>Pareto Optimality</strong> The limit of efficiency. To lower the AIMAC Debt score it would cost more. And you can't pay less without your AIMAC Debt score rising.</p>
+<p>Naming matters here. We originally called our metric "AIMAC Score," but users expect higher scores to be better. Thanks to an insight by <a href="https://www.linkedin.com/in/charlietriplett/">Charlie Triplett</a>, we renamed it to "AIMAC Debt." People intuitively understand that you want debt to be lower.</p>
+<p>Even with better naming, the Pareto chart still forces a choice between two kinds of unintuitiveness. You can leave the axes semantically honest (lower = better) and accept that the optimal quadrant is bottom-left. Or you can invert both axes so "up and to the right" means better, at the cost of making the axis directions themselves counterintuitive. Neither is great. An interactive chart that lets users toggle between views would help.</p>
+<h4>Slope Charts</h4>
+<p>Slope charts offer another way to visualize the cost vs. quality tradeoff. They plot each model's quality rank on the left and cost rank on the right, then draw a line between them. A flat or rising line means the model delivers good value: its cost rank matches or beats its quality rank. A steep drop means you're paying a premium for that quality. Pareto-optimal models are highlighted.</p>
+<p>We removed the slope chart from this iteration because with so many models, effectiveness drops, especially when costs cluster at the low end as ours do. Here's a mockup showing what it looked like when the distribution told the story well (note that this chart pre-dated our renaming of AIMAC Score to AIMAC Debt):</p>
+<figure>
+ <img alt="Sample slope chart mockup showing each model's rank by AIMAC Debt on the left and rank by total cost on the right, connected by lines. Flatter or rising lines indicate better value.">
+ <figcaption>
+  Sample slope chart mockup. Slope charts can make the cost versus debt tradeoff easier to scan when the distribution is clear.
+ </figcaption>
+</figure>
+<h2>For Model Providers</h2>
+<p><strong>Most benchmarks are simply focused on ranking models. Our goal is that every model achieve a perfect score.</strong></p>
+<p>When AI generates accessible code by default, people with disabilities are no longer locked out digital technology. A future where every model aces this benchmark means an internet that works for everyone. To be frank, as much effort as we put into the first iteration of this benchmark, achieving a perfect score on an automated metric that is easy to lint and produce synthetic data for is table stakes. However we decided to start here because the models aren't even doing this minimum step.</p>
+<h3>How to Ace the Benchmark</h3>
+<p><strong>Test the way we test.</strong> We run axe-core against rendered HTML in a real browser. Static linters won't catch everything. Color contrast, for example, requires computing actual styles from cascading CSS. <a href="https://playwright.dev/docs/accessibility-testing">Playwright's accessibility testing guide</a> covers the setup.</p>
+<p>The <a href="https://github.com/GAAD-Foundation/AIMAC">AIMAC repository</a> has our test prompts and scoring code.</p>
+<p>Questions? <a>[email protected]</a></p>
+<h2>Press</h2>
+<p>AIMAC has been featured in publications, podcasts, conference talks, and industry roundups. Selected coverage highlights:</p>
+<h3>Launch Coverage</h3>
+<ul>
+ <li><strong>VKTR</strong> - <a href="https://www.vktr.com/ai-market/the-opensource-ai-accessibility-checker-holding-llms-accountable">The Open‑Source AI Accessibility Checker Holding LLMs Accountable</a> by Michelle Hawley</li>
+ <li><strong>The AI Economy</strong> - <a href="https://theaieconomy.substack.com/p/aimac-ai-accessible-code-checker">Can Your AI Code for Everyone?</a> by Ken Yeung</li>
+ <li><strong>Curb Cuts</strong> - <a href="https://www.curbcuts.co/blog/2025-5-15-gaad-foundation-servicenow-announce-new-ai-model-accessibility-checker-api-for-developers">GAAD Foundation, ServiceNow Announce AI Model Accessibility Checker API</a> by Steven Aqui</li>
+</ul>

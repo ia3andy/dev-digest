@@ -1,0 +1,151 @@
+<h1>🤖 Revolut Built a Foundation Model for Money</h1>
+<p>Plus; $16bn withdrawn from Aave in a "run on DeFi" after KelpDAO hack, and Plaid's annual letter.</p>
+<h2>Weekly Rant 📣</h2>
+<p>🤖 <strong>Revolut Built a Foundation Model for Money</strong></p>
+<p><em>(And why it's worth billions to whichever bank builds the next one.)</em></p>
+<p>Something big happened in financial services in the last twelve months and almost nobody clocked it. Companies started training their own foundation models for finance:</p>
+<ul>
+ <li><strong>Revolut</strong> published <a href="https://arxiv.org/html/2604.08649v1">PRAGMA</a> — a foundation model trained on 24 billion banking events across 111 countries. Credit scoring up 130%. Fraud recall up 65%.</li>
+ <li><strong>Nubank</strong> published <a href="https://arxiv.org/html/2507.23267v1">nuFormer</a> — a foundation model trained on 100+ billion transactions across 100M+ customers. It's narrower than PRAGMA by use case, but more GPT-like as a model.</li>
+ <li><strong>Mastercard</strong> launched LTM — a foundation model trained on billions of card transactions to identify cyber risk.</li>
+</ul>
+<p>And some others started fine-tuning existing models.</p>
+<ul>
+ <li><strong>NPCI</strong> (India's UPI operator) — fine-tuned Mistral 24B, for UPI Help, a conversational agent for 400M+ UPI users.</li>
+ <li><strong>PayPal</strong> published Nemo-4-PayPal — fine-tuned llama3.1-nemotron-nano-8B-v1. Their shopping assistant got 49% faster and 45% cheaper to run. Two weeks of fine-tuning.</li>
+</ul>
+<p>Foundation models for finance are here.</p>
+<p>The most important signal in Revolut's PRAGMA work with NVIDIA is <a href="https://arxiv.org/html/2604.08649v1">the <em>significant</em> improvement (uplift) their model delivered vs their existing custom ML models</a>, across multiple use cases.</p>
+<p>It's now the case that the two most credible, fastest-growing Neobanks in the western hemisphere, Revolut and Nubank, are betting that transformer architectures will drive their growth.</p>
+<p><strong>Clearly, a custom finance foundation model will be a massive competitive advantage in the coming decade.</strong></p>
+<p>The IP of banking was always how they priced and managed risks, the squishy lending decisions, the fraud stuff, and the optimization of every interaction. If transformers deliver benefits in production on the scale Revolut is suggesting, they're a game changer.</p>
+<p>I've been asking for years — <em>where are the foundation models for finance?</em> Healthcare was doing this with DNA sequences. Ad-tech was doing it with clickstreams. Finance, the most data-rich industry on earth, was still stuck training bespoke ML models on hand-crafted features. PRAGMA is the first real answer that cuts across <em>multiple</em> use cases.</p>
+<h2>What is a Foundation Model for Money?</h2>
+<p>Revolut took their <strong>massive data set</strong> and looked at <strong>customer events</strong> (logins, screen taps, payments) <strong>over time</strong>.</p>
+<ul>
+ <li>26 million customers</li>
+ <li>24 billion customer events</li>
+ <li>207 billion tokens created</li>
+</ul>
+<p>This is NOT a large language model. It's not generating text or images. It's not competing with Claude or ChatGPT. Customer event data has a structure that text tokenization destroys. Numbers and scale become fragmented.</p>
+<p>To prove the model worked, Revolut ran three experiments. Pavel walked me through them.</p>
+<ul>
+ <li><strong>Experiment 1: Use the pre-trained "embeddings" on an old model.</strong> Answers one question: <em>how much information is already in the pre-trained embedding, before you've even told it what task you're solving?</em></li>
+ <li><strong>Experiment 2: Use pre-trained embeddings <em>alongside</em> the hand-crafted ML features the data science team had spent years building</strong>. This answers: <em>what new information does the foundation model capture that the old features missed?</em></li>
+ <li><strong>Experiment 3: Fine-tune the foundation model on finance outcomes using LoRA.</strong> This answers <em>can we beat the entire data science team by taking a pre-trained model and pressing a button?</em></li>
+</ul>
+<blockquote>
+ <p><em>can we beat the entire data science team by taking a pre-trained [foundation] model and pressing a button?</em></p>
+ <p>Pavel Nesterov</p>
+</blockquote>
+<p>In most cases, the answer is yes.</p>
+<p>The PRAGMA model took six production tasks, and replaced six separate custom machine learning (ML) models with one.</p>
+<h2>Revolut's Paper Shows STAGGERING Potential</h2>
+<p>The <a href="https://arxiv.org/html/2604.08649v1">paper</a> is the first time I've seen published evidence on the effectiveness of a foundation model for banking's most important competitive levers. Revolut published the uplift this model produced <em>vs their existing ML models</em>:</p>
+<ul>
+ <li>Credit scoring: +130% PR-AUC uplift vs ML models (how well it catches rare cases that matter)</li>
+ <li>Fraud recall: +65% uplift vs ML models (how much true fraud is caught above old ML model)</li>
+ <li>Marketing engagement: +79% &amp; product recommendation: +40% uplift vs ML models</li>
+</ul><img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,quality=80,format=auto,onerror=redirect/uploads/asset/file/c5899fbe-e83b-4114-a554-6c19cbeeaf72/image.png" alt="Revolut's final uplift of the PRAGMA vs production Deep Learning models">
+<p>Revolut's final uplift of the PRAGMA vs production Deep Learning models</p>
+<p>Each of these is a competitive lever:</p>
+<p><strong>1. Credit risk pricing is <em>the</em> competitive lever for banks</strong></p>
+<p>Credit scoring lets banks price and issue loans. Loans are the profit center of banks. Lending is a product that never has a demand problem. People will always take the money, the harder question is <em>will they pay back</em>, and if they do, <em>what can I should them as a %</em> so that they're <em>likely to take the loan from me, not someone else who's cheaper.</em> Today, that involves looking at <strong>their data</strong> compared to <strong>other customers' data</strong> over <strong>time.</strong></p>
+<p>→ A model that can find more customers who are likely to pay back, can price more aggressively, and the bank sells more loans, which means more <strong>revenue</strong>.</p>
+<p><em>(Assuming regulators don't tie themselves in knots over "explainability," this is the area of opportunity. FWIW, I think we need a shared responsibility framework for AI, as we have for cloud, and we'll be building V1 at <a>Fintech Nerdcon</a> this year.)</em></p>
+<p><strong>2. Fraud recall is a competitive lever for anyone in payments.</strong></p>
+<p>Fraud recall detects the % of true fraud events detected out of <em>all</em> of the fraud events that occurred. If you're detecting more of the actual fraud, you're also not falsely blocking good payments. Banks and fintech companies make money from card transactions (interchange), but are often liable for refunding fraud. So</p>
+<p>→ A model that catches more real fraud <strong>saves cost</strong>, and allowing more good transactions through generates <strong>revenue</strong>.</p>
+<p><strong>3. Marketing is how banks get new customers or cross-sell product.</strong></p>
+<p>The "attach rate" of customers is a really important metric that Neobanks like Revolut and Nubank have been excellent at. Whereas a large bank will have more than 60% of its customer base just using a single product. That's a lost opportunity for revenue.</p>
+<p>→ If customers are engaging more with marketing, their propensity to take the product being recommended increases. If they do take that product, the bank gets more <strong>revenue</strong>. Yay.</p>
+<p><strong>Notably, it had a seventh area where it did not succeed</strong>.</p>
+<p>PRAGMA performed 47% worse than Revolut's production system on anti-money laundering. This was not a surprise. Pavel told me the team expected to fail. AML is a network problem — what matters is who you transact with, not what you do. PRAGMA reads each user's history in isolation. It can't see the chain. They published the failure because it's a finding, and because they already know what to build next.</p>
+<p><em>(Although I imagine if you trained a model on that network transaction data instead of individual customer events, it would be net far more effective. The issue was the training data set, not the model type.)</em></p>
+<p>Building a customer model created six areas of competitive advantage. For a bank that already has 70M customers and is one of the fastest growing in the world.</p>
+<p>For Revolut, this kind of research compounds their advantage in tech.</p>
+<h2>The Prize is More Revenue and Lower Costs</h2><img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,quality=80,format=auto,onerror=redirect/uploads/asset/file/3526076d-46fd-4dfe-8c4a-b03e240448d7/image.jpeg" alt="">
+<p>Not a shocking business case. The magnitude, however, is.</p>
+<p>Napkin math o'clock.</p>
+<p><strong>Credit (Based on JPMorgan Chase earnings data).</strong> JPM has credit costs of over $10 billion a year, dominated by Card Services. Net charge-offs ~$2 billion per quarter in consumer, running $8bn+ annualised. Revolut's credit scoring improvement was +130% PR-AUC. That's not an 130% reduction in losses — nothing works like that in production. But even at 10% of the stated gain applied to JPM's card book?</p>
+<p>That's hundreds of millions of dollars a year. Every year. Compounding as the model improves.</p>
+<p><strong>Fraud losses can be millions per quarter.</strong> For every $1 lost in fraud, another $5.75 lost in operational costs. So that balloons to tens of millions. Revolut's fraud <em>recall</em> went up 65% — meaning they caught roughly 1.65x as much fraud as their prior production system.</p>
+<p>A large card issuer catching even a fraction more fraud pays for the GPU bill a thousand times over.</p>
+<p>Foundation models do all the things a consulting strategy deck will tell you to do.</p>
+<p>So you can skip that part and go straight to figuring out execution.</p>
+<p>But why can't every bank do this?</p>
+<h2>What Revolut built is 2020-era LLM. What comes next is wild.</h2>
+<p>Today PRAGMA predicts. That's it. Given a customer's history, it predicts who's a credit risk, who's committing fraud, and who's about to churn and a customers's lifetime value. Which is useful by all means but boring compared to what's coming.</p>
+<p>Pavel gave me the analogy of where LLMs were in 2020. Back then <a href="https://en.wikipedia.org/wiki/BERT_(language_model)">BERT</a> could read a sentence and fill in the missing word. Useful for search, classification, and ranking. But it wasn't until GPT came along and could <em>generate</em> the next sentence that things really began to change.</p>
+<p>PRAGMA today is like BERT was in 2020. It reads a customer's history and fills in the gaps.</p>
+<p>A generative version would write the next chapter. If you can generate a customer's future events, you can simulate when they'll buy a new product. And then rewind the tape to see the things that led to that decision, and try to make those things happen.</p>
+<p>Low-key Minority Report, for banking.</p>
+<p>That doesn't exist yet, but that's the goal.</p>
+<h2>Why haven't banks done this?</h2>
+<p>Do not underestimate banks AI capabilities in <em>some areas</em>.</p>
+<p>Banks have been doing machine learning for decades. Every major bank has capable AI talent in lending, underwriting, and AML — people who've forgotten more about credit modeling than most Silicon Valley ML engineers will ever learn. Their data sets are enormous and compounded over decades of experience.</p>
+<p>So why did a neobank ship this first?</p>
+<p><strong>1. Capability, and the ability move quickly.</strong></p>
+<p>Revolut is the canonical move-fast-and-occasionally-break-a-thing Fintech company, that famously took a little while to get its full UK bank license because of regulator concerns over audit gaps and compliance staff turnover. They will move quickly.</p>
+<p>And the entire tech stack is modern, regularly replaced, and ideal for this kind of experimentation. A bank could take months just to find and scrub the data they need for this training. Revolut likely had it. Ready to go.</p>
+<p><strong>2. The availability of open-weight base models.</strong></p>
+<p>Open-weight models like Qwen, Kimi and GLM are now incredibly capable, cheap and with a couple of weeks of rentable GPUs can be trained to run a foundation model on private data sets.</p>
+<p>That conversation may be happening in large institutions, but the execution pace isn't in the same universe. But I don't think that means they'll stay absent. When it's a company's IP, they're actually good at this stuff.</p>
+<p>The fact that Mastercard built a foundation model is a big tell for me.</p>
+<p>Foundation models for finance aren't a research problem anymore. They're an execution problem. The base models are open-weight. The frameworks are public. The papers are on arXiv. The compute is rentable. Banks can now do this.</p>
+<p>Banks have never lacked talent or resources; they just often get McKonsultant'd and PowerPoint-slided to death. The banks that train their own foundation models will be the ones who ignore that guff, and get their data and risk talent working hands-on with folks like NVIDIA.</p>
+<p>And Pahal Patangia runs payments business development at Nvidia. Where did he come from? <em>FICO</em>. The person who spent a decade helping retail banks build credit models is now the person helping Nvidia sell them the thing that replaces credit models.</p>
+<p>That's not a coincidence.</p>
+<h2>NVIDIA's Enterprise Finance Pitch</h2>
+<p>You think NVIDIA, you think chips, Jensen's leather jacket, and a stock price that's propping up the S&amp;P 500</p>
+<p>Almost nobody outside the people already working with them knows what they do in financial services.</p>
+<p>For Revolut, NVIDIA built the factory that lets a bank turn its proprietary data into a proprietary foundation model. It supports rolling your own foundation model or fine-tuning.</p>
+<ol>
+ <li><strong>Foundation Model Building (Revolut, Mastercard):</strong> NVIDIA provides the silicon (H100s, Blackwell), the data libraries (cuDF for the GPU-accelerated feature engineering that used to take weeks), and a training framework (NeMo AutoModel) that handles the parallelism so the ML team doesn't have to. PRAGMA's 1B model trained on 32 H100s in roughly two weeks.</li>
+ <li><strong>Fine Tuning a Model (PayPal):</strong> NVIDIA provides the <em>base model itself</em> — Nemotron. Plus the framework to do the fine-tuning (NeMo), plus the inference runtime to serve it cheaply (TensorRT-LLM).</li>
+</ol>
+<p>Pahal Patangia made the point on a recent Tokenized podcast episode — and I keep coming back to it — that training is a one-time cost. Inference is forever.</p>
+<p>A bank running fraud on every transaction, credit on every application, personalization on every session, is paying the inference bill billions of times a day. NVIDIA's whole recent model family has been re-tuned around that second number. Smaller models trained on more data, so they punch above their weight when you fine-tune them.</p>
+<p>So they'll help you train at low cost, because they want your inference workloads.</p>
+<p>Sort of like how GLP-1s give you something you want (better body shape) in return for a subscription fee to the medication.</p>
+<p>And before I turn this into an NVIDIA sales pitch, there are plenty of alternative companies competing here. Google TPUs, AWS Trainium on Bedrock, and AMD are all building out their offerings here.</p>
+<p>In fact, the raw inference space is becoming <em>so competitive</em>, there's a growing view in Silicon Valley that NVIDIA's moat is falling to more specialized silicon. So much so that the CEO of NVIDIA, Jensen Huang, went on the Dwarkesh podcast to lay out his counterargument <em>(and accidentally spawned a hilarious set of memes about cars).</em></p>
+<h2>It's not just the models</h2>
+<p>A foundation model is nice.</p>
+<p>But there's actually 3 layers of AI competitive advantage, the model is just one of them.</p>
+<ol>
+ <li>Talent. In one room. With one architecture.</li>
+ <li>The Data. Big banks have plenty.</li>
+ <li>The Model. What we've discussed today.</li>
+ <li>The workflow around the model is another.</li>
+</ol><img src="https://media.beehiiv.com/cdn-cgi/image/fit=scale-down,quality=80,format=auto,onerror=redirect/uploads/asset/file/0aca459c-7c36-47cd-9ba7-134d8a874345/converted_image__3_.png" alt="The Fintech Brainfood: Four Layers of AI Competitive Advantage">
+<p>The Fintech Brainfood: Four Layers of AI Competitive Advantage</p>
+<p><strong>Look at what PayPal did. They didn't just fine-tune Nemotron and ship it. They built a multi-agent system around it.</strong> Agents handle reasoning, checkout, fraud. The fine-tuned model is one component in a larger agentic workflow that, combined, <em>is the product</em>.</p>
+<ul>
+ <li>The model gets better the more data you put through it.</li>
+ <li>The workflow gets better the more customer interactions you observe.</li>
+ <li>The data gets richer the more products you cross-sell.</li>
+</ul>
+<p>Each layer compounds the one below it.</p>
+<p>Agentic workflows as intellectual property. Anyone with data and a computer can train a model. But the workflow — the orchestration, the tool routing, the evaluation harnesses, the guardrails, the specific prompts that encode your product's opinion about <em>what good looks like</em> — that's harder to copy.</p>
+<p>That's where competitive advantage starts to move to, once everyone has a foundation model.</p>
+<p><em>An aside: One more thing that held in Revolut's research: scaling laws work on events. More parameters, better performance. The same pattern that drives LLM progress applies to banking event data. The 10M-parameter model is good. The 1B-parameter model is better. The frontier keeps moving</em>.</p>
+<h2>So what do you do to compete?</h2>
+<p>I think there are three options emerging.</p>
+<ol>
+ <li><strong>Build your own custom model like Revolut did.</strong> This requires a massive dataset and, more importantly, the ability to <em>use it for training</em>.</li>
+ <li><strong>Collaborate with other industry actors to build a model.</strong> This could be with your core processor, industry consortia or vendors. Sardine has 6 billion user device profiles and event data. FICO has more lending data than anyone I can think of.</li>
+ <li><strong>Buy a model from a company with a large data set.</strong> Vendors exist in risk and credit who have <em>pretty large datasets themselves</em>. It's a matter of time until these companies have foundation models you could just buy.</li>
+</ol>
+<p>Your decision comes down to where you see your competitive advantage, and your honest assessment of your ability to execute.</p>
+<p>Neobanks and digital-only banks are now in an arms race to build their own models.</p>
+<p>The big banks have to figure out if they compete or if any of their bigger suppliers can help them compete.</p>
+<p>A mid-sized or smaller bank with a smaller customer base probably shouldn't be banging on NVIDIA's door to custom-train a model on their batch file outputs. But a group of smaller banks with pooled data and resources could do something very interesting.</p>
+<h2>Banks are not disrupted. But AI is disruptive.</h2>
+<p><a href="https://www.fintechbrainfood.com/p/banks-are-not-disrupted">Banks are not disrupted</a>. I still believe that.</p>
+<p>The moats around regulation, lending, and balance sheet are real, and they aren't going anywhere. But the banks that win the next decade aren't the ones with the biggest balance sheets. They're the ones that upgrade their IP. The moat stays the same. The winners inside the moat change.</p>
+<p>The IP of banking was always how they price and manage risks. The squishy lending decisions. The fraud stuff. For 200 years that IP lived in spreadsheets and in the heads of underwriters. Revolut just moved it into a model. And the model is only phase one of four.</p>
+<p>The only thing between you and a PRAGMA of your own is deciding which of the three paths is yours. Build. Collaborate. Buy.</p>
+<p>Pick one. Start now.</p>
+<p>ST.</p>
+<p><em>* Much of the PRAGMA detail in this Rant came from a conversation with Pavel Nesterov, one of the paper's authors. Any errors are mine. <a href="https://youtu.be/og7GlBVJfmQ?si=8imKjqnI4WfZFm5P">I also spoke to Pahal from NVIDIA on the Tokenized Podcast</a> and it was an absolute BANGER episode. You should really <a href="https://youtu.be/og7GlBVJfmQ?si=8imKjqnI4WfZFm5P">check it out</a>.</em></p>

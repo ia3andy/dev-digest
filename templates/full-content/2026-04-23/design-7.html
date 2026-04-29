@@ -1,0 +1,96 @@
+<h1>Ship&nbsp;agents&nbsp;to&nbsp;production.</h1>
+<p>Infrastructure for CLI-based AI agents. Sandboxing, auth, UI, and observability — out of the box.</p>
+<p>Building an agent takes a weekend.<br>
+ Running it in production takes months.</p>
+<h3>Without 21st</h3>
+<ul>
+ <li>Containers &amp; sandboxing</li>
+ <li>Secrets &amp; credential injection</li>
+ <li>Auth &amp; token exchange</li>
+ <li>Logging &amp; tracing</li>
+ <li>Tenant isolation</li>
+ <li>Chat UI components</li>
+</ul>
+<p>Weeks of infra work</p>
+<h3>With 21st</h3>
+<pre><code>// agents/my-agent/index.ts
+export default agent(\{
+  model: "claude-sonnet-4-6",
+  tools: \{ ... },
+})</code></pre>
+<pre><code>npx @21st-sdk/cli deploy</code></pre>
+<p>— done.</p>
+<h2>Everything you need to run agents in production.</h2>
+<h3>Sandboxed Runtimes</h3>
+<p>Every agent session runs in an isolated E2B sandbox with gVisor. Boots in seconds, not minutes.</p>
+<h3>Credential Management</h3>
+<p>API keys, env vars, secrets — injected securely at runtime. Token exchange auth for browser clients.</p>
+<h3>Agent UI</h3>
+<p>Drop-in React components for chat, streaming, and tool rendering. Works with Next.js out of the box.</p>
+<h3>Observability</h3>
+<p>Every step traced. Cost per session, latency, errors, token usage — one dashboard.</p>
+<h2>Three steps. Zero infra.</h2>
+<h3>1. Define</h3>
+<p>Write your agent in TypeScript. Add tools with Zod schemas. Configure model, system prompt, and MCP servers.</p>
+<h3>2. Deploy</h3>
+<p>npx @21st-sdk/cli deploy pushes your agent to a sandboxed, production-grade environment.</p>
+<h3>3. Integrate</h3>
+<p>Every agent gets an API endpoint. Embed the React chat UI, or connect via the server SDK.</p>
+<h2>Code-first. TypeScript all the way.</h2>
+<pre><code>import \{ agent, tool } from "@21st-sdk/agent"
+import \{ z } from "zod"
+
+export default agent(\{
+  model: "claude-sonnet-4-6",
+  systemPrompt: "You are a helpful assistant.",
+  tools: \{
+    search: tool(\{
+      description: "Search the knowledge base",
+      inputSchema: z.object(\{
+        query: z.string()
+      }),
+      execute: async (\{ query }) =&gt; ...
+    }),
+  },
+})</code></pre>
+<h2>Start from a working agent.</h2>
+<h3>Support Agent</h3>
+<p>Docs-powered Q&amp;A with email escalation</p>
+<h3>Lead Research</h3>
+<p>Qualify leads, alert via Slack</p>
+<h3>Web Scraper</h3>
+<p>Extract data from any website</p>
+<h3>Email Agent</h3>
+<p>Send, read, auto-reply via AgentMail</p>
+<h3>Docs Assistant</h3>
+<p>Instant Q&amp;A from your llms.txt</p>
+<h3>Slack Monitor</h3>
+<p>Track services, alert on Slack</p>
+<h2>Start free. Scale when you need to.</h2>
+<h3>Usage</h3>
+<p>Pay as you go</p>
+<p>For developers shipping their first agents.</p>
+<ul>
+ <li>Unlimited agents</li>
+ <li>E2B sandboxed runtimes with gVisor</li>
+ <li>Built-in token exchange auth</li>
+ <li>AgentChat React components</li>
+ <li>Observability &amp; tracing dashboard</li>
+ <li>Environment variables &amp; secrets</li>
+ <li>Claude Code runtime</li>
+ <li>Community Discord support</li>
+</ul>
+<h3>Scale</h3>
+<p>Custom</p>
+<p>For teams running agents on their own infrastructure.</p>
+<ul>
+ <li>Everything in Usage, plus:</li>
+ <li>On-premise deploy in your VPC</li>
+ <li>SSO &amp; Okta (SAML, OIDC)</li>
+ <li>Immutable audit logs</li>
+ <li>Budget caps per agent &amp; workflow</li>
+ <li>Full run replay with cost breakdown</li>
+ <li>Custom sandbox specs (CPU, RAM, disk)</li>
+ <li>Dedicated support &amp; SLA</li>
+</ul>
+<h2>Ship your first agent in 5 minutes.</h2>

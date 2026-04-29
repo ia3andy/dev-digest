@@ -1,0 +1,93 @@
+<img alt="OpenClaw LLM agent is represented by this crab Photo by Sandra Iglesias on Unsplash">
+<p>Searching for MEV profit opportunities often requires tedious blockchain monitoring and analysis. In this tutorial, I'll describe how to automate this process using the <a href="https://mevlog.rs/">mevlog-rs</a> MCP interface and the <a href="https://openclaw.ai/">OpenClaw</a> agent. We'll use a secure HTTPS connection and Telegram chat for communication. We'll also discuss the pros and cons of using OpenClaw vs. a manual MCP integration.</p>
+<h2>Initial setup and RPC requirements</h2>
+<p>I don't think the world needs another article on a basic OpenClaw setup. Any tutorial on <a href="https://www.youtube.com/results?search_query=openclaw+ubuntu">running OpenClaw with a Ubuntu VPS</a> should work. I will assume you already have an OpenClaw integration with a communication interface, such as Telegram, configured.</p>
+<p>For an MCP integration, you'll need an LLM agent configured and running locally. For the rest of this article, we will use the <a href="https://claude.com/product/claude-code">Claude Code CLI</a>.</p>
+<p>An optional but useful prerequisite for this tutorial is running a Geth full node on the same machine as OpenClaw. Local node offers significantly better performance for scanning larger block ranges. You can also use a premium RPC endpoint, e.g., from <a href="https://www.alchemy.com/">Alchemy</a>. But if you want a quick and easy way to test this setup, you can also use the built-in <a href="https://chainlist.org/">ChainList integration</a>, which automatically selects the fastest free RPC endpoint. But, please remember that free RPC endpoints are often throttled, don't provide access to older data, and disable EVM tracing features.</p>
+<h2>Configuring an MCP server with mevlog-rs</h2>
+<p>Let's start with a less "magical" setup. We will first configure a local MCP server and later a remote one to enable querying blockchain data by simply talking to your LLM agent. Full reference is in the <a href="https://github.com/pawurb/mevlog-rs/blob/main/docs/MCP.md">mevlog-rs MCP docs</a>.</p>
+<p>First, install an mevlog-rs CLI with the MCP feature enabled:</p>
+<pre><code>cargo install mevlog --features mcp</code></pre>
+<p>Start by verifying if basic querying works:</p>
+<pre><code>mevlog search -b latest --rpc-url=$ETH_RPC_URL</code></pre>
+<p>You should see JSON output with txs from the recent block.</p>
+<p>Now run a mevlog MCP server locally:</p>
+<pre><code>mevlog mcp --rpc-url=$ETH_RPC_URL</code></pre>
+<p>Next, configure it with your Claude Code instance:</p>
+<pre><code>claude mcp add --transport http mevlog http://localhost:6671</code></pre>
+<p>That's it! You can query blockchain through an LLM interface by just asking questions like:</p>
+<ul>
+ <li>query the last 50 blocks for transactions that transferred PEPE (<code>0x6982508145454ce325ddbe47a25d4ec3d2311933</code>) token</li>
+ <li>find transactions that transferred over 100k USDC (<code>0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48</code>) in the last 200 blocks</li>
+ <li>which tx transferred the most DAI (<code>0x6b175474e89094c44da98b954eedeac495271d0f</code>) in the last 6 hours</li>
+</ul><img alt="Claude Code using mevlog using an MCP interface">
+<h2>Configuring a remote MCP endpoint for better RPC performance</h2>
+<p>The above setup assumes that the <code>mevlog</code> CLI executes on your local machine. For production-like deployments, this is usually not optimal. The largest bottleneck of querying blockchains is downloading the data. <code>mevlog</code> uses caching extensively, so repetitive queries against the same block ranges will be significantly faster, but initial data must be downloaded over the wire.</p>
+<p>For the best download performance, I recommend a proprietary full node. But you're likely not run it in a local network but on an external VPS. To configure <code>mevlog</code> with an external node, you'll need an authenticated HTTPS gateway using NGINX. So let's do it now.</p>
+<p>I won't elaborate on configuring SSH access or running a full node on a proprietary VPS. Check my other tutorial for detailed info on how to do it.</p>
+<p>To expose your MCP endpoint externally, you'll need a similar nginx config:</p>
+<pre><code>server \{
+    listen 80;
+    listen [::]:80;
+    server_name mcphost.com;
+    return 301 https://$host$request_uri;
+}
+
+server \{
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name mcphost.com;
+
+    ssl_certificate /etc/nginx/ssl/mcphost.crt;
+    ssl_certificate_key /etc/nginx/ssl/mcphost.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    location = /mcp \{
+        proxy_pass http://127.0.0.1:6671/mcp;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        proxy_set_header Connection "";
+        proxy_buffering off;
+        proxy_request_buffering off;
+        chunked_transfer_encoding on;
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+
+    location = /.well-known/oauth-authorization-server \{
+        proxy_pass http://127.0.0.1:6671/.well-known/oauth-authorization-server;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+
+    location = /.well-known/oauth-protected-resource \{
+        proxy_pass http://127.0.0.1:6671/.well-known/oauth-protected-resource;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto https;
+    }
+}</code></pre>
+<p>I usually use a <a href="https://cloudflare.com/">Cloudflare</a> proxy and origin certificates to configure a secure SSL connection. Alternatively, you can use <a href="https://certbot.eff.org/">Certbot</a>. BTW, if you already have an OpenClaw running on your VPS, you can ask him to configure it; he'll know what to do.</p>
+<p>Now start the authenticated MCP process on a VPS:</p>
+<pre><code>MEVLOG_MCP_AUTH_TOKEN=mcp_password mevlog mcp --rpc-url=$ETH_RPC_URL --host=127.0.0.1</code></pre>
+<p>and configure your Claude Code to use this external endpoint:</p>
+<pre><code>claude mcp add --transport http mevlog-remote https://mcphost.com --header "Authorization: Bearer mcp_password"</code></pre>
+<p>and use it as you did before. It's a simple way to use a high-performance, externally hosted node to query the blockchain from a local LLM agent.</p>
+<h3>How to query EVM blockchains with the OpenClaw LLM agent</h3>
+<p>The MCP server required some manual configuration. If you're more into "agentic workflows", the OpenClaw setup might work better for you. Once you already have an OpenClaw configured, getting started with mevlog-rs is straightforward. There's a dedicated <a href="https://github.com/pawurb/mevlog-rs/blob/main/skills/mevlog-cli/SKILL.md">SKILL.md</a> file that explains how to use the CLI directly without the MCP endpoint. A recommended setup is to run OpenClaw on the same VPS as your RPC node to ensure the best performance.</p>
+<p>Just ask your OpenClaw to import the skill into memory, and provide an RPC (local or remote) endpoint, and you're good to go.</p><img alt="OpenClaw agent using mevlog using a dedicated skill">
+<p>I find OpenClaw setup useful for running scheduled queries and reporting directly to a Telegram channel. You can configure cron tasks like:</p>
+<ul>
+ <li>every 1h check and notify me if any transaction transferred more than 1 million USDC</li>
+ <li>each day at 8AM send me a report on which 10 txs paid the most for gas in the last 24 hours</li>
+ <li>how many txs did <code>jaredfromsubway.eth</code> send in the last 24h, and how much was his total gas spending</li>
+</ul>
+<h2>Summary</h2>
+<p>I wish I had access to similar tooling when I was full-time focused on building MEV bots some time ago. It would have saved me dozens of hours of manually querying blockchains for relevant txs. I hope you'll find some of these techniques useful. Please send any feature requests or bug reports.</p>
+<p>Also, stay tuned: I'm currently working on a major release of the <code>mevlog</code> CLI that will massively speed up and improve querying across large block ranges.</p>

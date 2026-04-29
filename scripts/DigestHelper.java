@@ -22,6 +22,9 @@ public class DigestHelper {
 
     static final int CONTENT_MIN_LENGTH = 500;
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    static double totalCostUsd = 0.0;
+    static int totalCalls = 0;
+    static String costContext = "";
 
     // TLDR page selectors (shared between Jsoup and Playwright)
     static final String SEL_SECTION = "section";
@@ -47,6 +50,12 @@ public class DigestHelper {
             System.err.println("Usage: DigestHelper <command> <args...>");
             System.exit(1);
         }
+        costContext = switch (args[0]) {
+            case "summarize" -> args.length > 2 ? args[2] : "";
+            case "write-content" -> Path.of(args[1]).getParent().getFileName().toString();
+            case "clean-all" -> "all";
+            default -> "";
+        };
         switch (args[0]) {
             case "tldr-articles" -> tldrArticles(args[1]);
             case "enrich" -> enrich(args[1], args[2], args[3]);
@@ -58,6 +67,39 @@ public class DigestHelper {
                 System.err.println("Unknown command: " + args[0]);
                 System.exit(1);
             }
+        }
+        if (totalCostUsd > 0) {
+            System.err.printf("%n  Session cost: $%.4f (%d calls)%n", totalCostUsd, totalCalls);
+            logCost(args[0]);
+        }
+    }
+
+    static void logCost(String command) {
+        try {
+            var logFile = Path.of(".digest-costs.log");
+            double grandTotal = 0;
+            if (Files.exists(logFile)) {
+                for (String l : Files.readAllLines(logFile)) {
+                    if (l.startsWith("TOTAL:")) {
+                        var m = Pattern.compile("\\$([0-9.]+)").matcher(l);
+                        if (m.find()) grandTotal = Double.parseDouble(m.group(1));
+                    }
+                }
+            }
+            grandTotal += totalCostUsd;
+            String ctx = costContext.isEmpty() ? command : command + " " + costContext;
+            String line = String.format("%s  %-30s %2d calls  $%.4f%n",
+                    java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                    ctx, totalCalls, totalCostUsd);
+            String totalLine = String.format("TOTAL: $%.4f%n", grandTotal);
+            var lines = Files.exists(logFile) ? new ArrayList<>(Files.readAllLines(logFile)) : new ArrayList<String>();
+            lines.removeIf(l -> l.startsWith("TOTAL:"));
+            lines.add(line.stripTrailing());
+            lines.add(totalLine.stripTrailing());
+            Files.writeString(logFile, String.join("\n", lines) + "\n");
+            System.err.printf("  Grand total: $%.4f%n", grandTotal);
+        } catch (Exception e) {
+            System.err.println("  Failed to log cost: " + e.getMessage());
         }
     }
 
@@ -263,7 +305,7 @@ public class DigestHelper {
 
     static String cleanHtmlWithAI(String html) {
         try {
-            var proc = new ProcessBuilder("claude", "--model", "haiku", "-p",
+            var proc = new ProcessBuilder("claude", "--model", "haiku", "--output-format", "json", "-p",
                     "Extract ONLY the article body from this HTML. " +
                     "REMOVE everything that is not the article's own prose: " +
                     "navigation, menus, ads, author bios, bylines, dates, comment sections, " +
@@ -281,9 +323,17 @@ public class DigestHelper {
                     .start();
             proc.getOutputStream().write(html.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             proc.getOutputStream().close();
-            String result = new String(proc.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
+            String raw = new String(proc.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
             proc.waitFor(120, java.util.concurrent.TimeUnit.SECONDS);
-            if (proc.exitValue() != 0 || result.isEmpty()) return null;
+            if (proc.exitValue() != 0 || raw.isEmpty()) return null;
+            var json = GSON.fromJson(raw, JsonObject.class);
+            String result = json.get("result").getAsString().trim();
+            if (json.has("total_cost_usd")) {
+                double cost = json.get("total_cost_usd").getAsDouble();
+                totalCostUsd += cost;
+                totalCalls++;
+                System.err.printf("      -> $%.4f (haiku clean)%n", cost);
+            }
             result = result.replaceAll("(?s)^```[a-z]*\\n?", "").replaceAll("(?s)\\n?```$", "").trim();
             return result;
         } catch (Exception e) {
@@ -580,15 +630,28 @@ public class DigestHelper {
                 .render();
 
         System.err.println("  Calling Claude for " + articles.size() + " articles...");
-        var proc = new ProcessBuilder("claude", "--model", "sonnet", "-p", prompt)
+        var proc = new ProcessBuilder("claude", "--model", "sonnet", "--output-format", "json", "-p", prompt)
                 .redirectErrorStream(false).start();
         proc.getOutputStream().write(dataInput.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
         proc.getOutputStream().close();
-        String result = new String(proc.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
+        String raw = new String(proc.getInputStream().readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
         proc.waitFor(300, java.util.concurrent.TimeUnit.SECONDS);
-        if (proc.exitValue() != 0 || result.isEmpty()) {
+        if (proc.exitValue() != 0 || raw.isEmpty()) {
             System.err.println("  Claude call failed (exit " + proc.exitValue() + ")");
             return;
+        }
+        String result;
+        try {
+            var cliJson = GSON.fromJson(raw, JsonObject.class);
+            result = cliJson.get("result").getAsString().trim();
+            if (cliJson.has("total_cost_usd")) {
+                double cost = cliJson.get("total_cost_usd").getAsDouble();
+                totalCostUsd += cost;
+                totalCalls++;
+                System.err.printf("  -> $%.4f (sonnet summarize, %d articles)%n", cost, articles.size());
+            }
+        } catch (Exception e) {
+            result = raw;
         }
         result = result.replaceAll("(?s)^```[a-z]*\\n?", "").replaceAll("(?s)\\n?```$", "").trim();
 

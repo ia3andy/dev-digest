@@ -1,0 +1,109 @@
+<h1>tda-mapper</h1>
+<p><strong>tda-mapper</strong> is a Python library built around the Mapper algorithm, a core technique in Topological Data Analysis (TDA) for extracting topological structure from complex data. Designed for computational efficiency and scalability, it leverages optimized spatial search methods to support high-dimensional datasets. The library is well-suited for integration into machine learning pipelines, unsupervised learning tasks, and exploratory data analysis.</p>
+<p>Further details in the <a href="https://tda-mapper.readthedocs.io/en/main/">documentation</a> and in the <a href="https://openreview.net/pdf?id=lTX4bYREAZ">paper</a>.</p>
+<h2>Core Features</h2>
+<ul>
+ <li>
+  <p><strong>Efficient construction</strong></p>
+  <p>Leverages optimized spatial search techniques and parallelization to accelerate the construction of Mapper graphs, supporting the analysis of high-dimensional datasets.</p></li>
+ <li>
+  <p><strong>Scikit-learn integration</strong></p>
+  <p>Provides custom estimators that are fully compatible with scikit-learn's API, enabling seamless integration into scikit-learn pipelines for tasks such as dimensionality reduction, clustering, and feature extraction.</p></li>
+ <li>
+  <p><strong>Flexible visualization</strong></p>
+  <p>Multiple visualization backends supported (Plotly, Matplotlib, PyVis) for generating high-quality Mapper graph representations with adjustable layouts and styling.</p></li>
+ <li>
+  <p><strong>Interactive app</strong></p>
+  <p>Provides an interactive web-based interface for dynamic exploration of Mapper graph structures, offering real-time adjustments to parameters and visualizations.</p></li>
+</ul>
+<h2>Background</h2>
+<p>The Mapper algorithm extracts topological features from complex datasets, representing them as graphs that highlight clusters, transitions, and key structural patterns. These insights reveal hidden data relationships and are applicable across diverse fields, including social sciences, biology, and machine learning. For an in-depth overview of Mapper, including its mathematical foundations and practical applications, read <a href="https://research.math.osu.edu/tgda/mapperPBG.pdf">the original paper</a>.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Step 1</th>
+   <th>Step 2</th>
+   <th>Step 3</th>
+   <th>Step 4</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><a href="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/mapper_1.png"><img src="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/mapper_1.png" alt="Step 1"></a></td>
+   <td><a href="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/mapper_2.png"><img src="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/mapper_2.png" alt="Step 2"></a></td>
+   <td><a href="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/mapper_3.png"><img src="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/mapper_3.png" alt="Step 3"></a></td>
+   <td><a href="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/mapper_4.png"><img src="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/mapper_4.png" alt="Step 2"></a></td>
+  </tr>
+  <tr>
+   <td>Choose lens</td>
+   <td>Cover image</td>
+   <td>Run clustering</td>
+   <td>Build graph</td>
+  </tr>
+ </tbody>
+</table>
+<h2>Quick Start</h2>
+<h3>Installation</h3>
+<p>To install the latest version uploaded on PyPI</p>
+<pre><code>pip install tda-mapper</code></pre>
+<h3>How to Use</h3>
+<p>Here's a minimal example using the <strong>circles dataset</strong> from <code>scikit-learn</code> to demonstrate how to use <strong>tda-mapper</strong>. This example demonstrates how to apply the Mapper algorithm on a synthetic dataset (concentric circles). The goal is to extract a topological graph representation using <code>PCA</code> as a lens and <code>DBSCAN</code> for clustering. We proceed as follows:</p>
+<pre><code>import matplotlib.pyplot as plt
+from sklearn.datasets import make_circles
+
+import numpy as np
+from sklearn.decomposition import PCA
+from sklearn.cluster import DBSCAN
+
+from tdamapper.learn import MapperAlgorithm
+from tdamapper.cover import CubicalCover
+from tdamapper.plot import MapperPlot
+
+# Generate toy dataset
+X, labels = make_circles(n_samples=5000, noise=0.05, factor=0.3, random_state=42)
+plt.figure(figsize=(5, 5))
+plt.scatter(X[:,0], X[:,1], c=labels, s=0.25, cmap="jet")
+plt.axis("off")
+plt.show()
+
+# Apply PCA as lens
+y = PCA(2, random_state=42).fit_transform(X)
+
+# Mapper pipeline
+cover = CubicalCover(n_intervals=10, overlap_frac=0.3)
+clust = DBSCAN()
+graph = MapperAlgorithm(cover, clust).fit_transform(X, y)
+
+# Visualize the Mapper graph
+fig = MapperPlot(graph, dim=2, seed=42, iterations=60).plot_plotly(colors=labels)
+fig.show(config=\{"scrollZoom": True})</code></pre>
+<table>
+ <thead>
+  <tr>
+   <th>Original Dataset</th>
+   <th>Mapper Graph</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><a href="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/circles_dataset_v2.png"><img src="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/circles_dataset_v2.png" alt="Original Dataset"></a></td>
+   <td><a href="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/circles_mean_v2.png"><img src="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/circles_mean_v2.png" alt="Mapper Graph"></a></td>
+  </tr>
+ </tbody>
+</table>
+<p>Left: the original dataset consisting of two concentric circles with noise, colored by class label. Right: the resulting Mapper graph, built from the PCA projection and clustered using DBSCAN. The two concentric circles are well identified by the connected components in the Mapper graph.</p>
+<p>More examples can be found in the <a href="https://tda-mapper.readthedocs.io/en/main/examples.html">documentation</a>.</p>
+<h2>Interactive App</h2>
+<p>Use our app to interactively visualize and explore your data without writing code. You can try it right away using <a href="https://tda-mapper-app.up.railway.app/">our live demo</a>, or run it locally on your machine.</p>
+<p>To run it locally:</p>
+<ol>
+ <li>
+  <p>Install the app and its dependencies:</p>
+  <pre><code>pip install tda-mapper[app]</code></pre></li>
+ <li>
+  <p>Launch the app:</p>
+  <pre><code>tda-mapper-app</code></pre></li>
+</ol>
+<p><a href="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/tda-mapper-app.png"><img src="https://github.com/lucasimi/tda-mapper-python/raw/main/resources/tda-mapper-app.png" alt="tda-mapper-app"></a></p>
+<h2>Citations</h2>
+<p>If you use <strong>tda-mapper</strong> in your work, please consider citing both the <a href="https://doi.org/10.5281/zenodo.10642381">library</a>, archived in a permanent Zenodo record, and the <a href="https://openreview.net/pdf?id=lTX4bYREAZ">paper</a>, which provides a broader methodological overview. We recommend citing the specific version of the library used in your research, along with the paper. For citation examples, please refer to the <a href="https://tda-mapper.readthedocs.io/en/main/#citations">documentation</a>.</p>

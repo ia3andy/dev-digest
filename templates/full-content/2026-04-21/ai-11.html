@@ -1,0 +1,156 @@
+<h1>FlashDrive: Flash Vision-Language-Action Inference For Autonomous Driving</h1>
+<p>Traditional autonomous driving systems separate perception and planning, which leaves them brittle on the "long tail" of rare, complex scenarios that real-world driving demands. Vision-Language-Action (VLA) models take a fundamentally different approach: by integrating chain-of-thought reasoning into end-to-end driving, they can think through novel situations step by step, producing explicit reasoning traces alongside trajectory predictions. This year, NVIDIA <a href="https://developer.nvidia.com/drive/alpamayo">released Alpamayo 1 and Alpamayo 1.5</a>, the industry's first open-source reasoning VLA models for autonomous driving.</p>
+<p>But reasoning takes time. Alpamayo 1.5 (10B parameters, built on Qwen3-VL) takes <strong>716ms</strong> per step on an NVIDIA RTX PRO 6000, roughly 1.4 Hz, far short of the real-time requirements for safe driving. <strong>FlashDrive</strong> is an algorithm-system co-design framework that attacks all four stages (encode, prefill, decode, and action), reducing end-to-end latency to <strong>159ms</strong>, a <strong>4.5× speedup</strong> with negligible accuracy loss.</p>
+<h2>The Bottleneck Is Everywhere</h2>
+<p>A typical VLA driving model's inference breaks into four stages: vision encoding, prompt prefilling, reasoning token decoding, and action generation via flow matching. We profiled Alpamayo 1.5 and found that latency is spread across all four stages with no single dominant bottleneck. Getting close to real-time requires optimizing the entire stack.</p>
+<figure>
+ <figcaption>
+  Decode and action together account for nearly two-thirds of the 716ms total, but encode and prefill are large enough that no single-stage fix suffices.
+ </figcaption>
+</figure>
+<h2>Streaming Inference</h2>
+<p>Unlike a chatbot VLM that processes a single image per request, a driving VLA must ingest a continuous multi-camera video stream. At every step, the model processes a sliding window of temporal frames across multiple camera views (e.g., 4 frames × 4 views). But consecutive time steps overlap by 75%: three out of four frames are identical. Re-encoding the full window from scratch every step wastes computation on frames the model has already seen.</p>
+<p>We introduce a streaming inference strategy that processes only the new frame:</p>
+<ul>
+ <li><strong>KV cache reuse</strong> from the three previously encoded frames eliminates 75% of vision computation.</li>
+ <li><strong>Pre-RoPE key caching</strong> with on-the-fly rotary embeddings handles dynamic position shifts as old frames are evicted and new ones arrive.</li>
+ <li><strong>A custom streaming attention mask</strong> accommodates view-major token ordering across cameras, ensuring each new frame attends only to frames from the current and previous views while remaining causal within itself.</li>
+</ul>
+<p>This reduces the effective sequence length by 75%, accelerating the encode and prefill stages.</p>
+<p>There's a subtlety. The streaming KV cache is an approximation: cached keys and values were computed under a different attention context than the current frame would produce in a full forward pass. This degrades accuracy. The obvious fix, fine-tuning the full VLM on streaming inputs, actually makes things <em>worse</em>. Why? Reasoning tokens are generated autoregressively and attend mainly to recent tokens, making them robust to stale cache entries. The action expert, by contrast, integrates information across the entire KV cache through cross-attention to produce continuous trajectories, amplifying even small distributional mismatches.</p>
+<p>This asymmetry suggests a targeted fix: <strong>freeze the VLM and fine-tune only the action expert</strong>. We expose the expert to the compounding approximation errors it will encounter at deployment by rolling out multiple streaming steps to populate the KV cache (no gradients), then enabling gradients at the final step. This cleanly recovers accuracy to near-baseline.</p>
+<figure>
+ <table>
+  <thead>
+   <tr>
+    <th></th>
+    <th>ADE@6.4s (m) ↓</th>
+    <th>minADE@6.4s (m) ↓</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr>
+    <td>Baseline (no streaming)</td>
+    <td>1.85</td>
+    <td>0.80</td>
+   </tr>
+   <tr>
+    <td>+ Streaming</td>
+    <td>2.30</td>
+    <td>1.07</td>
+   </tr>
+   <tr>
+    <td>+ Streaming, fine-tune VLM</td>
+    <td>4.97</td>
+    <td>3.38</td>
+   </tr>
+   <tr>
+    <td><strong>+ Streaming, fine-tune expert</strong></td>
+    <td><strong>1.93</strong></td>
+    <td><strong>0.87</strong></td>
+   </tr>
+  </tbody>
+ </table>
+ <figcaption>
+  Streaming alone degrades accuracy (2.30m vs 1.85m ADE). Fine-tuning the VLM makes it <em>worse</em> (4.97m). Fine-tuning only the action expert recovers to near-baseline (1.93m). Results obtained on Alpamayo 1.
+ </figcaption>
+</figure>
+<h2>Speculative Reasoning</h2>
+<p>The reasoning capability that makes VLA models powerful for long-tail scenarios comes at a cost: the model must generate explicit reasoning tokens (e.g., chain-of-causation traces) before producing an action. Autoregressive decoding produces these tokens one at a time, making this the largest bottleneck in the pipeline.</p>
+<p>But driving-domain reasoning is unusually easy to draft. The reasoning sequences are short (~16 tokens), follow a highly structured template, and are conditioned on rich visual context that already determines most of the content. This makes the per-token entropy substantially lower than in open-ended language generation, creating an opportunity for speculative decoding with high acceptance rates.</p>
+<p>We use our <strong>DFlash</strong>, a block diffusion model, as a parallel drafter. Instead of drafting tokens one at a time like conventional speculative methods, DFlash generates an entire block of candidates in a single forward pass, naturally capturing the intra-block correlations present in structured reasoning. Because speculative verification guarantees the output distribution is identical to standard autoregressive decoding, this acceleration comes with <strong>zero quality loss</strong>.</p>
+<h2>Adaptive-Step Flow Matching</h2>
+<p>VLA models must bridge language-level reasoning and continuous vehicle control. This is typically done through a flow-matching head that converts the model's reasoning into trajectory waypoints. The standard approach uses 10 denoising steps, but are all of them necessary?</p>
+<p>The naive solution is to use fewer uniformly-spaced steps. But this hurts quality, because the velocity field is not uniform across the denoising trajectory. We profiled it and found a striking U-shaped pattern: velocity changes sharply at the first and last steps but is nearly constant through the middle. The endpoints matter most; the middle is redundant.</p>
+<figure>
+ <figcaption>
+  Velocity changes drop from 27% at step 0→1 to under 6% in the middle, then rise again at the end.
+ </figcaption>
+</figure>
+<figure>
+ <figcaption>
+  Middle steps reach cosine similarity above 0.99, confirming they are nearly redundant.
+ </figcaption>
+</figure>
+<p>This non-uniformity has a clear physical interpretation: the early steps establish the coarse trajectory structure (lane choice, turn direction), the final steps snap the prediction onto the manifold of physically plausible trajectories (satisfying kinematic constraints and road geometry), and the intermediate steps perform only minor refinements to an already well-determined path. The endpoints carry the signal; the middle carries the inertia.</p>
+<p>We exploit this by caching the velocity at middle steps and reusing it instead of recomputing. This concentrates compute on the steps that shape the trajectory the most, cutting action generation time while preserving trajectory quality.</p>
+<h2>Quantization</h2>
+<p>Quantization compresses model weights and activations to lower precision, trading numerical headroom for speed. But there's a design choice. Standard methods like AWQ quantize only the weights to 4-bit (W4A16): this helps memory-bound decoding by shrinking the data the GPU must load per token, but leaves the compute-bound prefill stage untouched. For a chatbot LLM where decoding dominates, that trade-off is acceptable. For a VLA model with thousands of vision tokens in every prompt, prefill is too expensive to ignore.</p>
+<p>W4A8 quantization targets both regimes: 4-bit weights cut memory bandwidth for decoding, while 8-bit activations unlock faster INT8 matrix multiplies for the compute-heavy prefill. One format, two bottlenecks addressed.</p>
+<p>The harder question is <em>which</em> W4A8 method. VLA reasoning generates chain-of-thought tokens (~16 per step), and each feeds back into the model, so quantization error compounds at every token. Methods like AWQ leave weight outliers partially intact; over a full reasoning trace, those residual errors accumulate into measurable trajectory drift. We use our <strong>ParoQuant</strong>, whose scaled pairwise rotation suppresses outliers far more thoroughly, keeping the compounding error in check.</p>
+<h2>System Optimizations</h2>
+<p>The VLA pipeline is unusually heterogeneous: vision encoding, language processing, autoregressive decoding, and diffusion-based action generation each have different compute profiles. Algorithmic improvements alone leave performance on the table without tight system engineering:</p>
+<ul>
+ <li><strong>CUDA Graphs.</strong> Autoregressive generation launches many small kernels with high CPU dispatch overhead. Compiling the full four-stage pipeline into CUDA graphs eliminates this overhead.</li>
+ <li><strong>Kernel Fusion.</strong> We fuse Q/K/V projections into a single kernel launch and merge the gate and up-projections within MLP layers. Combined with max-autotune compilation for element-wise and reduction operations, this eliminates memory round-trips and launch gaps.</li>
+</ul>
+<h2>Results</h2>
+<figure>
+ <figcaption>
+  Per-stage latency on RTX PRO 6000. FlashDrive cuts every stage for a 4.5× speedup.
+ </figcaption>
+</figure>
+<figure>
+ <figcaption>
+  A slight accuracy gain.
+ </figcaption>
+</figure>
+<figure>
+ <figcaption>
+  Within 0.1m.
+ </figcaption>
+</figure>
+<p>On an RTX PRO 6000, algorithmic and system optimizations cut latency from 716ms to 159ms (4.5×). Every technique targets a different stage, so the gains compound rather than saturate: no single optimization accounts for more than half the total speedup.</p>
+<p>The same optimizations transfer across NVIDIA platforms, from the in-car Jetson Thor to datacenter workstation GPUs, with per-device speedups ranging from <strong>4.0× to 5.7×</strong>.</p>
+<figure>
+ <table>
+  <thead>
+   <tr>
+    <th></th>
+    <th>Jetson Thor</th>
+    <th>RTX 3090</th>
+    <th>RTX 4090</th>
+    <th>RTX 5090</th>
+    <th>RTX PRO 6000</th>
+   </tr>
+  </thead>
+  <tbody>
+   <tr>
+    <td>Alpamayo 1.5 (ms) ↓</td>
+    <td>3770</td>
+    <td>1788</td>
+    <td>1187</td>
+    <td>986</td>
+    <td>716</td>
+   </tr>
+   <tr>
+    <td>+ FlashDrive (ms) ↓</td>
+    <td>944</td>
+    <td>363</td>
+    <td>209</td>
+    <td>192</td>
+    <td>159</td>
+   </tr>
+   <tr>
+    <td>Speedup</td>
+    <td>4.0×</td>
+    <td>4.9×</td>
+    <td><strong>5.7×</strong></td>
+    <td>5.1×</td>
+    <td>4.5×</td>
+   </tr>
+  </tbody>
+ </table>
+ <figcaption>
+  End-to-end latency across five NVIDIA platforms, from in-car Jetson Thor to datacenter RTX PRO 6000. A single FlashDrive implementation delivers a consistent 4.0–5.7× speedup.
+ </figcaption>
+</figure>
+<h2>Conclusion</h2>
+<p><strong>VLA inference is not a monolithic bottleneck but a cascade of stages, each hiding a different form of redundancy.</strong> Temporal overlap in vision, low entropy in reasoning, velocity smoothness in flow matching, numerical headroom in weights: each yields to a targeted shortcut, and because the redundancies are orthogonal, the speedups compound to 4.5× with negligible accuracy loss.</p>
+<p><strong>This extends beyond driving to any VLA deployment where latency is the binding constraint.</strong> Sub-200ms inference on a single GPU brings reasoning-capable VLA models into the range where real-time deployment becomes viable, without sacrificing the chain-of-thought that makes them powerful.</p>
+<h2>Citation</h2>
+<pre><code>@article\{li2026flashdrive,
+  title   = \{\{FlashDrive: Flash Vision-Language-Action Inference For Autonomous Driving}},
+  author  = \{Li, Zekai and Liang, Yihao and Zhang, Hongfei and Chen, Jian and Liu, Zhijian},
+  year    = \{2026}
+}</code></pre>

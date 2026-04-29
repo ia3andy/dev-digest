@@ -1,0 +1,46 @@
+<h1>Google adds subagents to Gemini CLI to handle parallel coding tasks</h1>
+<p>AI coding agents might be able to take on more complex work, but they still tend to work through tasks one at a time. And that can become a huge bottleneck once tasks start to stack up.</p>
+<p>Google is addressing that with a new "<a href="https://geminicli.com/docs/core/subagents/">subagents</a>" feature in its <a href="https://tessl.io/blog/gemini-cli/">Gemini CLI</a>, introducing <a href="https://developers.googleblog.com/subagents-have-arrived-in-gemini-cli/">a way to split work across multiple specialised agents</a> within the same environment.</p>
+<p>Subagents are defined with their own instructions, tools, and context. The main agent can delegate parts of a task to them, allowing work to be broken down and handled in parallel. Rather than one agent working through everything step by step, tasks can be distributed and executed at the same time.</p>
+<p>For example, a developer could tell Gemini CLI that the backend for an analytics API is done and ask it to update the frontend, tests, and documentation, with subagents then spun up for each part of the job — a frontend specialist, a unit test agent, and a docs writer.</p>
+<figure>
+ <img alt="Subagents in Gemini CLI" src="https://cdn.sanity.io/images/ojuglg5y/production/fe45eb2351c195f66e6151ddba15141ac8faa79f-800x450.gif?w=800&amp;auto=format">
+ <figcaption>
+  Subagents in Gemini CLI
+ </figcaption>
+</figure>
+<h2>Delegating work inside the CLI</h2>
+<p>The setup is designed to handle tasks that would otherwise overload a single agent session. A developer can create subagents for specific roles — such as code review, testing, or documentation — and call on them when needed.</p>
+<p>Each subagent runs with its own context, allowing the main agent to hand off work and receive results without carrying everything in a single thread. That keeps tasks more contained and avoids long chains of instructions building up in one session.</p>
+<p>This approach has been present in other tools for some time. Claude Code, for example, has <a href="https://code.claude.com/docs/en/sub-agents">supported subagents for a while</a>, using a similar model of role-based delegation within a coding workflow.</p>
+<h2>Parallel execution and context separation</h2>
+<p>A key part of the feature is that subagents can run at the same time, allowing different parts of a task to be processed in parallel.</p>
+<p>Each subagent also operates in its own working space, so instructions and outputs remain separate. That reduces the risk of tasks interfering with one another, which can happen in longer, more complex sessions.</p>
+<p>Together, this allows larger pieces of work to be broken down and handled without losing track of what each part is doing.</p>
+<p>This also extends to running multiple instances of the same subagent at once. A developer can, for example, run a frontend-focused agent across several packages in parallel, with each instance analysing a different part of the codebase at the same time.</p>
+<figure>
+ <img alt="Parallel frontend-specialist subagents" src="https://cdn.sanity.io/images/ojuglg5y/production/302c3bf5dedfd1e815004b9ea619d5a2a4bf8eea-2042x1197.png?w=2042&amp;auto=format">
+ <figcaption>
+  Parallel frontend-specialist subagents
+ </figcaption>
+</figure>
+<p>It's worth noting that in Gemini CLI, this coordination happens within a single session, with subagents spun up to handle parts of a task before returning control to the main agent.</p>
+<p>Other systems are exploring a more extensive setup. Claude Code, for example, offers "<a href="https://code.claude.com/docs/en/agent-teams">agent teams</a>" that coordinate work across multiple sessions, rather than keeping everything tied to one session. That approach can support longer-running tasks, but adds more overhead in how those agents are defined and managed.</p>
+<h2>How to use subagents in Gemini CLI</h2>
+<p>Gemini CLI comes with a set of built-in subagents that can be used straight away, each geared toward a specific type of task. These include a "generalist" agent that can handle a wide range of coding and command-line tasks, a CLI-focused agent that can answer questions about how the tool works, and a codebase-focused agent for exploring architecture, dependencies, and debugging issues.</p>
+<p>Developers can also create their own subagents by defining them in a Markdown file with YAML frontmatter, followed by plain-text instructions describing the agent's role and behaviour. These files can be stored locally or alongside a project to share across a team.</p>
+<figure>
+ <img alt="Creating a custom frontend specialist agent" src="https://cdn.sanity.io/images/ojuglg5y/production/fd05ab143ca1c8fa42c82b8fdee42bf9d9fb0c31-707x729.png?w=707&amp;auto=format">
+ <figcaption>
+  Creating a custom frontend specialist agent
+ </figcaption>
+</figure>
+<p>The system will automatically route tasks to these subagents when it decides one is a better fit. That means routine or well-defined work can be handled without needing to specify which agent should take it on.</p>
+<p>Developers can also take direct control. By using the @ syntax followed by a subagent's name, tasks can be explicitly assigned to a specific role — for example, asking a frontend-focused agent to review an interface, or a codebase-focused agent to map out part of a system. Each subagent then handles the task within its own context, separate from the main session.</p>
+<p>To see which subagents are available at any point, the CLI provides a simple /agents command, which lists the current set of configured agents.</p>
+<h2>Resources</h2>
+<ul>
+ <li><a href="https://geminicli.com/docs/core/subagents/">Gemini CLI Subagents Documentation</a></li>
+ <li><a href="https://developers.googleblog.com/subagents-have-arrived-in-gemini-cli/">Google Blog on Gemini CLI Subagents</a></li>
+ <li><a href="https://code.claude.com/docs/en/sub-agents">Claude Code Subagents Documentation</a></li>
+</ul>

@@ -1,0 +1,60 @@
+<h1>Measurement Engineering: The Part of Data Science That Will Thrive in AI</h1>
+<h3>What good judgment actually looks like in data science needs a new name</h3>
+<h3>Am I measuring the right thing?</h3>
+<p>If you've been in data long enough, you know that question matters more than any model you've ever built. Yet most discussions center on "what's going on with this metric" before considering if we're measuring what we intend to.</p>
+<p>We've spent 15 years building a field around execution. Learn Python. Learn SQL. Build a model. Ship a dashboard. Get good at Kaggle. The assumption was always that if you could execute, the judgment would come with experience. You'd just absorb it.</p>
+<p>I don't think that was ever true. And now, with AI taking over more of the execution layer every month, the gap between people who can do the work and people who can tell you whether the work was worth doing is becoming the defining split in our field.</p>
+<p>I've started thinking about the latter group as measurement engineers. Not because they need a new title, but because the data science title is too broad and ambiguous, and they need to be recognized for what they actually do, which is fundamentally different from what most data science job descriptions ask for.</p>
+<h3>The split we're already feeling</h3>
+<p>You know this in your gut even if you haven't named it yet. There are two kinds of questions in data work:</p>
+<h4>Execution questions (AI can do these, and it's getting better fast):</h4>
+<ul>
+ <li>Write the query</li>
+ <li>Build the pipeline</li>
+ <li>Train the model</li>
+ <li>Generate the chart</li>
+</ul>
+<h4>Judgment questions (AI cannot do these, at least not well):</h4>
+<ul>
+ <li>Are we measuring the right thing?</li>
+ <li>Does the metric actually capture what we think it captures?</li>
+ <li>Should we trust this A/B test, or is something confounded?</li>
+ <li>The data says X, the users say Y. Who's right?</li>
+ <li>We have 300 metrics. Which 4 actually matter?</li>
+</ul>
+<p>We interview for the first list, but the second list generates most of the impact. We get. That disconnect is the problem.</p>
+<h3>What good measurement engineering looks like</h3>
+<p>Here are three situations you've probably lived through, or will soon.</p>
+<h4>The 100+ metric problem</h4>
+<p>Your team runs an experiment. It's measured against hundreds of metrics. Some go up, some go down, some don't move. The PM cherry-picks the three that support what they already wanted to do. Another PM on a different team runs a different experiment against a different subset of the same metrics and reaches the opposite conclusion. Both teams call themselves "data-driven."</p>
+<p>The execution was fine. The queries were correct. The dashboards were accurate. The problem is that nobody did the harder work: deciding which metrics actually predict the outcomes the business cares about and having the courage to retire the rest.</p>
+<p>That's judgment. The person who solves this doesn't write a query. They sit in a room with product leaders and make uncomfortable decisions about which numbers matter and which ones are noise dressed up as signal. They kill metrics that teams have been watching for years. It might be the single highest-leverage thing a measurement engineer does.</p>
+<h4>The eval that lied</h4>
+<p>An AI team builds evaluations for their model. The eval scores say quality is improving every week. Charts go up and to the right. Everyone feels good. They ship.</p>
+<p>Users hate it. Support tickets spike. Satisfaction drops. The model is measurably "better" on every internal eval and measurably worse in the real world.</p>
+<p>What happened? The evals were precise and reproducible, but they measured the wrong thing. They tested whether the output was fluent. Users cared whether the output was useful. Those are correlated, but they're not the same construct. The eval suite was systematically missing the dimension that mattered.</p>
+<p>A data scientist would look at the scores and say, "The model improved." A measurement engineer would ask: When was the last time we validated that these scores predict what users actually experience? The answer, in most organizations, is never.</p>
+<p>The fix isn't a better model or a better pipeline. It's redesigning what you measure. And that requires a skill most of us were never taught: understanding the difference between "the thing we're measuring" and "the thing we think we're measuring." Those are not the same. The gap between them is where organizations make their most expensive mistakes.</p>
+<h4>The ambiguous result</h4>
+<p>Your team runs an A/B test on a new feature. The primary metric is up 3%, statistically significant. The guardrail metric, long-term retention, is down 1.5%. Not significant, but trending wrong. The PM wants to ship. Everyone looks at you.</p>
+<p>What do you do?</p>
+<p>A data scientist can tell you what the numbers are. A measurement engineer can tell you what the numbers mean. And sometimes what they mean is: we don't have enough evidence to decide, and pretending we do is more dangerous than waiting.</p>
+<p>That willingness to say "the data is ambiguous and here's what I'd do about it" rather than just presenting a p-value is the skill that separates measurement engineers from analysts. It requires understanding power analysis well enough to know when your test couldn't detect the effect that matters. It requires understanding the business well enough to know whether a 1.5% retention drop compounds into a crisis over six months. And it requires the confidence to walk into a room full of people who want a green light and say, "I'd wait."</p>
+<h3>Judgment is not intuition</h3>
+<p>I don't believe judgment is just "experience" or "gut feel." That framing lets us off the hook for not teaching it deliberately. You can learn judgment. It comes from specific disciplines that the data science curriculum almost entirely ignores because they're from fields we don't talk to enough. Some examples:</p>
+<p><strong>Construct validity</strong> comes from psychometrics. Before you measure something, you ask: Does this measurement actually capture the thing I care about? If you're measuring "engagement" with time-on-page, are you measuring interest or confusion? Most data scientists have never been taught to ask this question. Most ML eval suites have never been subjected to it.</p>
+<p><strong>Measurement reliability</strong> is the difference between a thermometer that gives you a different reading every time and one that reads 72 degrees regardless of the actual temperature. Consistent and wrong. Most ML eval suites have this problem. They're reproducible, and they're reproducibly measuring something that doesn't matter.</p>
+<p><strong>Decision theory under ambiguity</strong> is what happens after the number comes back, and it's unclear. When two metrics disagree. When the confidence interval is wide. When the cost of being wrong in one direction is 10x the cost of being wrong in the other. Almost all data training teaches you to produce the number. Almost none teaches you what to do when the number doesn't give you a clean answer.</p>
+<h3>Why this matters right now</h3>
+<p>Three things changed, and they all point in the same direction.</p>
+<p>First, AI is handling the execution. If a language model can write the query, build the pipeline, and generate the chart, what's left for us? The part the model can't do: deciding whether the query answered the right question, whether the pipeline measured the right thing, and whether the chart tells a true story or a convenient one.</p>
+<p>Second, AI itself needs to be evaluated. And AI evaluation is the hardest measurement problem most organizations have ever faced. Traditional software either works or it doesn't. AI outputs are non-deterministic, context-dependent, and subjective. "Is this response good?" is not an engineering question. It's a measurement question. And most teams are improvising because nobody on the team was trained in the science of evaluation.</p>
+<p>Third, the cost of bad measurement is scaling. An incorrect number on a dashboard leads to a poor quarterly decision. An incorrect eval score on an AI system can lead to a model that hallucinates in production, even when the metrics say everything is fine. The consequences of getting measurement wrong are outpacing our ability to get it right.</p>
+<h3>What I'd change</h3>
+<p><strong>In hiring,</strong> stop testing for SQL speed and model-building. Start testing for judgment. Give candidates an ambiguous dataset and a question with no clean answer. The best candidates will tell you what the data can and cannot support. The rest will just give you a number.</p>
+<p><strong>In training,</strong> every data science program should require measurement theory. Construct validity. Inter-rater reliability. Item Response Theory. Not as an elective. As a core requirement. If you're going to build systems that measure things, you should know the science of measurement.</p>
+<p><strong>In org design,</strong> build a measurement function that owns the question "is this working?" across analytics, data science, and ML. Give it the authority to kill bad metrics and flag bad evals. Most data teams have the skills distributed across individuals. Few have the organizational structure that gives those individuals the mandate to actually use them.</p>
+<h3>Where this leaves you</h3>
+<p>If you're reading this and recognize yourself as someone who already does this work, the thing I want you to hear is this: the skill you have is about to become the most valuable on any data team. The people who can judge whether a measurement is valid, whether an eval is predictive, whether a result is trustworthy, those people were always important. In a world where AI handles the execution, they become essential.</p>
+<p>And if you're reading this and realizing you've been building your identity around the execution layer, the SQL, the models, and the pipelines, just know it's not enough anymore. The people who make the shift toward judgment, toward measurement, toward owning the question "is this actually working," they're the ones who will define what data teams look like for the next decade.</p>
+<p>The transition is uncomfortable. A lot of what made us feel technical and respected is moving to the execution layer that AI handles. But the part that stays human is the part that always mattered most.</p>

@@ -1,0 +1,237 @@
+<h2>Primer: jargon decoder</h2>
+<h3>Eight ideas the rest of the page is built on.</h3>
+<p>Each mini-demo below covers one concept used later. Skip the ones you already know.</p>
+<h4>Vector</h4>
+<p>A list of numbers. An arrow in space. A vector is an ordered list: <code>[0.3, −1.2]</code>. Geometrically it is an <strong>arrow from the origin</strong>. A <em>d-dimensional vector</em> is an arrow in $d$-space, hard to picture past 3-D, but the rules are the same.</p>
+<h4>Length ‖x‖ &amp; Inner Product ⟨x,y⟩</h4>
+<p>How much one vector points along another. <strong>Length</strong> = $\sqrt\{x_1^2+x_2^2+\dots}$. <strong>Inner product</strong> $\langle x,y\rangle = x_1 y_1 + x_2 y_2 + \dots = \|x\|\|y\|\cos\theta$. The inner product reaches its largest positive value when the two arrows point in the same direction. It drops to zero when the two arrows are perpendicular. It becomes negative when the arrows point in opposite directions, with its most negative value when they point exactly opposite.</p>
+<h4>Mean Squared Error</h4>
+<p>Why we square the mistake. Error is the distance between a guess and the truth. Scoring a guess by the signed error lets positive and negative errors cancel, which means the score does not penalise being off. Squaring forces every error to count as a positive number and gives big errors a larger penalty than small ones. The guess that minimises the mean of squared errors is the data's <strong>average</strong>: it is the unique number that minimises the sum of squared distances to the points.</p>
+<p>The <strong>first moment</strong> of a quantity $X$ is its mean $\mathbb\{E}[X]$; the <strong>second moment</strong> is the mean of its square $\mathbb\{E}[X^2]$. A zero-mean variable has a vanishing first moment because positive and negative deviations cancel. Its second moment is strictly positive whenever any deviation is nonzero, because squared values are nonnegative and cannot cancel. The MSE above is itself a second moment of the residual error. This distinction returns in <a>§7</a>, where the per-input gap $\tilde y - y$ averages to zero in the first moment, while its square averages to a strictly positive quantity in the second.</p>
+<p>The average has a property we will use in <a>§7</a>. It lies between the data's most extreme points, so its magnitude is smaller than at least one of them. When a quantizer compresses a whole bin of values down to the bin's average, the stored value is smaller in magnitude than the bin's largest values. The reconstruction is a shrunken version of the input. An inner product against a shrunken reconstruction comes out smaller than the same inner product against the input.</p>
+<h4>Unbiased vs Biased Estimator</h4>
+<p>Noisy is fine. Systematically off is not. An <strong>estimator</strong> is a procedure that takes data and returns a guess $\hat\theta$ for an unknown truth $\theta$. Repeat it on fresh data and the guesses form a cloud. The cloud can fail in two independent ways. Variance is one: individual guesses are noisy. Bias is the other: the procedure is wrong even after averaging many guesses. An estimator with $\mathbb\{E}[\hat\theta]=\theta$ is unbiased; the cloud's centre sits at $\theta$ regardless of the cloud's width.</p>
+<p>The bullseye below shows both failure modes. Bias is the distance from the cloud's centre to the crosshair. Variance is the width of the cloud. The two quantities are independent of each other. <a>§7</a> runs the same bullseye against the MSE quantizer of <a>§6</a>, and the cloud's centre lands away from the crosshair. <a>§8</a> runs it against a different estimator whose cloud centres on the crosshair.</p>
+<h4>Rotation</h4>
+<p>A rigid spin. Preserves lengths and angles. A <strong>rotation matrix</strong> $R$ spins space. The key property: $\|Rx\|=\|x\|$ and $\langle Rx,Ry\rangle=\langle x,y\rangle$. Rotation only changes the <em>basis</em> the coordinates are written in, not the geometry.</p>
+<h4>Where bell-curves come from (CLT)</h4>
+<p>Add up many small randoms → Gaussian. The <strong>Central Limit Theorem</strong> says that summing enough independent random numbers produces a distribution close to a bell curve. The shape of each individual term in the sum does not affect the limit. A sum of coin flips converges to the same Gaussian shape as a sum of uniform draws or a sum of skewed draws. A rotated coordinate is one of these sums: it is a weighted combination of every coordinate of the original vector, with random weights. After a random rotation, each new coordinate is therefore approximately Gaussian, which is the property TurboQuant relies on for every input.</p>
+<h4>Life in many dimensions</h4>
+<p>Each coordinate has mean $0$ and standard deviation $1/\sqrt d$. Pick a random point on a unit sphere in $d$ dimensions. In 2-D any coordinate is possible. In higher $d$, the unit-vector condition $\sum_i X_i^2 = 1$ together with rotational symmetry gives $\mathbb\{E}[X_i^2] = 1/d$ for every $i$, and $\mathbb\{E}[X_i] = 0$ by symmetry. So each coordinate has mean $0$ and standard deviation $1/\sqrt d$, with the marginal of $X_i$ narrowing around zero as $d$ grows. This is <strong>measure concentration</strong>, and it is the core fact TurboQuant exploits.</p>
+<h4>Quantization, in one dimension</h4>
+<p>Snap every number to the nearest of $2^b$ levels. This is what $b$ bits per number means. With $b=2$ you get 4 levels, $b=3$ gives 8. The gap between levels is your worst-case error. Adding one bit halves the gap, so the squared error drops by 4× per bit, the $4^\{-b}$ factor that shows up later.</p>
+<h3>CHEAT SHEET: Eight ideas, one sentence each</h3>
+<p><strong>Vector</strong>: ordered list of numbers / arrow from the origin. <strong>Length &amp; inner product</strong>: the norm $\sqrt\{\sum x_i^2}$ and how much two vectors point the same way. <strong>MSE</strong>: average squared error. <strong>Unbiased</strong>: the average of many estimates equals the truth. <strong>Rotation</strong>: change of basis that preserves lengths and angles. <strong>CLT</strong>: sum of many independent randoms converges to a Gaussian. <strong>High-D concentration</strong>: each coordinate of a random unit vector has mean $0$ and standard deviation $1/\sqrt d$. <strong>Quantization</strong>: snap each number to one of $2^b$ levels; one extra bit quarters the squared error.</p>
+<h3>Lineage and prior work</h3>
+<p>Where each idea on this page comes from.</p>
+<p><a href="https://arxiv.org/abs/2105.08339">DRIVE (Vargaftik et al., NeurIPS 2021)</a> introduced the construction for one bit per coordinate. A sender rotates the input vector by a random orthogonal matrix, sends the sign of every rotated coordinate together with a single scalar scale $S$, and the receiver inverts the rotation after multiplying the sign vector by $S$. DRIVE derives two scale formulas. The MSE-optimal biased scale is $S = \|R(x)\|_1 / d$. The unbiased scale is $S = \|x\|_2^2 / \|R(x)\|_1$, which gives $\mathbb\{E}[\hat x] = x$. DRIVE also shows that a Randomized Hadamard Transform can replace the uniform random rotation at $O(d \log d)$ cost (DRIVE, §6).</p>
+<p><a href="https://arxiv.org/abs/2108.08842">EDEN (Vargaftik et al., ICML 2022)</a> generalizes DRIVE to any $b$ bits per coordinate. After the rotation, EDEN normalizes the rotated vector by $\eta_x = \sqrt\{d}/\|x\|_2$ so each coordinate is approximately $\mathcal\{N}(0,1)$, then quantizes against a Lloyd-Max codebook designed once for the standard normal. The 1-bit codebook is $\\{\pm\sqrt\{2/\pi}\}\approx\\{\pm 0.798\}$ and the 2-bit codebook is $\\{\pm 0.453, \pm 1.510\}$. These are the exact codebooks the page derives in §5. EDEN keeps a per-vector scale $S = \|x\|_2^2 / \langle R(x),\, Q(\eta_x R(x))\rangle$ that yields an unbiased estimate (EDEN, Theorem 2.1).</p>
+<p><a href="https://arxiv.org/abs/2405.12497">RaBitQ (Gao and Long, SIGMOD 2024)</a> is a parallel line of work in approximate nearest-neighbor search. The encoder rotates the input vector with a randomized rotation, stores the sign of every rotated coordinate plus a per-vector normalization scalar, and the decoder estimates inner products from the signs and the scalar. The <a href="https://arxiv.org/abs/2409.09913">extended paper (Gao et al., 2024, arXiv:2409.09913)</a> proves that this estimator achieves the asymptotic optimality bound of <a href="https://arxiv.org/abs/1610.00239">Alon and Klartag (FOCS 2017)</a> for inner-product quantization. RaBitQ predates TurboQuant and shares the random-rotation backbone with the DRIVE/EDEN line. The two lines reach comparable theoretical results from different framings (federated mean estimation versus ANN search), and the relationship between them is the subject of an ongoing public discussion (<a href="https://arxiv.org/abs/2604.18555">arXiv:2604.18555</a> and <a href="https://arxiv.org/abs/2604.19528">arXiv:2604.19528</a>, both 2026).</p>
+<table>
+ <thead>
+  <tr>
+   <th>Idea on this page</th>
+   <th>First introduced in</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Random rotation, post-rotation distribution analysis (§3, §4)</td>
+   <td><a href="https://arxiv.org/abs/2105.08339">DRIVE (2021)</a>, §3</td>
+  </tr>
+  <tr>
+   <td>Randomized Hadamard transform as the practical rotation (§3)</td>
+   <td><a href="https://arxiv.org/abs/2105.08339">DRIVE (2021)</a>, §6; <a href="https://arxiv.org/abs/2108.08842">EDEN (2022)</a>, §5</td>
+  </tr>
+  <tr>
+   <td>Lloyd-Max codebook on $\mathcal\{N}(0,1)$, including the $\\{\pm\sqrt\{2/\pi}\}$ 1-bit and $\\{\pm 0.453,\,\pm 1.510\}$ 2-bit codebooks (§5)</td>
+   <td><a href="https://arxiv.org/abs/2108.08842">EDEN (2022)</a>, §3</td>
+  </tr>
+  <tr>
+   <td>Unbiased rotation-then-quantize via a per-vector scale (§7, §8 backbone)</td>
+   <td><a href="https://arxiv.org/abs/2105.08339">DRIVE (2021)</a>, §4.2, Theorem 3</td>
+  </tr>
+  <tr>
+   <td>The $b$-bit pipeline (§6)</td>
+   <td><a href="https://arxiv.org/abs/2108.08842">EDEN (2022)</a> with the per-vector scale fixed to a constant</td>
+  </tr>
+  <tr>
+   <td>QJL residual unbiasing (§8)</td>
+   <td>One-bit unbiased <a href="https://arxiv.org/abs/2105.08339">DRIVE</a> applied to the residual instead of the input</td>
+  </tr>
+  <tr>
+   <td>Random rotation + 1-bit sign quantization for unbiased inner-product estimation in ANN search</td>
+   <td><a href="https://arxiv.org/abs/2405.12497">RaBitQ (Gao &amp; Long, SIGMOD 2024)</a></td>
+  </tr>
+  <tr>
+   <td>Asymptotic optimality matching the <a href="https://arxiv.org/abs/1610.00239">Alon–Klartag (FOCS 2017)</a> inner-product bound</td>
+   <td><a href="https://arxiv.org/abs/2409.09913">RaBitQ extended (Gao et al., 2024, arXiv:2409.09913)</a></td>
+  </tr>
+  <tr>
+   <td>Residual chain: biased $(b\{-}1)$-bit + unbiased 1-bit (§7 then §8)</td>
+   <td><a href="https://arxiv.org/abs/2504.19874">TurboQuant (2025)</a></td>
+  </tr>
+  <tr>
+   <td>KV-cache and inner-product application framing</td>
+   <td><a href="https://arxiv.org/abs/2504.19874">TurboQuant (2025)</a>; <a href="https://arxiv.org/abs/2406.03482">QJL (2024)</a> for the 1-bit case</td>
+  </tr>
+ </tbody>
+</table>
+<h2>Vector quantization</h2>
+<h3>What is vector quantization, really?</h3>
+<p>Let's say you have a vector $\mathbf\{x}\in\mathbb\{R}^d$ of $d\{=}1536$ (1536 dimension vector stored as $1536$ floats). Storing all these floats is quite space intensive and therefore, you might want to store it using only $b$ bits per coordinate (with a total of $b\cdot d$ bits). Later, you want to recover an approximation $\tilde\{\mathbf\{x}}$ and this should be close to $\mathbf\{x}$. Closeness is measured by</p>
+<p><strong>MSE distortion</strong> $D_\{\text\{mse}} = \mathbb\{E}\big[\,\|\mathbf\{x} - \tilde\{\mathbf\{x}}\|_2^2\,\big]$ or <strong>inner-product error</strong> $D_\{\text\{prod}} = \mathbb\{E}\big[\,|\langle\mathbf\{y},\mathbf\{x}\rangle - \langle\mathbf\{y},\tilde\{\mathbf\{x}}\rangle|^2\,\big]$</p>
+<p>The second one matters because attention scores and nearest-neighbor queries are all <em>inner products</em>. We would like the estimator to be <em>unbiased</em>: $\mathbb\{E}[\langle\mathbf\{y},\tilde\{\mathbf\{x}}\rangle] = \langle\mathbf\{y},\mathbf\{x}\rangle$.</p>
+<h4>Key words</h4>
+<p><strong>MSE distortion</strong>: average squared error between the true vector and its reconstruction.</p>
+<p><strong>Inner product</strong> $\langle y, x\rangle$: how much two vectors point the same way. This is what attention computes.</p>
+<p><strong>Estimator</strong>: a rule (here: quantize, then decode) that returns an approximation $\hat s$ of a true number $s$.</p>
+<p><strong>Unbiased estimator</strong>: across many queries, the average of $\hat s$ equals $s$. Individual estimates can be noisy; the mean is on target.</p>
+<h3>The obvious quantizer</h3>
+<p>For each coordinate, pick the closest of $2^b$ evenly-spaced levels in $[-1, 1]$. That is $b$ bits per number. The same rule runs in 2D and 3D first, where the geometry is visible, before the high-dimensional version below.</p>
+<h4>First, in 2D</h4>
+<p>Drag the tip of the vector. The vector snaps to the nearest point of a $2^b \times 2^b$ grid. The green arrow shows the original input. The blue arrow shows where the input is quantized to. The red segment between them is the reconstruction error $\mathbf\{x} - \tilde\{\mathbf\{x}}$.</p>
+<h4>Same trick in 3D</h4>
+<p>A $2^b$-level grid on three axes gives $2^\{3b}$ snap points. Drag the canvas to orbit the view. The spike preset shows where the construction breaks: the input lies near one axis and falls between two grid levels, which is where the reconstruction error is largest.</p>
+<h4>Now at scale (d up to 128)</h4>
+<p>The same rule applied to every coordinate of a high-dimensional vector. You cannot see the grid anymore, but the per-coordinate errors are still there.</p>
+<p>Select the <strong>spike</strong> input. The naive quantizer's grid is spaced evenly over $[-1, 1]$. The input has almost all of its magnitude in a single coordinate, whose value falls between the two grid levels nearest to it and so reconstructs poorly. The remaining coordinates are near zero and consume most of the levels despite carrying little of the input's information.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>A fixed grid produces small reconstruction errors on inputs whose coordinates are roughly uniform in magnitude, and large reconstruction errors on inputs whose magnitude is concentrated in one or a few coordinates. Next: <a>§2</a> shows how production systems handle the second case and what they pay for the fix.</p>
+<h2>Why naive fails</h2>
+<h3>The adversarial coordinate, and why production systems pay a tax</h3>
+<p>Real embeddings are rarely flat. Trained models produce <em>outlier channels</em>, a few coordinates much larger than the rest. A fixed $[-L, L]$ grid either clips the outliers or wastes resolution on the bulk. Production quantizers (GPTQ, AWQ, KIVI, KVQuant) work around this by computing $(\min, \max)$ (or zero-point and scale) for every small block and storing those in full precision as side information.</p>
+<p><strong>The catch.</strong> To decode any block you also need its scale and zero-point, two float16 numbers (32 extra bits) stored next to every 16–64 quantized values. Walk through one case: a block of 32 numbers at 3 bits each is 96 payload bits, plus 32 metadata bits, which works out to <strong>4 bits per number, not 3</strong>. Smaller blocks of 16 numbers push it to <strong>5 bits per number</strong>. The advertised 3-bit scheme is really a 4–5-bit scheme once you count everything. TurboQuant matches this worst-case quality while storing zero per-block metadata.</p>
+<h4>DEMO: feel the catch same b bits/value, three strategies</h4>
+<p>A 64-dimensional vector whose coordinates are mostly small, with one large outlier shown in red. Three quantizers reconstruct the same vector at the same <code>b</code>-bit budget. Strategy A uses a single fixed grid for the whole vector. Strategy B adapts the grid per block, at the cost of a float16 header per block. Strategy C rotates the vector first and then applies a single fixed grid. The metrics report the RMSE of each reconstruction and the effective bits-per-value once the metadata cost is included.</p>
+<p><strong>Read the storage line.</strong> The effective bits-per-value works out to <code>b + 32/s</code> for the per-block scheme and to <code>b</code> for the other two, because only the per-block scheme stores a float16 scale and zero-point (32 bits together) for every block of <code>s</code> elements. At <code>b=3, s=16</code> the per-block cost works out to <code>3 + 2 = 5</code> bits/value, a 66% surcharge over the nominal <code>b</code>. Strategy C achieves the same storage cost as strategy A while producing the reconstruction quality of strategy B. The rest of this page explains the construction that makes that possible.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>Production quantizers handle outliers by paying a per-block metadata tax. TurboQuant must instead be <em>data-oblivious</em>: a single procedure that runs on every vector with no calibration set and no per-block headers. Next: <a>§3</a> introduces the move that makes a fixed grid work for every input.</p>
+<h2>The rotation trick</h2>
+<h3>Multiply by a random rotation. Watch the spike dissolve.</h3>
+<p><strong>The rotation trick:</strong> apply a random orthogonal transform $\boldsymbol\{\Pi}$, then quantize coordinate-wise. Rotation is lossless, it preserves length and inner products exactly:</p>
+<p>$\|\boldsymbol\{\Pi}\mathbf\{x}\|_2 = \|\mathbf\{x}\|_2$ · $\langle \boldsymbol\{\Pi}\mathbf\{x},\,\boldsymbol\{\Pi}\mathbf\{y}\rangle = \langle\mathbf\{x},\mathbf\{y}\rangle$ · $\boldsymbol\{\Pi}^\{\!\top}\boldsymbol\{\Pi} = \mathbf\{I}$</p>
+<p>Because rotation is exact, all reconstruction error comes from the quantization step alone. After a uniformly random rotation, every coordinate of $\boldsymbol\{\Pi}\mathbf\{x}$ follows the same fixed Beta density (Lemma 1 of the paper), regardless of what $\mathbf\{x}$ looked like. <strong>A single codebook designed once for that density is then optimal for every input.</strong> We build the codebook in <a>§5</a>.</p>
+<p><strong>Lineage:</strong> The random-rotation step and the analysis of the post-rotation Beta density were introduced by <a href="https://arxiv.org/abs/2105.08339">DRIVE (Vargaftik et al., NeurIPS 2021, §3)</a>. DRIVE also shows the density approaches $\mathcal\{N}(0, 1/d)$ as $d$ grows, which is what makes a single fixed codebook work. See §0.9 for the full mapping.</p>
+<h4>How to construct $\boldsymbol\{\Pi}$</h4>
+<p>Generate a $d\times d$ matrix of i.i.d. $\mathcal\{N}(0,1)$ entries and run QR decomposition; keep the orthogonal factor $Q$. The result is uniform on the orthogonal group $O(d)$, which is what Lemma 1 needs.</p>
+<h4>A spike in 2D</h4>
+<p>Start with the extreme case: a vector with all of its magnitude in one coordinate, $(1, 0)$. Rotate by angle $\theta$ and observe how the magnitude is redistributed across the two coordinates. At $\theta\{=}45°$ the magnitude is split evenly between the two coordinates, giving $(\tfrac\{1}\{\sqrt 2}, \tfrac\{1}\{\sqrt 2})$. The total length of the vector stays the same throughout.</p>
+<h4>A spike in 3D</h4>
+<p>The same construction in three dimensions. The spike $(1, 0, 0)$ is rotated by a random orthogonal matrix, which spreads the input's magnitude across all three coordinates of the output. The total length of the vector is preserved. Each fresh draw of the random rotation produces a different spread.</p>
+<h4>At high dimension</h4>
+<p>A single rotation in 2-D reduces the largest coordinate to at most half the input's magnitude. A random rotation in 3-D typically leaves one coordinate around $0.7$. At $d\{=}64$ the largest coordinate after rotation is around $1/\sqrt d \approx 0.125$, regardless of how concentrated the input was.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>Rotation preserves length and inner products. The only thing it changes is which coordinates contain the magnitude of the vector. A vector with all of its mass concentrated in one coordinate becomes, after rotation, a vector whose mass is spread across all $d$ coordinates. Every input that gets quantized is of this spread-out kind. Next: <a>§3.5</a> shows that the same rotated coordinates feed three different decoders across the prior-work map of §0.9.</p>
+<h2>One primitive, three targets</h2>
+<h3>The rotation step is shared. The decoder is what changes.</h3>
+<p>The random rotation of <a>§3</a> is the encoder front end shared by every method on the prior-work map of §0.9 (<a href="https://arxiv.org/abs/2105.08339">DRIVE 2021</a>, <a href="https://arxiv.org/abs/2108.08842">EDEN 2022</a>, <a href="https://arxiv.org/abs/2405.12497">RaBitQ 2024</a>, <a href="https://arxiv.org/abs/2406.03482">QJL 2024</a>, <a href="https://arxiv.org/abs/2504.19874">TurboQuant 2025</a>). The methods differ on the decoder side: each one reads the rotated coordinates and recovers a different quantity from them.</p>
+<p>The demo below runs one rotated vector through three decoders in parallel. The mean decoder from DRIVE returns an unbiased estimate of $\mathbf\{x}$ itself. The inner-product decoder from RaBitQ and QJL returns an estimate of $\langle\mathbf\{q},\mathbf\{x}\rangle$ against a query. The MSE decoder from EDEN and TurboQuant returns a low-distortion reconstruction $\tilde\{\mathbf\{x}}$. Each panel reports its error against the true value and the bits it stored per coordinate to get there.</p>
+<h4>Mean decoder</h4>
+<p><a href="https://arxiv.org/abs/2105.08339">Vargaftik et al., NeurIPS 2021</a>. Store $\mathrm\{sign}(\boldsymbol\{\Pi}\mathbf\{x})$ and the scalar $S=\|\mathbf\{x}\|^2/\|\boldsymbol\{\Pi}\mathbf\{x}\|_1$. Decoder returns $\hat\{\mathbf\{x}} = S\,\boldsymbol\{\Pi}^\{\!\top}\mathrm\{sign}(\boldsymbol\{\Pi}\mathbf\{x})$, an unbiased estimate of $\mathbf\{x}$.</p>
+<h4>Inner-product decoder</h4>
+<p><a href="https://arxiv.org/abs/2405.12497">Gao &amp; Long, SIGMOD 2024</a> (database vectors). <a href="https://arxiv.org/abs/2406.03482">Zandieh et al., 2024</a> (attention keys). Store $\mathrm\{sign}(\boldsymbol\{\Pi}\mathbf\{x})$ and $\|\mathbf\{x}\|$. At query time $\widehat\{\langle\mathbf\{q},\mathbf\{x}\rangle}$ is read from $\langle \boldsymbol\{\Pi}\mathbf\{q},\,\mathrm\{sign}(\boldsymbol\{\Pi}\mathbf\{x})\rangle$ with a normalizing scalar.</p>
+<h4>MSE decoder</h4>
+<p><a href="https://arxiv.org/abs/2108.08842">Vargaftik et al., ICML 2022</a>. <a href="https://arxiv.org/abs/2504.19874">Zandieh et al., 2025</a>. Snap each $(\boldsymbol\{\Pi}\mathbf\{x})_i$ to the nearest of $2^b$ centroids from the universal codebook of <a>§5</a>, then apply $\boldsymbol\{\Pi}^\{\!\top}$ to recover $\tilde\{\mathbf\{x}}$.</p>
+<p><strong>Lineage:</strong> The shared encoder front end is "rotate, then read $\mathrm\{sign}(\boldsymbol\{\Pi}\mathbf\{x})$ or $b$ centroid bits per coordinate." DRIVE introduced the rotated 1-bit shape with the $\|\mathbf\{x}\|^2/\|\boldsymbol\{\Pi}\mathbf\{x}\|_1$ scalar (<a href="https://arxiv.org/abs/2105.08339">Vargaftik et al., NeurIPS 2021</a>). RaBitQ uses the same sign-plus-norm encoding for inner-product retrieval (<a href="https://arxiv.org/abs/2405.12497">Gao &amp; Long, SIGMOD 2024</a>); QJL transports it to attention keys (<a href="https://arxiv.org/abs/2406.03482">Zandieh et al., 2024</a>). EDEN replaces the sign with a $b$-bit Lloyd–Max codebook for the post-rotation Beta marginal (<a href="https://arxiv.org/abs/2108.08842">Vargaftik et al., ICML 2022</a>). TurboQuant inherits EDEN's codebook with $S\{=}1$ and adds the residual chain that lets the MSE decoder run without a per-vector calibration scalar (<a href="https://arxiv.org/abs/2504.19874">Zandieh et al., 2025</a>). See §0.9 for the full mapping.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>Random rotation plus a low-bit read of the rotated coordinates is the front end shared across DRIVE, RaBitQ, QJL, EDEN, and TurboQuant. The methods differ on the decoder side and on what each one is asked to recover: the input vector, an inner product against a query, or an MSE-optimal reconstruction. The rest of this page follows the MSE branch (EDEN and TurboQuant). Next: <a>§4</a> explains the result that lets a single fixed codebook serve every input.</p>
+<h2>Why rotation works</h2>
+<h3>Coordinates of random unit vectors are nearly Gaussian.</h3>
+<p>Rotating $\mathbf\{x}$ by a uniformly random $\boldsymbol\{\Pi}$ is the same as picking a random point on the sphere of radius $\|\mathbf\{x}\|$. So the question "what does a coordinate of $\boldsymbol\{\Pi}\mathbf\{x}$ look like?" is the same question as "what does a coordinate of a uniform point on the sphere look like?"</p>
+<p>In low dimensions the answer is far from a bell curve. In 2-D the marginal is the arcsine density, which is U-shaped with peaks at $\pm 1$. In 3-D it is uniform on $[-1, 1]$. As $d$ grows the marginal narrows and converges to a Gaussian with variance $1/d$. The convergence is visible in the demos that follow.</p>
+<h4>The exact density (Lemma 1)</h4>
+<p>For a uniform point on $\mathbb\{S}^\{d-1}$, the marginal density of any single coordinate is</p>
+<p>$f_X(x) \;=\; \dfrac\{\Gamma(d/2)}\{\sqrt\{\pi}\,\Gamma((d-1)/2)}\,(1-x^2)^\{(d-3)/2},\quad x\in[-1,1]$</p>
+<p>a scaled/shifted Beta distribution. It converges pointwise to $\mathcal\{N}(0,\,1/d)$ as $d\to\infty$.</p>
+<h4>Step one: the circle (d=2)</h4>
+<p>Sample 2000 points uniformly from the unit circle and look at a single coordinate, say $x_1$. The marginal is the arcsine density $\tfrac\{1}\{\pi\sqrt\{1-x^2}}$, which is U-shaped with peaks at $\pm 1$. The shape is far from Gaussian: any value of $x_1$ between $-1$ and $+1$ is possible, and the endpoints are <em>more</em> likely than the middle.</p>
+<h4>Step two: the sphere (d=3)</h4>
+<p>Now sample uniformly from the unit sphere in 3-D. The marginal of one coordinate is uniform on $[-1, 1]$ (Archimedes' hat-box theorem). The marginal is still not a bell curve. Drag to orbit the view.</p>
+<h4>Step three: high dimensions</h4>
+<p>Drag $d$ upward. The marginal narrows and converges to a Gaussian with standard deviation $1/\sqrt d$. By $d\{=}30$ the marginal is visually Gaussian. By $d\{=}256$ almost all of the mass concentrates within a thin shell of width $\sim 1/\sqrt d$ around zero.</p>
+<p>Distinct coordinates are also approximately independent, a stronger condition than uncorrelated, and what is actually needed for the per-coordinate quantization argument below.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>Every coordinate of a rotated vector follows the same known density. The scalar quantization problem for that density can be solved once, and the solution can be reused for every coordinate of every vector. There are no per-block scale factors and no side information to store. Next: <a>§5</a> builds the codebook with Lloyd–Max.</p>
+<h2>The universal codebook</h2>
+<h3>Lloyd–Max: the optimal partition of a known distribution.</h3>
+<p>Every rotated coordinate looks like a draw from the same density (<a>§4</a>). So there is one scalar problem to solve, once: pick $2^b$ <strong>landing values</strong> on the number line such that snapping any sample to its nearest landing value introduces as little error as possible. Those landing values are the <em>codebook</em>.</p>
+<p>A classical algorithm finds them: <strong>Lloyd–Max</strong> (<a href="https://doi.org/10.1109/TIT.1982.1056489">Lloyd 1957/82</a>, <a href="https://doi.org/10.1109/TIT.1960.1057548">Max 1960</a>). Because the density is fixed and known in advance, Lloyd–Max runs once at table-build time. The resulting landing values are saved into a tiny per-$b$ table. Encoding a coordinate after that is a single nearest-neighbour lookup against the table. The same table is used for every input, with no calibration step and no per-vector tuning.</p>
+<p>Drag $b$ below to watch Lloyd–Max settle on the landing values for the Beta density.</p>
+<h4>The Lloyd–Max iteration</h4>
+<p>Given a PDF $f_X$, choose centroids $c_1 \le \dots \le c_\{2^b}$ minimising $\int (x - c_\{i(x)})^2 f_X(x)\,dx$ by alternating:</p>
+<ul>
+ <li><strong>Assignment:</strong> each centroid owns the Voronoi cell around it, boundaries are midpoints between adjacent centroids.</li>
+ <li><strong>Update:</strong> each centroid moves to the conditional mean of its cell, $c_k \leftarrow \mathbb\{E}[X \mid X \in \text\{cell}_k]$.</li>
+</ul>
+<p>Repeat until stable. The demo runs this on the Beta density of <a>§4</a>.</p>
+<p>For moderate $d$, the paper's explicit centroids (after normalising by $\sqrt\{d}$) are: $b\{=}1\!:\pm\sqrt\{2/\pi}$, $b\{=}2\!:\\{\pm 0.453,\pm 1.510\}$, and so on. Theorem 1 proves the per-coordinate MSE is $\lesssim \tfrac\{\sqrt\{3}\pi}\{2d}\cdot 4^\{-b}$. The constant $\tfrac\{\sqrt\{3}\pi}\{2}\approx 2.72$ is the asymptotic ratio to Shannon's minimum $\tfrac\{1}\{d}\cdot 4^\{-b}$; at $b\{=}1$ the paper reports a tighter ratio of $\approx 1.45$.</p>
+<p><strong>Lineage:</strong> The Lloyd–Max codebook for the post-rotation marginal is the codebook EDEN derives (<a href="https://arxiv.org/abs/2108.08842">Vargaftik et al., ICML 2022, §3</a>). The 1-bit and 2-bit landing values shown above ($\pm\sqrt\{2/\pi}$ and $\\{\pm 0.453,\,\pm 1.510\}$) match the EDEN tables. See §0.9 for the full mapping.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>Lloyd–Max gives the optimal partition for a known density, so the centroids for the Beta marginal can be precomputed and stored as a tiny per-$b$ table. The per-coordinate MSE that the resulting codebook achieves is within a factor of $\approx 2.72$ of Shannon's lower bound asymptotically and within $\approx 1.45$ at $b\{=}1$. Next: <a>§6</a> assembles rotation and codebook into TurboQuant-MSE.</p>
+<h2>TurboQuant-MSE</h2>
+<h3>Putting it together: TurboQuant-MSE.</h3>
+<ol>
+ <li><strong>Rotate</strong> $\mathbf\{y} = \boldsymbol\{\Pi}\mathbf\{x}$. Same $\boldsymbol\{\Pi}$ reused for every vector.</li>
+ <li><strong>Round each coord</strong> For each $j$, $\texttt\{idx}_j = \arg\min_k |y_j - c_k|$. Stores $b$ bits.</li>
+ <li><strong>Store</strong> Total: $b\!\cdot\!d$ bits. <strong>No scales, no zero-points.</strong></li>
+ <li><strong>Look up</strong> $\tilde\{y}_j = c_\{\texttt\{idx}_j}$ from the universal codebook.</li>
+ <li><strong>Rotate back</strong> $\tilde\{\mathbf\{x}} = \boldsymbol\{\Pi}^\{\!\top}\tilde\{\mathbf\{y}}$. Done.</li>
+</ol>
+<p>Toggle between input types. Naive quantization without rotation fails on the spike input and on the outlier-channel input. With the rotation step in front, the reconstruction error is roughly the same regardless of which input is selected. Every rotated coordinate follows the same $\mathcal\{N}(0,\,1/d)$ distribution, which is the distribution the codebook was designed for.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>TurboQuant-MSE stores $b\cdot d$ bits per vector and zero metadata. The reconstructed $\tilde\{\mathbf\{x}}$ is nearly as close to the original $\mathbf\{x}$ as any quantizer can achieve, within a factor of $\approx 2.72$ of Shannon's information-theoretic lower bound. Next: <a>§7</a> shows that the same codebook produces a systematically biased estimate of inner products. This is an error that minimising reconstruction MSE does not address.</p>
+<h2>The inner-product bias</h2>
+<h3>MSE-optimal quantizers underestimate inner products.</h3>
+<p><a>§6</a>'s TurboQuant-MSE keeps $\tilde\{\mathbf\{x}}$ close to $\mathbf\{x}$ in squared distance. Attention does not measure $\|\mathbf\{x}-\tilde\{\mathbf\{x}}\|^2$. It computes $\langle \mathbf\{q}, \tilde\{\mathbf\{k}}\rangle$ and uses that number as a stand-in for $\langle \mathbf\{q}, \mathbf\{k}\rangle$. The MSE codebook gives a systematically wrong answer to the inner-product question. Each trial returns the same error, so averaging many trials does not remove it.</p>
+<p>Two earlier facts produce the shrinkage. In <a>§0.3</a> the MSE-optimal reconstruction for a set of values was the set's average, and that average had smaller magnitude than the set's extreme values. In <a>§4</a> a random rotation made every coordinate of $\boldsymbol\{\Pi}\mathbf\{x}$ behave like a zero-mean draw with most of its mass close to 0. Combine the two and the shrinkage is forced: the encoder partitions each axis into $2^b$ bins and stores only which bin $\boldsymbol\{\Pi}\mathbf\{x}$ fell into, the decoder reconstructs with the bin's average, and the bin's average sits closer to 0 than the tail inputs that fall into the same bin. The reconstruction $\tilde\{\mathbf\{x}}$ is therefore a shrunken copy of $\mathbf\{x}$, and an inner product $\langle \mathbf\{q}, \tilde\{\mathbf\{k}}\rangle$ comes out smaller than $\langle \mathbf\{q}, \mathbf\{k}\rangle$. Because the codebook is fixed, the shrinkage factor is identical on every trial.</p>
+<h4>SEE THE SHRINKAGE: drag y, watch ỹ snap</h4>
+<p>One rotated coordinate $y$ has the near-Gaussian density drawn on top. Lloyd–Max partitions the axis into $2^b$ bins (interior verticals); each bin's centroid is the MSE-optimal reconstruction (red dots). Drag the mint handle to set $y$. The encoder snaps it to the centroid of the bin it fell into, giving $\tilde y$ (red). The staircase underneath plots that map $\tilde y(y)$ across the whole axis at once: every horizontal step sits inside the dashed identity line, and the gap between step and identity is the shrinkage at that input.</p>
+<p><strong>Variance budget.</strong> σ² = 1 splits into the part ỹ keeps and the part erased inside each bin.</p>
+<p><strong>What to notice.</strong> Shrinkage is a second-moment statement. The signed gap $\tilde y - y$ is positive for some inputs and negative for others; averaging it gives zero, so any first-moment argument cancels out. The squared gap $(\tilde y - y)^2$ in the third metric is always nonnegative, so summing it cannot cancel. Weighted by the Gaussian density and integrated, it equals $D_b = \sigma^2 - \mathbb\{E}[\tilde y^\{\,2}]$, the red segment of the budget bar; the staircase shading visualizes that gap pointwise, with opacity tracking the Gaussian density so the visual area concentrates where the distortion actually accumulates. As $b$ grows the shading thins and the red segment shrinks with it. The fourth metric, $\lambda_b = \mathbb\{E}[\tilde y^\{\,2}]/\sigma^2$, is the factor that multiplies every inner product $\langle\mathbf q,\tilde\{\mathbf k}\rangle$ in expectation; that is the shrinkage the next paragraph quotes as $0.64 / 0.88 / 0.97 / 0.99$ for $b=1,2,3,4$.</p>
+<p>The bullseye below measures the shrinkage. At $b\{=}1$ the offset is $1 - 2/\pi \approx 0.36$ on every axis. The shrinkage factor approaches 1 quickly with more bits (about 0.88 at $b\{=}2$, 0.97 at $b\{=}3$, 0.998 at $b\{=}5$), so by $b\{=}3$ the residual bias is smaller than the trial-to-trial noise of a few thousand shots and the red dot visually overlaps the crosshair. The bias is theoretically strictly nonzero at every finite $b$, but the regime where it matters in practice is the low-bit one (1–2 bits per coordinate), where it dominates the per-trial variance.</p>
+<h4>HOW TO READ: drag b, watch the red dot</h4>
+<p>Same bullseye as the primer. Each trial fires <em>two</em> shots at the target, one inner-product estimate against $\mathbf\{y}_1$ and one against an independent $\mathbf\{y}_2$, both divided by their truth and re-centred so a perfect estimate lands on the centre. The <strong>yellow crosshair</strong> marks truth, the <strong>red dot</strong> is the average of every shot fired so far. Unbiased means the red dot sits on the crosshair, no matter how wide the cloud of shots around it.</p>
+<p><strong>What to notice.</strong> At $b\{=}1$ the red dot is southwest of the crosshair, on the diagonal. The offset on $\mathbf\{y}_1$ and the offset on $\mathbf\{y}_2$ are equal, which is what one scalar shrinkage applied to the whole reconstruction would produce. Increase $b$: the offset shrinks fast and is below the trial-to-trial noise by $b\{=}3$, even though the underlying shrinkage factor is still strictly less than 1.</p>
+<h4>Derivation: where the 2/π factor comes from</h4>
+<p>For a standard Gaussian $g$, $\mathbb\{E}[|g|]=\sqrt\{2/\pi}$, the "half-normal" mean. The 1-bit MSE codebook rounds each rotated coordinate to $\pm\sqrt\{2/\pi}/\sqrt d$; when you dot-product that reconstruction back against $\mathbf\{y}$, you pick up another $\sqrt\{2/\pi}$ factor in expectation. Multiply: $2/\pi \approx 0.637$.</p>
+<p>Concretely at $b\{=}1$, the optimal MSE codebook is $\\{-\sqrt\{2/\pi}/\sqrt\{d},\,+\sqrt\{2/\pi}/\sqrt\{d}\}$, so $Q(\mathbf\{x}) = \sqrt\{2/(\pi d)}\cdot \operatorname\{sign}(\boldsymbol\{\Pi}\mathbf\{x})$ and</p>
+<p>$\mathbb\{E}\big[\langle\mathbf\{y},\tilde\{\mathbf\{x}}\rangle\big] \;=\; \dfrac\{2}\{\pi}\cdot\langle\mathbf\{y},\mathbf\{x}\rangle.$</p>
+<p>The factor shrinks as $b$ grows but never vanishes, which is what the demo above shows.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>An MSE-optimal codebook minimises squared reconstruction error. The cost is a fixed scalar shrinkage on every inner product, and this shrinkage stays nonzero at any finite bit budget. Attention and nearest-neighbour search need an inner-product estimator whose mean is correct. <strong>Next:</strong> <a>§8</a> keeps the same encoder and adds a fixed prefactor on the decoder side equal to the reciprocal of the shrinkage. The mean of many trials then equals $\langle \mathbf\{q}, \mathbf\{k}\rangle$.</p>
+<h2>QJL: the un-biaser</h2>
+<h3>If the bias is a known number, multiply it out.</h3>
+<p><a>§7</a> ended with a shrunken reconstruction. The MSE codebook produces $\tilde\{\mathbf\{x}}$ values whose magnitudes are smaller than the inputs they encode, so every inner product $\langle \mathbf\{y}, \tilde\{\mathbf\{x}}\rangle$ comes out smaller than $\langle \mathbf\{y}, \mathbf\{x}\rangle$ by the same scalar factor. At one bit per coordinate that factor is exactly $2/\pi$. Averaging over trials does not move the estimate toward $\langle \mathbf\{y}, \mathbf\{x}\rangle$, because the same scalar multiplies the result on every trial.</p>
+<p>A deterministic scalar bias is removable without changing the encoder. Multiply the decoder's output by the reciprocal of the bias and the expectation of the product equals the unbiased target. QJL applies this idea at one bit per coordinate. The encoder discards magnitude information, which is the same step that shrank §7's reconstruction. The decoder applies a fixed prefactor whose value is the reciprocal of the half-normal shrinkage that sign quantization introduces.</p>
+<h4>Encoder</h4>
+<p>Sample one random Gaussian matrix $\mathbf\{S}$ once and share it between every encoder and decoder. To store $\mathbf\{x}$, write down the signs of $\mathbf\{S}\mathbf\{x}$. The stored object is one bit per coordinate; the magnitudes of the entries of $\mathbf\{S}\mathbf\{x}$ are discarded. Discarding the magnitudes produces the bit savings and also produces a $\sqrt\{2/\pi}$ shrinkage on any reconstruction built from the signs alone, by the same half-normal identity that produced §7's $2/\pi$.</p>
+<h4>Decoder</h4>
+<p>A full-precision query $\mathbf\{y}$ arrives. Compute $\langle \mathbf\{S}\mathbf\{y},\,\text\{stored signs}\rangle$. This quantity is a noisy estimate of $\langle \mathbf\{x},\mathbf\{y}\rangle$ scaled down by $\sqrt\{2/\pi}$. Multiply by $\sqrt\{\pi/2}/d$. The factor $\sqrt\{\pi/2}$ is the reciprocal of the half-normal shrinkage and cancels it in expectation; the factor $1/d$ averages the estimate over the $d$ rows of $\mathbf\{S}$. The expected value of the result is $\langle \mathbf\{x}, \mathbf\{y}\rangle$. The per-trial variance is larger than the MSE estimator's variance, but the mean of many trials converges to $\langle \mathbf\{x}, \mathbf\{y}\rangle$.</p>
+<h4>HOW TO READ: same target, two estimators</h4>
+<p>Both panels use <strong>exactly 1 bit per coordinate</strong>. Left: the MSE-optimal codebook from <a>§7</a>, biased. Right: QJL with its calibration constant baked in. Each trial fires two shots (against independent $\mathbf\{y}_1$ and $\mathbf\{y}_2$). Same number of trials, same target. Watch where the red dot lands.</p>
+<p><strong>What to notice.</strong> The MSE panel's red dot is southwest of the centre at the same offset as <a>§7</a>'s 1-bit measurement, and that offset stays the same regardless of how many trials run. The QJL panel's red dot lands close to the centre but with a residual offset from finite-sample noise. QJL's per-trial variance is larger than MSE's (Lemma 4: $\propto \pi/(2d)$), so at the default trial count the residual offset is small but visible. The key difference between the two estimators is the source of this offset: MSE's offset is a fixed scalar bias on the inner product and does not shrink with more trials; QJL's residual offset is sampling noise around a correct mean and shrinks at the standard-error rate $1/\sqrt\{n}$ as the trial count grows.</p>
+<h4>The math: definition and where √π/2/d comes from</h4>
+<p>With $\mathbf\{S}\in\mathbb\{R}^\{d\times d}$ i.i.d. $\mathcal\{N}(0,1)$:</p>
+<p>$Q_\{\text\{jl}}(\mathbf\{x}) = \operatorname\{sign}(\mathbf\{S}\mathbf\{x}) \in \\{-1,+1\}^d, \quad \widehat\{\langle \mathbf\{x},\mathbf\{y}\rangle} = \frac\{\sqrt\{\pi/2}}\{d}\, \langle \mathbf\{S}\mathbf\{y},\,Q_\{\text\{jl}}(\mathbf\{x})\rangle.$</p>
+<p>Each row $\mathbf\{s}_i$ makes $\mathbf\{s}_i\mathbf\{x}$ and $\mathbf\{s}_i\mathbf\{y}$ jointly Gaussian with covariance $\langle\mathbf\{x},\mathbf\{y}\rangle$. The half-normal identity gives $\mathbb\{E}[(\mathbf\{s}_i\mathbf\{y})\,\text\{sign}(\mathbf\{s}_i\mathbf\{x})] = \sqrt\{2/\pi}\cdot\langle\mathbf\{x},\mathbf\{y}\rangle/\|\mathbf\{x}\|$. Sum over $d$ rows and multiply by $\sqrt\{\pi/2}/d$: the $\sqrt\{2/\pi}$ shrinkage cancels, and the result is $\langle\mathbf\{x},\mathbf\{y}\rangle$ in expectation. Variance is bounded by $\tfrac\{\pi}\{2d}\|\mathbf\{x}\|^2\|\mathbf\{y}\|^2$ (Lemma 4 of the paper).</p>
+<h3>Stretching it: TurboQuant-prod</h3>
+<p>QJL by itself uses one bit per coordinate. TurboQuant-prod extends the construction to a $b$-bit budget by allocating the bits between the two estimators from <a>§6</a> and <a>§8</a>. The first $b\{-}1$ bits encode $\boldsymbol\{\Pi}\mathbf\{x}$ with the MSE codebook of <a>§6</a> to capture magnitude. The last bit encodes the residual $\mathbf\{r} = \boldsymbol\{\Pi}\mathbf\{x} - \tilde\{\mathbf\{y}}_\{\text\{mse}}$ with QJL to make the inner-product estimate unbiased. The total cost is $b\cdot d$ bits plus one scalar per vector (the residual norm $\|\mathbf\{r}\|$), the same as TurboQuant-MSE.</p>
+<h4>The full TurboQuant-prod recipe</h4>
+<ol>
+ <li>Rotate $\mathbf\{x}\to \boldsymbol\{\Pi}\mathbf\{x}$ as in <a>§3</a>.</li>
+ <li>Apply $(b\{-}1)$-bit MSE-optimal quantization. Call the result $\tilde\{\mathbf\{y}}_\{\text\{mse}}$.</li>
+ <li>Form the residual $\mathbf\{r} = \boldsymbol\{\Pi}\mathbf\{x} - \tilde\{\mathbf\{y}}_\{\text\{mse}}$ and quantize it with one bit of QJL: store $\text\{sign}(\mathbf\{S}\mathbf\{r})$ and the residual norm $\|\mathbf\{r}\|$.</li>
+ <li>Decode: $\tilde\{\mathbf\{x}} = \boldsymbol\{\Pi}^\{\top}\big(\tilde\{\mathbf\{y}}_\{\text\{mse}} + \|\mathbf\{r}\|\cdot \tfrac\{\sqrt\{\pi/2}}\{d}\,\mathbf\{S}^\{\top}\text\{sign}(\mathbf\{S}\mathbf\{r})\big)$.</li>
+</ol>
+<p>The residual norm is the only piece of side info in the whole scheme, one scalar per vector, not one per small block the way GPTQ, AWQ, or KIVI need. Variance is bounded by Theorem 2.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>TurboQuant-MSE minimises reconstruction error and produces a biased inner-product estimate with a known shrinkage factor. TurboQuant-prod allocates one of its $b$ bits to a QJL residual and produces an unbiased inner-product estimate at higher per-trial variance. Both schemes use $b\cdot d$ bits plus one scalar per vector. Next: <a>§9</a> compares both upper bounds against the information-theoretic lower bound.</p>
+<h2>Shannon's floor</h2>
+<h3>How close is TurboQuant to the theoretical best?</h3>
+<p>The paper uses Shannon's lossy source-coding theorem (via Yao's minimax principle) to prove that no quantizer can do better than $D_\{\text\{mse}} \ge 4^\{-b}$ on worst-case inputs on the unit sphere. The bound covers every conceivable quantizer, including randomized and data-adaptive ones. TurboQuant's matching upper bound is $\tfrac\{\sqrt\{3}\pi}\{2}\cdot 4^\{-b}$, within a factor of $\approx 2.7$ of the lower bound asymptotically and within a factor of $\approx 1.45$ at $b\{=}1$.</p>
+<p>The plot uses a log scale on the vertical axis. All three curves have the same slope (the $4^\{-b}$ exponential rate) and differ only by a small constant offset.</p>
+<h3>The exponential improvement over older methods</h3>
+<p>Earlier data-oblivious quantizers (uniform rounding, scalar sketches) achieve a reconstruction error that decays only polynomially in the bit budget, e.g. $\mathcal\{O}(1/b)$. TurboQuant's $4^\{-b}$ rate is exponential in $b$. That exponential rate is what enables the 4–6× KV-cache compressions reported in §10 without measurable downstream quality loss.</p>
+<h3>TAKEAWAY: NEXT</h3>
+<p>The upper bound, the lower bound, and the measured error all decay at the same exponential rate.</p>

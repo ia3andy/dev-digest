@@ -1,0 +1,145 @@
+<p>We pulled dozens of <code>AGENTS.md</code> files from across our monorepo and measured their effect on code generation. The best ones gave our coding agent a quality jump equivalent to upgrading from Haiku to Opus. The worst ones made the output worse than having no <code>AGENTS.md</code> at all.</p>
+<p>That gap was surprising enough that we built a systematic study around it.</p>
+<p>What we found: most of what people put in <code>AGENTS.md</code> either doesn't help or actively hurts, and the patterns that work are specific and learnable.</p>
+<h2>The same file can help one task and hurt another by 30%</h2>
+<p>A single <code>AGENTS.md</code> isn't uniformly good or bad. The same file boosted <code>best_practices</code> by 25% on a routine bug fix and dropped <code>completeness</code> by 30% on a complex feature task in the same module.</p>
+<p>On the bug fix, a decision table for choosing between two similar data-fetching approaches helped the agent pick the right pattern immediately and stay within codebase standards. On the feature task, the agent read that same file, got pulled into the reference section, opened dozens of other markdown files trying to verify its approach against every guideline, created unnecessary abstractions, and shipped an incomplete solution.</p>
+<p>Different blocks of the document had opposite effects on different tasks.</p>
+<p>What follows is which patterns work, which fail, and how to tell which is which for your codebase.</p>
+<h2>How we measured this</h2>
+<p>We used AuggieBench, one of our internal eval suites, to evaluate how well agents do our internal dev work. We start with high-quality PRs from a large repo that reflect typical day-to-day agent tasks, set up the environment and prompt, and ask the agent to do the same task. Then we compare its output against the golden PR, the version that actually landed after review by multiple senior engineers. We filtered out PRs with scope creep or known bugs.</p>
+<p>For this study, we added two more filters: PRs had to be contained within a single module or app, and the scope had to be one where information in an <code>AGENTS.md</code> might plausibly help. We then ran each task twice, with and without the file, and compared scores.</p>
+<h2>What works</h2>
+<h3>1. Progressive disclosure beats comprehensive coverage</h3>
+<p>Treat your <code>AGENTS.md</code> like a skill. Cover the common cases and workflows at a high level, then push details into reference files the agent can load on demand. Keep each reference's scope clear so the agent knows when to pull it in.</p>
+<p>The 100–150 line <code>AGENTS.md</code> files with a handful of focused reference documents were the top performers in our study, delivering 10–15% improvements across all metrics in mid-size modules of around 100 core files. Once the main file got longer than that, the gains started reversing.</p>
+<h3>2. Procedural workflows take agents from failing to finishing</h3>
+<p>Describing a task as a numbered, multi-step workflow was one of the strongest patterns we measured. A well-written workflow can move the agent from unable to complete a task to producing a correct solution on the first try.</p>
+<p>One example from our codebase: a six-step workflow for deploying a new integration. The agent followed it step by step. The share of PRs with missing wiring files dropped from 40% to 10%, and the agent finished faster on average. <code>Correctness</code> went up 25%. <code>Completeness</code> went up 20%.</p>
+<p>For complex workflows, keep the main file concise and use reference files for branching cases.</p>
+<h3>3. Decision tables resolve ambiguity before the agent writes code</h3>
+<p>When your codebase has two or three reasonable ways to do something, decision tables force the choice up front. This is the pattern that most directly improved adherence to codebase conventions.</p>
+<p><strong>Example</strong>: resolving React Query vs Zustand for state management.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Question</th>
+   <th>React Query</th>
+   <th>Zustand</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Server is the only data source?</td>
+   <td>✅</td>
+   <td></td>
+  </tr>
+  <tr>
+   <td>Multiple code paths mutate this state?</td>
+   <td></td>
+   <td>✅</td>
+  </tr>
+  <tr>
+   <td>Need optimistic updates mixed with local state?</td>
+   <td></td>
+   <td>✅</td>
+  </tr>
+ </tbody>
+</table>
+<p>PRs in this area scored 25% higher on <code>best_practices</code>. The table resolved the ambiguity before the agent wrote a single line of code.</p>
+<h3>4. Examples from the real codebase improve code reuse</h3>
+<p>Short snippets of 3–10 lines from actual production code improved reuse and pattern adherence. Keep it to a few examples that are most relevant and not duplicative. More than that and the agent starts pattern-matching on the wrong thing.</p>
+<p>Example: we included copy-paste templates for Redux Toolkit primitives: <code>createSlice</code> with typed initial state, <code>createAsyncThunk</code> with proper error handling, and the typed <code>useAppSelector</code> hook. <code>code_reuse</code> went up 20%. The agent followed the template instead of inventing its own state management pattern, and the codebase stayed consistent.</p>
+<h3>5. Domain-specific rules still matter</h3>
+<p>This is the pattern most people already associate with <code>AGENTS.md</code>: language- or org-specific gotchas.</p>
+<p>Example: <code>Use Decimal instead of float for all financial calculations.</code> The agent catches truncation, rounding, and precision issues that it would otherwise miss. <code>best_practices</code> improves whenever the rule is directly relevant to the task.</p>
+<p>This works when the rule is specific and enforceable. It stops working when you stack dozens of them. See the overexploration section below.</p>
+<h3>6. Pair every "don't" with a "do"</h3>
+<p>Warning-only documentation consistently underperformed documentation that paired prohibitions with a concrete alternative.</p>
+<p>If you add <code>Don't instantiate HTTP clients directly</code>, pair it with <code>Use the shared apiClient from lib/http with the retry middleware.</code></p>
+<p>The first on its own makes the agent cautious and exploratory. The pair tells it what to do and moves on.</p>
+<p><code>AGENTS.md</code> files with 15+ sequential "don'ts" and no "dos" caused the agent to over-explore, stay conservative, and do less work. More on that below.</p>
+<h3>7. Keep your code modular, and <code>AGENTS.md</code> too</h3>
+<p>The best-performing agent docs described relatively isolated submodules. Mid-size modules, around 100 core files, with a 100–150 line <code>AGENTS.md</code> and a few reference documents, were where we saw the 10–15% cross-metric gains. Examples: UI components of the client, standalone services.</p>
+<p>Huge, cross-cutting <code>AGENTS.md</code> files at the repo root underperformed module-level ones. But the document itself is only part of the story.</p>
+<p>In our study, the worst-performing <code>AGENTS.md</code> files were the ones sitting on top of massive surrounding documentation. One module had 37 related docs totaling about 500K characters. Another had 226 docs totaling over 2MB. In both cases, removing just the <code>AGENTS.md</code> barely changed agent behavior. The agent kept finding and reading the surrounding doc sprawl, and the sprawl was the problem.</p>
+<p>If your <code>AGENTS.md</code> is good but your module has 500K of specs around it, the specs are what the agent is reading. Fix the documentation environment, not just the entry point.</p>
+<h2>Where <code>AGENTS.md</code> falls short</h2>
+<h3>The overexploration trap</h3>
+<p>This is the most common failure mode we observed, and it's essentially context rot.</p>
+<p>Two patterns cause it:</p>
+<h4>1. Too much architecture overview</h4>
+<p>The agent gets pulled into reading documentation files, sometimes dozens of them, trying to "better understand the architecture." It loads tens or hundreds of thousands of tokens of context, and the output gets worse.</p>
+<p><strong>Example</strong>: an AGENTS.md included a full service topology covering the event bus, message queues, API gateway routing, and shared middleware layers, with reasoning for every architectural decision. The task: a two-line config change. The agent read 12 documentation files trying to understand the architecture before touching code, loaded about 80K tokens of irrelevant context, got confused about which service owned the config, and produced an incomplete fix. <code>completeness</code> dropped 25%.</p>
+<p><strong>Fix</strong>: keep architecture descriptions concise and isolated. Vague descriptions of component responsibilities push the agent into exploration mode. Highlight boundaries. Focus on the <em>what</em>, not the <em>why</em>.</p>
+<h4>2. Excessive warnings</h4>
+<p>A big section of "don'ts" without matching "dos" produces a specific failure. The agent reads each instruction, tries to figure out whether it applies to the current task, and starts verifying its solution against every single warning. With 30–50 warnings, that means reading migration scripts, checking API version compatibility, and exploring auth middleware code, even on a task where none of it matters.</p>
+<p><strong>Example</strong>: an AGENTS.md with 30+ "don't" rules covering database migrations, API versioning, deployment safety, and auth boundaries. The task: a simple CRUD endpoint. The agent checked each warning for relevance and explored code it didn't need to touch. The PR took twice as long and was 20% less complete on average.</p>
+<p><strong>Fix</strong>: keep the core gotchas in the main file and move the majority into reference files. Pair every "don't" with a "do" whenever possible.</p>
+<h3>New patterns break old documentation</h3>
+<p>If you're introducing a pattern that doesn't exist in your codebase yet, <code>AGENTS.md</code> can actively steer the agent in the wrong direction.</p>
+<p><strong>Example</strong>: the AGENTS.md documented existing REST + polling patterns. The task was to build real-time collaborative editing using WebSockets. The agent followed the docs and built a polling-based solution, technically functional but architecturally wrong. The golden PR used WebSockets with a completely different data flow.</p>
+<p><strong>Fix</strong>: the fix isn't a better AGENTS.md. It's spec-driven development for net-new architecture.</p>
+<h2>Know what you're optimizing for</h2>
+<p>Different patterns move different metrics. Pick the patterns that target the problem you actually have.</p>
+<table>
+ <thead>
+  <tr>
+   <th>If you want to improve...</th>
+   <th>Use this pattern</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Reuse of existing code</td>
+   <td>Several clear and relevant examples from the prod code</td>
+  </tr>
+  <tr>
+   <td>Following established practices in the codebase</td>
+   <td>Decision tables for components and libraries</td>
+  </tr>
+  <tr>
+   <td>Ensuring proper wiring of big features</td>
+   <td>Procedural AGENTS.md</td>
+  </tr>
+  <tr>
+   <td>Handling of gotchas</td>
+   <td>"Don't" paired with "Do"</td>
+  </tr>
+  <tr>
+   <td>Context rot</td>
+   <td>Progressive disclosure of information via reference files</td>
+  </tr>
+  <tr>
+   <td>Context rot</td>
+   <td>Clear logical separation of what is in different reference files. Outline in AGENTS.md what exactly is there, but go no deeper</td>
+  </tr>
+  <tr>
+   <td>Context rot</td>
+   <td>Obvious advice, but AGENTS.md should only contain guidance relevant to the surrounding code</td>
+  </tr>
+ </tbody>
+</table>
+<h2>How agents actually find your docs</h2>
+<p>Before deciding how to migrate your existing documentation, it helps to know what the agent actually reads. We traced documentation discovery across hundreds of sessions. The discovery rates are lopsided enough to shape migration priorities.</p>
+<ul>
+ <li><code>AGENTS.md</code> files are discovered automatically in 100% of cases, for every file in the hierarchy from the working directory by most harnesses.</li>
+ <li>References out of <code>AGENTS.md</code> are loaded on demand and read in over 90% of sessions when the agent has a reason to pull them in.</li>
+ <li>Directory-level <code>README.md</code> files aren't auto-loaded, but the agent reads them in 80%+ of sessions when it's working in that directory.</li>
+</ul>
+<p>After that, discovery falls off a cliff.</p>
+<ul>
+ <li>Nested <code>README</code>s, meaning <code>README</code> files in subdirectories the agent isn't currently working in, get discovered only about 40% of the time.</li>
+ <li>Orphan docs in <code>_docs/</code> folders that nothing references get read in under 10% of sessions. One service in our codebase had 30K of detailed protocol design, throttling rules, and security docs in <code>_docs/</code>. The agent never opened most of them across dozens of sessions.</li>
+</ul>
+<p><code>AGENTS.md</code> <strong>is the only documentation location with reliable discovery.</strong> If something needs to be seen, it either lives there or is directly referenced from there. Moving the content into a referenced location is usually higher leverage than writing more docs.</p>
+<h2>Migrating existing docs</h2>
+<p>Every company already has READMEs, architecture docs, and design specs scattered across the repo. Here's how to turn that into something an agent can actually use.</p>
+<h3>Should you just rename your <code>README.md</code> to <code>AGENTS.md</code>?</h3>
+<p><code>README.md</code> and <code>AGENTS.md</code> serve different audiences, but they can be reused. Agents are good enough at codebase summarization now that human-oriented docs are less necessary than they used to be. You can either write an agentic doc from scratch, or reuse your <code>README.md</code>. If you reuse it, trim it aggressively. Keep it short, follow the patterns above, and cut any section that's there for humans to skim.</p>
+<h3>When to keep existing documentation</h3>
+<p>If the docs are high quality, current, to the point, and have examples, reuse them. Reference them from module- or folder-level <code>AGENTS.md</code> files. Don't put more than 10–15 references in a single <code>AGENTS.md</code> and keep the context lean. And audit the surrounding environment: if the module around your <code>AGENTS.md</code> has dozens of architecture docs and spec files, the agent will find and read them whether you reference them or not. A focused 150-line <code>AGENTS.md</code> sitting on top of 500K of surrounding specs won't save the agent from the specs.</p>
+<h3><code>AGENTS.md</code> isn't the only path</h3>
+<p>Agents find reference material through grep and semantic search too. About half of all search-result hits in our traces came from those tools, not from <code>AGENTS.md</code> references. If you're keeping legacy documentation, make sure the docs include relevant code examples and descriptive text that's searchable. A well-structured <code>AGENTS.md</code> gives you more control over what ends up in the context window, but it isn't the only way in.</p>
+<h2>What this study didn't cover</h2>
+<p>We focused on one-shot trajectories and the agent's ability to finish coding tasks without human intervention. We didn't look at best practices for maintaining <code>AGENTS.md</code> over time, though we're exploring that now. We also didn't cover operational, interactive, or analytics tasks. Those are coming in future posts.</p>

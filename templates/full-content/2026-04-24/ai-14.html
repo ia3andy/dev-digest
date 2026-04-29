@@ -1,0 +1,72 @@
+<h1>Introducing OlmoEarth embeddings: Custom embedding exports from OlmoEarth Studio for downstream analysis</h1>
+<p><a href="https://olmoearth.allenai.org/">OlmoEarth Studio</a>, our platform for building Earth observation models, now lets you compute and export <strong>embedding vectors</strong>—compact numerical representations of Earth-observation data produced by our open source OlmoEarth foundation models. The <a href="https://github.com/allenai/olmoearth_pretrain">source code</a> and <a href="https://huggingface.co/collections/allenai/olmoearth">model weights</a> are publicly available alongside the <a href="https://allenai.org/papers/olmoearth">research paper</a>, so the community can inspect exactly how these embeddings are generated.</p>
+<p>Embeddings are a fast, cost-effective entry point for leveraging OlmoEarth: they support a wide range of downstream tasks, from similarity search to segmentation to unsupervised exploration. Locations with similar surface characteristics end up with similar vectors; locations that differ land far apart. OlmoEarth embeddings have shown strong performance in our own benchmarking and in <a href="https://arxiv.org/abs/2603.02080">independent evaluations</a>. The exported Cloud-Optimized GeoTIFFs (COGs) are lightweight and easy to share. Choose your area of interest, time range, encoder variant, resolution, and imagery sources via the Studio UI or API, and get back a COG you can use however you like. If your application requires higher performance, Studio also supports <a href="https://docs.olmoearth.allenai.org/model-fine-tuning">supervised fine-tuning (SFT)</a>.</p>
+<p>Custom-computed embeddings are now available for users of OlmoEarth Studio. <a href="https://allenai.org/olmoearth">Reach out</a> if you're interested in gaining access. Instructions for using the publicly available OlmoEarth models to compute your own embeddings are available <a href="https://github.com/allenai/rslearn/blob/master/docs/examples/OlmoEarthEmbeddings.md">here</a>.</p>
+<h3>Computing embeddings in Studio</h3>
+<figure>
+ <img src="https://www.datocms-assets.com/64837/1776965912-olmoearth-embeddings-blog-google-docs-image-2-1.png?fit=max&amp;h=810&amp;w=1550" alt="">
+ <figcaption>
+  Global structure in OlmoEarth embeddings from seasonal Sentinel-2 imagery across 1.1M samples. Colors indicate 15 k-means clusters in a PCA-reduced embedding space.
+ </figcaption>
+</figure>
+<p>Computing embeddings follows the same workflow as any other prediction in Studio. First configure a model and run it, and then download the results. Several parameters tailor the output:</p>
+<ul>
+ <li><strong>Area of interest:</strong> Draw or upload any polygon; Studio handles imagery acquisition and tiling.</li>
+ <li><strong>Time span:</strong> 1-12 monthly periods.</li>
+ <li><strong>Encoder variant:</strong> Nano (128-dim, 1.4M params), Tiny (192-dim, 6.2M params), or Base (768-dim, 89M params).</li>
+ <li><strong>Spatial resolution:</strong> 10 meter, 20 meter, 40 meter, or 80 meter per pixel.</li>
+ <li><strong>Imagery sources:</strong> Sentinel-2 L2A, Sentinel-1 RTC, or both.</li>
+</ul>
+<figure>
+ <img src="https://www.datocms-assets.com/64837/1776966011-olmoearth-embeddings-blog-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550" alt="">
+ <figcaption>
+  Different visualization options applied to the same embedding raster.
+ </figcaption>
+</figure>
+<p>Studio delivers a COG with one band per embedding dimension. Vectors are stored as <strong>signed 8-bit integers </strong>(int8). Values range from -127 to +127, with -128 reserved for nodata. To recover floating-point vectors, see <a href="https://github.com/allenai/olmoearth_pretrain/blob/main/olmoearth_pretrain/evals/embedding_transforms.py">dequantize_embeddings</a> in olmoearth_pretrain.</p>
+<p>Because everything is computed on demand rather than pulled from a pre-computed global archive, your embeddings reflect exactly the conditions you care about. You can generate monthly embeddings to capture seasonal dynamics, not just annual snapshots.</p>
+<h3>What you can do with OlmoEarth embeddings</h3>
+<p>The examples below all use OlmoEarth-v1-Tiny (192-dim) embeddings at 40-meter resolution with Sentinel-2 L2A composites (annual for most examples; monthly for change detection). Tiny is a lightweight encoder but still highly performant; for your own applications, you can swap it for a larger variant at the cost of higher compute and storage.</p>
+<h4>Similarity search: Finding "more like this"</h4>
+<p>Pick a query pixel, extract its embedding, and compute cosine similarity against every other pixel. The result is a heatmap showing where the landscape looks most and least like your query pixel.</p><img src="https://www.datocms-assets.com/64837/1776966099-olmoearth-embeddings-blog-google-docs-image-4-2.png?fit=max&amp;h=810&amp;w=1550" alt="">
+<p>This query sits near the Merced urban center in California. Urban fabric and road corridors light up coherently while agricultural parcels stay dark. The model distinguishes built-up surfaces from cropland without any labels.</p>
+<p>Switching the query to a small agricultural window, we define the query vector as the mean of the embedding vectors over that window, then pull Sentinel-2 imagery at the highest- and lowest-similarity locations to see what the model treats as similar and dissimilar.</p><img src="https://www.datocms-assets.com/64837/1776966200-olmoearth-embeddings-blog-google-docs-image-5-2.png?fit=max&amp;h=810&amp;w=1550" alt="">
+<p>The most similar patches (0.89 and above) are all agricultural parcels with irrigated fields. The least similar (around zero) are an airport with surrounding bare ground, a reservoir with dry terrain, and arid rangeland. No training data, no labels, just a dot product in embedding space.</p>
+<h4>Few-shot segmentation: Labeling the landscape</h4>
+<p>Similarity search tells you "where is it like this?" but sometimes you need discrete labels across a region. Because the representations are already rich, a simple linear classifier can produce a wall-to-wall land-cover map from very few labeled pixels.</p>
+<p>To test this, we labeled just <em>60 pixels</em> (20 per class) over Ca Mau, Vietnam, a coastal mangrove region. Using <a href="https://esa-worldcover.org/en">ESA WorldCover 2021</a> as the label source for three classes (mangrove, water, other), we randomly sampled 20 pixels per class, trained a logistic regression with per-feature standardization, and predicted every pixel in the region.</p><img src="https://www.datocms-assets.com/64837/1776966290-olmoearth-embeddings-blog-google-docs-image-6-2.png?fit=max&amp;h=810&amp;w=1550" alt="">
+<p>From 60 labeled pixels, the classifier produces a coherent map with <em>weighted F1 = 0.84</em>. Mangrove stands, tidal channels, and open water are delineated across the entire region. The classifier saturates quickly: increasing from 30 to 300 labels barely changes accuracy, because the embeddings are doing most of the heavy lifting.</p>
+<p>The core of the analysis is a few lines of Python:</p>
+<pre><code>import rasterio
+import numpy as np
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+# Load the 192-band embedding COG exported from Studio
+with rasterio.open("embeddings.tif") as ds:
+    emb = ds.read().astype(np.float32)  # (192, H, W)
+
+C, H, W = emb.shape
+X = emb.reshape(C, -1).T  # (H*W, 192)
+
+# Train on labeled pixels, predict everywhere
+clf = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000))
+clf.fit(X[train_idx], labels[train_idx])
+prediction = clf.predict(X).reshape(H, W)</code></pre>
+<p>This is a <em>linear probe</em>, a standard evaluation for foundation models. The fact that a logistic regression over 192 dimensions recovers land-cover boundaries from so few labels means the Tiny encoder has organized these ecological distinctions during pretraining. Larger variants (Base, 768-dim) encode even richer representations.</p>
+<p>If you have ground-truth polygons, field survey points, or a coarse existing map, you can train a similar classifier and produce a wall-to-wall map for your own region of interest.</p>
+<h4>Change detection: Spotting what shifted</h4>
+<p>Because Studio can generate embeddings at any temporal resolution (monthly through annual), you can compare two time periods directly to identify where surface conditions have changed. Below, we computed monthly Sentinel-2 embeddings for the same region in September 2023 and September 2024 and measured per-pixel cosine distance. The Park Fire (July-September 2024) burn scar in Butte County, California lights up immediately.</p><img src="https://www.datocms-assets.com/64837/1776966463-olmoearth-embeddings-blog-google-docs-image-7-1.png?fit=max&amp;h=810&amp;w=1550" alt="">
+<p>No labels or training required—just two embedding COGs and a few lines of Python.</p>
+<h4>Unsupervised exploration: Seeing what the model sees</h4>
+<p>Sometimes you have no query location or reference labels. You just want to understand what structure exists in the embeddings. Principal Component Analysis (PCA) is a clean way to do this: reduce to three dimensions, map to R/G/B, and display as a false-color image. Similar embeddings get similar colors automatically.</p><img src="https://www.datocms-assets.com/64837/1776966500-olmoearth-embeddings-blog-google-docs-image-8-2.png?fit=max&amp;h=810&amp;w=1550" alt="">
+<p>Flevoland, in the Netherlands, is a reclaimed polder landscape with a regular grid of agricultural parcels. The PCA false-color image reproduces those boundaries with high fidelity. Different crop types, water bodies, and urban areas each get distinct hues. The embedding has internalized landscape structure without ever being told what a parcel or crop is.</p>
+<p>This kind of unsupervised view is a quick way to see what structure the model has picked up across your area of interest.</p>
+<h4>From export to insight</h4>
+<p>Similarity search, few-shot segmentation, change detection, and PCA exploration are simple operations on standard raster data that run in seconds. The power comes from the embeddings: learned representations that compress earth observation data into vectors capturing rich information about each location from many sensors and millions of training examples.</p>
+<p>Custom embedding exports are available now. Create a project, configure an embeddings model, and <a href="https://docs.olmoearth.allenai.org/embeddings">compute your embeddings</a>. The exported GeoTIFF works with any geospatial tool: QGIS, GDAL, rasterio, or your own scripts. For end-to-end code reproducing the examples in this post, see the <a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings">embeddings tutorial</a>, which includes working code for <a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings/src/olmoearth_embeddings_tutorial/similarity">similarity search</a>, <a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings/src/olmoearth_embeddings_tutorial/segmentation">few-shot segmentation</a>, <a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings/src/olmoearth_embeddings_tutorial/change_detection">change detection</a>, and <a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings/src/olmoearth_embeddings_tutorial/pca">PCA visualization</a>. To get hands-on without any local setup, try the <a href="https://colab.research.google.com/drive/1JnhFn0IfDJEn49S4sKuCS-mv_b4T2tU0?usp=sharing">Colab notebook</a>.</p>
+<h3>Going further: fine-tuning</h3>
+<p>The examples in this post all use frozen embeddings with no task-specific training. Embeddings are a great entry point for leveraging OlmoEarth: they enable fast, cost-effective generation of results, work well in resource-constrained environments, and are easy to share. For applications that require higher performance, OlmoEarth Studio also supports <a href="https://docs.olmoearth.allenai.org/model-fine-tuning">SFT</a>, training a task-specific model head on your own labels, which typically outperforms linear probes on frozen features.</p>
+<h4>Limitations</h4>
+<p>While we are always working to improve our pretraining approaches, it's important to check the quality of the embeddings for your use case using some of the techniques described above. Performance also depends on the quality of the input imagery—persistent cloud cover, atmospheric artifacts, or missing observations in the composite period can affect the resulting vectors.</p>

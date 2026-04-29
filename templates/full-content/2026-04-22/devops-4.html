@@ -1,0 +1,53 @@
+<p><em>What a two-person SRE team learned building an AI investigation pipeline. Spoiler: the runbooks mattered more than the model.</em></p>
+<h2>Why we built this</h2>
+<p>At STCLab, our SRE team supports multiple Amazon EKS clusters running high-traffic production workloads. We've got the full observability stack in place: OpenTelemetry feeding into Mimir, Loki, and Tempo. Robusta OSS enriches Prometheus alerts with error logs, Grafana links, and team mentions before dropping them into Slack.</p>
+<p>So the data was never the problem. The problem was what happened next. Every alert meant the same drill: check the pod, query Prometheus, dig through Loki, pull traces, try to correlate. Fifteen to twenty minutes, every single time. We wanted that first pass to happen automatically and show up in the same Slack thread.</p>
+<h2>HolmesGPT: Letting the LLM decide what to investigate</h2>
+<figure>
+ <img src="https://www.cncf.io/wp-content/uploads/2026/04/image-10.png" alt="A cooler image (flow chart) of the SRE Alerts Pipeline">
+ <figcaption>
+  Alerts Pipeline
+ </figcaption>
+</figure>
+<p>We went with HolmesGPT (CNCF Sandbox) because of how it works: the ReAct pattern. The LLM reads an alert, picks a tool, reads the result, then decides what to check next. If a pod restarts, it might start with the exit code, pull Loki logs across clusters through VPC peering, then look at CPU pressure in Prometheus. The path isn't scripted it depends on what the model actually finds.</p>
+<p>That matters in our case, because not every namespace looks the same. Some have the full picture: centralized logs, distributed traces, the works. Multi-tenant workloads often have none of that; for those namespaces, it's kubectl and Prometheus only. We capture these differences in markdown runbooks, each with a metadata header:</p>
+<ul>
+ <li><code>## Meta</code></li>
+ <li><code>scope: namespace=&lt;target&gt; only</code></li>
+ <li><code>tools: kubectl, prometheus, loki, tempo</code></li>
+ <li><code>caution: some containers excluded from log collection → use kubectl logs</code></li>
+</ul>
+<p>Holmes calls <code>fetch_runbook</code> early in its investigation. The metadata tells it which tools are available and which ones to skip.</p>
+<h2>Making it work with Robusta</h2>
+<p>Our custom playbook is about 200 lines of Python. It covers what HolmesGPT doesn't.</p>
+<p>Robusta posts the alert to Slack before Holmes is done investigating, so our playbook has to find the right thread after the fact and post results as a reply. When Prometheus fires one alert per pod during a rollout, the playbook fingerprints at the workload level and suppresses repeats for 30 minutes. And since Robusta routes to different Slack channels by namespace, the playbook replicates that mapping to find where to post.</p>
+<h2>Runbooks changed everything</h2>
+<p>We started by focusing on model selection. What actually determined investigation quality was the runbooks.</p>
+<p>Without runbooks, the model just guesses. It might check Istio metrics in namespaces that have no sidecars, or query Loki where nothing is being collected. Eventually it loops, burns through its step budget, and comes back with "I need more information."</p>
+<p>What fixed this wasn't a better model. It was telling the model what <em>not</em> to do. Once we added exclusion rules to our runbooks ("no Loki, no Tempo, no Istio here; use kubectl and PromQL only"), wasted tool calls dropped from 16 to 2 per investigation.</p>
+<p>We ran a controlled comparison to confirm this: the same ClickHouse handshake alert, tested four ways. With runbooks, Holmes matched the known error pattern in 3 to 4 tool calls and used the rest of its budget to verify. Without runbooks, it chased three entirely different hypotheses (proxy scaling, schema mismatch, port misconfiguration) and burned through 20+ steps before reaching a conclusion. Same model, same alert. The runbook didn't hand it the answer. It just narrowed the search space enough that a 12-step budget was plenty.</p>
+<p>We now maintain seven runbooks, organized by namespace and alert type. When an investigation comes back wrong, the first question we ask is "does the runbook cover this?" Not "do we need a better model?"</p>
+<figure>
+ <img src="https://www.cncf.io/wp-content/uploads/2026/04/image-11.png" alt="Screenshots: Same alert, same model. Left: with runbook guidance. Right: without runbooks.">
+ <figcaption>
+  Same alert, same model. Left: with runbook guidance. Right: without runbooks.
+ </figcaption>
+</figure>
+<h2>The model journey</h2>
+<p>We tested seven models across self-hosted and managed hosting.</p>
+<p>Self-hosted came first, running on Spot GPUs managed by KubeAI (CNCF). The 7B model couldn't produce valid tool calls. The 9B model's thinking mode clashed with the ReAct loop and returned empty responses. A 14B looked promising, but Spot evictions kept killing our runs, and cold starts took 5 to 8 minutes while Karpenter spun up nodes.</p>
+<p>Then we tried managed APIs through VPC endpoints, which keeps cluster data inside our infrastructure. Most models didn't work; several choked on HolmesGPT's prompt caching markers. Only one model family passed everything we needed: Korean output, Slack formatting, runbook retrieval, and cross-cluster log correlation. We also contributed a three-line upstream fix for pod identity authentication (PR #1850, merged).</p>
+<p>Today we run a hybrid setup: self-hosted in staging, managed API in production. Switching between them is one YAML block:</p>
+<pre><code>modelList:
+  primary:
+    model: "provider/model-name"   # swap provider and model ID
+    api_base: "https://endpoint"   # managed API or self-hosted
+    temperature: 0</code></pre>
+<p>Cost comes out to about $0.04 per investigation, roughly $12 a month. Pipeline, playbook, runbooks, all unchanged regardless of backend.</p>
+<h2>What actually mattered</h2>
+<p>Some numbers. Workload-level deduplication takes around 40 raw daily alerts down to about 12 unique investigations. Engineers read a threaded summary in under two minutes instead of spending 15 to 20 on manual triage. Roughly 40% of investigations resolve on their own: OOMKilled, ImagePullBackOff, and other known patterns where Holmes matches a runbook and the root cause is obvious.</p>
+<p>Here's what we'd tell another team starting this.</p>
+<p><strong>Runbooks over models.</strong> We ran a controlled test where the same model scored 4.6 out of 5 with runbooks and 3.6 without, on the exact same alert. The exclusion rules we wrote into our runbooks moved the needle more than any model swap ever did.</p>
+<p><strong>Glue code is real work.</strong> That 200-line playbook handles timing, dedup, routing, and thread matching. HolmesGPT handles reasoning. You need both.</p>
+<p><strong>Design for model migration.</strong> We've swapped backends three times now without touching the pipeline. The playbook is the stable core. The model is the part you replace.</p>
+<p>What's next: we're looking at Inspektor Gadget (CNCF) to feed eBPF-level network metrics, TCP retransmits, connection latency, into the same pipeline through Prometheus. The architecture stays the same. Holmes just gets better data to work with.</p>

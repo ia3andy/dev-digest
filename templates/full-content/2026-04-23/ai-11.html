@@ -1,0 +1,396 @@
+<h1>When LLMs Get Personal</h1>
+<h3>As AI answers become more personalized, do stable patterns still exist?</h3>
+<p>In my last two posts, I approached the heavily polarizing topic of AI search (yes, remarkably, it's still polarized) from two related angles.</p>
+<p>First, I argued mathematically that AI search is a different optimization problem than classical search. Second, I argued that the content that tends to surface in LLM answers is shaped by retrieval and generation mechanics, specifically entropy minimization. Different types of articles will be used to answer different types of questions; LLM's don't ONLY like lists and summaries nor do they only prefer long-form content.</p>
+<p>The underlying theme of my writings is the debate that keeps coming up around LLM-based search (or, pick your favorite acronym: AEO/GEO/LLMO). One camp wants to collapse it back into SEO before LLM's existed and say this is all basically the same game with a new interface. The other wants to treat it as a total rupture, as if everything we learned from search can be thrown out.</p>
+<p>My consistent point of view is that the reality lies somewhere in the middle.</p>
+<p>In the latest spin on this debate, the theme of <strong><a href="https://arxiv.org/html/2411.00027">personalization in LLM responses</a></strong> is being lobbed into the discourse like a mini-grenade.</p>
+<p>The specific framing is roughly as follows:</p>
+<blockquote>
+ <p>if LLM answers are assembled through content retrieval and generation, and those systems are conditioned on the user, isn't every answer going to be different? What's the point of even optimizing for LLM's, then?</p>
+</blockquote>
+<figure>
+ <a href="https://substackcdn.com/image/fetch/$s_!Dkzf!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe8dbd060-2e18-495a-9e5c-fe4f90e863a6_467x461.png"><img src="https://substackcdn.com/image/fetch/$s_!Dkzf!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe8dbd060-2e18-495a-9e5c-fe4f90e863a6_467x461.png" alt=""></a>
+</figure>
+<p>This is where the conversation tends to get fuzzy.</p>
+<p>People hear "personalization" and jump quickly to the idea that every user is now living inside a completely bespoke answer universe. At the same time, there's an equally weak counterpoint floating around that personalization is mostly superficial and that the answer is still basically the same for everyone.</p>
+<p>My guess is that both of those views miss the more interesting middle.</p>
+<p>LLM answers can vary across users, sessions, and contexts while still sharing a large amount of semantic structure. That should not be surprising. These systems are probabilistic, but they are also built on shared model priors, overlapping retrieval neighborhoods, and the same bottlenecks in context construction and decoding. So even when two answers are not identical, they may still be much closer than people assume in the parts that actually matter.</p>
+<p>That is the question I want to explore here.</p>
+<p>At the token level, the space of possible outputs is effectively unbounded. That observation is <strong>technically true and mostly useless</strong>. The more interesting question is whether the space of <strong>materially distinct</strong> answers is much smaller - and whether answers to the same question, across different users, tend to share a stable common core with variation concentrated more at the margins.</p>
+<p>There is plenty of writing about AI search that stays very tactical: screenshots, heuristics, surface-level advice. There is also a more technical conversation about retrieval, ranking, generation, and system design that often stays too abstract to connect back to the questions people actually care about. As always, I'm more interested in the middle ground: using the structure of the systems to explain practical behavior with a little more precision.</p>
+<p>So this post is an attempt to reason through personalization in AI answers at that level.</p>
+<p>The core hypothesis is simple:</p>
+<blockquote>
+ <p><strong>LLM answers can be personalized without becoming arbitrary and totally random.</strong></p>
+</blockquote>
+<p>Even when different users get different answers to the same question, those answers will often share many common elements because they are shaped by the same underlying machinery.</p>
+<h2>Definitions</h2>
+<dl>
+ <dt>
+  <strong>Classical search</strong>
+ </dt>
+ <dd>
+  Search systems where the primary output is an ordered list of documents or links in response to a query.
+ </dd>
+ <dt>
+  <strong>LLM-based search</strong>
+ </dt>
+ <dd>
+  Systems where a large language model generates a synthesized answer to a user query, potentially conditioned on retrieved material, rather than primarily returning a ranked list.
+ </dd>
+ <dt>
+  <strong>Generated answer</strong>
+ </dt>
+ <dd>
+  The natural language response produced by the model, separate from surrounding UI elements like citations, source cards, links, or other modules.
+ </dd>
+ <dt>
+  <strong>Personalization</strong>
+ </dt>
+ <dd>
+  Any mechanism by which an answer depends on more than just the explicit query. This can include user history, saved memory, account state, session context, location, or other contextual signals.
+ </dd>
+ <dt>
+  <strong>Materially distinct answer</strong>
+ </dt>
+ <dd>
+  An answer that differs in a way that matters substantively. That could mean different entities, different examples, different framing, different recommendations, or a meaningfully different practical conclusion.
+ </dd>
+ <dt>
+  <strong>Shared core</strong>
+ </dt>
+ <dd>
+  The semantic content that remains stable across many answers to the same question.
+ </dd>
+ <dt>
+  <strong>Variable margin</strong>
+ </dt>
+ <dd>
+  The part of the answer most likely to shift across users or runs: examples, emphasis, framing, ordering, local detail, and so on.
+ </dd>
+ <dt>
+  <strong>Answer archetype</strong>
+ </dt>
+ <dd>
+  A compressed representation of an answer at the level of substance rather than surface wording.
+ </dd>
+ <dt>
+  <strong>Stochastic</strong>
+ </dt>
+ <dd>
+  A system is stochastic if it can produce different outputs from the same input according to a probability distribution, rather than always producing the exact same result. In the context of LLMs, this means the same question can yield different answers across runs, even when the underlying model is the same.
+ </dd>
+</dl>
+<h2>Assumptions</h2>
+<p>A few assumptions are doing work in this post.</p>
+<p>First, I am not assuming access to internal logs, retrieval traces, memory stores, prompts, or product internals from any model provider. I am assuming the model providers honor the underlying mathematics of LLM's, though.</p>
+<p>Second, I am mostly talking about search-like or explanation-like prompts here. Questions where there is some shared topic structure: product comparisons, learning paths, informational queries, workflow questions, high-level guidance. This is less about creative writing, roleplay, or open-ended generation.</p>
+<p>Third, I am assuming that token-level variation is usually less important than semantic variation. If one answer says essentially the same thing with slightly different wording, that is not especially interesting.</p>
+<h2>Disclaimer</h2>
+<p>I'm the co-founder and CTO of Noble, a company that works in the space of LLM visibility and brand mentions. That practical context influences how I think about these systems, but this post is not a pitch for Noble or for any particular product.</p>
+<p>The question here is broader than brand visibility anyway. It applies to educational queries, product queries, software discovery, workflow questions, planning questions, and a lot of the general "AI search" surface that people increasingly interact with.</p>
+<p>What I'm trying to do here is reason from system structure rather than from anecdotes. There is already plenty of discussion of AI search that stays at the level of screenshots and vibes. I think there is room for a more explicit model of what personalization is likely doing and what it is probably not doing.</p>
+<h2>Myths Debunked</h2>
+<p>Before getting into the math, I want to clear out a few bad framings that tend to show up whenever people talk about personalization in AI answers.</p>
+<p>The point here is not to overstate the certainty of any one model of how these systems behave. It is to get rid of a few intuitions that are loose enough to be misleading.</p>
+<h3>Myth 1: Personalization means every user gets a totally different answer</h3>
+<p>This is probably the most common overreaction.</p>
+<p>People hear that LLM-based systems can condition on the user and immediately jump to the idea that every answer is now fully bespoke. <a href="https://sparktoro.com/blog/new-research-ais-are-highly-inconsistent-when-recommending-brands-or-products-marketers-should-take-care-when-tracking-ai-visibility/">There have even been very thorough studies</a> done on the inter-user variation in LLM answers across a large, but observable population of individuals. The implication being (for some, anyway) that there is no stable structure left to study because each person is effectively inhabiting a different answer universe.</p>
+<figure>
+ <a href="https://substackcdn.com/image/fetch/$s_!Lyci!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2b0f22c7-4fec-462f-901a-13a665f84487_1024x576.png"><img src="https://substackcdn.com/image/fetch/$s_!Lyci!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2b0f22c7-4fec-462f-901a-13a665f84487_1024x576.png" alt=""></a>
+</figure>
+<p>It doesn't work that way.</p>
+<p>Personalization is real, but LLM's are probabilistic and therefore built on shared priors, shared corpora, shared retrieval bottlenecks, and shared decoding constraints. Different users can absolutely get different answers, but those answers are still being generated by the same underlying machinery. That should create overlap, and often a lot of it.</p>
+<h3>Myth 2: If outputs are probabilistic, then there is no point trying to model them</h3>
+<p>This is another bad leap.</p>
+<p>A system being probabilistic does not make it patternless. If anything, probability is exactly the language we use when we want to talk about structured variation.</p>
+<p>The fact that an LLM can produce multiple possible outputs for the same question does not mean all of those outputs are equally likely, or that the answer space is too unconstrained to reason about. In practice, these systems concentrate probability mass. Some outputs show up repeatedly. Some structures recur. Some entities or framings are much more likely than others.</p>
+<p>So "the model is stochastic" really shouldn't be the end of the conversation. Rather, it's the beginning of a more interesting one.</p>
+<p>The great team at Graphite recently published some <a href="https://graphite.io/five-percent/demystifying-randomness-in-ai">very compelling literature</a> on how only 10 variations of answers to the same question are enough to observe core trends.</p>
+<figure>
+ <a href="https://substackcdn.com/image/fetch/$s_!Q-zx!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4e3d5379-381a-4fe6-9531-d89c5247e804_1200x800.gif"><img src="https://substackcdn.com/image/fetch/$s_!Q-zx!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F4e3d5379-381a-4fe6-9531-d89c5247e804_1200x800.gif" alt=""></a>
+ <figcaption>
+  Answers converge to similar core concepts as response count increase (source: Graphite study)
+ </figcaption>
+</figure>
+<h3>Myth 3: Personalization makes optimization impossible</h3>
+<p>This one is downstream of the first two, and it is the one I care about most in this post.</p>
+<p>The argument usually goes like this: if answers vary by user, and outputs are probabilistic, then there is no stable object left to optimize for.</p>
+<p>That only follows if you assume that personalization implies arbitrary divergence.</p>
+<p>I don't think it does.</p>
+<p>If answers to the same question still share a common semantic core, and if the number of materially distinct answers is much smaller than the number of possible strings, then optimization does not disappear. It just changes. The relevant object is no longer to rank on a single fixed surface. It is the recurring patterns across many related answer variants.</p>
+<p>This is a much harder mathematical problem to model than traditional SERP-style search. But it is still a problem with real numerical structure.</p>
+<h2>The Problem With "Infinite Answers"</h2>
+<p>A common way of talking about LLM outputs is to say that the <a href="https://medium.com/%40sarathkumaar569/the-ultimate-guide-to-llm-evaluation-a-practical-framework-for-real-world-ai-systems-6ee2b87699cc">answer space is infinite</a>.</p>
+<p>In one sense, that is true. If an answer is defined as an exact sequence of tokens, then there is no meaningful upper bound worth talking about. Change a phrase, swap an example, regenerate with slightly different decoding, and you have a new string.</p>
+<p>But that is the wrong object.</p>
+<p>Let's say a few different individuals ask the LLM a general question about getting in shape.</p>
+<p>Now suppose one answer says:</p>
+<blockquote>
+ <p>Walking every day is usually the best place to start if you want to get in better shape, because it's easy to stick with and doesn't put much stress on your body.</p>
+</blockquote>
+<p>And another says:</p>
+<blockquote>
+ <p>If your goal is to get fitter, daily walking is often the safest and most sustainable starting point because it's low impact and easy to maintain.</p>
+</blockquote>
+<p>Those are technically different outputs. They are also <em>basically the same answer.</em></p>
+<p>Now compare that with another answer that says:</p>
+<blockquote>
+ <p>If you want to get in shape quickly, start with short strength workouts and interval training a few times a week, since walking alone is too limited to make much difference.</p>
+</blockquote>
+<p>That is a meaningfully different answer.</p>
+<p>The distinction matters because when people talk about personalization, they often slip between these two levels without noticing. A system can produce many different strings while still <a href="https://arxiv.org/html/2212.06933v2?utm_source=chatgpt.com">producing only a relatively small number of </a><strong><a href="https://arxiv.org/html/2212.06933v2?utm_source=chatgpt.com">materially distinct</a></strong><a href="https://arxiv.org/html/2212.06933v2?utm_source=chatgpt.com"> answers.</a></p>
+<p>That is the thesis I want to make more precise.</p>
+<p>The right question is not:</p>
+<blockquote>
+ <p>Can a language model generate infinitely many outputs?</p>
+</blockquote>
+<p>Of course it can.</p>
+<p>The right question is:</p>
+<blockquote>
+ <p>How many materially distinct answers are there to the same query, and how much common structure do those answers share?</p>
+</blockquote>
+<h2>From Raw Text to Answer Archetypes</h2>
+<p>Now I'll get into the mathematical answer to the above question.</p>
+<p>Let <em>Y</em> be the random variable representing the generated answer to a query <em>q</em>.</p>
+<p>If we treat <em>Y</em> as raw text, the object is too fine-grained to be useful. So instead, define a map:</p>
+<p>\(ϕ(Y)\)</p>
+<p>where <em>ϕ</em> compresses the answer into the parts that matter substantively.</p>
+<p>A simple version might be:</p>
+<p>\(ϕ(Y)=(T,E,F,C)\)</p>
+<p>where:</p>
+<ul>
+ <li>
+  <p><em>T</em> is the topic-level conclusion or core takeaway</p></li>
+ <li>
+  <p><em>E</em> is the set of entities, examples, or concrete references selected e.g. a list of items</p></li>
+ <li>
+  <p><em>F</em> is the framing or tradeoff emphasis</p></li>
+ <li>
+  <p><em>C</em> is the practical conclusion or recommended course of action</p></li>
+</ul>
+<p>This is not the only way to decompose an answer, but it is enough to make the point.</p>
+<p>I define two answers that differ slightly in wording but share the same <em>(T,E,F,C)</em> as functionally the same answer archetype. Two answers that differ across these dimensions are substantively different, even if they overlap in vocabulary.</p>
+<p>That gives us a better object of study:</p>
+<p>\(∣supp(ϕ(Y)∣q)∣\)</p>
+<p>In words: how many materially distinct answer archetypes exist for a given query?</p>
+<p>And even more importantly, how much of that answer archetype is stable across users?</p>
+<h2>Shared Core, Variable Margin</h2>
+<p>I think the most useful mental model here is to split an answer into two parts:</p>
+<p>\(Y(q,u)≈C(q)⊕V(q,u)\)</p>
+<p>where:</p>
+<ul>
+ <li>
+  <p><em>q</em> is the query/prompt</p></li>
+ <li>
+  <p><em>u</em> is the user</p></li>
+ <li>
+  <p><em>C(q)</em> is the shared core</p></li>
+ <li>
+  <p><em>V(q,u)</em> is the variable margin</p></li>
+</ul>
+<p>The shared core is driven mostly by the topic itself and by the common machinery of the system. It includes the recurring concepts, the broad thrust of the answer, and often the dominant practical takeaways.</p>
+<p>The variable margin is where personalization and stochasticity have more room to act. It includes which examples are chosen, what ordering is used, what nuance gets emphasized, which sub-case gets foregrounded, and which user-specific angle is introduced.</p>
+<p>I think a lot of confusion comes from treating all variation as equally important.</p>
+<p>If I ask:</p>
+<blockquote>
+ <p>What's the best way to train for a marathon as a beginner?</p>
+</blockquote>
+<p>and one answer emphasizes gradual mileage buildup while another emphasizes consistency and recovery, those may be different emphases within the same conceptual basin. If a third answer recommends high-intensity interval training as the main strategy and barely mentions gradual volume, that is a more substantial divergence.</p>
+<p>The structure matters.</p>
+<p>For search-like prompts, the answer is best understood as having <strong>a relatively stable </strong><em><strong>C(q)</strong></em><strong> and a much more flexible </strong><em><strong>V(q,u)</strong></em><strong>.</strong> In layman's terms: a stable, shared core with some user-level flexibility.</p>
+<h2>Why a Shared Core Must Exist</h2>
+<p>There are several reasons to expect a substantial shared core across users.</p>
+<h3>1. Shared model priors</h3>
+<p>Different users are usually interacting with the same model or closely related variants. The model's <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf?utm_source=chatgpt.com">broad representation of the world is shared</a>. Its learned associations, its default explanatory styles, and its compression of common topics are all pulling answers in the same direction.</p>
+<p>For instance, if many users ask:</p>
+<ul>
+ <li>
+  <p>how to learn coding</p></li>
+ <li>
+  <p>how to choose the right software for your business</p></li>
+ <li>
+  <p>why prices go up</p></li>
+ <li>
+  <p>how to get in shape for a race</p></li>
+ <li>
+  <p>how to choose the right database framework for my app</p></li>
+</ul>
+<p>it would be surprising - and highly unlikely - if the system did not converge repeatedly on similar concepts and broad recommendations. I'll share a concrete example later in this writing.</p>
+<figure>
+ <a href="https://substackcdn.com/image/fetch/$s_!Nddf!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8c944400-b079-43e9-b13f-e8b37f5683e2_588x468.jpeg"><img src="https://substackcdn.com/image/fetch/$s_!Nddf!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8c944400-b079-43e9-b13f-e8b37f5683e2_588x468.jpeg" alt="NeuroAI and Geometry"></a>
+ <figcaption>
+  Representation of the latent space of a machine learning model, which serves to illustrate how LLM's mathematically structure similar concepts in their training data (Source: Sy Chung Lab)
+ </figcaption>
+</figure>
+<h3>2. Shared source neighborhoods</h3>
+<p>Even when retrieval is personalized, it is usually personalized within a bounded region of semantic space.</p>
+<p>Users are not retrieving from entirely unrelated universes. They are often moving around within overlapping conceptual neighborhoods. Different users may see different passages, different sources, or different examples, but those often come from clusters that share similar ideas.</p>
+<p>This is important because answers inherit structure from the retrieved evidence.</p>
+<h3>3. Shared product and instruction constraints</h3>
+<p>Commercial LLM systems are not sampling freely from open text space. They are tuned to be coherent, helpful, concise, and often to avoid certain failure modes. Or, put mathematically and as <a href="https://joshbudman.substack.com/p/what-content-surfaces-in-ai-search">I illustrated in my previous post</a>, they are built to minimize entropy in their answers. That pushes answers toward familiar shapes.</p>
+<p>That is why LLM answers often converge on things like:</p>
+<ul>
+ <li>
+  <p>summary first</p></li>
+ <li>
+  <p>a few concrete examples</p></li>
+ <li>
+  <p>a comparison by criteria</p></li>
+ <li>
+  <p>a short practical recommendation</p></li>
+ <li>
+  <p>a hedge or caveat at the end</p></li>
+</ul>
+<p>These are product-level constraints, and they create regularity.</p>
+<h3>4. Decoding concentrates probability mass</h3>
+<p>The existence of many possible outputs does not mean the distribution is flat. In practice, decoding methods and the model's own learned distribution tend to concentrate probability mass heavily in a relatively small region of output space.</p>
+<p>That means a handful of answer archetypes can dominate, even when many more are technically possible.</p>
+<figure>
+ <a href="https://substackcdn.com/image/fetch/$s_!ohcA!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2c4e7d61-05af-4e32-b8db-b9b4241f8f12_1400x1306.png"><img src="https://substackcdn.com/image/fetch/$s_!ohcA!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2c4e7d61-05af-4e32-b8db-b9b4241f8f12_1400x1306.png" alt="Certainty Estimation and Confidence Distributions in LLM Outputs | by  Jasper Hajonides van der Meulen | Medium"></a>
+ <figcaption>
+  LLM distribution concentrate probabilistically around a center of mass (similar to a normal distribution) for each answer space (Source: Jasper Hajonides on Medium)
+ </figcaption>
+</figure>
+<h2>Why Personalization Still Matters</h2>
+<p>To be clear: None of the above means personalization is weak or unimportant. It means the right question is not whether answers differ, but <strong>where</strong> they differ. Personalization can shift the answer at multiple stages as detailed below.</p>
+<h3>Query interpretation</h3>
+<p>The same literal prompt can imply <a href="https://arxiv.org/html/2504.05216v3">different latent questions</a> depending on the user context.</p>
+<p>"Best budgeting app" could mean:</p>
+<ul>
+ <li>
+  <p>personal budgeting for a young professional</p></li>
+ <li>
+  <p>joint budgeting for a family</p></li>
+ <li>
+  <p>cash flow visibility for a founder</p></li>
+ <li>
+  <p>a simple tool for someone new to budgeting</p></li>
+ <li>
+  <p>an app that integrates with a specific bank ecosystem</p></li>
+</ul>
+<p>The surface string is the same. The latent intent is not.</p>
+<h3>Retrieval neighborhood</h3>
+<p>Even a small shift in effective query representation can change what evidence gets surfaced. This is one of the most important sources of divergence, because once different evidence enters context, the answer can move in meaningful ways.</p>
+<h3>Framing and emphasis</h3>
+<p>One user may get an answer optimized around simplicity. Another may get an answer optimized around depth, integration, cost, rigor, or reliability. These aren't trivial changes. They can shape which practical conclusion feels most salient.</p>
+<h3>Surface realization</h3>
+<p>Even when the substance is similar, the style, order, and examples can vary. That matters for user experience, even when it is not the main object I care about here.</p>
+<p>The important point is that these sources of variation do not necessarily destroy the shared core. They often operate around it.</p>
+<h2>Pre-LLM Search vs LLM-Based Search</h2>
+<p>This is also where the contrast with classical search (i.e. traditional SEO) becomes useful. There is a body of individuals that reductively assert that traditional SERPs were already variable and somewhat personalized, so the variation in LLM responses is "old hat".</p>
+<p>It is true that <a href="https://support.google.com/websearch/answer/12410098?hl=en">search engines personalized before LLM</a>s. Location mattered. Language mattered. Some aspects of behavior mattered. In certain domains, prior activity or account state could matter too.</p>
+<p>But for many queries, the result surface still felt largely shared. Users often saw very similar sets of documents <em>d</em> with modest changes in ordering or presentation.</p>
+<p>You can think of that, loosely, as:</p>
+<p>\(score(d∣q,u)≈score(d∣q)+Δu​(d)\)</p>
+<p>where <em>Δu</em> perturbs a shared ranking structure and, as before, <em>q</em> denotes a query/search term and <em>u</em> denotes the user.</p>
+<p>For most search queries, the top of the ranking is dominated by a relatively strong global signal:</p>
+<p>\(s(q,d)≫Δu​(q,d)\)</p>
+<p>at least for the documents near the top. In other words, the personalization-based perturbation was negligible compared to global signals.</p>
+<p>So even if personalization was present, it often only changed:</p>
+<ul>
+ <li>
+  <p>lower-ranked results,</p></li>
+ <li>
+  <p>ties or near-ties,</p></li>
+ <li>
+  <p>inserted modules,</p></li>
+ <li>
+  <p>local ordering among documents with small score gaps.</p></li>
+</ul>
+<p>In LLM-based search, the user can affect the system earlier and more deeply:</p>
+<ul>
+ <li>
+  <p>before retrieval</p></li>
+ <li>
+  <p>during context construction</p></li>
+ <li>
+  <p>during answer generation</p></li>
+</ul>
+<p>That makes the answer surface more sensitive to personalization in LLM's than a classical SERP.</p>
+<h2>A Fun Experiment I Want to Run</h2>
+<p>I will demonstrate the above concepts with a very simple toy example with n=3.</p>
+<p>As my wife and I are avid consumers of streaming TV shows, we'll pose the question <strong>"what are the best streaming television shows"</strong> to ChatGPT under the following conditions:</p>
+<ol>
+ <li>
+  <p>A logged out session (i.e. no user context)</p></li>
+ <li>
+  <p>A session tied to my own ChatGPT account (I'm an avid user of ChatGPT, and have a ton of historical context in there)</p></li>
+ <li>
+  <p>A session tied to my wife's ChatGPT account (Less of an avid ChatGPT user than me)</p></li>
+</ol>
+<p>Then compare the answers side by side.</p>
+<p>The goal here is not be to prove that the answers are identical or to show that they are wildly different. The goal would be to inspect the structure of the variation.</p>
+<p>Questions I'm examining include:</p>
+<ul>
+ <li>
+  <p>Which concepts recur in all versions?</p></li>
+ <li>
+  <p>Which entities or examples are stable?</p></li>
+ <li>
+  <p>Which parts shift with account context?</p></li>
+ <li>
+  <p>Does the answer keep the same overall practical conclusion?</p></li>
+ <li>
+  <p>Where is the model actually expressing personalization?</p></li>
+</ul>
+<p>So, here goes:</p>
+<p><em>Logged Out Session</em></p>
+<figure>
+ <a href="https://substackcdn.com/image/fetch/$s_!DDwm!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcb5b21e6-a678-4d95-b0ac-dbd98c6bd44a_977x663.png"><img src="https://substackcdn.com/image/fetch/$s_!DDwm!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fcb5b21e6-a678-4d95-b0ac-dbd98c6bd44a_977x663.png" alt=""></a>
+</figure>
+<p><em>My Own User Session</em></p>
+<figure>
+ <a href="https://substackcdn.com/image/fetch/$s_!ULm9!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2a14cc02-a8e0-47ec-907b-16d9f604c657_980x606.png"><img src="https://substackcdn.com/image/fetch/$s_!ULm9!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2a14cc02-a8e0-47ec-907b-16d9f604c657_980x606.png" alt=""></a>
+</figure>
+<p><em>My Wife's Session (on a Mac with dark mode, hence the different appearance)</em></p>
+<figure>
+ <a href="https://substackcdn.com/image/fetch/$s_!Fi8l!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7cca93bd-6a6d-4972-bbf2-846628a21ca8_1484x1138.png"><img src="https://substackcdn.com/image/fetch/$s_!Fi8l!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F7cca93bd-6a6d-4972-bbf2-846628a21ca8_1484x1138.png" alt=""></a>
+</figure>
+<p>Indeed, if you compare the answers word-for-word, each and every one of them is completely different. That said, some clear common themes emerge across all three answers:</p>
+<ol>
+ <li>
+  <p>The Pitt is recommended in each response (I've heard great things!)</p></li>
+ <li>
+  <p>Each response is very clearly structured as a bulleted list of items</p></li>
+ <li>
+  <p>Each response has a common structure oriented around categories and sub-categories</p></li>
+</ol>
+<p>While personalization clearly plays a role over the small sample size in this experiment, law of large numbers would assert - and as corroborated by other studies in this area - that LLM responses will converge around the mean of the probability distribution modeled by the training data accessed by the LLM.</p>
+<h2>A Concrete Framing of Personalization in LLM Responses</h2>
+<p>I think the correct working hypothesis is something like this:</p>
+<blockquote>
+ <p>For many search-like questions, personalized LLM answers are best modeled as a bounded family of related answer archetypes that share a common semantic core, with variation concentrated in examples, framing, ordering, and local detail.</p>
+</blockquote>
+<p>Or, simply put:</p>
+<blockquote>
+ <p>For a lot of search-like questions, personalized LLM answers are different versions of the same basic answer. The main idea usually stays the same, while the examples, emphasis, order, and small details are what tend to change.</p>
+</blockquote>
+<p>That is a much stronger claim than saying "personalization exists," and a much more useful one than saying "everything is infinite."</p>
+<p>It also leads to a cleaner empirical question.</p>
+<p>Instead of asking whether two answers are literally identical, ask:</p>
+<ul>
+ <li>
+  <p>What concepts recur across users?</p></li>
+ <li>
+  <p>Which practical conclusions remain stable?</p></li>
+ <li>
+  <p>What changes first when user state changes?</p></li>
+ <li>
+  <p>How much of the answer is common core versus variable margin?</p></li>
+</ul>
+<p>That is a tractable object.</p>
+<h2>The Implication for Brands Trying to Show Up in LLM's</h2>
+<p>Of course, we can't <em>quite</em> resist briefly linking this back to the commercial side of LLM-based search.</p>
+<p>My argument in this post is quite simple: if one is trying to ensure their company shows up in LLM responses, the best way to do so is to be included heavily in the semantic core (i.e. training data) accessed by the models.</p>
+<p>While personalization will certainly impact the nature of what each and every searcher sees, across large populations there will necessarily be mathematical convergence towards common items. This also points to the value of AI search visibility measurement tools as they model responses over a large sample size of prompt runs.</p>
+<h2>Closing</h2>
+<p>A lot of the discourse around personalized AI answers is still stuck at the level of slogans.</p>
+<p>Some people talk as if there is still one answer surface, just with a slightly different interface. Others jump straight to the idea that personalization blows the whole thing apart and leaves nothing stable enough to reason about.</p>
+<p>I think both miss what is actually interesting.</p>
+<p>Answers will definitely vary across users, but the important point is that the variation is constrained. These systems are stochastic, but they are not sampling from chaos. They are generating under shared priors, shared corpora, bounded retrieval, bounded context, and decoding schemes that push probability mass into a relatively small part of the space.</p>
+<p>That means personalization matters, but it matters inside a structure.</p>
+<p>Answers to the same question can diverge in examples, framing, emphasis, and local detail while still converging on the same semantic center. And that is a very different claim from either "everyone gets the same answer" or "every answer is its own universe."</p>
+<p>The answer surface is no longer singular in the way it was in classical search. But it is not infinitely fragmented either. It is better understood as a bounded family of related answers, with a shared core and user-conditioned variation around it.</p>
+<p>Once you see that, a lot of the noise around AI search starts to clear.</p>

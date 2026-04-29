@@ -1,0 +1,113 @@
+<p>Large language model inference engines are typically benchmarked with prompt-heavy, decode-heavy, or balanced workloads. <a href="https://inferencex.semianalysis.com">InferenceX</a> from SemiAnalysis, for example, tests a workload with a fixed number of input and output tokens (e.g. 1,000 tokens in, 8,000 tokens out). Before the advent of agents that could aggressively call tools, most workloads were simple: chatbots that would think while answering a math problem, API calls that would summarize a long body of text, or coding autocomplete that would take in the current file and emit a short suggestion.</p>
+<p>Agentic applications today have a very different shape: multi-turn, tool-using workloads that have produced a surge in the demand for inference capacity. These workloads present a new set of challenges compared to the single-turn pattern, including KV cache management from long-running traces, scheduler pressure from a large volume of short output requests, and heavy-tailed token distributions.</p>
+<p>In this post, we'll share some learnings from our production post-training runs and deployments on what these traffic patterns look like. We release <strong>three distinct workload profiles</strong> and an <strong>open-source benchmarking harness</strong> for replaying them, with the hope that these will help define clearer targets when optimizing inference engines and hardware accelerators. We also clarify a few of the metrics that are important for different deployment contexts including batch, background, and interactive agents.</p>
+<h3>How modern workloads differ</h3>
+<p>Inference benchmarking today primarily consists of single-turn, single-request workloads where we send a prompt of P tokens, generate D tokens, and then measure time-to-first-token, tokens-per-second, and completion throughput. Engines are load-tested on a sample of these (P, D) pairs: 1k/8k for decode-heavy, 8k/1k for prefill-heavy, and 1k/1k for balanced. Those workloads are designed to model human-chatbot interactions where the input/output patterns are for short question-answer sessions or multi-turn interactions with relatively short user inputs and negligible latency between user interactions.</p>
+<p>In contrast, a session with an agent produces a back-and-forth somewhat resembling a multi-turn user conversation: the model thinks and generates a response, calls a tool, receives the output after waiting for a response from a tool server, and generates again given the tool's output as context. This loop repeats up to hundreds of times and completes when the model no longer needs to call a tool. Each tool call output requires a new round of prefill before appending to the cache built up over previous turns, and between turns the server must decide whether to keep or evict that cache while the tool executes.</p>
+<p>Over a hundred of our production multi-turn post-training runs sampled from different deployments, we observe a mean of about twenty tool turns per trace, with a long tail into the hundreds. Assistant responses within a turn are centered around 200 - 300 tokens while tool outputs are concentrated around 500 tokens, but both have a meaningful chunk that extends into the tens of thousands. Input prompts are centered around 10k, mostly from long system prompts that include tool descriptions. Tool-call latencies are short overall, around one second, but can extend past hundreds of seconds in the tail.</p>
+<p>We pull three real workloads for our experiments.</p>
+<ul>
+ <li>An <strong>agentic coding</strong> workload involving tasks from <a href="https://openai.com/index/introducing-swe-bench-verified/">SWE-Bench Verified</a> with a heavy tool harness that takes up thousands of tokens.</li>
+ <li>A lightweight <strong>code QA</strong> workload that involves agentic terminal-based search over a repository to answer user questions.</li>
+ <li>An <strong>office work</strong> workload involving document, spreadsheet, and slide deck manipulation over a large filesystem with a heavy tool harness.</li>
+</ul>
+<h3>Statistics from production deployments</h3>
+<p>We use the following terminology:</p>
+<ul>
+ <li>A single <strong>request</strong> is the set of input parameters into the HTTP POST for an engine's /completion or /chat/completion endpoint. An 8k-in, 1k-out workload is effectively just one request.</li>
+ <li>A <strong>trace</strong> is a single session with an agent, consisting of all its requests and tool calls. One Claude Code or Codex session, for example, can be considered a trace.</li>
+ <li>A <strong>workload</strong> is a set of traces, typically captured during production inference.</li>
+</ul>
+<figure>
+ <img alt="Figure 1: Lifecycle of a trace. Note that each LLM generate call is a single request.">
+ <figcaption>
+  Figure 1: Lifecycle of a trace. Note that each LLM generate call is a single request.
+ </figcaption>
+</figure>
+<p>We can model a trace with the following attributes:</p>
+<ul>
+ <li>Input prompt length: the token count of the initial request, including system prompt, tool definitions, and user prompt.</li>
+ <li>Number of turns: how many tool-call round trips occur. This determines how many completion requests a single conversation generates.</li>
+ <li>Assistant output per turn: the number of sampled tokens at each step. This is the generation component of each request that the inference engine runs.</li>
+ <li>Tool output per turn: the number of new tokens appended as context between turns from the model executing tools against the environment.</li>
+ <li>Tool call latency: the wall-clock delay, in seconds, between receiving the model's response and sending the next request.</li>
+</ul>
+<p>While the last point may seem like an implementation detail, it can meaningfully contribute to observed throughput by affecting scheduler and cache eviction decisions. Correspondingly, this affects the optimal concurrency and queries-per-second for an engine.</p>
+<p>These three workloads are different, but share a few core elements. The number of tool calls is typically in the dozens while assistant output per turn and tool output per turn are usually in the low hundreds of tokens. Most attributes have heavy tails, especially number of turns, assistant tokens per turn, tool output tokens per turn, and tool call latency.</p>
+<p>Of the three, the agentic coding use case is relatively shorter-horizon but spikier in tool latency: it averages about 20 tool turns per trace, starts from a smaller prompt, ends with a shorter final response, but has a heavier tail in tool wait time. The office work use case averages about 41 turns per trace, begins with a larger prompt, produces larger tool outputs overall, and ends with much longer final responses. The code QA use case has the most range with the number of tool call turns going up to 200, showing the difficulty of some of the tasks in the workload.</p>
+<p>Note that for the purposes of the workload we collapse parallel tool calls into one, so a parallel tool call with t1 and t2 tool call output tokens respectively would be logged in a workload file as one tool call output of size t1 + t2. This doesn't change workload semantics as from the engine's perspective parallel tool call outputs are still just one larger prefill request.</p>
+<h3>Why capture full workloads?</h3>
+<p>For simplicity, we could instead compute the <em>mean trace</em> where each quantity is the average from across the workload. For example, for the office work use case, the mean trace would have 41 turns and 8.9k input prompt tokens. We could then replay just this trace repeatedly. Unfortunately, this would overstate our engine performance on the real workload as:</p>
+<ol>
+ <li>There is more request scheduling and KV allocation pressure with high variance requests.</li>
+ <li>LLM inference is "convex": a request with twice the input prompt length is more than twice as expensive. Meanwhile a request with half the input prompt length is less than half as expensive.</li>
+</ol>
+<p>We show this ablation in the appendix.</p>
+<h3>Metrics for batch, background, and interactive deployments</h3>
+<p>We evaluate engines by replaying the same workload against each endpoint. For each engine configuration, we sweep concurrency at a fixed run duration and report both per-trace latency metrics and per-workload throughput metrics. Which metrics matter most depends on the deployment context. We consider three.</p>
+<p><strong>1. Pure throughput (minimizing $/token).</strong> For workloads that are not sensitive to latency — asynchronous tasks, synthetic data generation, RL training — the goal is to maximize throughput per dollar. We use completion throughput per GPU as the primary measure of system goodput, since the inference engine's primary task is to sample new tokens. We don't consider pure MFU because a system with poor KV cache management could have very high overall FLOPs utilization from constantly prefilling evicted tokens, but would take much longer to complete the overall workload.</p>
+<p>Steady-state throughput is computed from the later portion of the benchmark after excluding the initial warmup period. We build a cumulative completion-token curve over benchmark time, drop the first 20% of benchmark wall-clock time, and report throughput from the remaining portion. This reduces the influence of startup effects such as an initially empty cache and short early sequence lengths. We also report total prompt throughput, cached prompt throughput, uncached prompt throughput, and cache hit rate as diagnostic metrics.</p>
+<p><strong>2. Background tasks with an SLA (meeting a time budget).</strong> Many agentic workloads fall between pure batch and fully interactive. For example, a coding agent running in CI, a deep research task kicked off in the background, or an enterprise workflow that must be completed before a review in a few hours. The user is not directly working in sync with the agent, but it would be valuable to bound how long the request takes to complete. Here the headline metric is end-to-end trace latency: the time from the first request of a trace to the final token of the final response. Throughput still matters as it determines the cost per task but another constraint is that individual traces must finish within the SLA. Tail latency (p90, p99) becomes especially important to track.</p>
+<p><strong>3. User-facing agents (streaming to a user).</strong> When a user is working in sync with an agent, an important latency metric is time to first answer token (TTFAT): the wall-clock time from the start of a trace to the first streamed token of the final, user-visible assistant response. This is distinct from the standard time to first token (TTFT), which measures only the latency of the first turn's prefill. In a multi-turn agentic workflow, the model may complete many intermediate tool-calling turns before producing the answer the user actually sees. The right metric is partly a product decision: some applications may stream intermediate steps rather than waiting for the final answer. Interactivity, defined as streaming tokens per second per user, also matters here, since a fast first answer token that trickles out slowly can result in a degraded experience.</p>
+<h3>An open-source harness for replaying agent traces</h3>
+<p>To study these workloads, we release a small evaluation harness for replaying multi-turn agentic traces against OpenAI-compatible inference endpoints. The harness is lightweight at &lt;1k lines of Python. It replays traces by having each occupy one concurrency slot for its full lifetime, including tool wait time, and each successive assistant turn is issued as a new completion request against the accumulated prompt.</p>
+<p>We release three primary workload files: agentic_coding_8k.jsonl, code_qa_8k.jsonl, and office_work_8k.jsonl. These are concrete recorded traces from production workloads. They correspond to the distributions shown above.</p>
+<p>The suite reports two classes of metrics. The first are per-trace metrics, which summarize the distribution of end-to-end trace latency, time to first answer token, interactivity, cache hit rate, and eligible cache hit rate across completed traces. Eligible cache hit rate measures hit rate only on the prefix tokens that are expected to be cacheable, excluding tokens from the initial request's input prompt and subsequent requests' most recent tool call output. The second are per-workload metrics, which summarize total prompt throughput, cached prompt throughput, uncached prompt throughput, and completion throughput, each reported as overall, last-30-second, and steady-state values, with an optional per-GPU normalization.</p>
+<figure>
+ <img alt="Figure 2: Terminal logs while a run is ongoing.">
+ <figcaption>
+  Figure 2: Terminal logs while a run is ongoing.
+ </figcaption>
+</figure>
+<figure>
+ <img alt="Figure 3: Terminal output after a run finishes. Metrics are broken down into per-trace and overall workload tables.">
+ <figcaption>
+  Figure 3: Terminal output after a run finishes. Metrics are broken down into per-trace and overall workload tables.
+ </figcaption>
+</figure>
+<p>To launch a run, a user will specify an endpoint, a model name, a tokenizer, a workload file, a concurrency level, and a run duration.</p>
+<pre><code>uv run python trie \
+  workload_path=office_work_8k.jsonl \
+  endpoint=&lt;http-endpoint&gt; \
+  model=&lt;served-model-name&gt; \
+  tokenizer_model=&lt;model-name-or-tokenizer-path&gt; \
+  concurrency=24 \
+  duration=3600 \
+  num_gpus=8</code></pre>
+<h3>Engine performance for Deepseek R1</h3>
+<p>We evaluate all three workloads on vLLM and SGLang each running a replica of Deepseek R1 on a 8xB200 node with TP8EP8 for simplicity. For each engine, we mostly use the default configuration except for turning up CUDA graph batch size granularity. Setup commands are given in the appendix.</p>
+<p>Each point in the main comparison is a two-hour run at a fixed concurrency, with streaming enabled so that we can measure time to first answer token and interactivity. Unless otherwise noted, the figure below sweeps concurrency in \{8, 16, 24, 32, 40, 48}. The figure should be read as a Pareto plot. For the left-hand side, points that are higher and further right are preferable. For the right-hand side, points that are higher and further left are preferable. On these workloads, vLLM and SGLang are comparable. Naturally, these results are workload-, model-, and tuning-specific. Different settings may lead to more substantial differences.</p>
+<p>We observe that both engines degrade noticeably once concurrency is turned up too high. This is due to KV cache evictions which cause the cache hit rate to decrease. The figure below shows the eligible cache hit rate which under ideal prefix caching conditions would be at or near 100%.</p>
+<h3>Conclusion</h3>
+<p>The surge in agentic use cases has increased demand for inference compute with meaningfully different workload characteristics. Knowing the end workload can be a powerful tool for better inference and hardware accelerator optimization. For example, knowing our workloads has motivated us to pursue better tune concurrency, inference serving parallelism, quantization, and load balancer policies. Our tuning is metric-specific; for RL training, in particular, we care primarily about inference throughput. On the workloads above, we've observed that our primary bottleneck is KV capacity.</p>
+<p>We hope this benchmark will engage the community's effort on optimizing agentic inference workloads. Some further directions include:</p>
+<p><strong>KV cache offloading and eviction.</strong> Since KV capacity is a primary bottleneck for performance, offloading to host RAM or disk would be helpful. Workload statistics on tool call latency and context lengths could be incorporated into determining which blocks from which traces should be evicted first.</p>
+<p><strong>Multi-engine load balancing.</strong> Performance here can be measured with the same harness, but with the endpoint exposed by a router rather than a single engine.</p>
+<p><strong>Workload-aware routing.</strong> A router may benefit from reasoning over workload statistics: current cache residency, expected future turns, recent tool latencies, and predicted remaining trace length. This opens the door to workload-aware routing policies that preserve cache locality and avoid sending sessions to engines that, even if less busy now, will predictably be busy within a few turns.</p>
+<p><strong>Shared prefixes across requests.</strong> This is especially relevant in post-training where we generate multiple rollouts for a single task. A router policy should be aware of shared prefix overlap and try to route traces with the same prefix to the same engine.</p>
+<p><strong>Disaggregated layouts.</strong> When doing prefill-decode disaggregation, the optimal ratio of each type of worker depends closely on the ratio between assistant output tokens (decode) and tool output tokens (prefill).</p>
+<p><a href="https://github.com/Applied-Compute/trie">See the repository</a>.</p>
+<h3>Appendix</h3>
+<p><strong>1. Mean trace ablation</strong></p>
+<p>For the office work workload, we compute the mean trace where we average across all quantities. For any integer values (such as number of tool call turns) we round up. Despite this, we find that replaying the mean trace leads to overestimating throughput by between 10 - 20% making the mean trace not representative as an optimization target.</p>
+<p><strong>2. Engine configurations</strong></p>
+<p>For vLLM, we use the 'vllm/vllm-openai:latest' image.</p>
+<pre><code>export VLLM_USE_FLASHINFER_MOE_FP8=1
+vllm serve /tmp/DeepSeek-R1 \
+  --tensor-parallel-size 8 \
+  --enable-expert-parallel \
+  --trust-remote-code \
+  --quantization fp8 \
+  --enable-prompt-tokens-details \
+  --cudagraph-capture-sizes 1 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 64 96 128 160 192 224 256 288 320 352 384 416 448 480 512 544 576 608 640 672 704 736 768 800 832 864 896 928 960 992 1024 1056 1088 1120 1152 1184 1216 1248 1280 1312 1344 1376 1408 1440 1472 1504 1536 1568 1600 1632 1664 1696 1728 1760 1792 1824 1856 1888 1920 1952 1984 2016 2048</code></pre>
+<p>For SGLang, we use the 'lmsysorg/sglang:v0.5.9' image due to cuda graph instabilities. Also, prefill piecewise cuda graphs were not enabled for sglang because of compilation errors inside the 'flashinfer_trtllm' backend.</p>
+<pre><code>python -m sglang.launch_server \
+  --trust-remote-code \
+  --model-path /tmp/DeepSeek-R1 \
+  --quantization fp8 \
+  --model-loader-extra-config '\{"enable_multithread_load": true, "num_threads": 8}' \
+  --tp 8 \
+  --enable-metrics \
+  --enable-cache-report \
+  --cuda-graph-max-bs 48 \
+  --cuda-graph-bs 1 2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48</code></pre>

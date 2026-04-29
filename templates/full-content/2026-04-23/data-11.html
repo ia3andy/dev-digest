@@ -1,0 +1,215 @@
+<h1>Entropy-Guided KV Cache Summarization via Low-Rank Attention Reconstruction</h1>
+<p>As Large Language Models (LLMs) move toward million-token context windows, we are hitting a physical limit: the KV Cache. Storing the Keys and Values for every single token in a sequence causes VRAM usage to scale linearly.</p>
+<p>In the standard Transformer architecture, each new token requires access to the keys and values of all preceding tokens. As a result, the KV cache grows linearly with sequence length: $[\mathcal\{O}(N)]$. For long-context models, this quickly exceeds the VRAM capacity of a single GPU (e.g., an H100), necessitating either distributed sharding or aggressive pruning strategies.</p>
+<p>Existing Heavy Hitter or Top-K eviction strategies rely on a simple premise: if a token isn't being looked at now, it won't be looked at later. However, information in natural language is inherently context-dependent and non-stationary. A token that is irrelevant in one segment may become the primary anchor in another.</p>
+<p>In this post, I'll walk through another paradigm: The SRC (Selection-Reconstruction-Compression) Pipeline. Instead of deleting tokens, we mathematically summarize them using Information Theory and Linear Algebra.</p>
+<p>To understand why this assumption fails, we first need to examine the structure of attention itself.</p>
+<h2>Why Pruning Fails: Attention is Structured</h2>
+<p>The attention mechanism does not operate on tokens independently. Instead, it produces a dense interaction pattern between queries and keys, where each token participates in a global computation.</p>
+<p>Each row corresponds to a query token, and each column corresponds to a key token. The intensity reflects how strongly a query attends to a given key.</p>
+<p>Several observations emerge:</p>
+<ul>
+ <li>Attention is highly structured, not sparse</li>
+ <li>Multiple tokens contribute jointly to outputs</li>
+ <li>Dependencies are distributed across the sequence</li>
+</ul>
+<h3>Token-wise Error Under Pruning</h3>
+<p>While pruning appears effective on average, a finer-grained analysis reveals a critical failure mode.</p>
+<p>This plot shows the reconstruction error for each token after applying Top-K pruning.</p>
+<p>Most tokens exhibit low error, suggesting that pruning works well locally. However, a few tokens show <strong>sharp spikes in error</strong>, indicating catastrophic failures.</p>
+<p>These spikes correspond to tokens whose contribution is:</p>
+<ul>
+ <li>not immediately dominant</li>
+ <li>but structurally important for downstream attention</li>
+</ul>
+<p>Notably, these failures are not predictable from local importance alone.</p>
+<blockquote>
+ <p>Pruning fails not uniformly, but <strong>selectively and unpredictably</strong>.</p>
+</blockquote>
+<h2>The SRC Paradigm: A Three-Stage Evolution</h2>
+<p>To address these limitations, we shift from a heuristic, decision-based paradigm to a structured transformation pipeline.</p>
+<p>Instead of deciding which tokens to remove, we aim to approximate their contribution through a sequence of operations:</p>
+<pre><code>Selection → Reconstruction → Compression</code></pre>
+<h3>Selection: The Entropy "Recycle Bin"</h3>
+<p>How do we decide which tokens to summarize? Instead of magnitude, we look at Information Uncertainty.</p>
+<p>We calculate the Shannon Entropy H(P) of the attention weights for each head. If a token has high entropy, it means the model is "diffusing" its focus; the information is less specific and potentially more redundant.</p>
+<p>$$H(P) = -\sum_\{i} p_i \log(p_i)$$</p>
+<p>Tokens with high entropy and low cumulative importance are moved to a "Recycle Bin." Low-entropy "anchor" tokens are kept in the high-fidelity Active Cache.</p>
+<h4>Entropy Landscape of Tokens</h4>
+<p>Each point represents the entropy of a token's attention distribution.</p>
+<p>We observe that:</p>
+<ul>
+ <li>Some tokens exhibit <strong>low entropy</strong> (sharp, focused attention)</li>
+ <li>Others exhibit <strong>high entropy</strong> (diffuse, uncertain attention)</li>
+</ul>
+<p>Low-entropy tokens tend to act as <strong>anchors</strong>, concentrating attention and carrying specific semantic meaning. High-entropy tokens, in contrast, distribute attention broadly and often encode less precise information.</p>
+<h3>Reconstruction: Solving for the Semantic Essence</h3>
+<p>Once tokens are in the Recycle Bin, we want to represent them as a single <strong>centroid token</strong>. Simply averaging them is insufficient, as it ignores the specific queries that might interact with them.</p>
+<p>We instead frame this as an <strong>Ordinary Least Squares (OLS)</strong> problem. Our goal is to find a weight matrix $( W )$ that minimizes the reconstruction error of the attention output produced by the binned tokens.</p>
+<p>Given a set of reference queries $( Q_\{\text\{ref}} )$ and the original binned values $( V_\{\text\{bin}} )$, we solve:</p>
+<p>$$[ W^* = \arg\min_\{W} \left| Q_\{\text\{ref}} W - \text\{Attn}(Q_\{\text\{ref}}, K_\{\text\{bin}}, V_\{\text\{bin}}) \right|_2^2 ]$$</p>
+<p>This formulation ensures that the reconstructed representation preserves the functional contribution of the discarded tokens.</p>
+<p>In practice, we solve this analytically using the <strong>Moore-Penrose pseudoinverse</strong>:</p>
+<p>$$[ W = Q_\{\text\{ref}}^\{\dagger} \cdot \text\{Attn}(Q_\{\text\{ref}}, K_\{\text\{bin}}, V_\{\text\{bin}}) ]$$</p>
+<p>This allows the compressed representation to accurately approximate the original attention outputs while using significantly fewer tokens.</p>
+<h4>The core OLS logic from the implementation</h4>
+<pre><code>def summarize_bin_ols(Q_ref, bin_v):
+    # Solve for weights that reconstruct the original V output
+    pinv_Q = torch.linalg.pinv(Q_ref)
+    W_reconstruction = pinv_Q @ bin_v
+    return W_reconstruction</code></pre>
+<h3>Compression: Low-Rank Approximation (SVD)</h3>
+<p>The reconstruction weight matrix $( W )$ is still memory-intensive. To achieve actual VRAM savings, we compress $( W )$ using <strong>Singular Value Decomposition (SVD)</strong>.</p>
+<p>By performing a rank $-( k )$ approximation, we retain only the most significant singular values and their corresponding vectors. This yields a compact representation that captures the dominant structure of the original matrix.</p>
+<p>$$ [ W \approx U_k \Sigma_k V_k^T ]$$</p>
+<p>This low-rank factorization allows us to interpret each retained component as a synthetic key-value pair, effectively producing a <strong>centroid token</strong> that acts as a proxy for the entire Recycle Bin.</p>
+<p>Importantly, this process filters out low-energy components (noise) while preserving the principal directions (signal) that are most relevant for reconstructing attention outputs.</p>
+<p>As a result, we achieve substantial compression without significantly degrading the functional behavior of the attention mechanism.</p>
+<h2>Evaluation Protocol: FAIR vs REAL</h2>
+<p>Before presenting results, it is important to distinguish between two evaluation settings.</p>
+<p>A naive comparison between methods can be misleading, as different approaches utilize memory differently. In particular, summarization-based methods introduce additional tokens, making direct comparisons with pruning methods non-trivial.</p>
+<p>To address this, we evaluate under two complementary regimes:</p>
+<h3>FAIR: Equal Effective Capacity</h3>
+<p>In the FAIR setting, we ensure that all methods operate under the same <strong>effective KV budget</strong>.</p>
+<p>For HAE, summarization introduces additional tokens (e.g., centroid tokens). To account for this, we adjust the usable budget:</p>
+<pre><code>effective_budget = k_budget − (bin_size − k_rank)</code></pre>
+<h3>REAL: Actual Memory Usage</h3>
+<p>In the REAL setting, we measure the true memory footprint of each method without any adjustments.</p>
+<pre><code>def kv_memory(K, V):
+    return (K.numel() + V.numel()) * 4 / (1024 * 1024)</code></pre>
+<p>Unlike the FAIR setting, we do not compensate for summarization overhead. This reflects real-world deployment conditions, where every stored token contributes to memory usage.</p>
+<h2>Results</h2>
+<h3>Memory Evolution Over Time</h3>
+<p>This plot shows the number of KV tokens retained as the sequence progresses.</p>
+<p>Two distinct behaviors emerge:</p>
+<ul>
+ <li><strong>Top-K (blue)</strong> maintains a flat cap, enforcing a strict upper bound on memory</li>
+ <li><strong>HAE (orange)</strong> exhibits a step-like pattern, where memory grows and is periodically compressed</li>
+</ul>
+<h4>Interpretation</h4>
+<p>Top-K follows a <strong>static retention policy</strong>:</p>
+<ul>
+ <li>Once the budget is reached, tokens are continuously evicted</li>
+ <li>No information from evicted tokens is preserved</li>
+</ul>
+<p>In contrast, HAE follows a <strong>dynamic compression policy</strong>:</p>
+<ul>
+ <li>Tokens are temporarily accumulated</li>
+ <li>When the recycle bin fills, they are summarized and compressed</li>
+ <li>The cache size drops before growing again</li>
+</ul>
+<p>Each downward step in HAE corresponds to:</p>
+<pre><code>Recycle Bin Full → OLS Reconstruction → SVD Compression → Reinsertion</code></pre>
+<h3>KV Compression Strategies (FAIR)</h3>
+<p>We extend our evaluation to compare multiple KV cache compression strategies under the FAIR setting.</p>
+<p>Methods evaluated:</p>
+<ul>
+ <li><strong>Top-K</strong>: Retains tokens with highest attention importance</li>
+ <li><strong>Sliding Window</strong>: Keeps only the most recent tokens</li>
+ <li><strong>OLS (rank-k)</strong>: Low-rank approximation without entropy-based selection</li>
+ <li><strong>HAE (Vanilla)</strong>: Entropy-based selection without reconstruction</li>
+ <li><strong>HAE (Entropy + OLS)</strong>: Full SRC pipeline (Selection + Reconstruction + Compression)</li>
+</ul>
+<h4>1. Full SRC Pipeline Performs Best</h4>
+<p>Across all memory budgets, <strong>HAE (Entropy + OLS)</strong> consistently achieves the lowest reconstruction error.</p>
+<ul>
+ <li>Significant gains at low keep ratios (≤ 30%)</li>
+ <li>Maintains strong performance even under aggressive compression</li>
+</ul>
+<h4>2. Selection Alone is Not Enough</h4>
+<p>Comparing:</p>
+<ul>
+ <li><strong>HAE (Vanilla)</strong> vs</li>
+ <li><strong>HAE (Entropy + OLS)</strong></li>
+</ul>
+<p>We observe that:</p>
+<blockquote>
+ <p>Entropy-based selection improves over naive methods, but reconstruction is critical.</p>
+</blockquote>
+<p>Without OLS, performance degrades significantly, especially at lower budgets.</p>
+<h4>3. Compression Alone is Insufficient</h4>
+<p>The <strong>OLS (rank-k)</strong> baseline remains nearly flat across ratios:</p>
+<ul>
+ <li>It does not adapt to token importance</li>
+ <li>Lacks query-aware selection</li>
+</ul>
+<p>This highlights that:</p>
+<blockquote>
+ <p>Compression without selection fails to capture meaningful structure.</p>
+</blockquote>
+<h4>4. Sliding Window Performs Poorly</h4>
+<p>Sliding window exhibits the highest reconstruction error:</p>
+<ul>
+ <li>Ignores global dependencies</li>
+ <li>Retains tokens purely based on recency</li>
+</ul>
+<h4>5. Top-K is Strong but Fragile</h4>
+<p>Top-K performs reasonably well at higher budgets, but:</p>
+<ul>
+ <li>Degrades rapidly at low ratios</li>
+ <li>Suffers from the selective failure modes observed earlier</li>
+</ul>
+<h3>FAIR vs REAL: Accuracy and Memory Tradeoff</h3>
+<p>We now evaluate the SRC pipeline across both FAIR and REAL settings, capturing the tradeoff between reconstruction fidelity and memory usage.</p>
+<h4>FAIR: Reconstruction Error</h4>
+<p>The left plot shows reconstruction error (MSE) under equal effective capacity.</p>
+<p>Across all keep ratios, HAE consistently outperforms Top-K:</p>
+<ul>
+ <li>At <strong>30% keep ratio</strong>, HAE achieves nearly <strong>3× lower error</strong></li>
+ <li>At <strong>50% and 70%</strong>, the gap remains significant</li>
+ <li>At higher ratios, both methods converge as more tokens are retained</li>
+</ul>
+<p>This demonstrates that:</p>
+<blockquote>
+ <p>HAE preserves the attention function more effectively under constrained budgets.</p>
+</blockquote>
+<h4>REAL: Memory Footprint</h4>
+<p>The right plot shows the actual memory consumption of each method.</p>
+<p>Interestingly, HAE uses:</p>
+<blockquote>
+ <p><strong>Less memory than Top-K across all ratios</strong></p>
+</blockquote>
+<p>This occurs because:</p>
+<ul>
+ <li>HAE compresses multiple tokens into low-rank representations</li>
+ <li>Redundant information is removed rather than explicitly stored</li>
+</ul>
+<h4>Combined Interpretation</h4>
+<p>Taken together, the results reveal a key distinction:</p>
+<ul>
+ <li>
+  <p><strong>Top-K</strong>:</p>
+  <ul>
+   <li>Optimizes for token retention</li>
+   <li>Suffers from high reconstruction error at low budgets</li>
+  </ul></li>
+ <li>
+  <p><strong>HAE</strong>:</p>
+  <ul>
+   <li>Optimizes for functional preservation</li>
+   <li>Achieves both <strong>lower error</strong> and <strong>lower memory usage</strong></li>
+  </ul></li>
+</ul>
+<h4>Rethinking the Objective</h4>
+<p>These findings challenge a common assumption:</p>
+<blockquote>
+ <p>Fewer tokens do not necessarily imply better efficiency.</p>
+</blockquote>
+<p>Instead:</p>
+<ul>
+ <li>Memory should be evaluated in terms of <strong>information density</strong>, not token count</li>
+ <li>Compression can outperform pruning in both <strong>accuracy and footprint</strong></li>
+</ul>
+<h2>Conclusion</h2>
+<p>This research established that the linear scaling of the KV cache can be mitigated through mathematically-guided summarization. The synergy between Hierarchical Attention Entropy and Low-Rank Reconstruction allows the model to "compact" diffused information into a representative centroid rather than simply evicting it.</p>
+<p>Our benchmarks on a synthetic Transformer show that this method maintains the semantic "shape" of attention patterns that pruning strategies typically degrade. The primary trade-off observed is the increased calculation time for OLS and SVD steps. Consequently, the next phase of this work involves implementing these operations within custom Triton kernels to amortize latency. By viewing the cache through the lens of reconstruction fidelity rather than just memory capacity, we can develop more sustainable architectures for long-context inference.</p>
+<p>The full research notebook <a href="https://github.com/jayanthchandra/notebooks/blob/main/HAE_OLS.ipynb">open for review</a></p>
+<h2>Citation</h2>
+<pre><code>@misc\{hae_kv_cache_2026,
+  title     = \{Entropy-Guided KV Cache Summarization via Low-Rank Attention Reconstruction},
+  author    = \{Chandra, Jayanth},
+  year      = \{2026},
+  publisher = \{Zenodo},
+  doi       = \{10.5281/zenodo.19657329},
+  url       = \{https://doi.org/10.5281/zenodo.19657329}
+}</code></pre>

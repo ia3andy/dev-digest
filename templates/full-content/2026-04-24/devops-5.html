@@ -1,0 +1,100 @@
+<h1>Automating Incident Investigation with AWS DevOps Agent and Salesforce MCP Server</h1>
+<p>Every minute counts when managing a critical infrastructure incident. Organizations need to quickly identify issues, diagnose root causes, and implement solutions—all while keeping customers informed. AWS DevOps Agent changes this by automating investigation and response, reducing mean time to resolution (MTTR) from hours to minutes.</p>
+<p>In this post, you'll learn how to integrate <a href="https://docs.aws.amazon.com/devopsagent/latest/userguide/about-aws-devops-agent.html">AWS DevOps Agent</a> with <a href="https://help.salesforce.com/s/articleView?id=platform.hosted_mcp_servers.htm&amp;type=5">Salesforce Hosted MCP Server</a> to create an autonomous incident investigation workflow. This integration connects customer support cases directly to infrastructure diagnostics, reducing response times, and facilitating consistent incident resolution across your organization.</p>
+<h2>The Challenge: The Cost of Manual Incident Investigation</h2>
+<p>Customer complaints like "the website is slow" often trigger hours of investigation across distributed systems, fragmented telemetry, and multiple teams. Your customer support team lacks the deep infrastructure expertise to diagnose root causes, while your DevOps Engineers are constantly interrupted and pulled away from systematic improvements.</p>
+<p>This handoff between teams creates friction:</p>
+<ul>
+ <li><strong>Increased mean time to detect (MTTD)</strong> – Issues sit in queues waiting for the right expert</li>
+ <li><strong>Extended mean time to resolve (MTTR)</strong> – Manual investigation across Amazon CloudWatch, AWS CloudTrail, application logs, and deployment history is time-consuming</li>
+ <li><strong>Context loss</strong> – Information gets lost in translation between support tickets and infrastructure analysis</li>
+ <li><strong>Reactive problem solving</strong> – Teams spend time on symptoms rather than preventing recurring issues</li>
+</ul>
+<p>AWS DevOps Agent integrated with Salesforce changes this paradigm by connecting support workflows directly to autonomous infrastructure investigation, eliminating manual handoffs and reducing investigation time.</p>
+<h2>How It Works – A Seamless Flow from Customer Complaint to Infrastructure Diagnosis</h2>
+<ol>
+ <li><strong>Case Creation:</strong> Your customer reports an issue in <a href="https://www.salesforce.com/service/">Agentforce Service</a> (e.g., "My Load Balancer is showing unavailable"). Salesforce Flow detects the new case and triggers the AWS DevOps Agent via an API or webhook call.</li>
+ <li><strong>Autonomous Investigation:</strong> DevOps Agent starts an investigation and identifies the root cause. The agent queries AWS observability services, third-party platforms like Splunk and Datadog, code repositories, and CI/CD pipelines. It builds a dynamic topology graph to map relationships between application resources.</li>
+ <li><strong>Case Enrichment:</strong> Investigation findings automatically post back to the Salesforce case, providing your support team with technical context and root cause analysis.</li>
+ <li><strong>Preventative Recommendations:</strong> The agent suggests architectural improvements to help prevent recurrence.</li>
+</ol>
+<h2>Real-World Example: The Single Instance Outage</h2>
+<p><strong>The Incident</strong></p>
+<p>A customer opens a case in Agentforce Service reporting an application as unavailable.</p>
+<h2>The Investigation</h2>
+<p>Salesforce Flow triggers DevOps Agent when the case is created:</p>
+<ol>
+ <li><strong>Case Retrieval:</strong> The agent uses the Salesforce soql_query tool to retrieve case details, including the customer's account, incident description, and timing. The tool is made available via Salesforce Hosted MCP.</li>
+ <li><strong>Topology Discovery:</strong> The agent maps the infrastructure and identifies all components of the application.</li>
+ <li><strong>CloudWatch Metrics Analysis:</strong> The agent examines metrics during the incident window and discovers the count of requests dropped to zero during the unavailability period.</li>
+ <li><strong>CloudTrail Event Analysis:</strong> The agent discovers a sequence of administrative actions that caused the downtime.</li>
+ <li><strong>Root Cause Determination:</strong> The agent correlates the administrative actions with the metrics drop, identifying that an EC2 instance termination caused the outage.</li>
+ <li><strong>Case Update:</strong> The agent uses the Salesforce create_sobject_record tool to post findings to the case Activity feed. The tool is made available via Salesforce Hosted MCP.</li>
+</ol>
+<h2>The Result</h2>
+<p>Your Salesforce case now contains a comprehensive root cause analysis with timeline, affected resources, and contributing factors.</p>
+<h2>The Mitigation Plan</h2>
+<p>The agent generates an actionable mitigation plan showing how to prevent recurrence.</p>
+<p>The agent also provides step-by-step remediation instructions that you can apply immediately. Due to length, this shows a portion of the plan.</p>
+<h2>Technical Implementation</h2>
+<p><strong>Prerequisites:</strong> Before implementing this integration, verify you have:</p>
+<ol>
+ <li>Agentforce Service with <a href="https://help.salesforce.com/s/articleView?id=platform.hosted_mcp_servers_setup.htm&amp;type=5">Salesforce Hosted MCP Server</a> enabled</li>
+ <li><a href="https://docs.aws.amazon.com/devopsagent/latest/userguide/about-aws-devops-agent-what-are-devops-agent-spaces.html">AWS DevOps Agent Space</a> configured in your AWS account</li>
+ <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html">Amazon CloudWatch</a> and AWS <a href="https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html">CloudTrail</a> enabled for observability</li>
+ <li><a href="https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/tagging-best-practices.html">Infrastructure resources tagged</a> for topology mapping (optional)</li>
+ <li>Familiarity with <a href="https://help.salesforce.com/s/articleView?id=platform.flow_build.htm&amp;type=5">Salesforce Flow Builder</a> for workflow automation</li>
+</ol>
+<p>This integration requires configuration in both Salesforce and AWS. The following steps provide an overview of the setup process.</p>
+<ol>
+ <li><strong>Create Agent Space:</strong> Set up a DevOps Agent Space in your AWS account with appropriate IAM roles and permissions.</li>
+ <li><strong>Integrate Observability Tools:</strong> Connect your operational tools like Splunk, Datadog, or New Relic to provide the agent with telemetry data.</li>
+ <li><strong>Connect Code Repositories:</strong> Link GitHub, GitLab, or AWS CodeCommit to enable the agent to correlate incidents with recent deployments.</li>
+ <li><strong>Build Topology Mapping:</strong> Tag your infrastructure resources, so the agent focuses on components relevant to your application.</li>
+ <li><strong>Add Skills:</strong> Configure the agent with instructions to direct the investigation – for example, to update Agentforce Service cases when investigations are complete.</li>
+</ol>
+<p>Highlighted below are the key setup steps:</p>
+<h3>Create Agent Space</h3>
+<p>An Agent Space defines the AWS accounts, integrations, and access controls for your DevOps Agent investigations. When you create your Agent Space, configure a skill that instructs the agent to post investigation findings back to Salesforce cases.</p>
+<p>The skill provides specific instructions for the agent's workflow – in this case, directing it to update the originating Agentforce Service case when the investigation completes.</p>
+<h3>Salesforce Hosted MCP Server Setup</h3>
+<p>The Salesforce Hosted MCP Server enables AWS DevOps Agent to query case data and post investigation findings back to Salesforce. Configure the MCP Server in your Salesforce org using the following steps. For complete instructions, see the <a href="https://help.salesforce.com/s/articleView?id=platform.hosted_mcp_servers.htm&amp;type=5">Salesforce documentation</a> and the <a href="https://github.com/forcedotcom/mcp-hosted">Salesforce Hosted MCP GitHub Repository</a>.</p>
+<ul>
+ <li><strong>Enable the Salesforce External MCP Service:</strong> Turn on the MCP functionality in your Salesforce org.</li>
+ <li><strong>Create External Client App:</strong> Register the AWS DevOps Agent as an OAuth client in Salesforce with these settings: 
+  <ul>
+   <li>Use this callback URL: <a href="https://api.prod.cp.aidevops.us-east-1.api.aws/v1/register/mcpserver/callback">https://api.prod.cp.aidevops.us-east-1.api.aws/v1/register/mcpserver/callback</a></li>
+   <li>Enable OAuth Settings with required scopes (see below)</li>
+  </ul></li>
+</ul>
+<h3>Add the Salesforce Hosted MCP Server to Your Agent Space</h3>
+<p>In the AWS Console, register the Salesforce MCP Server with your Agent Space. This connection allows DevOps Agent to query Salesforce case data and post investigation findings.</p>
+<ul>
+ <li><strong>Add the Endpoint URL:</strong> For your setup, if you're using a Salesforce Sandbox, your endpoint is: <a href="https://api.salesforce.com/platform/mcp/v1-beta.2/sandbox/sobject-all">https://api.salesforce.com/platform/mcp/v1-beta.2/sandbox/sobject-all</a></li>
+ <li><strong>Authentication:</strong> OAuth 2.0 with PKCE (Three-Legged OAuth)</li>
+ <li><strong>Exchange URL:</strong> <a href="https://test.salesforce.com/services/oauth2/token">https://test.salesforce.com/services/oauth2/token</a></li>
+ <li><strong>Authorization URL:</strong> <a href="https://test.salesforce.com/services/oauth2/authorize">https://test.salesforce.com/services/oauth2/authorize</a></li>
+ <li><strong>Scopes:</strong> api, sfap_api, refresh_token, einstein_gpt_api, offline_access</li>
+</ul>
+<p>After registration, test by manually triggering an investigation from the AWS Console. Instruct the agent to retrieve case details from Salesforce and post the root cause analysis back to the case.</p>
+<p>When configuring MCP tools, follow best <a href="https://docs.aws.amazon.com/devopsagent/latest/userguide/configuring-capabilities-for-aws-devops-agent-connecting-mcp-servers.html">security practices</a>.</p>
+<p>In the next step, you'll automate this workflow using Salesforce Flow, so investigations trigger automatically when cases are created.</p>
+<h2>Using Salesforce Flows</h2>
+<p><a href="https://help.salesforce.com/s/articleView?id=platform.flow.htm&amp;type=5">Salesforce Flows</a> automate the connection between case creation and DevOps Agent investigations. Flow is a no-code automation tool that uses a visual drag-and-drop interface (Flow Builder) to automate business processes.</p>
+<p>Configure a Flow trigger on your Case object to invoke DevOps Agent automatically when cases are created.</p>
+<p>The Flow calls the DevOps Agent webhook with case details including the customer account, incident description, and timing. This triggers an autonomous investigation without requiring manual handoff to engineering teams. Due to length, this shows a portion of the Flow.</p>
+<p>For implementation details and example code, see this <a href="https://github.com/rduranSFDC/salesforce-aws-webhook">Code repository</a></p>
+<h2>Connecting Salesforce Flow to AWS DevOps Agent</h2>
+<p>Configure how Salesforce Flow invokes the DevOps Agent webhook. Choose one of three integration approaches based on your requirements:</p>
+<ol>
+ <li><strong>Option 1: External Service (Recommended for simplicity)</strong> <a href="https://help.salesforce.com/s/articleView?id=platform.external_services.htm&amp;type=5">External Service</a> Integrate with AWS services using SigV4 (AWS Signature Version 4) authentication through Named Credentials. This no-code approach is the fastest way to establish the connection.</li>
+ <li><strong>Option 2: Apex Class (Recommended for custom logic)</strong> Create an Apex class that your Flow calls to invoke the webhook. This approach provides flexibility to add custom business logic or error handling before triggering investigations.</li>
+</ol>
+<h2>Results and Impact</h2>
+<p>This integration transforms incident response by connecting customer support directly to autonomous infrastructure investigation:</p>
+<p><strong>Faster Incident Resolution:</strong> Autonomous investigation reduces mean time to resolution (MTTR) by eliminating manual log analysis. The agent detects and diagnoses issues immediately when cases are created, providing 24/7 coverage across time zones.</p>
+<p><strong>Reduced Manual Effort:</strong> SRE teams focus on systematic improvements instead of responding to individual incidents. Support teams receive technical insights without escalating to engineering, and every investigation follows the same thorough process.</p>
+<p><strong>Improved Customer Experience:</strong> Customers receive detailed root cause analysis within minutes of reporting an issue. This transparency builds trust, and the agent's architectural recommendations help prevent recurring problems.</p>
+<p><strong>Organizational Learning:</strong> Every investigation is documented and searchable, creating a knowledge base of incident patterns. The agent identifies recurring issues across cases and suggests infrastructure improvements to address root causes.</p>
+<h2>Conclusion</h2>
+<p>Connecting AWS DevOps Agent with a Salesforce Hosted MCP Server creates an autonomous investigation workflow that eliminates manual handoffs between support and engineering teams. This integration reduces mean time to resolution through instant analysis, improves customer experience with rapid root cause updates, and enables proactive prevention through pattern recognition.</p>

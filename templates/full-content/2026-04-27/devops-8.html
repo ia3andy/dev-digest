@@ -1,0 +1,103 @@
+<p>We often treat determinism and predictability as synonyms, but they are not the same.</p>
+<p>A system is deterministic if the same starting conditions always lead to the same result. A system is predictable if we can actually foresee that result with the tools, time, and knowledge we have.</p>
+<p>Determinism is a system characteristic.</p>
+<p>Predictability, on the other hand, often depends on our capabilities, and it usually exists on a spectrum. Weather is a good example. The laws of physics governing the atmosphere have not changed, and they are deterministic. Yet our ability to predict the weather has improved over decades simply because our measurements, models, and computing power improved.</p>
+<p>But it's not always on us. Stephen Wolfram has described the concept of <strong>computational irreducibility</strong>. A system is computationally irreducible if the only way to know its future state is to simulate every step. There are also <strong>chaotic systems</strong> where tiny measurement errors grow rapidly, making them practically unpredictable.</p>
+<p>Some systems are both deterministic and predictable, like planetary motion over short time scales. Others are deterministic but not predictably so in practice, like weather or turbulent flows. Conversely, some systems are not deterministic at the level of individual events but are still predictable statistically, such as casino games or population averages.</p>
+<table>
+ <thead>
+  <tr>
+   <th>System Type</th>
+   <th>Deterministic</th>
+   <th>Predictable</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Planetary orbits (over finite time horizons)</td>
+   <td>Yes</td>
+   <td>Yes</td>
+  </tr>
+  <tr>
+   <td>Weather</td>
+   <td>Yes</td>
+   <td>Limited</td>
+  </tr>
+  <tr>
+   <td>Dice roll (unknown forces)</td>
+   <td>Yes</td>
+   <td>No</td>
+  </tr>
+  <tr>
+   <td>Radioactive decay (single event)</td>
+   <td>No</td>
+   <td>No</td>
+  </tr>
+  <tr>
+   <td>Casino odds (many trials)</td>
+   <td>No</td>
+   <td>Yes</td>
+  </tr>
+ </tbody>
+</table>
+<p><strong>In essence: determinism does not guarantee predictability, and predictability does not require determinism.</strong></p>
+<h2>Back to coding</h2>
+<p>From the perspective of someone who needs a piece of software, development has never been deterministic. When you ask a software developer to build something, you cannot predict exactly what code they will write, how long it will take (so many jokes about this…), or which edge cases will fail first. The same is true when you ask an AI agent. Both are problem-solving processes operating under uncertainty.</p>
+<p>One can argue in favor or against the competency of humans or LLMs when it comes to coding, but determinism has never been a human trait.</p>
+<p>In most cases, developers build software to satisfy other people's needs, and what these people really care about is <strong>whether the resulting code is predictable enough to rely on</strong>: whether the system behaves correctly most of the time, whether failures are visible, and whether they can be fixed quickly.</p>
+<p>This distinction is important. From a software developer's pov, asking an LLM to "build a program that sorts 1000 numbers" may not have a predictable result (code). But the end user only cares if the resulting program will always sort any 1000 numbers correctly.</p>
+<p>And then there is the environment. Modern software runs on stacks that are far more complex than any single developer can fully reason about: hardware, kernels, drivers, libraries, network conditions, configuration files, container layers, dependency versions. So, even if, as a developer, you write the code to do excatly what you want it to do, in a totally predictable way, running the code may yield less predictable results. <strong>While deterministic, the system as a whole is so complex that its behavior cannot be predicted perfectly in advance.</strong></p>
+<p>We have quietly accepted that bugs are a natural part of software development (i.e. there will be cases where it behaves unpredictably), because we recognize the complexity of the endeavor. Instead of expecting perfect foresight, the industry built practices around uncertainty: tests, staging environments, observability, rollbacks, reproducible builds.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Producer / System Component</th>
+   <th>Deterministic</th>
+   <th>Predictable (for the requester)</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Human developer</td>
+   <td>No</td>
+   <td>Usually, within experience and process constraints</td>
+  </tr>
+  <tr>
+   <td>AI coding agent</td>
+   <td>No</td>
+   <td>Increasing, with tooling and validation loops</td>
+  </tr>
+  <tr>
+   <td>Compiler / build system</td>
+   <td>Yes</td>
+   <td>Yes</td>
+  </tr>
+  <tr>
+   <td>Tested deployment pipeline</td>
+   <td>Yes</td>
+   <td>Yes</td>
+  </tr>
+ </tbody>
+</table>
+<p>So, the meaningful question is not about determinism. <strong>The meaningful question is which workflow produces more predictable outcomes under real conditions, and which human or AI is a better fit at each case/stage.</strong></p>
+<h2>Some final thoughts</h2>
+<p>It's worth looking at how we build some of the most safety-critical software. DO-178C is the "Software Considerations in Airborne Systems and Equipment Certification". It is a key document in the aeronautic industry, providing guidelines for the development of safety-critical airborne software.</p>
+<blockquote>
+ <p>The approach of DO-178C is based on the formulation of appropriate objectives and on the verification that these objectives are achieved. The DO-178C authors acknowledged that objectives are more essential and stable than specific procedures. The ways of achieving an objective may vary between companies, and they may vary over time with the evolution of methods, techniques, and tools. DO-178C never states that one should use design method X, coding rules Y, or tool Z. DO-178C does not even impose a specific life cycle.</p>
+</blockquote>
+<p>DO-178C is <strong>objective-oriented</strong>: the focus is on formulating objectives and verification that the objectives are achieved, a framework that could work both for human coders and LLMs.</p>
+<h2>References</h2>
+<ol>
+ <li>
+  <p><a href="https://en.wikipedia.org/wiki/Computational_irreducibility">Computational Irreducibility (Wikipedia)</a>. The image, <a href="https://turmites.art">Not Random, Blue</a>, is inspired by the concept.</p></li>
+ <li>
+  <p><a href="https://world.hey.com/dhh/software-has-bugs-this-is-normal-26d5fd06">Software has bugs. This is normal.</a></p></li>
+ <li>
+  <p>Also depending on mood, health, work relationships and other human factors.</p></li>
+ <li>
+  <p>Even leaving bugs aside, there is a big discussion of which aspect of a compiler is predictable. Modern compilers tend to generate <strong>binaries that behave predictably</strong>, but are implemented in ways unexpected by the vast majority of developers. For example <a href="https://xania.org/202512/24-cunning-clang">this article</a> describes a case where the compiler decides to replace an O(n) algorithm written by the developer, with an O(1) one!</p></li>
+ <li>
+  <p>Side thought: If someone <strong>proved</strong> (not observed) that humans or LLMs can generate predictable results in some non-trivial cases, that would be really interesting. Tbh, if I had to bet that such a proof exists, I'd put my money on finding one for LLMs.</p></li>
+ <li>
+  <p><a href="https://innovationspace.ansys.com/knowledge/forums/topic/an-introduction-to-do-178c/">An introduction to DO-178C</a></p></li>
+</ol>

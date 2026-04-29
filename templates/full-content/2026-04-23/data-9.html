@@ -1,0 +1,209 @@
+<h1>ML Intern</h1>
+<p>An ML intern that autonomously researches, writes, and ships good quality ML related code using the Hugging Face ecosystem — with deep access to docs, papers, datasets, and cloud compute.</p>
+<h2>Quick Start</h2>
+<h3>Installation</h3>
+<pre><code>git clone git@github.com:huggingface/ml-intern.git
+cd ml-intern
+uv sync
+uv tool install -e .</code></pre>
+<h4>That's it. Now <code>ml-intern</code> works from any directory:</h4>
+<pre><code>ml-intern</code></pre>
+<p>Create a <code>.env</code> file in the project root (or export these in your shell):</p>
+<pre><code>ANTHROPIC_API_KEY=&lt;your-anthropic-api-key&gt; # if using anthropic models
+OPENAI_API_KEY=&lt;your-openai-api-key&gt; # if using openai models
+HF_TOKEN=&lt;your-hugging-face-token&gt;
+GITHUB_TOKEN=&lt;github-personal-access-token&gt;</code></pre>
+<p>If no <code>HF_TOKEN</code> is set, the CLI will prompt you to paste one on first launch. To get a GITHUB_TOKEN follow the tutorial <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token">here</a>.</p>
+<h3>Usage</h3>
+<p><strong>Interactive mode</strong> (start a chat session):</p>
+<pre><code>ml-intern</code></pre>
+<p><strong>Headless mode</strong> (single prompt, auto-approve):</p>
+<pre><code>ml-intern "fine-tune llama on my dataset"</code></pre>
+<p><strong>Options:</strong></p>
+<pre><code>ml-intern --model anthropic/claude-opus-4-6 "your prompt"
+ml-intern --model openai/gpt-5.5 "your prompt"
+ml-intern --max-iterations 100 "your prompt"
+ml-intern --no-stream "your prompt"</code></pre>
+<h2>Supported Gateways</h2>
+<p>ML Intern currently supports one-way notification gateways from CLI sessions. These gateways send out-of-band status updates; they do not accept inbound chat messages.</p>
+<h3>Slack</h3>
+<p>Slack notifications use the Slack Web API to post messages when the agent needs approval, hits an error, or completes a turn. Create a Slack app with a bot token that has <code>chat:write</code>, invite the bot to the target channel, then set:</p>
+<pre><code>SLACK_BOT_TOKEN=xoxb-...
+SLACK_CHANNEL_ID=C...</code></pre>
+<p>The CLI automatically creates a <code>slack.default</code> destination when both variables are present. Optional environment variables for the env-only default:</p>
+<pre><code>ML_INTERN_SLACK_NOTIFICATIONS=false
+ML_INTERN_SLACK_DESTINATION=slack.ops
+ML_INTERN_SLACK_AUTO_EVENTS=approval_required,error,turn_complete
+ML_INTERN_SLACK_ALLOW_AGENT_TOOL=true
+ML_INTERN_SLACK_ALLOW_AUTO_EVENTS=true</code></pre>
+<p>For a persistent user-level config, put overrides in <code>~/.config/ml-intern/cli_agent_config.json</code> or point <code>ML_INTERN_CLI_CONFIG</code> at a JSON file:</p>
+<pre><code>\{
+  "messaging": \{
+    "enabled": true,
+    "auto_event_types": ["approval_required", "error", "turn_complete"],
+    "destinations": \{
+      "slack.ops": \{
+        "provider": "slack",
+        "token": "$\{SLACK_BOT_TOKEN}",
+        "channel": "$\{SLACK_CHANNEL_ID}",
+        "allow_agent_tool": true,
+        "allow_auto_events": true
+      }
+    }
+  }
+}</code></pre>
+<h2>Architecture</h2>
+<h3>Component Overview</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                         User/CLI                            │
+└────────────┬─────────────────────────────────────┬──────────┘
+             │ Operations                          │ Events
+             ↓ (user_input, exec_approval,         ↑
+      submission_queue  interrupt, compact, ...)  event_queue
+             │                                          │
+             ↓                                          │
+┌────────────────────────────────────────────────────┐  │
+│            submission_loop (agent_loop.py)         │  │
+│  ┌──────────────────────────────────────────────┐  │  │
+│  │  1. Receive Operation from queue             │  │  │
+│  │  2. Route to handler (run_agent/compact/...) │  │  │
+│  └──────────────────────────────────────────────┘  │  │
+│                      ↓                             │  │
+│  ┌──────────────────────────────────────────────┐  │  │
+│  │         Handlers.run_agent()                 │  ├──┤
+│  │                                              │  │  │
+│  │  ┌────────────────────────────────────────┐  │  │  │
+│  │  │  Agentic Loop (max 300 iterations)     │  │  │  │
+│  │  │                                        │  │  │  │
+│  │  │  ┌──────────────────────────────────┐  │  │  │  │
+│  │  │  │ Session                          │  │  │  │  │
+│  │  │  │  ┌────────────────────────────┐  │  │  │  │  │
+│  │  │  │  │ ContextManager             │  │  │  │  │  │
+│  │  │  │  │ • Message history          │  │  │  │  │  │
+│  │  │  │  │   (litellm.Message[])      │  │  │  │  │  │
+│  │  │  │  │ • Auto-compaction (170k)   │  │  │  │  │  │
+│  │  │  │  │ • Session upload to HF     │  │  │  │  │  │
+│  │  │  │  └────────────────────────────┘  │  │  │  │  │
+│  │  │  │                                  │  │  │  │  │
+│  │  │  │  ┌────────────────────────────┐  │  │  │  │  │
+│  │  │  │  │ ToolRouter                 │  │  │  │  │  │
+│  │  │  │  │  ├─ HF docs &amp; research     │  │  │  │  │  │
+│  │  │  │  │  ├─ HF repos, datasets,    │  │  │  │  │  │
+│  │  │  │  │  │  jobs, papers           │  │  │  │  │  │
+│  │  │  │  │  ├─ GitHub code search     │  │  │  │  │  │
+│  │  │  │  │  ├─ Sandbox &amp; local tools  │  │  │  │  │  │
+│  │  │  │  │  ├─ Planning               │  │  │  │  │  │
+│  │  │  │  │  └─ MCP server tools       │  │  │  │  │  │
+│  │  │  │  └────────────────────────────┘  │  │  │  │  │
+│  │  │  └──────────────────────────────────┘  │  │  │  │
+│  │  │                                        │  │  │  │
+│  │  │  ┌──────────────────────────────────┐  │  │  │  │
+│  │  │  │ Doom Loop Detector               │  │  │  │  │
+│  │  │  │ • Detects repeated tool patterns │  │  │  │  │
+│  │  │  │ • Injects corrective prompts     │  │  │  │  │
+│  │  │  └──────────────────────────────────┘  │  │  │  │
+│  │  │                                        │  │  │  │
+│  │  │  Loop:                                 │  │  │  │
+│  │  │    1. LLM call (litellm.acompletion)   │  │  │  │
+│  │  │       ↓                                │  │  │  │
+│  │  │    2. Parse tool_calls[]               │  │  │  │
+│  │  │       ↓                                │  │  │  │
+│  │  │    3. Approval check                   │  │  │  │
+│  │  │       (jobs, sandbox, destructive ops) │  │  │  │
+│  │  │       ↓                                │  │  │  │
+│  │  │    4. Execute via ToolRouter           │  │  │  │
+│  │  │       ↓                                │  │  │  │
+│  │  │    5. Add results to ContextManager    │  │  │  │
+│  │  │       ↓                                │  │  │  │
+│  │  │    6. Repeat if tool_calls exist       │  │  │  │
+│  │  └────────────────────────────────────────┘  │  │  │
+│  └──────────────────────────────────────────────┘  │  │
+└────────────────────────────────────────────────────┴──┘
+</code></pre>
+<h3>Agentic Loop Flow</h3>
+<pre><code>User Message
+     ↓
+[Add to ContextManager]
+     ↓
+     ╔═══════════════════════════════════════════╗
+     ║      Iteration Loop (max 300)             ║
+     ║                                           ║
+     ║  Get messages + tool specs                ║
+     ║         ↓                                 ║
+     ║  litellm.acompletion()                    ║
+     ║         ↓                                 ║
+     ║  Has tool_calls? ──No──&gt; Done             ║
+     ║         │                                 ║
+     ║        Yes                                ║
+     ║         ↓                                 ║
+     ║  Add assistant msg (with tool_calls)      ║
+     ║         ↓                                 ║
+     ║  Doom loop check                          ║
+     ║         ↓                                 ║
+     ║  For each tool_call:                      ║
+     ║    • Needs approval? ──Yes──&gt; Wait for    ║
+     ║    │                         user confirm ║
+     ║    No                                     ║
+     ║    ↓                                      ║
+     ║    • ToolRouter.execute_tool()            ║
+     ║    • Add result to ContextManager         ║
+     ║         ↓                                 ║
+     ║  Continue loop ─────────────────┐         ║
+     ║         ↑                       │         ║
+     ║         └───────────────────────┘         ║
+     ╚═══════════════════════════════════════════╝
+</code></pre>
+<h2>Events</h2>
+<p>The agent emits the following events via <code>event_queue</code>:</p>
+<ul>
+ <li><code>processing</code> - Starting to process user input</li>
+ <li><code>ready</code> - Agent is ready for input</li>
+ <li><code>assistant_chunk</code> - Streaming token chunk</li>
+ <li><code>assistant_message</code> - Complete LLM response text</li>
+ <li><code>assistant_stream_end</code> - Token stream finished</li>
+ <li><code>tool_call</code> - Tool being called with arguments</li>
+ <li><code>tool_output</code> - Tool execution result</li>
+ <li><code>tool_log</code> - Informational tool log message</li>
+ <li><code>tool_state_change</code> - Tool execution state transition</li>
+ <li><code>approval_required</code> - Requesting user approval for sensitive operations</li>
+ <li><code>turn_complete</code> - Agent finished processing</li>
+ <li><code>error</code> - Error occurred during processing</li>
+ <li><code>interrupted</code> - Agent was interrupted</li>
+ <li><code>compacted</code> - Context was compacted</li>
+ <li><code>undo_complete</code> - Undo operation completed</li>
+ <li><code>shutdown</code> - Agent shutting down</li>
+</ul>
+<h2>Development</h2>
+<h3>Adding Built-in Tools</h3>
+<p>Edit <code>agent/core/tools.py</code>:</p>
+<pre><code>def create_builtin_tools() -&gt; list[ToolSpec]:
+    return [
+        ToolSpec(
+            name="your_tool",
+            description="What your tool does",
+            parameters=\{
+                "type": "object",
+                "properties": \{
+                    "param": \{"type": "string", "description": "Parameter description"}
+                },
+                "required": ["param"]
+            },
+            handler=your_async_handler
+        ),
+        # ... existing tools
+    ]</code></pre>
+<h3>Adding MCP Servers</h3>
+<p>Edit <code>configs/cli_agent_config.json</code> for CLI defaults, or <code>configs/frontend_agent_config.json</code> for web-session defaults:</p>
+<pre><code>\{
+  "model_name": "anthropic/claude-sonnet-4-5-20250929",
+  "mcpServers": \{
+    "your-server-name": \{
+      "transport": "http",
+      "url": "https://example.com/mcp",
+      "headers": \{
+        "Authorization": "Bearer $\{YOUR_TOKEN}"
+      }
+    }
+  }
+}</code></pre>
+<p>Note: Environment variables like <code>$\{YOUR_TOKEN}</code> are auto-substituted from <code>.env</code>.</p>

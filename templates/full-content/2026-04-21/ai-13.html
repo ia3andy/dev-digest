@@ -1,0 +1,34 @@
+<h3>Executive Summary:&nbsp;</h3>
+<ul>
+ <li>Internal documents reveal that Microsoft plans to temporarily suspend individual account signups to its GitHub Copilot coding product, as it transitions from requests (single interactions with Copilot) towards token-based billing.</li>
+ <li>The documents reveal that the weekly cost of running Github Copilot has doubled since the start of the year.</li>
+ <li>Microsoft also intends to tighten the rate limits on its individual and business accounts, and to remove access to certain models for those with the cheapest subscriptions.</li>
+</ul>
+<hr>
+<p>Leaked internal documents viewed by <em>Where's Your Ed At</em> reveal that Microsoft intends to pause new signups for the student and paid individual tiers of AI coding product GitHub Copilot, tighter rate limits, and eventually move users to "token-based billing," charging them based on what the actual cost of their token burn really is.</p>
+<blockquote>
+ <strong>Explainer:</strong> At present, GitHub Copilot users have a certain amount of "<a href="https://docs.github.com/en/copilot/concepts/billing/copilot-requests?ref=wheresyoured.at">requests</a>" — interactions where you ask the model to do something, with Pro ($10-a-month) accounts getting 300 a month, and Pro+ ($39-a-month) getting 1500. More-expensive models use more requests, cheaper ones use less (I'll explain in a bit). 
+ <br>
+ <br>
+  Moving to "token-based billing" would mean that instead of using "requests," GitHub Copilot users would pay for the actual cost of tokens. For example, <a href="https://www.anthropic.com/news/claude-opus-4-7?ref=wheresyoured.at">Claude Opus 4.7 costs $5 per million input tokens (stuff you feed in) and $25 per million output tokens</a> (stuff the model outputs, including tokens for chain-of-thought reasoning.
+</blockquote>
+<h2>Token-Based-Billing</h2>
+<p>The document says that although token-based billing has been a top priority for Microsoft, it became more urgent in recent months, with the week-over-week cost of running GitHub Copilot nearly doubling since January.</p>
+<p>The move to token-based billing will see GitHub users charged based on their usage of the platform, and how many tokens their prompts consume — and thus, how much compute they use. It's unclear at this time when this will begin.</p>
+<p>This is a significant move, reflecting the significant cost of running models on any AI product. Much like <a href="https://www.wheresyoured.at/the-subprime-ai-crisis-is-here/#what-does-%E2%80%9Csubsidized-ai%E2%80%9D-mean">Anthropic, OpenAI, Cursor, and every other AI company</a>, Microsoft has been subsidizing the cost of compute, allowing users to burn way, way more in tokens than their subscriptions cost.</p>
+<p>The party appears to be ending for subsidized AI products, with Microsoft's upcoming move following Anthropic's (<a href="https://www.theinformation.com/articles/anthropic-changes-pricing-bill-firms-based-ai-use-amid-compute-crunch?rc=kz8jh3&amp;ref=wheresyoured.at">per The Information</a>) recent changes shifting enterprise users to token-based billing as a means of reducing its costs.</p>
+<h2>Pauses on Signups for Individual and Student Tiers</h2>
+<p>GitHub Copilot currently has two tiers for individual developers — a $10-per-month package called GitHub Copilot Pro, and a $39-a-month subscription called GitHub Copilot Pro+.</p>
+<p>According to the leaked documents, both of these tiers will be impacted by the shutdown, as will the GitHub Copilot Student product, which is included within the free GitHub Education package.</p>
+<h2>Removing Opus From GitHub Copilot Pro, Rate Limits Tightened on GitHub Copilot Pro, Pro+, Business, Enterprise</h2>
+<p>According to the documents, Microsoft also intends to tighten rate limits on some Copilot Business and Enterprise plans, as well as on individual plans, where limits have already been squeezed, and plans to suspend trials of paid individual plans as it attempts to "fight abuse."</p>
+<p>Although Microsoft has regularly tweaked the rate limits for individual GitHub Copilot accounts, most recently at the start of April, the document notes that these changes weren't enough, and that more rate limits changes are to come in the next few weeks.</p>
+<p>As part of this cost-cutting exercise, Microsoft intends to remove Anthropic's Opus family of AI models from the $10-per-month GitHub Copilot Pro package altogether.</p>
+<p>Microsoft <a href="https://github.blog/changelog/2026-04-10-enforcing-new-limits-and-retiring-opus-4-6-fast-from-copilot-pro/?ref=wheresyoured.at">most recently retired Opus 4.6 Fast at the start of April for </a>GitHub<a href="https://github.blog/changelog/2026-04-10-enforcing-new-limits-and-retiring-opus-4-6-fast-from-copilot-pro/?ref=wheresyoured.at"> Copilot Pro+ users</a>, although this decision was framed as a way to "further improve service reliability" and "[streamline] our model offerings and focusing resources on the models our users use the most."</p>
+<p>Other Opus models — namely Opus 4.6 and Opus 4.5 — will be removed from the GitHub Copilot Pro+ tier in the coming weeks, <a href="https://github.blog/changelog/2026-04-16-claude-opus-4-7-is-generally-available/?ref=wheresyoured.at">as Microsoft transitions to Anthropic's latest Opus 4.7 model</a>.</p>
+<p>The move towards Opus 4.7 will likely see GitHub Copilot Pro+ users reach their usage limits faster.</p>
+<p><a href="https://github.blog/changelog/2026-04-16-claude-opus-4-7-is-generally-available/?ref=wheresyoured.at">Microsoft is offering a 7.5x request multiplier until April 30</a> — although it's unclear what the multiplier will be after this date. This might<em> sound</em> like a good thing, but it actually means that each request using Opus 4.7 is actually 7.5 of them. <a href="https://www.reddit.com/r/GithubCopilot/comments/1sn6eqb/comment/ogjagn5/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">Redditors immediately worked that out and are a little bit worried</a>.</p>
+<p>Premium request multipliers allow GitHub to reflect the cost of compute for different models. LLMs that require the most compute will have higher premium request multipliers compared to those that are comparatively more lightweight.</p>
+<p>For example, the GPT-5.4 Mini model has a premium request multiplier of 0.33 — meaning that every prompt is treated as one-third of a premium request — whereas the now-retired Claude Opus 4.6 Fast had a 30x multiplier, meaning each request was treated as <em>thirty of them.</em></p>
+<p>The standard version of Claude Opus 4.6 has a premium request multiplier of three — meaning that, even with the promotional pricing, Claude Opus 4.7 is around 250% more expensive to use.</p>
+<p>The announcements for all of these changes are scheduled to take place throughout the week.</p>

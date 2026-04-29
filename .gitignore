@@ -48,5 +48,6 @@ nb-configuration.xml
 node_modules/
 playwright-output/
 
-# Digest cache
+# Digest cache & cost log
 .digest-cache/
+.digest-costs.log

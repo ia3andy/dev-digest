@@ -1,0 +1,600 @@
+<h1><em>Agent-World</em></h1>
+<h2>What is Agent-World?</h2>
+<p>A self-evolving training arena that unifies <strong>scalable environment synthesis</strong> with <strong>continuous agent training</strong> by autonomously mining real-world tool ecosystems, synthesizing verifiable tasks, and driving agents to evolve through diagnostic feedback loops.</p>
+<figure>
+ <img alt="Overview of Agent-World">
+</figure>
+<figure>
+ <img alt="Hierarchical environment taxonomy">
+ <figcaption>
+  Hierarchical environment taxonomy across 20 primary categories and their subcategories.
+ </figcaption>
+</figure>
+<h2>Key Capabilities</h2>
+<p>Six core pillars powering the Agent-World ecosystem</p>
+<h3>Real-World Environment Mining</h3>
+<p>Autonomously discovers and mines structured databases from real-world sources including MCP servers, tool docs, and industrial PRDs.</p>
+<h3>2K Environments &amp; 19K Tools</h3>
+<p>Builds over 2,000 realistic environments spanning 20 primary categories, each equipped with executable tool interfaces totaling 19K+ validated tools with rich parameters.</p>
+<h3>Graph &amp; Programmatic Tasks</h3>
+<p>Synthesizes verifiable tasks via tool dependency graphs and executable Python solutions with controllable difficulty scaling.</p>
+<h3>Multi-Environment Agent RL</h3>
+<p>Closed-loop RL training across diverse environments with structured verifiable rewards and GRPO optimization.</p>
+<h3>Self-Evolving Arena</h3>
+<p>Automatically diagnoses agent weaknesses through dynamic evaluation, then generates targeted tasks to drive iterative improvement.</p>
+<h3>Strong Results on 23 Benchmarks</h3>
+<p>Demonstrates strong performance across agentic tool use, advanced AI assistant, software engineering, deep research, and reasoning benchmarks.</p>
+<h2>Abstract</h2>
+<p>Large language models are increasingly expected to serve as general-purpose agents that interact with external, stateful tool environments. The Model Context Protocol (MCP) and broader agent skills offer a unified interface for connecting agents with scalable real-world services, but training robust agents remains limited by the lack of realistic environments and principled mechanisms for lifelong learning.</p>
+<p>In this paper, we present <strong>Agent-World</strong>, a self-evolving training arena for advancing general agent intelligence through scalable environments. Agent-World has two main components: <strong>(1) Agentic Environment-Task Discovery</strong>, which autonomously explores topic-aligned databases and executable tool ecosystems from thousands of real-world environment themes and synthesizes verifiable tasks with controllable difficulty; and <strong>(2) Continuous Self-Evolving Agent Training</strong>, which combines multi-environment reinforcement learning with a self-evolving agent arena that automatically identifies capability gaps through dynamic task synthesis and drives targeted learning, enabling the co-evolution of agent policies and environments.</p>
+<p>Across <strong>23 challenging agent benchmarks</strong>, Agent-World consistently outperforms strong proprietary models and environment scaling baselines. Further analyses reveal scaling trends with environment diversity and self-evolution rounds, offering insights for building general agent intelligence.</p>
+<h2>Introduction</h2>
+<p>As the capability frontier of large language models continues to expand, expectations are shifting from chat-oriented text generation toward <strong>general-purpose agent assistants</strong>. Ideally, such agents should seamlessly integrate real-world interaction with verbal reasoning, and continuously learn from experience to improve themselves. Realizing these agentic capabilities requires training LLMs in dynamic environments equipped with executable tools, forming a <em>"Generation–Execution–Feedback"</em> interaction loop.</p>
+<p>With the rise of agentic reinforcement learning (Agent RL), several agent systems built on static tool environments have demonstrated strong practical value. However, open-world tool environments are inherently <strong>compositional and stateful</strong>. For instance, in a flight-booking workflow, an agent should follow a valid action order (check inventory → execute booking → update the calendar), while each action also modifies the underlying environment state. Prior work centered on stateless or single-tool settings is insufficient for realistic applications.</p>
+<p>Two key bottlenecks remain unresolved:</p>
+<h3>Scalable Realism and Complex Environment Synthesis</h3>
+<p>Existing environments are often LLM-generated or derived from limited open-source toolchains, which often mismatch real-world interaction logic. Synthetic environments are limited in complexity, restricting agent training on long-horizon, state-intensive tasks.</p>
+<h3>Continuous Self-Evolving Training Mechanisms</h3>
+<p>Existing work has primarily emphasized environment construction and scaling, while lacking principled mechanisms that use scalable environments to diagnose agent weaknesses and drive continual self-improvement.</p>
+<p>We propose <strong>Agent-World</strong>, a general-purpose agent training arena that unifies scalable environment synthesis with continuous self-evolving training. Agent-World follows a two-stage design that forms a closed-loop training process.</p>
+<h3>Key Contributions</h3>
+<ul>
+ <li>We introduce <strong>Agent-World</strong>, a general-purpose agent training arena that unifies scalable environment synthesis with a continuous self-evolving training mechanism, forming a co-evolution loop between agent policies and environments.</li>
+ <li>We propose <strong>Agentic Environment-Task Discovery</strong>, which mines realistic executable environments from real-world environment themes and synthesizes diverse verifiable tasks with controllable difficulty.</li>
+ <li>We propose <strong>Continuous Self-Evolving Agent Training</strong>, which integrates multi-environment agentic RL with a self-evolving arena to automatically diagnose agent weaknesses and drive targeted learning in a closed training loop.</li>
+ <li>Experiments across <strong>23 challenging agent benchmarks</strong> demonstrate the superior performance of Agent-World. Further analysis reveals scaling relationships among environment diversity, evolution rounds, and agent performance.</li>
+</ul>
+<h2>Method</h2>
+<p>Agent-World contains two tightly coupled components that form a closed loop: scalable environments support agent training, while training-time diagnosis feeds back into the next round of environment-task construction.</p>
+<h3>Agentic Environment-Task Discovery</h3>
+<h4>Environment Theme Collection</h4>
+<p>We systematically gather environment themes from three real-world sources: <strong>(1) MCP Servers</strong> (real-world server specifications from Smithery with structured JSON documents), <strong>(2) Tool Documentations</strong> (open-source datasets covering real tool-use scenarios), and <strong>(3) Industrial PRDs</strong> (product requirement documents containing domain workflows and system interfaces). Together, these form a seed topic set of over <strong>2,000 environment themes</strong> across <strong>20 primary categories</strong>.</p>
+<h4>Hierarchical Environment Taxonomy</h4>
+<p>We design a <strong>three-level hierarchical classification system</strong> to organize all environment themes: 20 first-tier categories (for example, Document &amp; Design, Social Media &amp; Community, System &amp; Cloud Infrastructure), each subdivided into fine-grained second-tier subcategories (such as Office &amp; Text Processing, Social Network Integration, Cloud Platform Services), and finally mapped to specific MCP server instances at the third tier. This taxonomy ensures broad domain coverage, enables systematic gap analysis during self-evolving training, and supports controlled difficulty scaling across diverse real-world domains.</p>
+<h4>Agentic Database Mining</h4>
+<p>Unlike prior work that uses LLM-synthesized databases, we argue that the web already contains abundant, high-value structured data. We design a deep-research agent that autonomously mines and processes web data into environment databases. For each topic, the agent conducts iterative loops for in-depth information retrieval and data mining, followed by a <strong>database complexification process</strong> to iteratively expand and enrich the database over multiple rounds.</p>
+<h4>Tool Interface Generation and Verification</h4>
+<p>A tool-design agent produces candidate tools and unit test cases grounded in the mined databases. We perform cross-validation to retain tools that: (1) compile successfully, (2) achieve accuracy &gt;0.5 across test cases, and (3) belong to environments with at least one tool and one test case. The resulting ecosystem contains <strong>19K+ distinct tools</strong> with rich parameters.</p>
+<h4>Verifiable Task Synthesis</h4>
+<p>We synthesize high-quality agentic tasks through two complementary strategies:</p>
+<p><strong>Graph-Based Task Synthesis:</strong> We construct weighted tool dependency graphs and perform random walks to generate tool-call sequences. From these sequences, an LLM drafts task descriptions and ground-truth answers, followed by consistency verification (ReAct agent × 5 runs).</p>
+<p><strong>Programmatic Task Synthesis:</strong> We directly generate executable Python solutions with complex control flows (loops, branches, aggregations). Each task is paired with an executable verification script for robust evaluation beyond simple string matching.</p>
+<p>Both methods support <strong>difficulty scaling</strong> by expanding tool chains, increasing non-linear reasoning requirements, and obscuring tool names to force higher-level planning.</p>
+<h4>Environment Taxonomy Mapping</h4>
+<p>Click an L1 category to expand its L2 labels. Select any L2 label to view 10 representative L3 server examples on the right.</p>
+<p>L1 Categories: 20 L2 Labels: 50 L3 Servers (Total): 1,978</p>
+<h5>Select one L2 label</h5>
+<p>The representative server list will appear here.</p>
+<figure>
+ <img alt="Comprehensive statistics of Agent-World environments and tasks">
+ <figcaption>
+  Comprehensive statistics of Agent-World environments and synthesized tasks, including environment diversity, tool coverage, file-type distribution, and task difficulty characteristics.
+ </figcaption>
+</figure>
+<h3>Continuous Self-Evolving Agent Training</h3>
+<h4>Multi-Environment Agent Reinforcement Learning</h4>
+<p>We implement a closed-loop interaction among three components: an <strong>LLM policy</strong> (generates actions conditioned on history), a <strong>tool interface/runtime</strong> (executes tools in sandboxed environments), and a <strong>database state</strong> (provides verifiable, updatable data backbone). Tasks within each global batch are paired with independent environments, realizing multi-environment rollouts.</p>
+<p><strong>Structured Verifiable Reward:</strong> Graph-based tasks are evaluated via rubric-conditioned LLM-as-judge; programmatic tasks are verified through executable validation scripts in sandboxes. We adopt <strong>GRPO</strong> (Group Relative Policy Optimization) for stable training.</p>
+<h4>Self-Evolving Agent Arena</h4>
+<p>The environment ecosystem serves as a <strong>dynamic diagnostic arena</strong>:</p>
+<p><strong>Phase 1: Dynamic Evaluation</strong> - Synthesize fresh verifiable tasks in held-out arena environments at each iteration, preventing overfitting to a static benchmark.</p>
+<p><strong>Phase 2: Agentic Diagnosis</strong> - A diagnosis agent analyzes per-task failure traces, error distributions, and environment metadata to identify weak environments and generate task-generation guidelines.</p>
+<p><strong>Phase 3: Agent-Environment Co-Evolution</strong> - Re-run task synthesis conditioned on diagnosed weaknesses, optionally complexify databases, and continue RL to obtain an improved policy. This creates a self-evolving loop:</p>
+<p>πθ(r) → <em>evaluate</em> → W(r) → <em>diagnose + target</em> → Xtarget(r) → <em>continue RL</em> → πθ(r+1)</p>
+<figure>
+ <img alt="The Overall Framework of Continuous Self-Evolving Agent Training">
+ <figcaption>
+  The Overall Framework of Continuous Self-Evolving Agent Training.
+ </figcaption>
+</figure>
+<h2>Experiments</h2>
+<p>We evaluate Agent-World on <strong>23 benchmarks</strong> spanning agentic tool use, advanced AI assistant, software engineering, deep research, and general reasoning, using Qwen3-8B/14B backbones trained with GRPO.</p>
+<h3>Main Results on Agentic Tool-Use Benchmarks</h3>
+<p>We report accuracy (%) across three benchmark suites: <strong>MCP-Mark</strong>, <strong>BFCL V4</strong>, and <strong>τ²-Bench</strong>.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Method</th>
+   <th>MCP-Mark</th>
+   <th>BFCL V4</th>
+   <th>τ²-Bench</th>
+  </tr>
+  <tr>
+   <th>File.</th>
+   <th>Github</th>
+   <th>Notion</th>
+   <th>Play.</th>
+   <th>Post.</th>
+   <th>Avg.</th>
+   <th>WebS.</th>
+   <th>Mem.</th>
+   <th>Multi-T.</th>
+   <th>NoLive</th>
+   <th>Live</th>
+   <th>Relev.</th>
+   <th>Irrelev.</th>
+   <th>Avg.</th>
+   <th>Retail</th>
+   <th>Telec.</th>
+   <th>Airline</th>
+   <th>Avg.</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Frontier Proprietary Models</td>
+  </tr>
+  <tr>
+   <td>GPT-5.2 High</td>
+   <td>60.0</td>
+   <td>47.8</td>
+   <td>42.9</td>
+   <td>40.0</td>
+   <td>66.7</td>
+   <td>53.1</td>
+   <td>75.5</td>
+   <td>45.8</td>
+   <td>48.5</td>
+   <td>81.9</td>
+   <td>70.4</td>
+   <td>75.0</td>
+   <td>88.7</td>
+   <td>62.9</td>
+   <td>81.6</td>
+   <td>95.8</td>
+   <td>62.5</td>
+   <td>80.2</td>
+  </tr>
+  <tr>
+   <td>Claude Sonnet-4.5</td>
+   <td>32.5</td>
+   <td>29.4</td>
+   <td>25.0</td>
+   <td>27.0</td>
+   <td>50.0</td>
+   <td>33.3</td>
+   <td>81.0</td>
+   <td>65.0</td>
+   <td>61.4</td>
+   <td>88.7</td>
+   <td>81.1</td>
+   <td>68.8</td>
+   <td>86.6</td>
+   <td>73.2</td>
+   <td>86.2</td>
+   <td>98.0</td>
+   <td>70.1</td>
+   <td>84.7</td>
+  </tr>
+  <tr>
+   <td>Gemini-3 Pro</td>
+   <td>56.7</td>
+   <td>45.7</td>
+   <td>43.8</td>
+   <td>40.0</td>
+   <td>70.2</td>
+   <td>50.8</td>
+   <td>80.0</td>
+   <td>61.7</td>
+   <td>60.8</td>
+   <td>90.7</td>
+   <td>83.1</td>
+   <td>68.8</td>
+   <td>85.6</td>
+   <td>72.5</td>
+   <td>85.3</td>
+   <td>98.0</td>
+   <td>72.7</td>
+   <td>85.4</td>
+  </tr>
+  <tr>
+   <td>Seed 2.0</td>
+   <td>60.0</td>
+   <td>39.1</td>
+   <td>53.6</td>
+   <td>40.0</td>
+   <td>81.0</td>
+   <td>54.7</td>
+   <td>92.0</td>
+   <td>57.8</td>
+   <td>62.3</td>
+   <td>89.0</td>
+   <td>82.2</td>
+   <td>76.6</td>
+   <td>75.0</td>
+   <td>73.4</td>
+   <td>90.4</td>
+   <td>94.2</td>
+   <td>—</td>
+   <td>—</td>
+  </tr>
+  <tr>
+   <td>Open-Source Foundation Models (8B–685B)</td>
+  </tr>
+  <tr>
+   <td>DeepSeek-V3.2-685B</td>
+   <td>36.7</td>
+   <td>20.7</td>
+   <td>45.5</td>
+   <td>17.0</td>
+   <td>66.6</td>
+   <td>36.7</td>
+   <td>69.5</td>
+   <td>54.2</td>
+   <td>37.4</td>
+   <td>34.9</td>
+   <td>53.7</td>
+   <td>37.5</td>
+   <td>93.2</td>
+   <td>54.1</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>80.3</td>
+  </tr>
+  <tr>
+   <td>GPT-OSS-120B</td>
+   <td>5.8</td>
+   <td>4.4</td>
+   <td>3.6</td>
+   <td>3.0</td>
+   <td>7.1</td>
+   <td>4.7</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>67.8</td>
+   <td>49.2</td>
+   <td>48.0</td>
+   <td>55.0</td>
+  </tr>
+  <tr>
+   <td>Qwen3-8B</td>
+   <td>3.3</td>
+   <td>0.0</td>
+   <td>0.0</td>
+   <td>4.0</td>
+   <td>4.8</td>
+   <td>2.4</td>
+   <td>7.0</td>
+   <td>17.6</td>
+   <td>35.4</td>
+   <td>90.2</td>
+   <td>80.9</td>
+   <td>81.3</td>
+   <td>77.2</td>
+   <td>40.4</td>
+   <td>34.0</td>
+   <td>18.0</td>
+   <td>26.5</td>
+   <td>26.2</td>
+  </tr>
+  <tr>
+   <td>Qwen3-14B</td>
+   <td>3.3</td>
+   <td>4.4</td>
+   <td>0.0</td>
+   <td>0.0</td>
+   <td>9.5</td>
+   <td>3.4</td>
+   <td>4.0</td>
+   <td>19.8</td>
+   <td>36.9</td>
+   <td>90.0</td>
+   <td>82.4</td>
+   <td>81.3</td>
+   <td>79.4</td>
+   <td>41.0</td>
+   <td>55.3</td>
+   <td>14.9</td>
+   <td>27.0</td>
+   <td>32.4</td>
+  </tr>
+  <tr>
+   <td>Qwen3-32B</td>
+   <td>10.0</td>
+   <td>0.0</td>
+   <td>3.6</td>
+   <td>0.0</td>
+   <td>23.8</td>
+   <td>7.5</td>
+   <td>26.0</td>
+   <td>15.7</td>
+   <td>43.3</td>
+   <td>90.3</td>
+   <td>82.0</td>
+   <td>81.3</td>
+   <td>82.4</td>
+   <td>46.7</td>
+   <td>59.5</td>
+   <td>27.2</td>
+   <td>48.0</td>
+   <td>44.9</td>
+  </tr>
+  <tr>
+   <td>Qwen3-235B-A22B</td>
+   <td>13.3</td>
+   <td>0.0</td>
+   <td>10.7</td>
+   <td>0.0</td>
+   <td>4.8</td>
+   <td>5.8</td>
+   <td>54.0</td>
+   <td>23.9</td>
+   <td>45.4</td>
+   <td>37.4</td>
+   <td>68.9</td>
+   <td>87.5</td>
+   <td>81.7</td>
+   <td>47.9</td>
+   <td>71.9</td>
+   <td>58.0</td>
+   <td>45.6</td>
+   <td>58.5</td>
+  </tr>
+  <tr>
+   <td>Open-Source Environment Scaling Methods (7B–14B)</td>
+  </tr>
+  <tr>
+   <td>Simulator-8B</td>
+   <td>3.3</td>
+   <td>0.0</td>
+   <td>0.0</td>
+   <td>4.0</td>
+   <td>4.8</td>
+   <td>2.4</td>
+   <td>17.5</td>
+   <td>6.0</td>
+   <td>4.1</td>
+   <td>47.6</td>
+   <td>44.6</td>
+   <td>31.3</td>
+   <td>87.3</td>
+   <td>23.9</td>
+   <td>32.2</td>
+   <td>29.2</td>
+   <td>34.0</td>
+   <td>31.8</td>
+  </tr>
+  <tr>
+   <td>TOUCAN-7B</td>
+   <td>0.0</td>
+   <td>0.0</td>
+   <td>0.0</td>
+   <td>0.0</td>
+   <td>4.8</td>
+   <td>1.0</td>
+   <td>21.0</td>
+   <td>18.5</td>
+   <td>17.8</td>
+   <td>81.0</td>
+   <td>73.9</td>
+   <td>81.3</td>
+   <td>78.6</td>
+   <td>36.6</td>
+   <td>22.8</td>
+   <td>10.5</td>
+   <td>20.0</td>
+   <td>17.7</td>
+  </tr>
+  <tr>
+   <td>EnvScaler-8B</td>
+   <td>10.0</td>
+   <td>4.4</td>
+   <td>0.0</td>
+   <td>4.0</td>
+   <td>9.5</td>
+   <td>5.6</td>
+   <td>23.0</td>
+   <td>21.9</td>
+   <td>47.1</td>
+   <td>88.5</td>
+   <td>82.2</td>
+   <td>93.8</td>
+   <td>74.6</td>
+   <td>47.6</td>
+   <td>49.6</td>
+   <td>32.7</td>
+   <td>31.5</td>
+   <td>37.9</td>
+  </tr>
+  <tr>
+   <td>AWM-8B</td>
+   <td>3.3</td>
+   <td>0.0</td>
+   <td>0.0</td>
+   <td>4.0</td>
+   <td>4.8</td>
+   <td>2.4</td>
+   <td>9.5</td>
+   <td>15.7</td>
+   <td>34.9</td>
+   <td>90.2</td>
+   <td>80.5</td>
+   <td>93.8</td>
+   <td>73.9</td>
+   <td>40.0</td>
+   <td>41.2</td>
+   <td>38.5</td>
+   <td>23.5</td>
+   <td>34.4</td>
+  </tr>
+  <tr>
+   <td>AWM-14B</td>
+   <td>3.3</td>
+   <td>8.7</td>
+   <td>0.0</td>
+   <td>4.0</td>
+   <td>9.5</td>
+   <td>5.1</td>
+   <td>10.0</td>
+   <td>19.8</td>
+   <td>37.6</td>
+   <td>90.2</td>
+   <td>81.5</td>
+   <td>75.0</td>
+   <td>79.4</td>
+   <td>42.4</td>
+   <td>63.6</td>
+   <td>17.8</td>
+   <td>31.5</td>
+   <td>39.0</td>
+  </tr>
+  <tr>
+   <td>ScaleEnv-8B</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>—</td>
+   <td>50.9</td>
+   <td>27.2</td>
+   <td>37.5</td>
+   <td>38.5</td>
+  </tr>
+  <tr>
+   <td>Agent-World-8B</td>
+   <td>13.3</td>
+   <td>4.4</td>
+   <td>3.6</td>
+   <td>4.0</td>
+   <td>19.1</td>
+   <td>8.9</td>
+   <td>47.0</td>
+   <td>21.7</td>
+   <td>44.5</td>
+   <td>83.3</td>
+   <td>79.6</td>
+   <td>93.8</td>
+   <td>80.2</td>
+   <td>51.4</td>
+   <td>72.8</td>
+   <td>50.9</td>
+   <td>40.0</td>
+   <td>61.8</td>
+  </tr>
+  <tr>
+   <td>Agent-World-14B</td>
+   <td>16.6</td>
+   <td>4.4</td>
+   <td>3.6</td>
+   <td>4.0</td>
+   <td>38.1</td>
+   <td>13.3</td>
+   <td>53.0</td>
+   <td>23.9</td>
+   <td>53.9</td>
+   <td>82.3</td>
+   <td>79.3</td>
+   <td>93.8</td>
+   <td>81.0</td>
+   <td>55.8</td>
+   <td>74.5</td>
+   <td>56.1</td>
+   <td>52.0</td>
+   <td>65.4</td>
+  </tr>
+ </tbody>
+</table>
+<h3>Key Findings</h3>
+<p><strong>(1) Foundation models remain limited in complex agentic tool-use scenarios.</strong> Even advanced proprietary models show clear limitations. GPT-5.2 High achieves only 53.1% on MCP-Mark, while open-source models like GPT-OSS-120B and Qwen3-235B-A22B score only 4.7% and 5.8%. These benchmarks cover diverse stateful environments, suggesting current models still struggle with long-horizon tool use requiring multi-step planning and state tracking.</p>
+<p><strong>(2) Existing environment-scaling methods still suffer from uneven capability gains.</strong> Simulator-based methods such as Simulator-8B achieve strong results on τ²-Bench yet perform poorly on MCP-Mark and BFCL V4. Code-based methods like EnvScaler-8B and AWM-8B/14B provide broader gains but show clear weaknesses on specific environments including GitHub and Notion.</p>
+<p><strong>(3) Agent-World achieves more consistent cross-environment generalization.</strong> Agent-World consistently outperforms prior environment-scaling baselines across all three benchmark suites. Agent-World-8B achieves 61.8% on τ²-Bench, 51.4% on BFCL V4, and 8.9% on MCP-Mark. Agent-World-14B surpasses even DeepSeek-V3.2-685B on BFCL-V4 (55.8% vs. 54.1%).</p>
+<figure>
+ <img alt="Generalization across long-horizon agentic reasoning scenarios">
+ <figcaption>
+  Generalization across long-horizon agentic reasoning scenarios. Comparison of Qwen3-8B, EnvScaler-8B, and Agent-World-8B across General Reasoning, Agentic Search &amp; Coding, and Knowledge &amp; MCP.
+ </figcaption>
+</figure>
+<h3>Generalization on Advanced AI Assistant Benchmarks</h3>
+<figure>
+ <img alt="Generalization on advanced agentic assistant benchmarks">
+ <figcaption>
+  Generalization on advanced agentic assistant benchmarks. Comparison of Qwen3, EnvScaler, AWM, and Agent-World series on SkillsBench, ARC-AGI-2, and Claw-Eval.
+ </figcaption>
+</figure>
+<h3>Scaling Analysis of Training Environments</h3>
+<p>We progressively increase the number of training environments from 0 to 2000. Performance improves consistently across all domains as the environment scale grows. Averaged over four domains, the score rises from <strong>18.4% to 38.5%</strong> (+20.1 points), more than doubling the initial level. The gains are particularly pronounced on interaction-intensive tasks.</p>
+<figure>
+ <img alt="Scaling relationship between training environments and performance">
+ <figcaption>
+  Scaling relationship of training environments: Downstream agent performance scales positively with the number of synthesized training environments.
+ </figcaption>
+</figure>
+<h3>Analysis of Continuous Self-Evolution</h3>
+<p>To validate Continuous Self-Evolving Agent Training, we run the same two-round self-evolving arena loop from two different starting points: Agent-World-14B and EnvScaler-8B. Results show <strong>monotonic gains</strong> on all three evaluation suites for both models:</p>
+<table>
+ <thead>
+  <tr>
+   <th>Model / Round</th>
+   <th>τ²-Bench</th>
+   <th>BFCL-V4</th>
+   <th>MCP-Mark (Post.)</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Agent-World-14B (base)</td>
+   <td>45.3</td>
+   <td>52.4</td>
+   <td>29.5</td>
+  </tr>
+  <tr>
+   <td>+1 round</td>
+   <td>48.6 (+3.3)</td>
+   <td>54.9 (+2.5)</td>
+   <td>36.3 (+6.8)</td>
+  </tr>
+  <tr>
+   <td>+2 rounds</td>
+   <td>50.5 (+1.9)</td>
+   <td>55.8 (+0.9)</td>
+   <td>38.1 (+1.8)</td>
+  </tr>
+  <tr>
+   <td>EnvScaler-8B (base)</td>
+   <td>37.9</td>
+   <td>47.6</td>
+   <td>9.5</td>
+  </tr>
+  <tr>
+   <td>+1 round</td>
+   <td>40.2 (+2.3)</td>
+   <td>49.1 (+1.5)</td>
+   <td>13.9 (+4.4)</td>
+  </tr>
+  <tr>
+   <td>+2 rounds</td>
+   <td>41.6 (+1.4)</td>
+   <td>50.0 (+0.9)</td>
+   <td>15.1 (+1.2)</td>
+  </tr>
+ </tbody>
+</table>
+<p>The largest gains across two rounds appear on MCP-Mark for both models: +8.6 for Agent-World and +5.6 for EnvScaler. This setting requires stronger state tracking and more reliable interaction with realistic MCP server environments. Importantly, EnvScaler-8B also improves, indicating that the loop not only benefits our base model but also yields sustained gains for other environment-scaling baselines without relying on Agent-World initialization.</p>
+<h3>Training Dynamics</h3>
+<figure>
+ <img alt="Training Dynamics of Agent-World">
+ <figcaption>
+  Training Dynamics of Agent-World. (a) Training reward score and (b) actor entropy over training steps for Qwen3-8B and Qwen3-14B backbones using GRPO on synthesized environments.
+ </figcaption>
+</figure>
+<h2>Conclusion</h2>
+<p>We presented <strong>Agent-World</strong>, a self-evolving training arena for general-purpose agents in realistic tool environments. Agent-World unifies two tightly coupled components:</p>
+<p><strong>Agentic Environment-Task Discovery</strong> mines topic-aligned real-world databases and executable toolsets from large-scale themes and synthesizes verifiable tasks with controllable difficulty.</p>
+<p><strong>Continuous Self-Evolving Agent Training</strong> combines multi-environment reinforcement learning with an agentic diagnostic arena to identify capability gaps and drive targeted iterative data expansion.</p>
+<p>Experiments across 23 challenging benchmarks demonstrate that Agent-World consistently improves performance over strong baselines. Further analyses reveal clear scaling trends with respect to environment diversity, evolution rounds, and task difficulty, suggesting that scalable realistic environments are not only useful data sources, but also <strong>critical infrastructure for advancing general agent capabilities</strong>.</p>

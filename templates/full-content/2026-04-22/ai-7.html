@@ -1,0 +1,72 @@
+<img alt="DNL effect on convolutional kernel">
+<p>One sign-bit flip in an early-layer edge detector kernel fundamentally alters learned representations. The transformed kernel generates corrupted feature maps that propagate through the network, severely impairing recognition. This single-bit perturbation illustrates the critical vulnerability of early-layer parameters.</p>
+<h2>Overview</h2>
+<p>Deep neural networks are vulnerable to catastrophic failure from flipping just a few sign bits in model parameters. We present <strong>Deep Neural Lesion (DNL)</strong>, a data-free method that identifies and exploits critical parameters across vision and language domains.</p>
+<p>Our approach requires only write access to stored weights—no training data, no optimization, minimal computation. This makes it practical under realistic threat models where attackers compromise model storage through firmware exploits, rootkits, DMA attacks, or Rowhammer vulnerabilities.</p>
+<ul>
+ <li><strong>ResNet-50:</strong> 2 sign flips → 99.8% accuracy drop</li>
+ <li><strong>Mask R-CNN / YOLOv8-seg:</strong> 1–2 flips collapse detection and segmentation</li>
+ <li><strong>Qwen3-30B &amp; Nemotron 8B:</strong> Few flips reduce reasoning and task accuracy to near-zero</li>
+</ul>
+<h2>Methodology</h2>
+<h3>Attack Variants</h3>
+<p><strong>Pass-Free DNL:</strong> Identifies critical parameters using magnitude-based heuristics and early-layer targeting with zero additional computation.</p>
+<p><strong>Enhanced 1-Pass DNL:</strong> Refines parameter selection with a single forward and backward pass on random inputs, achieving stronger attacks with minimal overhead.</p>
+<h3>Why Sign-Bit Flips Matter</h3>
+<ul>
+ <li><strong>Clean disruption:</strong> Flipping the sign bit instantly negates weights, maximizing feature map corruption</li>
+ <li><strong>Hardware feasibility:</strong> Bit flips in fixed positions are more reliably achievable in physical attacks</li>
+ <li><strong>Early-layer criticality:</strong> High-magnitude weights in early layers have outsized impact on all downstream representations</li>
+ <li><strong>Universal vulnerability:</strong> Pattern holds across CNNs, Transformers, and MoE architectures</li>
+</ul>
+<h2>Image Classification Results</h2>
+<p>Evaluated on 60 classifiers including 48 ImageNet models from timm and Torchvision repositories across diverse architectures.</p>
+<h3>Model Vulnerability Hierarchy</h3>
+<h4>ResNet-50</h4>
+<p>2 flips: 99.8% drop (76.1% → 0.0%)</p>
+<h4>EfficientNet-B7</h4>
+<p>3 flips: 95%+ drop. Scales worse than ResNet.</p>
+<h4>Vision Transformer</h4>
+<p>Early blocks critical. Similar pattern to CNNs.</p><img alt="Model size vs. vulnerability">
+<p>Accuracy reduction (AR) as a function of model scale across diverse architectures. All models remain highly vulnerable, with early-layer targeting dominating architecture choice in determining susceptibility.</p>
+<h2>Detection &amp; Segmentation Results</h2>
+<p>Object detection and instance segmentation systems collapse dramatically with just 1-2 parameter flips in backbone networks.</p><img alt="Clean Mask R-CNN detection">
+<p><strong>Baseline:</strong> Mask R-CNN correctly detects and segments objects with high confidence.</p><img alt="Attacked Mask R-CNN">
+<p><strong>After 1-2 flips:</strong> Detection and segmentation collapse to random outputs.</p>
+<h4>YOLOv8-seg</h4>
+<p>1–2 early flips. Detection &amp; segmentation collapse.</p>
+<h4>Mask R-CNN</h4>
+<p>1–2 flips in backbone. AP → 0, Mask AP → 0.</p>
+<h4>Key Finding</h4>
+<p>Backbone criticality. Head can recover.</p>
+<h2>Language Models Results</h2>
+<p>Reasoning and generation models exhibit severe vulnerability to targeted parameter bit flips. Both MoE and dense architectures are affected.</p>
+<h4>Qwen3-30B-A3B</h4>
+<p>2 flips (different experts). 78% → 0% reasoning.</p>
+<h4>Qwen3-4B</h4>
+<p>14 flips all layers. 100% accuracy reduction.</p>
+<h4>Nemotron 8B</h4>
+<p>32 flips first 5 blocks. Complete collapse.</p>
+<h4>BERT (Text Encoder)</h4>
+<p>Early layers critical. Encoder vulnerability.</p>
+<h4>RoBERTa</h4>
+<p>Early layers still critical. Consistent pattern.</p>
+<h3>Language Model Attack Patterns</h3>
+<p><strong>Decoder-only models (Qwen, Nemotron):</strong> Sign-bit attacks are highly effective, especially when targeting the first 5 blocks. Two targeted flips can reduce Qwen3-30B accuracy from 78% to 0%.</p>
+<p><strong>MoE routing:</strong> Targeting different experts in Mixture-of-Experts models amplifies the attack impact, as each token's routing path becomes compromised.</p>
+<p><strong>Encoder models (BERT, RoBERTa):</strong> Early-layer sign-bit flips remain highly destructive across diverse architectures.</p>
+<p><strong>Generation behavior:</strong> Attacked models degenerate into repetitive, nonsensical text rather than near-miss errors—indicating catastrophic failure rather than graceful degradation.</p>
+<h2>Attack Strategy Comparison</h2><img alt="Comparison of attack strategies">
+<p>Performance of different targeting heuristics across 48 ImageNet models. Magnitude-based selection combined with early-layer targeting significantly outperforms random flips and matches top-k magnitude selection while remaining data-free and computationally lightweight.</p>
+<h2>Defense &amp; Implications</h2>
+<p>While the vulnerability is severe, we demonstrate that selective hardening of critical parameters provides practical defense. By protecting only the top 0.1-1% most vulnerable weights, models achieve substantial resilience without major performance overhead.</p>
+<p>DNL easily bypasses common defenses such as weight quantization, pruning, and simple checksumming schemes. The data-free nature and reliance on magnitude-based targeting make it robust against defenses that assume adversaries lack threat model knowledge or computational resources.</p>
+<h3>Key Takeaways</h3>
+<ul>
+ <li>Critical parameters are universally identifiable across architectures and domains</li>
+ <li>Defense cost scales better than attack identification for large models</li>
+ <li>Once attackers gain parameter write access, minimal computation suffices for catastrophic failure</li>
+ <li>Data-free nature makes detection and attribution exceptionally challenging</li>
+</ul>
+<h2>Citation</h2>
+<pre><code>@article\{galil2025maximal, title=\{Maximal Brain Damage Without Data or Optimization: Disrupting Neural Networks via Sign-Bit Flips}, author=\{Galil, Ido and Kimhi, Moshe and El-Yaniv, Ran}, journal=\{Transactions on Machine Learning Research}, year=\{2025}, url=\{https://arxiv.org/pdf/2502.07408} }</code></pre>

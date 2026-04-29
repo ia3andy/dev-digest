@@ -1,0 +1,71 @@
+<h1>From Vibe Coder to Product Builder</h1>
+<figure>
+ <img src="https://marcabraham.com/wp-content/uploads/2026/04/as-i-learn-69e21f2c801e8.png?w=1024" alt="Diverse software team collaborating and coding around a table in an office">
+</figure>
+<h2>The Vibe Coding spectrum</h2>
+<p>The lines between product management and software engineering are becoming increasingly blurred. As product managers, we can now show rather than tell; build rather than write. There's a spectrum here, which is nicely captured by product management consultant and trainer <a href="https://www.linkedin.com/in/danolsen98/">Dan Olsen</a>:</p>
+<figure>
+ <a href="https://marcabraham.com/wp-content/uploads/2026/03/vibe-coding-spectrum.jpeg"><img src="https://marcabraham.com/wp-content/uploads/2026/03/vibe-coding-spectrum.jpeg?w=800" alt=""></a>
+ <figcaption>
+  <strong>Image Credit:</strong> <a href="https://www.linkedin.com/posts/danolsen98_productmanagement_genai_vibecoding_activity_7366199368124727297-rkyx/">Dan Olsen</a>
+ </figcaption>
+</figure>
+<p>A lot of product managers stop at Bolt or Lovable – and that's fine for visualising an idea. But I believe there's a meaningful difference between visualising a product and actually building one. My take is that there are different degrees of product building, and if you want to move from prototyping ideas to shipping real products, you need to start using coding agents and get comfortable with some engineering basics. Not to become an engineer, but to get the most out of the tools.</p>
+<h2>Why bother going further?</h2>
+<p>For the past few months I've been going beyond Lovable and Bolt myself. I won't pretend it's been smooth – this is how I felt at first, and still feel at times:</p>
+<figure>
+ <a href="https://marcabraham.com/wp-content/uploads/2026/04/overwhelmed.webp"><img src="https://marcabraham.com/wp-content/uploads/2026/04/overwhelmed.webp?w=290" alt=""></a>
+</figure>
+<p>I have no ambition to become an engineer, and no illusion that my code is immediately production-ready. But moving beyond prototyping matters for a few concrete reasons. Using coding agents gives you more control over both the front and back-end of what you're building. It means you can produce something real that engineers can actually build on – especially when they share relevant code with you – and have far more grounded conversations with your engineering team as a result. Most importantly, it makes you better at reviewing and challenging AI output. You can't critique what you don't understand.</p>
+<h2>From visualising to building</h2>
+<p>From the moment I started building with Cursor and Claude Code, I had to get comfortable with breaking things. Database migrations failing, bugs that made no immediate sense, outputs that weren't what I'd asked for. It has felt equal parts daunting and empowering; I'm out of my comfort zone, but I'm also able to work through problems as they emerge. That's a new feeling for a PM without an engineering background, and an instructive one.</p>
+<h2>What I had to learn</h2>
+<p>Getting to grips with coding agents meant familiarising myself with some engineering basics – commands, functions, debugging — while also leaning on product fundamentals like critical thinking and planning. Here are my main lessons learned so far.</p>
+<h3><em>The value of planning</em></h3>
+<p>I love a good plan, and despite being able to generate a first prototype from a single prompt, I still believe in the importance of thinking upfront about the why and what of your product idea – including key UX and tech choices. I typically start with a few pointers and prompt the AI to turn them into a PRD.md file.</p>
+<figure>
+ <a href="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-04-14-at-12.03.08.png"><img src="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-04-14-at-12.03.08.png?w=925" alt=""></a>
+</figure>
+<p>I'll then prompt Claude Code, using its <a href="https://code.claude.com/docs/en/agent-sdk/user-input">AskUserQuestionTool</a>, to ask me questions about anything related to tech, UX, tradeoffs and data concerns before writing a single line of code. This planning step directly shapes the quality of what the agent builds. A well-structured PRD means fewer wrong turns, less backtracking, and a clear reference point to check that the code actually reflects what you had in mind.</p>
+<figure>
+ <a href="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-04-14-at-12.05.02.png"><img src="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-04-14-at-12.05.02.png?w=940" alt=""></a>
+</figure>
+<h3><em>Thinking about the tech stack</em></h3>
+<p>Building things forces you to make real architectural decisions: what programming language to use, how the client, server and database relate to each other, and what tradeoffs come with different choices. Node JS has felt like the right entry point for me, given its flexibility across front and back-end. More importantly, having a working mental model of the stack changes how you interact with a coding agent. When the agent proposes a structural change, you can evaluate it rather than just accept it. Without that mental model, you're trusting output you can't interrogate. This is fine for a prototype, but not for something you intend to ship or hand to engineers to build on.</p>
+<figure>
+ <a href="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-04-12-at-09.35.53.png"><img src="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-04-12-at-09.35.53.png?w=1024" alt=""></a>
+</figure>
+<h3><em>Functions and objects</em></h3>
+<p>Two concepts that confused me early on. A function is a reusable block of code that takes an input and returns an output. An object organises related data and behaviour into a single unit. When I built a <a href="https://personal-landing-page-three-phi.vercel.app/">personal landing page</a> in Cursor, I wrote a function to return a list of my recommended product management tools — straightforward in retrospect, but understanding why it was structured that way helped me prompt more precisely and catch it when the agent implemented something differently to what I'd intended. The practical value isn't being able to write these from scratch; it's being able to read them, understand what the agent has done, and spot when something looks off.</p>
+<figure>
+ <a href="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-01-06-at-07.45.50.png"><img src="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-01-06-at-07.45.50.png?w=800" alt=""></a>
+</figure>
+<h3><em>Error-driven development</em></h3>
+<p>In my hunt for perfection, every error the coding agent threw used to stop me in my tracks. Until <a href="https://www.linkedin.com/in/shawn-freyssonnet-inder/">Shawn</a>, who has very patiently helped me learn, introduced me to error-driven development (EDD). The insight is simple but powerful: errors aren't failures, they're instructions. They're designed to prompt a next action. I've learned to look at server and browser logs for clues about what's broken and why, which has made me a much better collaborator with the agent — I can point it in the right direction rather than just asking it to "fix the error."</p>
+<figure>
+ <a href="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2025-12-22-at-15.48.43.png"><img src="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2025-12-22-at-15.48.43.png?w=1024" alt=""></a>
+</figure>
+<h3><em>Debugging</em></h3>
+<p>Related to EDD but distinct: when I hit a bug, I now ask the agent to diagnose before it fixes. I want to understand what the issue is and what change is being proposed before anything gets implemented. Claude Code has a built-in <a href="https://code.claude.com/docs/en/skills">debug skill</a> which is prompt-based and allows it to run a detailed, structured debugging process. I'll sometimes run a second agent on the same problem to see if it reaches the same diagnosis. I've found this to be a useful sense-check when the proposed fix seems overly complex or touches parts of the codebase I wasn't expecting.</p>
+<figure>
+ <a href="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-04-16-at-07.30.01.png"><img src="https://marcabraham.com/wp-content/uploads/2026/04/screenshot-2026-04-16-at-07.30.01.png?w=619" alt=""></a>
+</figure>
+<h3><em>Iterating, one thing at a time</em></h3>
+<p>This is where product instincts transfer most directly. Just as you wouldn't ship a full product rebuild without testing incrementally, you shouldn't try to build everything in a single prompt. I've learned to make one change at a time, test it, understand it, then move on. It keeps the codebase manageable, makes errors easier to isolate, and – honestly – makes the whole process feel less overwhelming. The PM habit of releasing small and learning early applies just as well to building with coding agents as it does to shipping product.</p>
+<h2>What this changes for PMs</h2>
+<p>PMs who understand these basics become genuinely better at writing prompts, reviewing agent output critically, and working through problems when things go wrong. Using coding agents gives you real control over what you're building — and real accountability for it. With tools like Lovable or Bolt, it's easy to fall into a pattern of prompting and hoping for the best. Coding agents demand more from you, and in return give you more back.</p>
+<h2>What doesn't change for PMs</h2>
+<p>The fact that it has become much easier to build doesn't automatically mean that you should – and that's <a href="https://marcabraham.com/2024/07/07/what-makes-ai-product-managers-different/">a trap</a> worth naming explicitly. The lower barrier to building creates a real risk of PMs jumping straight into a PRD and opening up a coding agent before they've properly validated the problem they're solving and its commercial impact. The foundational questions still apply: is this problem worth solving? Who has it, and badly enough to care about a solution? What outcome are we actually trying to create? Even with my own side projects, I make a point of working through the 'why' and the 'who' before writing a single line of a PRD. The tools have changed. The thinking hasn't, and if anything, it matters more now that building has become so fast and so easy.</p>
+<p><strong>Main learning point:</strong> The shift from vibe coding to product building isn't about learning to code. It's about learning enough to be a better builder. PMs who get comfortable with engineering basics don't just get more out of coding agents; they become more credible collaborators with their engineering teams, more rigorous reviewers of AI output, and more capable of shipping things that go beyond a demo. The tools are already there. The question is how far along the vibe coding spectrum you're willing to go.</p>
+<h2>Related links for further learning</h2>
+<ol>
+ <li><a href="https://navonsanjuni178.medium.com/oop-concepts-with-real-world-examples-b8eb8f09b623">https://navonsanjuni178.medium.com/oop-concepts-with-real-world-examples-b8eb8f09b623</a></li>
+ <li><a href="https://code.claude.com/docs/en/common-workflows">https://code.claude.com/docs/en/common-workflows</a></li>
+ <li><a href="https://cursorai.notion.site/Building-with-Cursor-public-273da74ef0458051bf22e86a1a0a5c7d">https://cursorai.notion.site/Building-with-Cursor-public-273da74ef0458051bf22e86a1a0a5c7d</a></li>
+ <li><a href="https://testrigor.com/blog/what-is-error-driven-development/">https://testrigor.com/blog/what-is-error-driven-development/</a></li>
+ <li><a href="https://www.producttalk.org/vibe-coding-best-practices/">https://www.producttalk.org/vibe-coding-best-practices/</a></li>
+ <li><a href="https://medium.com/singularity-energy/error-driven-development-8ef893b90b19">https://medium.com/singularity-energy/error-driven-development-8ef893b90b19</a></li>
+ <li><a href="https://navonsanjuni178.medium.com/oop-concepts-with-real-world-examples-b8eb8f09b623">https://navonsanjuni178.medium.com/oop-concepts-with-real-world-examples-b8eb8f09b623</a></li>
+ <li><a href="https://www.geeksforgeeks.org/dsa/functions-programming/">https://www.geeksforgeeks.org/dsa/functions-programming/</a></li>
+ <li><a href="https://www.romanpichler.com/blog/product-managers-product-builders/">https://www.romanpichler.com/blog/product-managers-product-builders/</a></li>
+</ol>

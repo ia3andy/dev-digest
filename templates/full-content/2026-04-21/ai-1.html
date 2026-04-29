@@ -1,0 +1,53 @@
+<p>Chronicle is in an <strong>opt-in research preview</strong>. It is only available for ChatGPT Pro subscribers on macOS, and is not yet available in the EU, UK and Switzerland. Please review the Privacy and Security section for details and to understand the current risks before enabling.</p>
+<p>Chronicle augments Codex memories with context from your screen. When you prompt Codex, those memories can help it understand what you've been working on with less need for you to restate context.</p>
+<p>Chronicle is available as an opt-in research preview in the Codex app on macOS. It requires macOS Screen Recording and Accessibility permissions. Before enabling, be aware that Chronicle uses rate limits quickly, increases risk of prompt injection, and stores memories unencrypted on your device.</p>
+<h2>How Chronicle helps</h2>
+<p>We've designed Chronicle to reduce the amount of context you have to restate when you work with Codex. By using recent screen context to improve memory building, Chronicle can help Codex understand what you're referring to, identify the right source to use, and pick up on the tools and workflows you rely on.</p>
+<h3>Use what's on screen</h3>
+<p>With Chronicle Codex can understand what you are currently looking at, saving you time and context switching.</p>
+<h3>Fill in missing context</h3>
+<p>No need to carefully craft your context and start from zero. Chronicle lets Codex fill in the gaps in your context.</p>
+<h3>Remember tools and workflows</h3>
+<p>No need to explain to Codex which tools to use to perform your work. Codex learns as you work to save you time in the long run.</p>
+<p>In these cases, Codex uses Chronicle to provide additional context. When another source is better for the job, such as reading the specific file, Slack thread, Google Doc, dashboard, or pull request, Codex uses Chronicle to identify the source and then use that source directly.</p>
+<h2>Enable Chronicle</h2>
+<ol>
+ <li>Open Settings in the Codex app.</li>
+ <li>Go to <strong>Personalization</strong> and make sure <strong>Memories</strong> is enabled.</li>
+ <li>Turn on <strong>Chronicle</strong> below the Memories setting.</li>
+ <li>Review the consent dialog and choose <strong>Continue</strong>.</li>
+ <li>Grant macOS Screen Recording and Accessibility permissions when prompted.</li>
+ <li>When setup completes, choose <strong>Try it out</strong> or start a new thread.</li>
+</ol>
+<p>If macOS reports that Screen Recording or Accessibility permission is denied, open System Settings &gt; Privacy &amp; Security &gt; Screen Recording or Accessibility and enable Codex. If a permission is restricted by macOS or your organization, Chronicle will start after the restriction is removed and Codex receives the required permission.</p>
+<h2>Pause or disable Chronicle at any time</h2>
+<p>You control when Chronicle generates memories using screen context. Use the Codex menu bar icon to choose <strong>Pause Chronicle</strong> or <strong>Resume Chronicle</strong>. Pause Chronicle before meetings or when viewing sensitive content that you do not want Codex to use as context. To disable Chronicle, return to <strong>Settings &gt; Personalization &gt; Memories</strong> and turn off <strong>Chronicle</strong>.</p>
+<p>You can also control whether memories are used in a given thread.</p>
+<h2>Rate limits</h2>
+<p>Chronicle works by running sandboxed agents in the background to generate memories from captured screen images. These agents currently consume rate limits quickly.</p>
+<h2>Privacy and security</h2>
+<p>Chronicle uses screen captures, which can include sensitive information visible on your screen. It does not have access to your microphone or system audio. Don't use Chronicle to record meetings or communications with others without their consent. Pause Chronicle when viewing content you do not want remembered in memories.</p>
+<h3>Where does Chronicle store my data?</h3>
+<p>Screen captures are ephemeral and will only be saved temporarily on your computer. Temporary screen capture files may appear under <code>$TMPDIR/chronicle/screen_recording/</code> while Chronicle is running. Screen captures that are older than 6 hours will be deleted while Chronicle is running.</p>
+<p>The memories that Chronicle generates are just like other Codex memories: unencrypted markdown files that you can read and modify if needed. You can also ask Codex to search them. If you want to have Codex forget something you can delete the respective file inside the folder or selectively edit the markdown files to remove the information you'd like to remove. You should not manually add new information. The generated Chronicle memories are stored locally on your computer under <code>$CODEX_HOME/memories_extensions/chronicle/</code> (typically <code>~/.codex/memories_extensions/chronicle</code>).</p>
+<p>Both directories for your screen captures and memories might contain sensitive information. Make sure you do not share content with others, and be aware that other programs on your computer can also access these files.</p>
+<h3>What data gets shared with OpenAI?</h3>
+<p>Chronicle captures screen context locally, then periodically uses Codex to summarize recent activity into memories. To generate those memories, Chronicle starts an ephemeral Codex session with access to this screen context. That session may process selected screenshot frames, OCR text extracted from screenshots, timing information, and local file paths for the relevant time window.</p>
+<p>Screen captures used for memory generation are stored temporarily on your device. They are processed on our servers to generate memories, which are then stored locally on device. We do not store the screenshots on our servers after processing unless required by law, and do not use them for training.</p>
+<p>The generated memories are Markdown files stored locally under <code>$CODEX_HOME/memories_extensions/chronicle/</code>. When Codex uses memories in a future session, relevant memory contents may be included as context for that session, and may be used to improve our models if allowed in your ChatGPT settings.</p>
+<h2>Prompt injection risk</h2>
+<p>Using Chronicle increases risk to prompt injection attacks from screen content. For instance, if you browse a site with malicious agent instructions, Codex may follow those instructions.</p>
+<h2>Troubleshooting</h2>
+<h3>How do I enable Chronicle?</h3>
+<p>If you do not see the Chronicle setting, make sure you are using a Codex app build that includes Chronicle and that you have Memories enabled inside Settings &gt; Personalization.</p>
+<p>Chronicle is currently only available for ChatGPT Pro subscribers on macOS. Chronicle is not available in the EU, UK and Switzerland.</p>
+<p>If setup does not complete:</p>
+<ol>
+ <li>Confirm that Codex has Screen Recording and Accessibility permissions.</li>
+ <li>Quit and reopen the Codex app.</li>
+ <li>Open <strong>Settings &gt; Personalization</strong> and check the Chronicle status.</li>
+</ol>
+<h3>Which model is used for generating the Chronicle memories?</h3>
+<p>Chronicle uses the same model as your other Memories. If you did not configure a specific model it uses your default Codex model. To choose a specific model, update the <code>consolidation_model</code> in your configuration.</p>
+<pre><code>[memories]
+consolidation_model = "gpt-5.4-mini"</code></pre>

@@ -1,0 +1,237 @@
+<h1>Databases Were Not Designed For This</h1>
+<p>There is an implicit contract at the foundation of every database architecture decision you have ever made. You probably never wrote it down. Nobody does. It just… existed.</p>
+<p>The contract goes something like this: the caller is a human-authored application, running deterministic code, issuing predictable queries, reviewed by a developer before deployment. Writes are intentional. Connections are brief. When something goes wrong, a human notices. The database can be dumb and fast because the application layer is smart and careful.</p>
+<p>For forty years, this contract held. It shaped how we designed schemas, sized connection pools, granted permissions, and thought about failure modes. It worked because the assumption was correct.</p>
+<p>It is no longer correct. Agentic AI systems violate this contract at every layer simultaneously.</p>
+<p>In this article, I break down exactly which assumptions are failing, why they matter, and what to do about it - with concrete patterns and code. Let's dig right in…</p>
+<h2>Assumption - Deterministic Caller</h2>
+<p>In every application you have deployed before agents, the queries hitting your database were authored by a human.</p>
+<ul>
+ <li>developer wrote the SQL</li>
+ <li>developer code-reviewed it</li>
+ <li>developer tested it and deployed it.</li>
+</ul>
+<p>This assumption runs so deep that the tooling reflects it automatically: the Postgres query planner builds statistics around observed query patterns, caching layers warm up on repeated queries, and connection pools are tuned around the expected number of concurrent queries of a known complexity.</p>
+<p>Agents work differently; they reason their way to queries. Different reasoning paths produce different queries against the same tables.</p>
+<p>An agent working on a customer analytics task might issue a join across five tables that has never been issued before, hold the connection while it thinks about the result, then issue a completely different follow-up. Your indexes cover the happy path. Your connection pool is sized for your observed peak. Neither of those holds when the agent can build any query depending on the data it needs.</p>
+<h3>Statement Timeouts</h3>
+<p>Statement timeouts are your first line of defense. A human-authored query that takes 30 seconds is a bug that someone will notice. An agent query that takes 30 seconds might be a reasoning loop that no one is watching.</p>
+<p>So, set timeouts at the role level, not just the application level.</p>
+<pre><code>CREATE ROLE agent_worker;
+ALTER ROLE agent_worker SET statement_timeout = '5s';
+ALTER ROLE agent_worker SET idle_in_transaction_session_timeout = '10s';</code></pre>
+<p>The <code>idle_in_transaction_session_timeout</code> is especially important. Agents that pause mid-reasoning while holding an open transaction could be a legitimate situation.</p>
+<h2>Assumption - Writes are Intentional</h2>
+<p>The most dangerous assumption in database architecture is that every write was reviewed by a human before it happened. This was basically true for your entire career, but not anymore.</p>
+<p>Agents write autonomously. They write based on their current understanding of the task, which may be wrong. Agents write in loops when their tools return unexpected results. Agents write on retries when a transient network error makes them 'think' the first attempt failed. Agents can even write thousands of rows in the time it takes you to get a Slack notification that something looks off.</p>
+<p>Here's a real documented failure pattern - an agent calling a legacy API receives HTTP <code>200</code> with an empty result set. The API failed silently because the database connection pool was exhausted downstream. The agent interprets "no data" as "no problem" and proceeds to process 500 transactions with incomplete data. No exception was raised. No alert fired. The log showed "decision: approved" on every record.</p>
+<p>The core fix here is to design your write paths assuming the caller might be wrong, might retry, and might not be watching the results.</p>
+<h3>Soft Deletes Everywhere</h3>
+<p>Never let an agent hard-delete anything. Use soft deletes as a baseline for any table an agent can write to</p>
+<pre><code>ALTER TABLE orders ADD COLUMN deleted_at TIMESTAMPTZ;
+ALTER TABLE orders ADD COLUMN deleted_by TEXT; -- 'agent:customer-support-v2', 'user:abc123'
+ALTER TABLE orders ADD COLUMN delete_reason TEXT;
+
+-- Agents query this view; they never see deleted rows and can't accidentally undelete
+CREATE VIEW active_orders AS
+  SELECT * FROM orders WHERE deleted_at IS NULL;</code></pre>
+<p>The <code>deleted_by</code> column is more important than it looks. When you are debugging what happened two hours ago, "show me everything agent X deleted" is a query you will want to run.</p>
+<h3>Append-only Event Logs</h3>
+<p>For operations where the stakes are higher - financial records, inventory changes, user state mutations - consider going further and making the table append-only. The agent never issues <code>UPDATE</code> or <code>DELETE</code>. It issues <code>INSERT</code> with a new state and a reason:</p>
+<pre><code>CREATE TABLE order_state_log (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  order_id UUID NOT NULL REFERENCES orders(id),
+  previous_status TEXT,
+  new_status TEXT NOT NULL,
+  changed_by TEXT NOT NULL,
+  changed_at TIMESTAMPTZ DEFAULT now(),
+  reason TEXT,
+  idempotency_key TEXT UNIQUE
+);</code></pre>
+<p>This is the event sourcing pattern applied at the table level. A single append-only log table for your most sensitive entities gives you a complete audit trail and makes "undo" a projection query.</p>
+<h3>Idempotency Keys Are Not Optional</h3>
+<p>Agents retry, and this is by design. Every orchestration framework operates on at-least-once delivery semantics. If a step fails, it runs again. Your write paths need to be designed for this.</p>
+<p>An idempotency key is a stable identifier that an agent includes with every write. The database rejects duplicates silently with a unique constraint. The agent gets a successful response either way. Running the operation twice produces the same result as running it once.</p>
+<pre><code>-- The agent generates this key from
+-- task_id + operation_type + target_id
+-- It is deterministic for the same logical
+-- operation, so retries produce the same key
+ALTER TABLE order_state_log
+ ADD CONSTRAINT uq_idempotency_key UNIQUE (idempotency_key);</code></pre>
+<p>In practice, the agent constructs the key like this:</p>
+<pre><code>import hashlib
+
+def make_idempotency_key(task_id: str,
+   operation: str, target_id: str) -&gt; str:
+    raw = f"\{task_id}:\{operation}:\{target_id}"
+    return hashlib.sha256(raw.encode()).hexdigest()[:32]</code></pre>
+<p>The task ID comes from the orchestration layer and is stable across retries of the same logical task. This means the agent can retry as many times as it needs to, and your database sees exactly one write per logical operation.</p>
+<h2>Assumption - Connections are Brief</h2>
+<p>Traditional connection pool sizing follows a straightforward mental model. Your application handles <code>N</code> concurrent requests. Each request needs one database connection for a brief period. You size your pool to slightly above your expected concurrency peak, add a little headroom, and you are done.</p>
+<p>Agents break this model in three ways.</p>
+<ol>
+ <li>Agents hold connections longer</li>
+</ol>
+<p>A multi-step reasoning task may issue a query, pause to process the result with the LLM, issue another query, pause again, and repeat. Each pause holds the connection open. The connection time per task is no longer "query execution time" - it is "query execution time + LLM inference time x reasoning steps."</p>
+<ol>
+ <li>Agents fan out</li>
+</ol>
+<p>A single high-level agent task often spawns sub-agents to work in parallel. One task becomes five simultaneous database sessions. This can exhaust connections when concurrent agent workflows holding <code>db.session</code> open across long IO waits until Postgres ran out of connection slots.</p>
+<ol>
+ <li>Agents multiply unexpectedly</li>
+</ol>
+<p>In development, you had three agents. In production, you have thirty. Nobody updated the connection pool configuration.</p>
+<p>The fix is a dedicated connection pool for agent workloads, sized independently from your human-facing transactional application traffic</p>
+<pre><code># Rule of thumb: (num_agent_workers * avg_concurrent_steps * 0.5)
+# The 0.5 accounts for the fact that most agent steps
+# involve LLM time, not DB time
+
+agent_engine = create_engine(
+    DATABASE_URL,
+    pool_size=10,           # base pool for agents
+    max_overflow=5,         # burst capacity
+    pool_timeout=3,         # fail fast rather than queue
+    pool_recycle=300,       # recycle connections every 5 minutes
+    pool_pre_ping=True,     # validate connections before checkout
+    connect_args=\{
+        "options": "-c statement_timeout=5000 -c idle_in_transaction_session_timeout=10000"
+    }
+)</code></pre>
+<p>The <code>pool_timeout=3</code> is deliberate. When an agent cannot get a connection within 3 seconds, it should fail fast and retry with backoff, not queue indefinitely. Queued requests under a saturated pool is how you get cascading failures.</p>
+<p>For systems running many agents concurrently, add PgBouncer between your agents and Postgres. <a href="https://www.pgbouncer.org/">PgBouncer</a> operates in transaction pooling mode, which means it returns a connection to the pool immediately after each transaction rather than holding it for the entire session. This is a significant multiplier on your effective connection capacity for agentic workloads.</p>
+<pre><code># pgbouncer.ini
+[databases]
+mydb = host=postgres_host dbname=mydb
+
+[pgbouncer]
+pool_mode = transaction       # critical: release connection after each transaction
+max_client_conn = 500         # clients (agents) can connect up to this number
+default_pool_size = 20        # actual postgres connections (much smaller)
+reserve_pool_size = 5         # emergency capacity
+reserve_pool_timeout = 1.0    # fail fast if reserve is also exhausted</code></pre>
+<p>In transaction pooling mode, <code>20</code> actual Postgres connections can serve <code>500</code> agent connections, because each agent only holds a Postgres connection for the duration of a single transaction, not the entire multi-step task.</p>
+<h2>Assumption - Bad Queries Fail Loudly</h2>
+<p>In a human-operated system, a slow or incorrect query surfaces quickly. The dashboard loads slowly. The API times out. An engineer runs <a href="https://www.postgresql.org/docs/current/sql-explain.html">EXPLAIN ANALYZE</a> and finds the problem. The feedback loop is tight.</p>
+<p>Agents close that feedback loop. An agent that gets a slow query result just uses the result. An agent that gets an empty result set does not know whether the data genuinely does not exist or whether the query was wrong. It continues with its task, potentially writing decisions based on a bad read.</p>
+<p>This is a different class of failure from application errors. An exception is observable. A semantically wrong query that returns rows is not.</p>
+<p>The mitigation is building agent-specific observability into your database access layer. Standard slow query logs are not enough. You need to know which agent, which task, and which reasoning step produced a query. The most practical way to do this in Postgres is query comments</p>
+<pre><code>from sqlalchemy import text, event
+from sqlalchemy.engine import Engine
+
+@event.listens_for(Engine, "before_cursor_execute")
+def add_agent_context_comment(conn, cursor, statement, parameters, context, executemany):
+    agent_ctx = getattr(conn.info, "agent_context", None)
+    if agent_ctx:
+        statement = f"/* agent_id=\{agent_ctx['agent_id']}, task_id=\{agent_ctx['task_id']}, step=\{agent_ctx['step']} */ \{statement}"
+    return statement, parameters
+
+# Usage: set context on the connection before executing
+with engine.connect() as conn:
+    conn.info["agent_context"] = \{
+        "agent_id": "fulfillment-v3",
+        "task_id": "task-abc-123",
+        "step": "check-inventory"
+    }
+    conn.execute(text("SELECT ..."))</code></pre>
+<p>These comments appear in <code>pg_stat_activity</code>, <code>pg_stat_statements</code>, and your slow query logs. A query that appears in your slow query log tagged <code>agent_id=fulfillment-v3, task_id=task-abc-123, step=check-inventory</code> is immediately actionable. Without this, you are doing archaeology.</p>
+<p>Build a monitoring view that surfaces queries grouped by agent:</p>
+<pre><code>-- pg_stat_statements with agent context extracted from query text
+SELECT
+  (regexp_match(query, 'agent_id=([^,]+)'))[1] AS agent_id,
+  (regexp_match(query, 'task_id=([^,]+)'))[1] AS task_id,
+  count(*) AS call_count,
+  round(mean_exec_time::numeric, 2) AS avg_ms,
+  round(total_exec_time::numeric, 2) AS total_ms
+FROM pg_stat_statements
+WHERE query LIKE '%agent_id=%'
+GROUP BY 1, 2
+ORDER BY total_ms DESC;</code></pre>
+<p>When you see a single agent type accounting for 60% of total database time, you know where to look.</p>
+<h2>Assumption - Schema is a Contract With Engg</h2>
+<p>This is the assumption that most teams never think about until it breaks. Your schema was designed for developer ergonomics - named to make sense to the engineers, structured for query convenience, with nullable columns that "mean something" only if you read the original migration comment.</p>
+<p>When an agent can see your schema - through Text-to-SQL, through tool definitions, through an MCP server wrapping your database - the schema becomes a contract with a language model. Column names, table structure, and nullability now affect whether the LLM generates correct queries or confident-sounding nonsense.</p>
+<p>Consider the difference between these two column definitions</p>
+<pre><code>-- What most schemas look like
+CREATE TABLE orders (
+  id UUID PRIMARY KEY,
+  usr_id UUID,           -- which user?
+  stat_cd INT,           -- what does 2 mean? what does 7 mean?
+  flg_1 BOOLEAN,         -- ???
+  upd_ts TIMESTAMPTZ     -- updated at? but by whom?
+);
+
+-- What a schema legible to an agent looks like
+CREATE TABLE orders (
+  id UUID PRIMARY KEY,
+  customer_id UUID NOT NULL REFERENCES customers(id),
+  fulfillment_status TEXT NOT NULL CHECK (
+    fulfillment_status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')
+  ),
+  requires_signature BOOLEAN NOT NULL DEFAULT false,
+  last_modified_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);</code></pre>
+<p>The second schema generates correct LLM queries almost automatically. The first schema requires extensive prompt engineering to compensate for what should have been done at the schema level.</p>
+<p>For schemas you cannot rename (legacy systems, high-migration-cost tables), build an agent-facing view layer</p>
+<pre><code>-- The raw table retains its legacy names
+-- Agents query this view; they never touch the underlying table directly
+CREATE VIEW agent_orders AS
+SELECT
+  id,
+  usr_id         AS customer_id,
+  CASE stat_cd
+    WHEN 1 THEN 'pending'
+    WHEN 2 THEN 'processing'
+    WHEN 5 THEN 'shipped'
+    WHEN 7 THEN 'delivered'
+    WHEN 9 THEN 'cancelled'
+  END            AS fulfillment_status,
+  flg_1          AS requires_signature,
+  upd_ts         AS last_modified_at
+FROM orders
+WHERE deleted_at IS NULL;  -- agents only ever see active rows</code></pre>
+<p>Write column comments as if they are docstrings - because for Text-to-SQL agents, they are:</p>
+<pre><code>COMMENT ON COLUMN agent_orders.fulfillment_status IS
+  'Current state of the order in the fulfillment pipeline. '
+  'Use this to filter orders that need action: pending and processing orders are active. '
+  'Cancelled orders should never be modified.';
+
+COMMENT ON COLUMN agent_orders.requires_signature IS
+  'True if the delivery requires an adult signature. '
+  'When true, the shipping agent must schedule a delivery window.';</code></pre>
+<h2>Scoping Blast Radius</h2>
+<p>There is one more failure mode worth treating separately, because it cuts across all the assumptions above: the blast radius of a misbehaving agent is determined by the access it was granted.</p>
+<p>Traditional applications share a database role, or at best have a few roles for different services. The assumption was that the application code was the guard rail. If the code only allowed users to update their own records, the database role did not need to enforce that - the application layer handled it.</p>
+<p>Agents make this assumption dangerous. An agent that reasons itself into an incorrect state can issue queries that the application developers never anticipated. The agent is not a known, finite set of code paths - it is a general-purpose reasoner with access to a database connection. Application-layer guardrails do not bind it the way they bind deterministic code.</p>
+<p>The fix is role-per-agent-type access, with the minimum necessary privileges defined at the database level:</p>
+<pre><code>-- Each agent type gets its own role
+CREATE ROLE agent_fulfillment;
+CREATE ROLE agent_customer_support;
+CREATE ROLE agent_analytics;
+
+-- agent_analytics: read-only, only the tables it needs
+GRANT SELECT ON agent_orders TO agent_analytics;
+GRANT SELECT ON customers TO agent_analytics;
+-- Explicitly: no access to payments, credentials, PII tables
+
+-- agent_customer_support: can update order status, cannot touch financials
+GRANT SELECT ON agent_orders TO agent_customer_support;
+GRANT INSERT ON order_state_log TO agent_customer_support;
+-- Does not have UPDATE on orders -- changes go through the event log
+
+-- agent_fulfillment: can read and update shipping-related fields only
+GRANT SELECT, UPDATE (fulfillment_status, shipped_at, tracking_number)
+  ON orders TO agent_fulfillment;</code></pre>
+<p>The question to ask in your access design review is not "what does this agent need?" but "what is the worst case if this agent's reasoning goes wrong, or if its credentials are compromised?" Reduce that blast radius at the database level, where it cannot be reasoned around.</p>
+<h2>Defensively Designed Data Layer</h2>
+<p>Pulling this together, here is what the data layer looks like for a team that has internalized these failure modes. None of it is exotic. All of it exists in battle-tested database tooling.</p>
+<p>Every agent type has its own database role with the minimum necessary privileges, enforced at the database level with role-level timeouts. Agents connect through a dedicated connection pool, sized for agentic workload patterns and separated from human-facing traffic. PgBouncer runs in transaction pooling mode between agents and Postgres.</p>
+<p>Tables that agents can write to use soft deletes with a <code>deleted_by</code> column that captures agent identity. High-stakes write paths use append-only event log tables with idempotency key constraints. Every write carries an agent ID and task ID so the audit trail is always traversable.</p>
+<p>Schema objects that agents can see are named for legibility, not legacy convenience. A maintained view layer translates legacy column names to meaningful ones. Column comments are written as docstrings. Agents are granted access to views, not directly to underlying tables.</p>
+<p>Every query issued by an agent carries a comment with the agent ID, task ID, and reasoning step. A monitoring dashboard aggregates this data so the on-call engineer can see "agent X consumed 40% of database time in the last hour" in real time.</p>
+<p>The circuit breakers are defined: max writes per task enforced in the orchestration layer, max rows affected per statement enforced via statement complexity checks, max task duration enforced with a watchdog process that terminates stalled agent sessions.</p>
+<p>None of this is new technology. Soft deletes, append-only logs, least-privilege roles, row-level security, idempotency keys, query tagging - these are patterns that have existed for years. The shift that agents force is that these patterns go from "best practice we keep meaning to implement" to "load-bearing infrastructure." Agents do not give you the luxury of deferring them.</p>
+<p>The database was not designed for this caller. But the tools to make it safe are already there.</p>
+<h2>Conclusion and Footnote</h2>
+<p>Traditional database architecture rests on assumptions that agentic AI workloads systematically violate: deterministic callers, intentional writes, brief connections, loud failures, and schema as a developer contract.</p>
+<p>Each of these assumptions held because a human was always somewhere in the loop. Agents remove that guarantee. The result is that patterns long treated as optional best practice - soft deletes, append-only logs, idempotency keys, least-privilege roles, query tagging - become load-bearing infrastructure.</p>
+<p>None of this requires new technology. It requires treating the database as a defensive layer that assumes the caller might be wrong, might retry, and might not be watching the results.</p>
