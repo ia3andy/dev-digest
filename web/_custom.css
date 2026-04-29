@@ -412,7 +412,7 @@
 
 .priority-bucket-header {
   @apply px-4 py-2 text-sm font-semibold
-    bg-gray-50 dark:bg-gray-750 text-gray-700 dark:text-gray-300
+    bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300
     border-b border-gray-200 dark:border-gray-700;
 }
 
