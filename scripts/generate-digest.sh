@@ -164,7 +164,8 @@ generate_post() {
   local digest_desc
   digest_desc=$(echo "$all_sections" | timeout 120 claude -p "Write a 1-2 sentence summary of the most important news for developers from these sections. Output ONLY the text, no quotes, no prefix." 2>/dev/null) || digest_desc=""
   [[ -z "$digest_desc" ]] && digest_desc="Daily developer news digest"
-  digest_desc="${digest_desc//\"/\'}"
+  digest_desc="${digest_desc//\"/}"
+  digest_desc="${digest_desc//\\/}"
 
   local claude_output="sections:"$'\n'"$all_sections"
 
