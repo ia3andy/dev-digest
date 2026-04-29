@@ -1,0 +1,46 @@
+---
+title: Latest Dev Digest
+description: The most recent developer news digest, AI-curated from TLDR newsletters
+layout: main
+---
+
+{@io.quarkiverse.roq.frontmatter.runtime.model.NormalPage page}
+
+{#let posts=site.collections.get('digest-posts')}
+{#if posts}
+{#let latest=posts.get(0)}
+
+<article class="article-page">
+  <section class="page-content">
+    <section class="wrap-content">
+      <div class="page-header">
+        <h1>{latest.title}</h1>
+        <p class="page-date">{latest.date.format('MMMM dd, yyyy')}</p>
+      </div>
+
+      {#let sections=latest.data.sections}
+      {#include partials/digest-articles.html /}
+      {/let}
+
+      <div class="page-footer">
+        {#if latest.data.author??}
+        {#let author=cdi:authors.get(latest.data.author)}
+        {#if author}
+        <div class="author">
+          <img src="{site.image(author.avatar)}" alt="author-{latest.data.author}"/>
+          <div class="author-data">
+            <a target="_blank" rel="noopener noreferrer" href="{author.profile}"
+               class="author-name">{author.name}</a>
+            <span class="author-job-title">{author.job}</span>
+          </div>
+        </div>
+        {/if}
+        {/let}
+        {/if}
+      </div>
+    </section>
+  </section>
+</article>
+
+{/let}
+{/if}

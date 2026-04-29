@@ -47,23 +47,54 @@ document.addEventListener('DOMContentLoaded', () => {
     heading.textContent = 'Other news';
     card.appendChild(heading);
 
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function createSpan(cls, text) {
+      const s = document.createElement('span');
+      s.className = cls;
+      s.textContent = text;
+      return s;
+    }
+
     for (const el of otherNews) {
       const title = el.querySelector('.digest-article-title')?.textContent || '';
       const oneLiner = el.querySelector('.digest-one-liner')?.textContent || '';
       const badge = el.querySelector('.digest-badge')?.textContent || '';
       const tags = (el.dataset.tags || '').split(',').map(t => t.trim()).filter(Boolean);
-      const tagsHtml = tags.map(t => '<span class="digest-quick-link-tag">' + t.replace(/</g, '&lt;') + '</span>').join('');
 
       const details = document.createElement('details');
       details.className = 'digest-quick-link-item';
 
       const summary = document.createElement('summary');
-      summary.innerHTML = '<span class="digest-deep-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>' +
-        '<span class="digest-quick-link-text">' +
-        '<span class="digest-quick-link-header"><span class="digest-quick-link-title">' + title.replace(/</g, '&lt;') + '</span>' +
-        '<span class="digest-badge">' + badge.replace(/</g, '&lt;') + '</span></span>' +
-        '<span class="digest-quick-link-meta"><span class="digest-quick-link-desc">' + oneLiner.replace(/</g, '&lt;') + '</span>' +
-        '<span class="digest-quick-link-tags">' + tagsHtml + '</span></span></span>';
+
+      const icon = document.createElement('span');
+      icon.className = 'digest-deep-icon';
+      icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>';
+      summary.appendChild(icon);
+
+      const textWrap = document.createElement('span');
+      textWrap.className = 'digest-quick-link-text';
+
+      const header = document.createElement('span');
+      header.className = 'digest-quick-link-header';
+      header.appendChild(createSpan('digest-quick-link-title', title));
+      header.appendChild(createSpan('digest-badge', badge));
+      textWrap.appendChild(header);
+
+      const meta = document.createElement('span');
+      meta.className = 'digest-quick-link-meta';
+      meta.appendChild(createSpan('digest-quick-link-desc', oneLiner));
+      const tagsWrap = document.createElement('span');
+      tagsWrap.className = 'digest-quick-link-tags';
+      for (const t of tags) tagsWrap.appendChild(createSpan('digest-quick-link-tag', t));
+      meta.appendChild(tagsWrap);
+      textWrap.appendChild(meta);
+
+      summary.appendChild(textWrap);
       details.appendChild(summary);
 
       el.classList.add('digest-quick-link-expanded');

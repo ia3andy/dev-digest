@@ -4,7 +4,6 @@ set -eu
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 FEEDS_FILE="$PROJECT_DIR/data/feeds.yml"
-PROMPT_FILE="$SCRIPT_DIR/prompt-template.md"
 POSTS_DIR="$PROJECT_DIR/content/digest-posts"
 TEMP_DIR=$(mktemp -d)
 CACHE_DIR="$PROJECT_DIR/.digest-cache"
@@ -14,15 +13,23 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 TARGET_DATE=""
 DRY_RUN=false
 NO_PUSH=false
+CLEAN_ALL=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     --date) TARGET_DATE="$2"; shift 2 ;;
     --dry-run) DRY_RUN=true; shift ;;
     --no-push) NO_PUSH=true; shift ;;
+    --clean-all) CLEAN_ALL=true; shift ;;
     *) echo "Unknown option: $1"; exit 1 ;;
   esac
 done
+
+if [[ "$CLEAN_ALL" == true ]]; then
+  echo "Re-cleaning all posts..."
+  jbang "$SCRIPT_DIR/DigestHelper.java" clean-all "$POSTS_DIR" "$CACHE_DIR" "$FEEDS_FILE"
+  exit 0
+fi
 
 find_last_date() {
   ls -d "$POSTS_DIR"/*-dev-digest 2>/dev/null \
@@ -83,30 +90,15 @@ summarize_feed() {
   local name="$1" daily_url="$2" target_date="$3" output_file="$4"
 
   local feed_file="$TEMP_DIR/feed-${name}-${target_date}.xml"
-  echo "--- FEED: $name ---" > "$feed_file"
   echo "  [$name] Scraping..." >&2
-  jbang "$SCRIPT_DIR/DigestHelper.java" tldr-articles "$daily_url" >> "$feed_file"
+  jbang "$SCRIPT_DIR/DigestHelper.java" tldr-articles "$daily_url" > "$feed_file"
 
   echo "  [$name] Enriching..." >&2
-  local enriched_file="$TEMP_DIR/enriched-${name}-${target_date}.xml"
+  local enriched_file="$TEMP_DIR/enriched-${name}-${target_date}.json"
   jbang "$SCRIPT_DIR/DigestHelper.java" enrich "$feed_file" "$enriched_file" "$CACHE_DIR"
 
   echo "  [$name] Summarizing..." >&2
-  local prompt
-  prompt=$(cat "$PROMPT_FILE")
-  timeout 300 claude -p "$prompt
-
-Process this single feed section for date: $target_date
-The feed name is: $name
-
-IMPORTANT INSTRUCTIONS:
-- Output ONLY the YAML for this one section (starting with '  - name: $name'), nothing else.
-- No digest-summary line, no 'sections:' wrapper, no markdown fences.
-- You MUST include ALL non-sponsored articles from the feed. Do not skip or omit any article unless it is clearly an ad or sponsored content.
-- Every article must have a complete summary (what, why, takeaway) and a one-liner. Never leave fields empty.
-- The TLDR description in each <description> tag is your primary source. Always write a full summary from it.
-- Full article content (ARTICLE sections) is bonus context for deep-summaries only. Missing article content is not a reason to skip or weaken any summary." < "$enriched_file" 2>/dev/null \
-    | sed '/^```/d; /^[Hh]ere/d; /^[Pp]rocessing/d; /^[Ll]et me/d; /^I.ll/d' > "$output_file"
+  jbang "$SCRIPT_DIR/DigestHelper.java" summarize "$enriched_file" "$name" > "$output_file"
   echo "  [$name] Done." >&2
 }
 
@@ -201,8 +193,8 @@ ${claude_output}
 ---
 FRONTMATTER
 
-  echo "  Injecting full article content..."
-  jbang "$SCRIPT_DIR/DigestHelper.java" inject-content "$post_dir/index.md" "$CACHE_DIR"
+  echo "  Writing article content files..."
+  jbang "$SCRIPT_DIR/DigestHelper.java" write-content "$post_dir/index.md" "$CACHE_DIR" "$FEEDS_FILE"
 
   echo "  Written to $post_dir/index.md"
 }
