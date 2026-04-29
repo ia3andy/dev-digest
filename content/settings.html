@@ -1,0 +1,255 @@
+---
+title: Settings
+description: Customize your digest tag priorities
+layout: main
+---
+
+<script>window.DEFAULT_TAG_PRIORITIES={cdi:feeds.get('tag-priorities').raw};</script>
+
+<article class="article-page">
+  <section class="page-content">
+    <section class="wrap-content">
+      <h1>Tag Priorities</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">
+        Drag tags between buckets to change priority. Drag within a bucket to reorder.
+        Top articles appear first with full details, hidden articles are not shown.
+      </p>
+      <div id="priority-settings" class="priority-settings"></div>
+    </section>
+  </section>
+</article>
+
+<script>
+(function() {
+  const LEVELS = [
+    { value: 1, label: 'Top', icon: '🔥' },
+    { value: 2, label: 'High', icon: '⬆' },
+    { value: 3, label: 'Normal', icon: '━' },
+    { value: 4, label: 'Compact', icon: '⬇' },
+    { value: 5, label: 'Hidden', icon: '🚫' }
+  ];
+
+  const defaults = window.DEFAULT_TAG_PRIORITIES || {};
+  const overrides = JSON.parse(localStorage.getItem('digest-tag-priorities') || '{}');
+  const savedOrder = JSON.parse(localStorage.getItem('digest-tag-order') || '[]');
+  const current = { ...defaults, ...overrides };
+
+  const root = document.getElementById('priority-settings');
+  if (!root) return;
+
+  const allTags = Object.keys(defaults).filter(t => t !== 'default');
+  const orderedTags = [...savedOrder.filter(t => allTags.includes(t)), ...allTags.filter(t => !savedOrder.includes(t))];
+
+  const buckets = {};
+
+  for (const level of LEVELS) {
+    const bucket = document.createElement('div');
+    bucket.className = 'priority-bucket';
+    bucket.dataset.level = level.value;
+
+    const header = document.createElement('div');
+    header.className = 'priority-bucket-header';
+    header.textContent = level.icon + ' ' + level.label;
+    bucket.appendChild(header);
+
+    const dropzone = document.createElement('div');
+    dropzone.className = 'priority-bucket-tags';
+    dropzone.dataset.level = level.value;
+    bucket.appendChild(dropzone);
+
+    root.appendChild(bucket);
+    buckets[level.value] = dropzone;
+  }
+
+  function createGripSvg() {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('width', '14');
+    svg.setAttribute('height', '14');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    const coords = [[9,5],[15,5],[9,12],[15,12],[9,19],[15,19]];
+    for (const [cx, cy] of coords) {
+      const c = document.createElementNS(ns, 'circle');
+      c.setAttribute('cx', cx);
+      c.setAttribute('cy', cy);
+      c.setAttribute('r', '1');
+      svg.appendChild(c);
+    }
+    return svg;
+  }
+
+  function createTagChip(tag) {
+    const chip = document.createElement('div');
+    chip.className = 'priority-tag-chip';
+    chip.dataset.tag = tag;
+    chip.setAttribute('touch-action', 'none');
+
+    const grip = document.createElement('span');
+    grip.className = 'priority-tag-grip';
+    grip.appendChild(createGripSvg());
+    chip.appendChild(grip);
+
+    const label = document.createElement('span');
+    label.className = 'priority-tag-label';
+    label.textContent = tag;
+    chip.appendChild(label);
+
+    return chip;
+  }
+
+  for (const tag of orderedTags) {
+    const priority = current[tag] || defaults['default'] || 3;
+    const chip = createTagChip(tag);
+    buckets[priority].appendChild(chip);
+  }
+
+  // --- Drag and drop (pointer events for mouse + touch) ---
+
+  let dragEl = null;
+  let ghost = null;
+  let startX = 0, startY = 0;
+  let offsetX = 0, offsetY = 0;
+  let isDragging = false;
+  let placeholder = null;
+
+  function getDropTarget(x, y) {
+    const els = document.elementsFromPoint(x, y);
+    for (const el of els) {
+      if (el.classList.contains('priority-bucket-tags')) return { zone: el, before: null };
+      const chip = el.closest('.priority-tag-chip');
+      if (chip && chip !== dragEl && chip !== ghost) {
+        const rect = chip.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        return { zone: chip.closest('.priority-bucket-tags'), before: y < midY ? chip : chip.nextElementSibling };
+      }
+    }
+    return null;
+  }
+
+  function onPointerDown(e) {
+    const chip = e.target.closest('.priority-tag-chip');
+    if (!chip || !root.contains(chip)) return;
+
+    e.preventDefault();
+    chip.setPointerCapture(e.pointerId);
+
+    dragEl = chip;
+    const rect = chip.getBoundingClientRect();
+    startX = e.clientX;
+    startY = e.clientY;
+    offsetX = e.clientX - rect.left;
+    offsetY = e.clientY - rect.top;
+    isDragging = false;
+  }
+
+  function onPointerMove(e) {
+    if (!dragEl) return;
+    e.preventDefault();
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (!isDragging && Math.abs(dx) + Math.abs(dy) < 8) return;
+
+    if (!isDragging) {
+      isDragging = true;
+
+      ghost = dragEl.cloneNode(true);
+      ghost.className = 'priority-tag-chip priority-tag-ghost';
+      const rect = dragEl.getBoundingClientRect();
+      ghost.style.width = rect.width + 'px';
+      document.body.appendChild(ghost);
+
+      placeholder = document.createElement('div');
+      placeholder.className = 'priority-tag-placeholder';
+      placeholder.style.height = rect.height + 'px';
+      dragEl.parentNode.insertBefore(placeholder, dragEl);
+
+      dragEl.style.display = 'none';
+    }
+
+    ghost.style.left = (e.clientX - offsetX) + 'px';
+    ghost.style.top = (e.clientY - offsetY) + 'px';
+
+    dragEl.releasePointerCapture(e.pointerId);
+    const target = getDropTarget(e.clientX, e.clientY);
+    dragEl.setPointerCapture(e.pointerId);
+
+    for (const z of Object.values(buckets)) z.classList.remove('priority-bucket-hover');
+
+    if (target) {
+      target.zone.classList.add('priority-bucket-hover');
+      if (placeholder.parentNode !== target.zone || placeholder.nextElementSibling !== target.before) {
+        target.zone.insertBefore(placeholder, target.before);
+      }
+    }
+  }
+
+  function onPointerUp(e) {
+    if (!dragEl) return;
+
+    if (isDragging) {
+      dragEl.releasePointerCapture(e.pointerId);
+
+      if (placeholder && placeholder.parentNode) {
+        placeholder.parentNode.insertBefore(dragEl, placeholder);
+      }
+
+      dragEl.style.display = '';
+      if (ghost) ghost.remove();
+      if (placeholder) placeholder.remove();
+
+      for (const z of Object.values(buckets)) z.classList.remove('priority-bucket-hover');
+
+      saveState();
+    }
+
+    ghost = null;
+    placeholder = null;
+    dragEl = null;
+    isDragging = false;
+  }
+
+  root.addEventListener('pointerdown', onPointerDown);
+  document.addEventListener('pointermove', onPointerMove);
+  document.addEventListener('pointerup', onPointerUp);
+  document.addEventListener('pointercancel', onPointerUp);
+
+  function saveState() {
+    const newOverrides = {};
+    const order = [];
+    for (const level of LEVELS) {
+      const zone = buckets[level.value];
+      for (const chip of zone.querySelectorAll('.priority-tag-chip')) {
+        const tag = chip.dataset.tag;
+        order.push(tag);
+        if (level.value !== (defaults[tag] || defaults['default'] || 3)) {
+          newOverrides[tag] = level.value;
+        }
+      }
+    }
+    localStorage.setItem('digest-tag-priorities', JSON.stringify(newOverrides));
+    localStorage.setItem('digest-tag-order', JSON.stringify(order));
+  }
+
+  const resetBtn = document.createElement('button');
+  resetBtn.className = 'priority-reset-btn';
+  resetBtn.textContent = 'Reset to defaults';
+  resetBtn.addEventListener('click', () => {
+    localStorage.removeItem('digest-tag-priorities');
+    localStorage.removeItem('digest-tag-order');
+    for (const zone of Object.values(buckets)) zone.replaceChildren();
+    const defaultOrder = Object.keys(defaults).filter(t => t !== 'default').sort();
+    for (const tag of defaultOrder) {
+      const priority = defaults[tag] || defaults['default'] || 3;
+      buckets[priority].appendChild(createTagChip(tag));
+    }
+  });
+  root.appendChild(resetBtn);
+})();
+</script>

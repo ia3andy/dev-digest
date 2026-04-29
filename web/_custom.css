@@ -1,5 +1,4 @@
 /* Theme customization: https://iamroq.dev/theme/default/#css-customization */
-/* Replace these values with any Tailwind color (e.g. var(--color-sky-500)) or custom hex */
 @theme inline {
     --color-accent-50: #fdf5ef;
     --color-accent-100: #f9e6d4;
@@ -28,23 +27,6 @@
     @apply mb-0;
 }
 
-/* Digest page */
-.digest-page {
-  @apply max-w-3xl mx-auto;
-}
-
-.digest-header {
-  @apply mb-8;
-}
-
-.digest-header h1 {
-  @apply text-3xl font-bold;
-}
-
-.digest-header time {
-  @apply text-sm text-gray-500 dark:text-gray-400;
-}
-
 /* Flash prevention: articles hidden until JS assigns priorities */
 .digest-articles {
   @apply opacity-0 transition-opacity duration-150;
@@ -59,15 +41,14 @@
   @apply hidden;
 }
 
-/* Article cards (matching theme post card layout) */
+/* Article cards */
 .digest-article {
   @apply mb-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm overflow-hidden;
   @apply flex flex-col md:flex-row min-h-44;
 }
 
 .digest-article-img {
-  @apply w-full min-h-44 object-cover;
-  @apply md:w-[30%];
+  @apply w-full min-h-44 object-cover md:w-[30%];
 }
 
 .digest-article-content {
@@ -119,6 +100,11 @@
   @apply text-gray-800 dark:text-gray-200;
 }
 
+/* Collapsible shared icon */
+.digest-deep-icon {
+  @apply inline-flex transition-transform duration-200;
+}
+
 /* Deep dive collapsible */
 .digest-deep-summary {
   @apply mt-3 rounded-lg overflow-hidden
@@ -136,10 +122,6 @@
 
 .digest-deep-summary > summary::-webkit-details-marker {
   @apply hidden;
-}
-
-.digest-deep-icon {
-  @apply inline-flex transition-transform duration-200;
 }
 
 .digest-deep-summary[open] .digest-deep-icon {
@@ -191,8 +173,7 @@
 
 .digest-article-tag {
   @apply px-2.5 py-0.5 text-xs font-semibold rounded-full uppercase
-    bg-gray-100 text-gray-500
-    dark:bg-gray-700 dark:text-gray-400;
+    bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400;
 }
 
 /* Read article icon button */
@@ -201,8 +182,7 @@
     text-gray-400 dark:text-gray-500
     hover:text-accent-600 dark:hover:text-accent-400
     hover:bg-accent-50 dark:hover:bg-accent-950
-    transition-colors duration-150
-    no-underline;
+    transition-colors duration-150 no-underline;
 }
 
 /* Summary collapsible (What / Why / Takeaway) */
@@ -228,7 +208,7 @@
   @apply rotate-180;
 }
 
-/* Quick links card (priority 4 grouped) */
+/* Quick links card (priority 3-4 grouped) */
 .digest-quick-links {
   @apply mb-4 rounded-xl border border-gray-200 dark:border-gray-700
     bg-white dark:bg-gray-800 shadow-sm p-5;
@@ -254,8 +234,7 @@
 }
 
 .digest-quick-link-item[open] > summary .digest-deep-icon {
-  @apply rotate-180 p-2 rounded-md
-    hover:bg-gray-100 dark:hover:bg-gray-700;
+  @apply rotate-180 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700;
 }
 
 .digest-quick-link-item[open] > summary .digest-quick-link-text {
@@ -288,10 +267,201 @@
 
 .digest-quick-link-tag {
   @apply px-1.5 py-0.5 text-[10px] rounded-full
-    bg-gray-100 text-gray-500
-    dark:bg-gray-700 dark:text-gray-400;
+    bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400;
 }
 
 .digest-quick-link-expanded {
   @apply m-4 mt-0;
+}
+
+/* --- Read tracking --- */
+
+/* Status ribbon on listing cards */
+.card.post {
+  @apply relative;
+}
+
+.digest-ribbon {
+  @apply absolute top-0 right-0 z-10 flex items-center gap-1
+    px-2.5 py-1 rounded-bl-lg
+    bg-rose-500 text-white transition-colors duration-200;
+}
+
+.digest-ribbon-new {
+  @apply text-[10px] font-bold tracking-wider;
+}
+
+.digest-ribbon-done {
+  @apply hidden text-[10px] font-bold tracking-wider;
+}
+
+/* Ribbon buttons (base styles first, then visibility toggles) */
+.digest-ribbon .digest-btn-mark-read,
+.digest-ribbon .digest-btn-mark-all-read {
+  @apply inline-flex items-center gap-1 p-1 rounded
+    text-[10px] text-white/70 hover:text-white hover:bg-white/20
+    transition-colors cursor-pointer border-none bg-transparent;
+}
+
+.digest-ribbon svg {
+  @apply shrink-0;
+}
+
+.digest-ribbon .digest-btn-undo {
+  @apply hidden;
+}
+
+/* Digested state: green ribbon, show undo, hide done/all */
+.card.post.is-read .digest-ribbon {
+  @apply bg-emerald-500/80;
+}
+
+.card.post.is-read .digest-ribbon-new {
+  @apply hidden;
+}
+
+.card.post.is-read .digest-ribbon-done {
+  @apply inline;
+}
+
+.card.post.is-read .digest-ribbon .digest-btn-done,
+.card.post.is-read .digest-ribbon .digest-btn-mark-all-read {
+  @apply hidden;
+}
+
+.card.post.is-read .digest-ribbon .digest-btn-undo {
+  @apply inline-flex;
+}
+
+/* Detail page toast bar */
+.digest-toast {
+  @apply flex items-center justify-between gap-3 px-4 py-3 my-6 rounded-lg
+    bg-rose-50 border border-rose-200
+    dark:bg-rose-950/50 dark:border-rose-800
+    transition-colors duration-200;
+}
+
+.digest-toast-status {
+  @apply flex items-center gap-2 text-sm font-semibold;
+}
+
+.digest-toast-fresh {
+  @apply inline-flex items-center gap-1.5 text-rose-600 dark:text-rose-400;
+}
+
+.digest-toast-devoured {
+  @apply hidden items-center gap-1.5 text-emerald-600 dark:text-emerald-400;
+}
+
+.digest-toast-actions {
+  @apply flex items-center gap-2;
+}
+
+.digest-toast .digest-btn-mark-read,
+.digest-toast .digest-btn-mark-all-read {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md
+    text-rose-600 hover:text-white hover:bg-rose-500
+    dark:text-rose-400 dark:hover:text-white dark:hover:bg-rose-600
+    transition-colors cursor-pointer border border-rose-300 dark:border-rose-700 bg-transparent;
+}
+
+.digest-toast .digest-btn-undo {
+  @apply hidden;
+}
+
+.digest-toast svg {
+  @apply shrink-0;
+}
+
+/* Devoured state toast */
+.article-page.is-read .digest-toast {
+  @apply bg-emerald-50 border-emerald-200
+    dark:bg-emerald-950/50 dark:border-emerald-800;
+}
+
+.article-page.is-read .digest-toast-fresh {
+  @apply hidden;
+}
+
+.article-page.is-read .digest-toast-devoured {
+  @apply inline-flex;
+}
+
+.article-page.is-read .digest-toast .digest-btn-mark-read:not(.digest-btn-undo),
+.article-page.is-read .digest-toast .digest-btn-mark-all-read {
+  @apply hidden;
+}
+
+.article-page.is-read .digest-toast .digest-btn-undo {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md
+    text-emerald-600 hover:text-white hover:bg-emerald-500
+    dark:text-emerald-400 dark:hover:text-white dark:hover:bg-emerald-600
+    transition-colors cursor-pointer border border-emerald-300 dark:border-emerald-700 bg-transparent;
+}
+
+/* --- Priority settings page --- */
+
+.priority-settings {
+  @apply max-w-2xl mx-auto;
+}
+
+.priority-bucket {
+  @apply mb-4 rounded-xl border border-gray-200 dark:border-gray-700
+    bg-white dark:bg-gray-800 overflow-hidden;
+}
+
+.priority-bucket-header {
+  @apply px-4 py-2 text-sm font-semibold
+    bg-gray-50 dark:bg-gray-750 text-gray-700 dark:text-gray-300
+    border-b border-gray-200 dark:border-gray-700;
+}
+
+.priority-bucket-tags {
+  @apply flex flex-wrap gap-2 p-3 min-h-12 transition-colors duration-150;
+}
+
+.priority-bucket-tags.priority-bucket-hover {
+  @apply bg-accent-50/50 dark:bg-accent-950/30;
+}
+
+.priority-tag-chip {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5
+    text-sm font-medium rounded-lg cursor-grab
+    bg-gray-100 text-gray-700
+    dark:bg-gray-700 dark:text-gray-300
+    border border-gray-200 dark:border-gray-600
+    select-none touch-none
+    hover:bg-accent-50 dark:hover:bg-accent-950
+    hover:border-accent-300 dark:hover:border-accent-700
+    transition-colors duration-150;
+}
+
+.priority-tag-chip:active {
+  @apply cursor-grabbing;
+}
+
+.priority-tag-grip {
+  @apply text-gray-400 dark:text-gray-500 shrink-0;
+}
+
+.priority-tag-label {
+  @apply leading-none;
+}
+
+.priority-tag-ghost {
+  @apply fixed z-50 pointer-events-none opacity-90 shadow-lg
+    bg-accent-100 border-accent-400 text-accent-800
+    dark:bg-accent-900 dark:border-accent-600 dark:text-accent-200;
+}
+
+.priority-tag-placeholder {
+  @apply w-20 rounded-lg border-2 border-dashed border-accent-300 dark:border-accent-700;
+}
+
+.priority-reset-btn {
+  @apply mt-4 px-4 py-2 text-sm rounded-md cursor-pointer
+    border border-gray-300 dark:border-gray-600
+    text-gray-600 dark:text-gray-400
+    hover:bg-gray-100 dark:hover:bg-gray-800
+    transition-colors;
 }

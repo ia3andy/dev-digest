@@ -4,14 +4,18 @@ layout: main
 
 {@io.quarkiverse.roq.frontmatter.runtime.model.DocumentPage page}
 
-<article class="article-page">
+<article class="article-page" data-post-date="{page.date.format('yyyy-MM-dd')}">
   <section class="page-content">
     <section class="wrap-content">
       {#include partials/roq-default/page-header.html /}
 
+      {#readButtons postDate=page.date.format('yyyy-MM-dd') /}
+
       {#let sections=page.data.sections}
       {#include partials/digest-articles.html /}
       {/let}
+
+      {#readButtons postDate=page.date.format('yyyy-MM-dd') /}
 
       <div class="page-footer">
         {#if page.data.author??}
