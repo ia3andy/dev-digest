@@ -1,6 +1,6 @@
 ---
 title: "Dev Digest - April 24, 2026"
-description: "OpenAI released GPT-5.5 with stronger coding and agentic capabilities, DeepSeek launched V4 models at a fraction of US lab pricing, and Anthropic published a detailed postmortem on three bugs that degraded Claude Code quality between March and April. Kubernetes v1.36 shipped with 70 enhancements including GA user namespaces and volume group snapshots, browsers now support `sizes=\'auto\'` to eliminate manual responsive image calculations, and a critical SSRF in the LMDeploy inference toolkit was weaponized just 12 hours after disclosure."
+description: "OpenAI released GPT-5.5 with stronger coding and agentic capabilities, DeepSeek launched V4 models at a fraction of US lab pricing, and Anthropic published a detailed postmortem on three bugs that degraded Claude Code quality between March and April. Kubernetes v1.36 shipped with 70 enhancements including GA user namespaces and volume group snapshots, browsers now support sizes=auto to eliminate manual responsive image calculations, and a critical SSRF in the LMDeploy inference toolkit was weaponized just 12 hours after disclosure."
 layout: digest-post
 date: 2026-04-24
 tags: digest
