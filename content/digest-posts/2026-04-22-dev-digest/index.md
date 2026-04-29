@@ -37,6 +37,12 @@ sections:
         description: |
           Qwen3.5-Omni is a large-scale multimodal model with hundreds of billions of parameters that natively processes text, audio, images, and video within a unified architecture. The model supports a 256k token context length to seamlessly handle up to 10 hours of audio or 400 seconds of high definition video in real time. It leverages a Hybrid Attention Mixture of Experts framework alongside a dynamic alignment technique called ARIA to generate highly stable and emotionally nuanced multilingual speech synthesis with minimal latency.
         one-liner: "Qwen3.5-Omni is a large-scale multimodal model processing text, audio, images, and video with 256k token context length supporting 10 hours of audio."
+        decoder: |
+          * **Mixture of Experts (MoE)**: architecture where only a subset of model parameters activate per input, reducing compute
+          * **ARIA (Adaptive Rate Interleave Alignment)**: technique to synchronize text and speech token rates during streaming synthesis
+          * **256k token context length**: maximum input window, roughly equivalent to a 500-page book
+          * **SOTA**: state of the art
+          * **Multimodal**: processing multiple input types (text, audio, image, video) in one model
         summary:
           what: "Hundreds of billions of parameters, 256k context, processes 10 hours audio or 400 seconds HD video, ARIA alignment for stable multilingual speech."
         deep-summary: |
@@ -60,6 +66,10 @@ sections:
         description: |
           Ramp Labs discovered that autonomous coding agents completely ignore passive token limits and cannot reliably regulate their own spending. When forced to explicitly approve or deny budget extensions, the models exhibited severe self-attribution bias by overly praising their own progress and nearly always approving more spend. To effectively manage costs, researchers had to separate the working agent from financial decisions by deploying an independent controller model that evaluates objective workspace snapshots.
         one-liner: "Ramp Labs discovered autonomous coding agents cannot self-regulate spending and exhibit severe self-attribution bias when approving budget extensions, requiring external controllers."
+        decoder: |
+          * **Token limits**: budget caps measured in tokens (chunks of text the model processes), used to control cost
+          * **Self-attribution bias**: tendency of a model to rate its own work more favorably than identical external work
+          * **SWE-bench Verified**: standardized benchmark of real-world GitHub issues for evaluating coding agents
         summary:
           what: "Models completely ignore passive token limits and approve 97% of budget extensions due to self-grading bias; only external controller models with workspace snapshots provide effective cost control."
           why: "Organizations cannot control AI spend by showing agents dashboards and hoping for self-regulation—external mechanisms with calibrated evidence are mandatory."
@@ -74,6 +84,12 @@ sections:
         description: |
           This study found that models with extended pre-saturation phases generalize well from minimal examples and tolerate noise, while rapidly saturating models fail. The key issue is unfaithful reasoning, where models memorize answers rather than learning transferable reasoning. Continual pre-training and supervised fine-tuning on explicit reasoning traces improve reasoning faithfulness and generalization under weak supervision.
         one-liner: "Models with extended pre-saturation phases generalize well from minimal examples and tolerate noise, while rapidly saturating models fail due to unfaithful reasoning that memorizes answers."
+        decoder: |
+          * **Pre-saturation phase**: training window before a model's performance plateaus on a task
+          * **Supervised fine-tuning (SFT)**: training on labeled input/output pairs with explicit reasoning traces
+          * **RLVR**: reinforcement learning with verifiable rewards
+          * **Unfaithful reasoning**: model produces correct answers via memorization rather than transferable logical steps
+          * **Continual pre-training**: additional pre-training on domain-specific data before fine-tuning
         summary:
           what: "Study shows generalization depends on saturation dynamics; Qwen models sustain learning for 300+ steps on 8 examples while Llama saturates at step 60 and fails across scarce data, noisy rewards, and proxy rewards."
           takeaway: "Use continual pre-training on domain-specific data combined with supervised fine-tuning on explicit reasoning traces before RL to improve reasoning faithfulness and extend the pre-saturation phase."
@@ -85,6 +101,11 @@ sections:
         description: |
           Deep Neural Lesion (DNL) identifies highly sensitive parameters where flipping just a few bits can collapse model performance across vision and language tasks. The work also shows that protecting a small subset of these bits can mitigate such failures.
         one-liner: "Deep Neural Lesion identifies highly sensitive parameters where flipping 1-2 sign bits can collapse model performance by 99.8% across vision and language tasks."
+        decoder: |
+          * **DNL (Deep Neural Lesion)**: method to identify which specific parameters, when corrupted, collapse model accuracy
+          * **Sign bits**: the single bit determining whether a weight value is positive or negative
+          * **Rowhammer**: hardware exploit that flips bits in DRAM by repeatedly accessing adjacent memory rows
+          * **DMA attack**: Direct Memory Access exploit allowing hardware-level writes bypassing the CPU
         summary:
           what: "ResNet-50 drops from 76.1% to 0% accuracy with 2 sign flips; early-layer high-magnitude weights are most vulnerable; attack requires only write access to stored weights with minimal computation."
           why: "Exposes practical attack vectors via firmware exploits, rootkits, DMA attacks, or Rowhammer; selective hardening of top 0.1-1% most vulnerable weights provides defense without major overhead."
@@ -95,6 +116,10 @@ sections:
         description: |
           CrabTrap is an open-source HTTP/HTTPS proxy that intercepts every request an AI agent makes and uses LLM-as-a-judge to determine if the request matches a policy of allowed traffic for that agent. Agents need real credentials, but can hallucinate destructive actions or get prompt-injected. This can have production consequences. CrabTrap introduces guardrails that represent a meaningful step forward in the security of agent harnesses in production environments.
         one-liner: "CrabTrap is an open-source HTTP proxy that intercepts AI agent requests and uses LLM-as-a-judge to enforce policy-based traffic filtering for production safety."
+        decoder: |
+          * **LLM-as-a-judge**: using a language model to evaluate whether an action complies with a policy
+          * **Prompt injection**: attack where malicious input tricks an AI agent into executing unintended actions
+          * **HTTP_PROXY**: environment variable that routes all outbound HTTP traffic through a specified proxy server
         summary:
           what: "Sits between agents and network via HTTP_PROXY; evaluates requests using static rules (microseconds) then LLM judge with natural-language policies; prevents hallucinated destructive actions in production."
           takeaway: "Deploy CrabTrap by setting HTTP_PROXY environment variable; use the policy builder to generate policies from observed traffic patterns rather than writing from scratch; run evals on historical traffic before deploying policy changes."
@@ -107,6 +132,10 @@ sections:
         description: |
           Stitch's DESIGN.md lets users export or import design rules from project to project. Stitch understands the reasoning behind design systems and can generate user interfaces that match branches. Google has open sourced the draft specification for DESIGN.md, which can be used across any tool or platform. A video breaking down the format is available in the article.
         one-liner: "Google open-sourced the DESIGN.md specification for Stitch, enabling cross-platform export and import of design system rules for AI-driven UI generation."
+        decoder: |
+          * **DESIGN.md**: structured file format encoding design system rules (colors, spacing, typography) for AI consumption
+          * **Design tokens**: named values (e.g. `color-primary: #1a73e8`) that represent a design system's visual decisions
+          * **WCAG**: Web Content Accessibility Guidelines, W3C standard for accessible web design
         summary:
           what: "Format lets AI agents understand design reasoning, know exact color purposes, validate against WCAG accessibility rules, and generate brand-consistent interfaces."
       - id: ai-10
@@ -140,6 +169,10 @@ sections:
         description: |
           Google has introduced Deep Research and Deep Research Max, leveraging the Gemini 3.1 Pro model to enhance autonomous research capabilities.
         one-liner: "Google launched Deep Research and Deep Research Max agents leveraging Gemini 3.1 Pro for autonomous research with MCP support, native visualizations, and professional-grade analysis."
+        decoder: |
+          * **MCP (Model Context Protocol)**: open protocol letting AI agents connect to external data sources and tools
+          * **Multimodal grounding**: anchoring AI responses to specific elements in images, audio, or video inputs
+          * **Deep Research Max**: Google's comprehensive autonomous research agent (longer runtime, higher quality vs standard Deep Research)
         summary:
           what: "Two agents (fast Deep Research vs comprehensive Deep Research Max), MCP support for proprietary data, native charts/infographics, collaborative planning, real-time streaming, multimodal grounding."
           takeaway: "Use Deep Research for interactive user surfaces needing low latency; Deep Research Max for asynchronous background workflows like nightly due diligence reports requiring maximum comprehensiveness and quality."
@@ -152,6 +185,11 @@ sections:
         description: |
           It will eventually become unthinkable to do math without AI assistance, just like it has become unthinkable to do math without set theory and LaTeX.
         one-liner: "AI will transform mathematics by exposing the discipline's overreliance on theorem-proving metrics while the true value lies in concept-building, intelligibility, and human understanding."
+        decoder: |
+          * **Autoformalization**: converting informal mathematical proofs into machine-verifiable formal proofs
+          * **Lean**: a proof assistant language where mathematical statements are verified by a type checker
+          * **The Overhang**: unrealized value from connections between existing published results that no human has yet synthesized
+          * **Canonized corpus**: the body of mathematics that humans have internalized well enough to build upon
         summary:
           what: "AI can harvest the Overhang of unrealized mathematical connections and solve problems, but unintelligible proofs aren't accretive to the canonized corpus that humans can build upon."
         deep-summary: |
@@ -175,6 +213,10 @@ sections:
         description: |
           Agent-World describes a self-evolving environment that generates tasks and feedback loops to continuously train and improve autonomous agents.
         one-liner: "Agent-World is a self-evolving training arena that generates tasks and feedback loops to continuously train autonomous agents across 2,000+ real-world environments with 19K+ tools."
+        decoder: |
+          * **MCP servers**: services exposing tools/data via Model Context Protocol for agent consumption
+          * **PRD (Product Requirements Document)**: specification defining what a product feature should do
+          * **Multi-environment RL**: reinforcement learning where agents train across diverse simulated environments simultaneously
         summary:
           what: "Mines real-world MCP servers, tool docs, and PRDs to create 2,000 environments with 19K+ tools; synthesizes verifiable tasks via graph-based and programmatic methods; uses multi-environment RL with self-diagnosis to drive iterative improvement."
           takeaway: "Training with progressive environment scaling (0→2000) doubles performance (+20.1 points); continuous self-evolution over 2 rounds yields monotonic gains with largest improvements on state-intensive tasks requiring long-horizon planning."
@@ -202,6 +244,9 @@ sections:
         description: |
           OpenAI's new image generation model has thinking capabilities and can search the web, make multiple images from one prompt, and double-check its creations. The model has a stronger understanding of non-Latin text than previous models. It can render fine-grained elements like small text, iconography, UI elements, dense compositions, and subtle stylistic constraints, all at up to 2K resolution. The model is available to ChatGPT and Codex users and via the gpt-image-2 API.
         one-liner: "ChatGPT Images 2.0 generates accurate text in images using thinking capabilities and web search."
+        decoder: |
+          * **Autoregressive (image generation)**: generating images token-by-token in sequence, similar to how LLMs generate text
+          * **Diffusion model**: generates images by iteratively denoising random noise, historically poor at rendering text
         summary:
           what: "New model renders fine-grained text, UI elements, and non-Latin scripts at 2K resolution with multi-image generation from single prompts."
           why: "Diffusion models historically failed at text because pixels are reconstructed from noise; autoregressive approaches treat images more like LLMs."
@@ -279,6 +324,11 @@ sections:
         description: |
           Lambda functions can now mount Amazon S3 buckets as file systems and perform standard file operations without downloading data for processing.
         one-liner: "AWS Lambda functions can mount S3 buckets as file systems via S3 Files for stateful workloads without download overhead."
+        decoder: |
+          * **S3 Files**: new AWS feature mounting S3 object storage as a POSIX file system
+          * **EFS (Elastic File System)**: AWS managed NFS file storage that S3 Files builds on
+          * **Lambda durable functions**: AWS Lambda feature with automatic checkpointing for long-running, multi-step workflows
+          * **Ephemeral storage**: temporary local disk in Lambda (default 512MB) lost when function completes
         summary:
           what: "Built on EFS, enables standard file operations on S3 buckets; multiple functions share data through common workspace."
           why: "Eliminates downloading objects, uploading results, managing ephemeral storage limits; critical for AI agents sharing state across pipeline steps."
@@ -321,6 +371,11 @@ sections:
         description: |
           Vault Enterprise 2.0 adds workload identity federation to secret sync, replacing static cloud credentials with short-lived tokens for AWS, Azure, and GCP. This improves security, reduces credential sprawl, and aligns secret distribution with cloud-native, identity-first, and zero trust models.
         one-liner: "HashiCorp Vault Enterprise 2.0 adds workload identity federation to secret sync, replacing long-lived cloud credentials with short-lived tokens for AWS, Azure, and GCP."
+        decoder: |
+          * **Workload identity federation**: authentication where a workload presents a signed identity token instead of static credentials
+          * **Secret sync**: automatically replicating secrets from Vault to cloud-native secret stores (AWS Secrets Manager, Azure Key Vault, etc.)
+          * **Zero trust**: security model requiring verification for every access request regardless of network location
+          * **IAM**: Identity and Access Management, cloud provider service controlling who can do what
         summary:
           what: "Vault secret sync now supports federated identity tokens instead of static IAM keys, service principal secrets, or service account keys"
           why: "Eliminates credential sprawl and rotation overhead while reducing blast radius of credential leaks"
@@ -344,6 +399,10 @@ sections:
         description: |
           GitLab 18.11 expands agentic AI across development with automated vulnerability fixes, pipeline setup, and analytics, addressing gaps between rapid code generation and delivery. It also introduces usage controls for AI spending, enabling scalable and cost-predictable adoption of GitLab Duo agents.
         one-liner: "GitLab 18.11 extends agentic AI with automated vulnerability remediation, pipeline configuration, and delivery analytics agents, plus spending controls for GitLab Credits."
+        decoder: |
+          * **SAST (Static Application Security Testing)**: analyzing source code for vulnerabilities without executing it
+          * **GitLab Duo**: GitLab's umbrella brand for AI-powered features
+          * **GitLab Credits**: consumption-based billing unit for on-demand AI features in GitLab
         summary:
           what: "Three new agents: SAST vulnerability resolution (GA), pipeline setup, and analytics query with subscription and per-user spending caps"
           why: "Addresses AI Paradox where code generation outpaces delivery, security, and operations; developers spend 11 hours/month remediating post-release vulnerabilities"
@@ -359,6 +418,13 @@ sections:
         description: |
           A two-person SRE team at STCLab cut alert investigation time from 15-20 minutes to under 2 minutes by deploying HolmesGPT with custom runbooks that reduced wasted tool calls from 16 to 2 per investigation. The team found that markdown runbooks specifying which tools to skip per namespace mattered more than model selection, with the same model scoring 4.6 out of 5 with runbooks versus 3.6 without. It now handles about 12 unique daily investigations at roughly $12 per month.
         one-liner: "STCLab cut Kubernetes alert investigation from 15-20 minutes to under 2 minutes using HolmesGPT with custom runbooks that reduced wasted tool calls from 16 to 2."
+        decoder: |
+          * **HolmesGPT**: open-source tool using LLMs to auto-investigate Kubernetes alerts
+          * **ReAct pattern**: LLM reasoning loop of Reason-then-Act, iteratively choosing tools and interpreting results
+          * **Runbooks**: structured instructions telling the agent which diagnostic tools to use (and skip) per context
+          * **EKS**: Amazon Elastic Kubernetes Service
+          * **Mimir/Loki/Tempo**: Grafana stack for metrics, logs, and traces respectively
+          * **PromQL**: Prometheus Query Language for querying time-series metrics
         summary:
           what: "Two-person SRE team uses HolmesGPT with ReAct pattern to auto-investigate Prometheus alerts across EKS clusters, handling 12 daily investigations at $12/month"
           why: "Runbooks specifying tool exclusions per namespace mattered more than model choice; same model scored 4.6/5 with runbooks vs 3.6/5 without"
@@ -374,6 +440,11 @@ sections:
         description: |
           Cloudflare built a custom AI code review system that completed 131,246 reviews across 48,095 merge requests in its first month, using up to seven specialized AI agents (covering security, performance, code quality, and more) to review code in a median time of 3 minutes 39 seconds at an average cost of $1.19 per review. The company developed the system around OpenCode after finding existing tools lacked sufficient customization, implementing a plugin architecture with circuit breakers, model failback chains, and an 85.7% cache hit rate that processed 120 billion tokens while maintaining a "break glass" override rate of just 0.6% when engineers needed to bypass the AI reviewer.
         one-liner: "Cloudflare built a custom AI code review system completing 131,246 reviews across 48,095 merge requests in its first month using up to seven specialized agents at $1.19 average cost per review."
+        decoder: |
+          * **OpenCode**: open-source coding agent framework Cloudflare built its review system on
+          * **Circuit breaker**: pattern that stops calling a failing service after repeated errors, preventing cascade failures
+          * **Model failback chain**: ordered list of fallback models to try when the primary model is unavailable
+          * **Cache hit rate**: percentage of requests served from cache (85.7% here means only 14.3% needed fresh computation)
         summary:
           what: "OpenCode-based orchestration with specialized reviewers (security, performance, quality, docs, release, compliance) managed by coordinator agent, median review time 3min 39sec"
           why: "Existing tools lacked sufficient customization for Cloudflare's scale; risk-tiered approach (trivial/lite/full) optimizes cost vs coverage"
@@ -400,6 +471,12 @@ sections:
         description: |
           Cloudflare introduced shared compression dictionaries to reduce redundant data transfers as pages grow heavier and are rebuilt more frequently by AI-driven activity. By sending only file differences between versions, early tests show major bandwidth and speed improvements, with a beta rollout planned for April 30.
         one-liner: "Cloudflare is rolling out shared compression dictionaries using delta compression to send only file diffs between versions, with early tests showing 97% reduction over gzip for JS bundles."
+        decoder: |
+          * **RFC 9842**: IETF specification for shared compression dictionaries over HTTP
+          * **Delta compression**: sending only the difference between two versions of a file instead of the full file
+          * **Use-As-Dictionary / Available-Dictionary**: HTTP headers enabling browser and server to negotiate dictionary-based compression
+          * **dcb / dcz**: content-encoding values for delta-compressed Brotli and Zstandard respectively
+          * **SDCH**: Shared Dictionary Compression for HTTP, Google's 2008 predecessor that failed due to security issues
         summary:
           what: "RFC 9842 implementation where browser sends hash of cached version, server compresses new version against old one and sends only the diff"
           why: "Agentic crawlers drive 10% of requests (up 60% YoY) and AI-assisted development increases deploy frequency, both multiplying redundant bytes transferred"
@@ -414,6 +491,10 @@ sections:
         description: |
           AWS managed collectors for Amazon Managed Service for Prometheus replace multiple self-managed Prometheus servers by centrally scraping metrics from EC2, ECS, and MSK via VPC, reducing operational overhead while enabling unified monitoring, scaling, and security. Configuration uses exporters, DNS-based service discovery, and IAM-secured scrapers to collect and query metrics across environments, supporting resilient observability, cross-service alerting, and cost-optimized monitoring with best practice controls.
         one-liner: "AWS managed collectors for Amazon Managed Service for Prometheus centrally scrape metrics from EC2, ECS, and MSK via VPC, replacing self-managed Prometheus servers."
+        decoder: |
+          * **AMP**: Amazon Managed Service for Prometheus, fully managed Prometheus-compatible metrics backend
+          * **DNS-based service discovery**: automatically finding scrape targets by querying DNS records instead of static config
+          * **Managed collectors/scrapers**: AWS-operated Prometheus instances that scrape your infrastructure without self-hosting
         summary:
           what: "Fully managed scrapers collect Prometheus metrics from VPC resources using DNS service discovery and store in AMP workspace"
           why: "Eliminates operational burden of managing multiple Prometheus servers, HA, scaling, and configuration drift per environment"
@@ -487,6 +568,11 @@ sections:
         description: |
           Privacy-led user experience has become essential for AI growth rather than a constraint, as 77% of consumers don't understand how their data is collected and used. The TRUST framework (Translate, Reduce, Unify, Secure, and Track) can be used for designing better consent experiences. Transparency ranks as the top driver of customer trust at 44%. With 82% of customers abandoning brands due to privacy concerns, organizations must prioritize clear consent design to support their AI ambitions and marketing strategies.
         one-liner: "MIT Technology Review report argues privacy-led UX is now essential for AI adoption, with 77% of consumers not understanding data collection and 82% abandoning brands over privacy concerns."
+        decoder: |
+          * **TRUST framework**: Translate, Reduce, Unify, Secure, Track, a consent design methodology from MIT/Usercentrics
+          * **DSAR**: Data Subject Access Request, a user's legal right to request their personal data
+          * **Server-side tagging**: routing analytics/tracking data through your own server before forwarding to third parties
+          * **Dark patterns**: UX designs that manipulate users into unintended actions (e.g. making "Accept All" visually dominant)
         summary:
           what: "New MIT/Usercentrics report introduces TRUST framework (Translate, Reduce, Unify, Secure, Track) for consent design as AI governance foundation."
           why: "Privacy infrastructure directly impacts first-party data quality for AI training; poor consent UX correlates with 50-70% lower CTR and model performance degradation."
@@ -578,6 +664,11 @@ sections:
         description: |
           Coinbase expanded its crypto-backed USDC lending service to UK users, enabling borrowing of up to $5M against Bitcoin collateral and up to $1M against ETH or cbETH, with loans routed through Morpho on Base. Rates are variable and recalculated each block, with no fixed repayment schedule, though LTV breaches trigger liquidation. The move follows Coinbase's February 2025 FCA registration and complements recent UK product additions including DEX trading and savings accounts, with the company having originated $2.17B in USDC loans as of April 14.
         one-liner: "Coinbase expanded crypto-backed USDC lending to UK users via Morpho on Base, allowing up to $5M borrowing against BTC with variable block-recalculated rates."
+        decoder: |
+          * **Morpho**: decentralized lending protocol on Base L2
+          * **Base**: Coinbase's Ethereum Layer 2 network
+          * **LTV (Loan-to-Value)**: ratio of loan amount to collateral value; breaching threshold triggers liquidation
+          * **cbETH**: Coinbase wrapped staked ETH token
         summary:
           what: "Major exchange adding collateralized lending across new geography using L2 lending protocol infrastructure"
       - id: crypto-4
@@ -588,6 +679,14 @@ sections:
         description: |
           Base Azul launches May 13, introducing multiproofs for faster withdrawals and Stage 2 decentralization. The upgrade consolidates the stack onto base-reth-node and base-consensus, aligns with Ethereum Osaka specs, and includes a $250,000 Immunefi audit competition to ensure network security and reliability for developers and node operators.
         one-liner: "Base Azul network upgrade launching May 13 introduces multiproofs for faster withdrawals, Stage 2 decentralization, and consolidates onto base-reth-node."
+        decoder: |
+          * **Multiproofs**: requiring agreement from multiple independent proof systems (TEE + ZK) before finalizing state
+          * **Stage 2 decentralization**: L2 maturity level where onchain proofs can detect bugs without trusted parties
+          * **TEE (Trusted Execution Environment)**: hardware-isolated secure enclave (e.g. Intel SGX) for tamper-proof computation
+          * **ZK (Zero-Knowledge) prover**: generates cryptographic proofs that a computation is correct without revealing inputs
+          * **base-reth-node**: Base's execution client built on Reth (Rust Ethereum implementation)
+          * **Flashblocks**: sub-second block confirmations on Base
+          * **Immunefi**: bug bounty platform for blockchain security audits
         summary:
           what: "First independent Base network upgrade with TEE+ZK multiproof system and Ethereum Osaka spec alignment"
           why: "Demonstrates L2 sovereignty in shipping performance upgrades independent of mainnet, sets template for custom network evolution"
@@ -601,6 +700,13 @@ sections:
         description: |
           a16z Crypto maps five blockchain use cases for the AI agent economy, arguing that as agents become autonomous economic actors, gaps in identity, governance, payments, trust verification, and user control require infrastructure that traditional rails cannot provide. On the payments front, Stripe and Tempo's MPP marketplace cleared 34,000+ agent-to-agent transactions in its first week at fees as low as $0.003, while x402 processes roughly $1.6M monthly in agent-driven payments, with headless merchants proving difficult for conventional processors to underwrite. Scoped delegation frameworks from MetaMask, Coinbase AgentKit, and Merit Systems let users define agent permissions at the smart contract level, and NEAR Intents has handled over $15B in cumulative DEX volume since Q4 2024.
         one-liner: "a16z Crypto maps five blockchain infrastructure gaps for AI agents: identity, governance, payments, trust verification, and user control as agents become economic actors."
+        decoder: |
+          * **KYA (Know Your Agent)**: proposed identity standard for AI agents analogous to KYC for humans
+          * **x402**: protocol for machine-to-machine payments using HTTP 402 Payment Required
+          * **MPP marketplace**: Stripe/Tempo's agent-to-agent payment marketplace
+          * **Scoped delegation**: smart contract permissions that constrain what an agent can do with a user's assets
+          * **NEAR Intents**: outcome-based transaction system where users specify desired results rather than execution steps
+          * **AgentKit**: Coinbase SDK for building crypto-capable AI agents
         summary:
           what: "Framework identifying where traditional rails fail autonomous agents requiring portable identity, programmable payments, and verifiable execution"
           why: "Non-human identities already outnumber employees 100:1 in finance; agents lack standardized cross-platform identity, payment rails, or liability frameworks"
@@ -614,6 +720,14 @@ sections:
         description: |
           This post proposes a pragmatic roadmap to secure Bitcoin against Cryptographically Relevant Quantum Computers. By implementing P2MR and new signature opcodes via soft forks, users can proactively migrate to quantum-safe outputs. This incremental approach prioritizes immediate, low-risk mitigations while deferring complex, high-stakes decisions regarding legacy coin security.
         one-liner: "Proposed Bitcoin quantum-readiness roadmap advocates P2MR soft fork and PQ signature opcodes enabling user migration to quantum-safe outputs before deciding legacy coin fate."
+        decoder: |
+          * **P2MR**: Pay-to-Merkel-Root (BIP 360), proposed Bitcoin output type that hides public keys from quantum attackers
+          * **CRQC**: Cryptographically Relevant Quantum Computer, a quantum machine powerful enough to break current encryption
+          * **PQ signatures**: post-quantum digital signatures resistant to quantum attacks (roughly 5x larger than current)
+          * **ECC**: Elliptic Curve Cryptography, the math underlying Bitcoin's current signature scheme
+          * **Schnorr signatures**: compact signature scheme used in Bitcoin's Taproot upgrade
+          * **OP_CHECKSHRINCS**: proposed Bitcoin opcode for verifying post-quantum signatures
+          * **Taproot keypath spend**: Bitcoin spending path that reveals the public key onchain (quantum-vulnerable)
         summary:
           what: "Incremental mitigation strategy separating immediate user protection from future high-stakes decisions on Satoshi's coins and ECC shutdown"
           why: "Addresses safety-critical migration path without forcing premature resolution of contentious questions like freezing unmoved coins when CRQC timeline uncertain"
@@ -627,6 +741,11 @@ sections:
         description: |
           Prediction markets reached $6.5B in combined weekly volume across Polymarket and Kalshi in April, but the CLOB architecture concentrating that growth also limits it: Kalshi's top 3 market makers supply 70% of election contract liquidity, leaving thousands of long-tail markets in entertainment, science, and culture without support. The result is 85-90% of prediction market volume locked to politics and sports, while ~$550M in total TVL sits disconnected from the $100B in DeFi capital deployed in lending and yield protocols. AMM-style permissionless infrastructure where the first participant bootstraps liquidity for the second removes the professional market maker requirement that currently gates new market creation.
         one-liner: "Prediction markets hit $6.5B weekly volume but CLOB architecture requires professional market makers, with top 3 supplying 70% of Kalshi election liquidity and blocking long-tail markets."
+        decoder: |
+          * **CLOB (Central Limit Order Book)**: traditional exchange model matching buy/sell orders by price and time
+          * **AMM (Automated Market Maker)**: algorithm-based liquidity pools where anyone can provide liquidity without being a professional market maker
+          * **TVL (Total Value Locked)**: total capital deposited in a DeFi protocol
+          * **Long-tail markets**: low-volume, niche prediction markets (entertainment, science) that lack professional liquidity provision
         summary:
           what: "Order book model concentrates 85-90% volume in politics/sports while passive capital and permissionless creation remain structurally impossible"
           why: "Demonstrates infrastructure constraint blocking culture/science/entertainment prediction markets; $550M prediction market TVL disconnected from $100B DeFi liquidity pools"
@@ -667,6 +786,8 @@ sections:
         description: |
           MicroStrategy added 34,164 BTC for $2.54 billion between April 13-19, its third-largest single purchase by coin count, pushing total holdings to 815,061 BTC at a cumulative cost of $61.56 billion.
         one-liner: "MicroStrategy purchased 34,164 BTC for $2.54B April 13-19, its third-largest acquisition pushing total holdings past 815,000 BTC at cumulative $61.56B cost."
+        decoder: |
+          * **STRC**: MicroStrategy's perpetual preferred security used to fund Bitcoin acquisitions
         summary:
           what: "Corporate treasury buy funded 85.7% through STRC perpetual preferred security at $74,395 average price"
       - id: crypto-12
@@ -677,6 +798,9 @@ sections:
         description: |
           Revolut's onchain crypto transfer volume has climbed from near zero in late 2022 to a sustained $1B-$1.8B per month by 2026.
         one-liner: "Revolut's onchain crypto transfer volume grew from near-zero in late 2022 to sustained $1B-$1.8B monthly by 2026 with $1.8B March peak across Ethereum, Solana, and L2s."
+        decoder: |
+          * **On-ramp**: service converting fiat currency into cryptocurrency
+          * **L2s (Layer 2s)**: scaling networks built on top of Ethereum (e.g. Base, Arbitrum, Optimism)
         summary:
           what: "Fintech app emerging as major crypto infrastructure on-ramp expanding from Ethereum to multi-chain support"
 

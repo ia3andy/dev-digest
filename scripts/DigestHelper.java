@@ -623,11 +623,13 @@ public class DigestHelper {
                 "one-liner (1 English sentence), what (core fact, 1 line), " +
                 "why (non-obvious developer relevance, omit if obvious), " +
                 "takeaway (concrete next step, omit if none), " +
-                "deep-summary (5-15 lines markdown, only for important/technical articles, omit for most).\n" +
+                "deep-summary (5-15 lines markdown, only for important/technical articles, omit for most), " +
+                "decoder (markdown list using * prefix, each item: * **Term**: short definition, " +
+                "for a technical reader who may not know every new project or acronym, omit for simple articles with no jargon).\n" +
                 "skip:true for ads/sponsored/job postings. No filler. Omit optional fields.\n" +
                 "{jsonFormat}")
                 .data("count", articles.size())
-                .data("jsonFormat", "{\"articles\":[{\"i\":1,\"tags\":[...],\"one-liner\":\"...\",\"what\":\"...\"},...]}")
+                .data("jsonFormat", "{\"articles\":[{\"i\":1,\"tags\":[...],\"one-liner\":\"...\",\"what\":\"...\",\"decoder\":\"...\"},...]}")
                 .render();
 
         System.err.println("  Calling Claude for " + articles.size() + " articles...");
@@ -692,6 +694,7 @@ public class DigestHelper {
             String why = ai != null ? sanitizeText(jsonStr(ai, "why")) : "";
             String takeaway = ai != null ? sanitizeText(jsonStr(ai, "takeaway")) : "";
             String deepSummary = ai != null ? sanitizeMarkdown(jsonStr(ai, "deep-summary")) : "";
+            String decoder = ai != null ? sanitizeMarkdown(jsonStr(ai, "decoder")) : "";
 
             List<String> tags = new ArrayList<>();
             if (ai != null && ai.has("tags")) {
@@ -717,6 +720,10 @@ public class DigestHelper {
             if (!deepSummary.isEmpty()) {
                 out.append("        deep-summary: |\n");
                 out.append(yamlBlockScalar(deepSummary, "          "));
+            }
+            if (!decoder.isEmpty()) {
+                out.append("        decoder: |\n");
+                out.append(yamlBlockScalar(decoder, "          "));
             }
         }
 

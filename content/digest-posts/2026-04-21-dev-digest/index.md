@@ -18,6 +18,10 @@ sections:
         description: |
           Chronicle, available for ChatGPT Pro users on macOS, augments Codex by using screen context for memory building, helping Codex understand ongoing work with less context restatement. It stores unencrypted markdown memories on your device and requires macOS Screen Recording and Accessibility permissions. Be aware of prompt injection risks from screen content, and pause Chronicle during sensitive work to prevent unwanted context capture.
         one-liner: "Chronicle augments Codex with screen context memory on ChatGPT Pro for macOS, reducing restated context but increasing prompt injection risk from captured screen content."
+        decoder: |
+          * **Codex**: OpenAI's autonomous coding agent
+          * **Prompt injection**: attack where malicious text in visible content hijacks an AI's instructions
+          * **$CODEX_HOME**: local directory where Codex stores config and memory files
         summary:
           what: "MacOS feature that uses screen captures to build memories, requires Screen Recording permissions, stores unencrypted markdown locally."
           why: "Introduces prompt injection risk from malicious screen content; memories stored unencrypted at $CODEX_HOME/memories_extensions/chronicle/."
@@ -31,6 +35,11 @@ sections:
         description: |
           Kimi K2.6 features robust capabilities for coding and agentic tasks across chat and agent modes on kimi.com, with weights on Hugging Face and APIs via platform.moonshot.ai. The lineup includes K2.6 Instant for quick replies, K2.6 Thinking for complex reasoning, K2.6 Agent for document and web tasks, and K2.6 Agent Swarm for large-scale processing. Kimi K2.6 claims top open-source benchmark scores, surpassing competitors like GPT-5.4 and Claude Opus 4.6 in SWE-bench Multilingual and BrowseComp.
         one-liner: "Moonshot AI's Kimi K2.6 brings open-source coding and agentic capabilities with four variants claiming SOTA benchmarks over GPT-5.4 and Claude Opus 4.6."
+        decoder: |
+          * **SWE-bench Multilingual**: benchmark measuring LLM ability to resolve real GitHub issues across languages
+          * **BrowseComp**: benchmark for web browsing and information retrieval by AI agents
+          * **SOTA**: State Of The Art, best known result on a benchmark
+          * **Hugging Face**: open platform for sharing ML model weights and datasets
         summary:
           what: "K2.6 Instant, Thinking, Agent, and Agent Swarm available on kimi.com with weights on Hugging Face and APIs via platform.moonshot.ai."
           takeaway: "Test K2.6 Agent for video hero sections, WebGL shaders, and native backend generation."
@@ -42,6 +51,9 @@ sections:
         description: |
           Qwen3.6-Max-Preview brings stronger world knowledge and instruction following along with significant agentic coding improvements across a wide range of benchmarks. The model is still under active development as researchers continue to iterate on it. Users can chat with the model interactively in Qwen Studio or call via API on Alibaba Cloud Model Studio API (coming soon).
         one-liner: "Qwen3.6-Max-Preview delivers stronger agentic coding and world knowledge with significant benchmark improvements over Qwen3.6-Plus while still under active development."
+        decoder: |
+          * **SkillsBench / SciCode / NL2Repo**: benchmarks for agentic coding, scientific code generation, and natural-language-to-repository tasks
+          * **preserve_thinking**: API flag that keeps a model's chain-of-thought across multi-turn calls
         summary:
           what: "Preview model shows +9.9 SkillsBench, +6.3 SciCode, +5.0 NL2Repo gains; available via Alibaba Cloud Model Studio API as qwen3.6-max-preview."
           takeaway: "Enable preserve_thinking feature in API calls for agentic tasks requiring reasoning continuity across turns."
@@ -63,6 +75,13 @@ sections:
         description: |
           Meta introduced Effective Training Time (ETT%) to measure how much end-to-end training runtime is spent on actual learning, highlighting overhead like checkpointing and failures. This post outlines system and PyTorch-level optimizations that reduce wasted time and improve large-scale training efficiency.
         one-liner: "Meta introduces Effective Training Time (ETT%) metric to quantify productive training vs overhead, achieving &gt;90% through system and PyTorch optimizations."
+        decoder: |
+          * **ETT% (Effective Training Time)**: fraction of total training runtime spent on actual gradient updates vs overhead
+          * **Checkpointing**: periodically saving model state so training can resume after a failure
+          * **PT2**: PyTorch 2's torch.compile JIT compilation stack
+          * **TTS / TTR**: Time to Start (job launch overhead) / Time to Recover (resume after failure)
+          * **MegaCache**: consolidated cache for inductor, triton, and autotuning artifacts to speed recompilation
+          * **AOT Autograd**: Ahead-Of-Time Autograd, pre-compiles backward pass graphs
         summary:
           what: "ETT% = productive training time / total E2E runtime; measures idleness (Time to Start, Time to Recover) and failures."
           takeaway: "Apply ETT% methodology to your training workloads: measure Time to Start, Time to Recover, and failures; optimize checkpointing intervals based on actual failure rates."
@@ -77,6 +96,13 @@ sections:
         description: |
           AllenAI describes a post-training approach that builds independent domain experts and combines them using a mixture-of-experts architecture. This allows models to gain new capabilities without retraining from scratch or degrading existing skills.
         one-liner: "AllenAI's BAR (Branch-Adapt-Route) enables modular post-training by training independent domain experts and composing them via mixture-of-experts architecture."
+        decoder: |
+          * **BAR (Branch-Adapt-Route)**: AllenAI's method to train domain experts independently, then merge via routing
+          * **MoE (Mixture of Experts)**: architecture where only a subset of parameters activate per input
+          * **FFN**: Feed-Forward Network layers inside a transformer block
+          * **SFT**: Supervised Fine-Tuning on curated prompt/response pairs
+          * **RLVR**: Reinforcement Learning with Verifiable Rewards
+          * **mIoU**: mean Intersection over Union, a segmentation accuracy metric
         summary:
           what: "Each expert trains through full pipeline with frozen anchor FFN; shared parameters progressively unfreeze (embeddings at SFT, attention at RLVR); experts merge via weight averaging and router training."
           takeaway: "For domains requiring independent pipelines (math, code, safety), use BAR to avoid quadratic retraining costs when upgrading capabilities."
@@ -91,6 +117,11 @@ sections:
         description: |
           Even uncensored models quietly nudge language away from the words that sentences actually want. There is no refusal or warning - the probability just moves in some instances. This is a mechanism that can be used to shape what billions of users read without them noticing.
         one-liner: "Even uncensored models flinch from charged words via pretrain probability shifts invisible to users, with refusal ablation leaving word-level censorship intact or worse."
+        decoder: |
+          * **Flinch**: measured gap between a word's expected probability (from fluency) and the model's actual probability
+          * **EuphemismBench**: benchmark of 4,442 contexts testing whether models suppress charged vocabulary
+          * **Abliteration / refusal ablation**: technique that surgically removes a model's refusal behavior by editing internal representations
+          * **The Pile / Dolma**: large-scale pretraining corpora (unfiltered vs. curated)
         summary:
           what: "Flinch measures gap between fluency-based probability and actual model probability across 1,117 charged terms; heretic (ablated Qwen) scores +14.3 total flinch over base."
           takeaway: "Test fine-tuned models against EuphemismBench if your domain (legal, medical, security research) requires unfiltered vocabulary."
@@ -117,6 +148,10 @@ sections:
         description: |
           Qwen3.5-Omni scales to hundreds of billions of parameters with a hybrid MoE architecture, supporting long-context multimodal inputs across text, audio, and video.
         one-liner: "Qwen3.5-Omni scales to hundreds of billions of parameters with hybrid MoE supporting 256k context across text, audio, and video modalities."
+        decoder: |
+          * **Hybrid MoE**: architecture combining dense and mixture-of-experts layers
+          * **ARIA**: Qwen's alignment method for stable text-to-speech streaming synthesis
+          * **256k context**: maximum token window the model can process in one call
         summary:
           what: "ARIA aligns text and speech units for stable streaming synthesis; supports 10 languages; handles 10+ hours audio and 400 seconds 720p video at 1 FPS."
           why: "Audio-Visual Vibe Coding capability emerged: coding directly from audio-visual instructions."
@@ -129,6 +164,12 @@ sections:
         description: |
           TIPSv2 improves vision-language pretraining by combining distillation, enhanced self-supervised objectives, and richer caption data. The resulting models achieve strong performance across multimodal tasks, with notable gains in zero-shot segmentation.
         one-liner: "DeepMind's TIPSv2 improves vision-language pretraining via distillation analysis, achieving strong zero-shot segmentation and dense alignment."
+        decoder: |
+          * **TIPSv2**: DeepMind's vision-language pretraining method using distillation and self-supervised objectives
+          * **iBOT++**: extended patch-level self-supervised loss applied to all tokens
+          * **Head-only EMA**: Exponential Moving Average applied only to prediction heads, reducing trainable params 42%
+          * **Zero-shot segmentation**: pixel-level classification on categories never seen during training
+          * **ADE150**: scene parsing benchmark with 150 object categories
         summary:
           what: "iBOT++ extends patch-level loss to all tokens; Head-only EMA reduces training parameters 42%; Multi-Granularity Captions use PaliGemma and Gemini descriptions."
           why: "Distilled students surprisingly surpass larger teachers in patch-text alignment; iBOT++ alone yields +14.1 mIoU on ADE150."
@@ -142,6 +183,13 @@ sections:
         description: |
           FlashDrive is an algorithm-system co-design framework that reduces end-to-end latency to 159ms with negligible accuracy loss. VLA inference is a cascade of stages, each hiding a different form of redundancy. Temporal overlap in vision, low entropy in reasoning, velocity smoothness in flow matching, and numerical headroom in weights each yield to a targeted shortcut. The speedups compound to 4.5x with negligible accuracy loss because the redundancies are orthogonal.
         one-liner: "FlashDrive cuts VLA autonomous driving inference from 716ms to 159ms via algorithm-system co-design targeting all four pipeline stages."
+        decoder: |
+          * **VLA (Vision-Language-Action)**: model pipeline that perceives a scene, reasons about it, and outputs control actions
+          * **KV cache**: stored key/value tensors from prior tokens that avoid recomputation during inference
+          * **Speculative reasoning**: generating candidate token sequences in parallel, then verifying, to reduce latency
+          * **Flow matching**: generative modeling technique that learns continuous trajectories between distributions
+          * **W4A8**: quantization scheme with 4-bit weights and 8-bit activations
+          * **CUDA graphs**: pre-recorded GPU kernel sequences that eliminate per-call dispatch overhead
         summary:
           what: "Streaming inference reuses 75% KV cache; speculative reasoning with block diffusion drafter; adaptive-step flow matching exploits velocity U-shape; W4A8 quantization with ParoQuant."
           takeaway: "Apply staged optimization to multi-modal AI pipelines: exploit temporal redundancy in vision, low entropy in reasoning, and velocity structure in continuous outputs."
@@ -168,6 +216,9 @@ sections:
         description: |
           Microsoft plans to temporarily suspend individual account signups to GitHub Copilot. The weekly cost of running the service has doubled since the start of the year. Microsoft intends to tighten rate limits on individual and business accounts. It will also remove access to certain models for those with the cheapest subscriptions.
         one-liner: "Microsoft pauses GitHub Copilot individual signups, tightens rate limits, removes Opus from Pro tier, and moves toward token-based billing as weekly costs doubled since January."
+        decoder: |
+          * **Token-based billing**: charging per input/output token processed instead of a flat subscription
+          * **Multiplier**: cost scaling factor applied to expensive models (e.g., 7.5x means one token costs 7.5 credits)
         summary:
           what: "Opus removed from $10 Pro tier; Opus 4.7 has 7.5x multiplier on Pro+ (effectively 250% more expensive than Opus 4.6's 3x); token-based billing coming."
           why: "End of subsidized AI products; developers will pay actual token costs like Claude API ($5 input/$25 output per million tokens)."
@@ -227,6 +278,10 @@ sections:
         description: |
           This article tells the story of how scientists figured out how the flagellar motor worked. The flagellar motor was discovered by Howard Berg, who set out in the early 1970s to apply his training in physics to understand how bacteria move. Bacteria move quickly, so Berg had to invent and build an automatic tracking microscope to keep them in view. He hypothesized how the mechanism worked 50 years before scientists discovered how the motor works.
         one-liner: "Scientists finally understand how the bacterial flagellar motor works after 50 years, revealing it runs on proton motive force, the same physical life force that powers all cellular processes."
+        decoder: |
+          * **Flagellar motor**: rotating molecular machine that propels bacteria
+          * **Proton motive force**: electrochemical gradient of protons across a membrane that powers cellular motors
+          * **Cryo-EM**: Cryo-Electron Microscopy, imaging technique that resolves molecular structures at near-atomic resolution
         summary:
           what: "Howard Berg discovered the rotating motor in the 1970s; recent cryo-EM studies (2020-2026) cracked the molecular structures showing pentagonal stator rings that rotate via proton flow."
       - id: tech-4
@@ -237,6 +292,13 @@ sections:
         description: |
           Both AES-128 and SHA-256 are safe against quantum computers. No symmetric key sizes have to change as part of the post-quantum transition. Almost all experts agree on this. The misconception is usually based on a misunderstanding of the applicability of a quantum algorithm called Grover's.
         one-liner: "AES-128 and SHA-256 remain secure against quantum computers because Grover's algorithm doesn't parallelize efficiently, making 128-bit symmetric keys safe for post-quantum cryptography."
+        decoder: |
+          * **AES-128**: symmetric encryption standard with 128-bit keys
+          * **Grover's algorithm**: quantum search algorithm providing quadratic (not exponential) speedup over brute force
+          * **Shor's algorithm**: quantum algorithm that efficiently breaks asymmetric crypto (RSA, ECC)
+          * **DW cost (Depth x Width)**: total quantum computational resources measured as circuit depth times number of qubits
+          * **Post-quantum cryptography**: cryptographic algorithms designed to resist quantum computer attacks
+          * **ECDH / ECDSA**: Elliptic Curve Diffie-Hellman (key exchange) / Elliptic Curve Digital Signature Algorithm
         summary:
           what: "Breaking AES-128 with Grover requires 2^104.5 DW cost across 140 trillion quantum circuits running 10 years, which is 2^78.5 times more expensive than breaking 256-bit elliptic curves with Shor's algorithm."
           takeaway: "Focus post-quantum transition efforts on asymmetric cryptography (ECDH, RSA, ECDSA); leave symmetric encryption unchanged per NIST guidance."
@@ -250,6 +312,11 @@ sections:
         description: |
           Jujutsu megamerges let developers work on many different streams of work simultaneously. This article provides an in-depth explanation of how they work. Megamerges are a way of showing developers the whole picture and are not really meant to be pushed to remote. Developers will still want to publish branches individually as usual.
         one-liner: "Jujutsu megamerges let developers create octopus merge commits with 3+ parents to work simultaneously on multiple branches without context switching or merge conflicts."
+        decoder: |
+          * **Jujutsu (jj)**: Git-compatible version control system with different branching and merging semantics
+          * **Megamerge**: octopus merge commit with 3+ parents combining all working branches into one view
+          * **`jj absorb`**: command that automatically routes hunks from a working change into the correct ancestor commit
+          * **Revset**: Jujutsu's query language for selecting sets of revisions
         summary:
           what: "Workflow keeps empty megamerge commit as parent of all working branches; developers work on combined sum of all changes, using `jj absorb` to auto-squash changes downstream."
           takeaway: "Add revset aliases and commands like `stack`, `stage`, and `restack` to your Jujutsu config for ergonomic megamerge workflows."
@@ -262,6 +329,13 @@ sections:
         description: |
           93% of Cloudflare's R&amp;D organization used AI coding tools powered by infrastructure that they built on their own platform. The team built its own MCP servers, access layer, and AI tooling necessary for agents to be useful at Cloudflare. This has had a significant impact on the number of merge requests made. The four week rolling average has climbed from around 5,600 per week to over 8,700. This post looks at how Cloudflare achieved this.
         one-liner: "Cloudflare built its internal AI engineering stack entirely on shipping products, achieving 93% R&amp;D adoption and nearly doubling weekly merge requests from 5,600 to 10,952."
+        decoder: |
+          * **MCP (Model Context Protocol)**: standard for exposing tools and data sources to AI agents
+          * **AI Gateway**: proxy layer that routes, logs, and rate-limits requests to multiple LLM providers
+          * **Workers AI**: Cloudflare's serverless inference platform
+          * **D1 / KV**: Cloudflare's serverless SQL database / key-value store
+          * **AGENTS.md**: per-repo file giving AI agents context about codebase conventions, similar to CLAUDE.md
+          * **Backstage**: open-source developer portal for cataloging services and infrastructure
         summary:
           what: "Stack uses AI Gateway for routing 20.18M requests/month across frontier models and Workers AI (51.83B tokens), MCP Server Portal with 13 servers exposing 182+ tools, and AI Code Reviewer with 100% coverage."
           takeaway: "The architecture is public: proxy Worker for auth/routing, Cloudflare Access for zero-trust, Code Mode for reducing context overhead, and AGENTS.md files generated across 3,900+ repos for codebase context."
@@ -299,6 +373,11 @@ sections:
         description: |
           ggsql allows developers to write queries that combine SQL data retrieval with visualization specifications in a single, composable syntax.
         one-liner: "ggsql extends SQL with Grammar of Graphics visualization syntax, letting analysts combine data retrieval and chart specifications in a single query without switching to Python or R."
+        decoder: |
+          * **Grammar of Graphics**: formal system for describing statistical charts as layered components (data, aesthetics, geometries)
+          * **DuckDB**: embedded analytical SQL database (like SQLite for OLAP)
+          * **Vegalite**: declarative JSON grammar for interactive visualizations
+          * **WASM**: WebAssembly, portable binary format that runs near-native speed in browsers
         summary:
           what: "Syntax adds VISUALISE, DRAW, SCALE, and LABEL clauses to SQL queries; compiles to WASM for browser embedding; built on DuckDB/SQLite + Vegalite foundation."
           takeaway: "Try the playground at ggsql's website; syntax designed for AI agent output that's immediately readable and validatable by users."
@@ -466,6 +545,12 @@ sections:
         description: |
           A $292 million exploit of KelpDAO's rsETH via the LayerZero bridge triggered a 48-hour DeFi-wide panic that erased $13.21 billion in TVL, pulling the sector from $26.4 billion to roughly $20 billion by April 20. Aave absorbed the sharpest blow, losing $8.45 billion in deposits as withdrawals cascaded into protocols unconnected to the original attack, driving the AAVE token down 18%. Liquidity constraints pushed multiple lending pools to 100% utilization and borrow rates to 10-15%, compressing margins for leveraged strategies across the sector.
         one-liner: "A $292M Kelp DAO bridge exploit triggered $13.2B in DeFi withdrawals as unbacked rsETH collateral created cascading liquidations across lending protocols."
+        decoder: |
+          * **TVL (Total Value Locked)**: aggregate value of assets deposited in DeFi protocols
+          * **rsETH**: Kelp DAO's restaked ETH token representing staked Ether plus restaking rewards
+          * **LayerZero**: cross-chain messaging protocol enabling token transfers between blockchains
+          * **DVN (Decentralized Verifier Network)**: LayerZero's infrastructure for validating cross-chain messages
+          * **Utilization rate**: percentage of a lending pool's assets currently borrowed; 100% means no liquidity for withdrawals
         summary:
           what: "LayerZero bridge vulnerability allowed minting of 116.5K unbacked rsETH deposited into Aave as collateral, causing $8.45B in withdrawals and market freezes."
           why: "Demonstrates systemic risk in cross-chain bridge verification and tight coupling where single-point failures cascade across unrelated DeFi platforms."
@@ -489,6 +574,12 @@ sections:
         description: |
           The n-VM architecture integrates heterogeneous virtual machines like EVM and SVM into a single consensus and shared state tree. By enabling atomic cross-VM transfers through a unified ledger, this design eliminates bridge-dependent vulnerabilities, potentially preventing the $2.8 billion in losses historically caused by cross-chain bridge exploits.
         one-liner: "n-VM architecture runs heterogeneous VMs (EVM, SVM, Bitcoin Script) on unified consensus with atomic cross-VM transfers, eliminating bridge exploits that caused $2.8B in losses."
+        decoder: |
+          * **n-VM**: architecture running multiple heterogeneous virtual machines (EVM, SVM) on shared consensus
+          * **EVM / SVM**: Ethereum Virtual Machine / Solana Virtual Machine
+          * **BFT (Byzantine Fault Tolerant)**: consensus that functions correctly even if some nodes act maliciously
+          * **Poseidon**: hash function optimized for zero-knowledge proof circuits
+          * **Atomic state transition**: operation that either fully completes or fully reverts, with no partial state
         summary:
           what: "Novel architecture with opcode-based routing, unified 32-byte identity commitment, and single token ledger enabling atomic transfers without lock-mint-burn cycles."
           why: "Eliminates entire class of bridge vulnerabilities by replacing trust-based cross-chain transfers with atomic state transitions on shared ledger."
@@ -503,6 +594,10 @@ sections:
         description: |
           Perps.fun launched in alpha with a propose-crowdfund-launch model that allows anyone to propose a new perpetual futures market, crowdfund the ticker listing costs, and deploy it permissionlessly on app.perps[.]fun. The mechanism removes the cost barrier that has historically restricted long-tail asset coverage in perp markets, enabling community-driven market creation without gatekeeping from centralized venues.
         one-liner: "Perps.fun launched permissionless perpetual futures market creation via propose-crowdfund-launch model, removing cost barriers for long-tail asset coverage."
+        decoder: |
+          * **Perpetuals (perps)**: futures contracts with no expiry date, settled continuously via funding rates
+          * **Permissionless**: deployable by anyone without requiring approval from a central authority
+          * **Long-tail assets**: low-liquidity tokens outside the top market-cap rankings
         summary:
           what: "Platform enabling community to propose, crowdfund ticker listing costs, and deploy perpetual markets without centralized gatekeeping."
           takeaway: "Explore permissionless market creation patterns for enabling community-driven feature launches without upfront capital requirements."
@@ -526,6 +621,9 @@ sections:
         description: |
           Coinbase Ventures outlined four 2026 investment themes: RWA tokenization, specialized institutional exchanges, next-gen DeFi, and AI agents as onchain economic actors, against a backdrop of Q1 venture funding falling 15% YoY to under $5B. BlackRock projects tokenization reaching $20T by 2030, Bernstein forecasts institutional crypto trading growing from $5B to $18B over the same period, and Coinbase has secured Amazon, Google, and Stripe as partners on its x402 payment protocol. Kraken parent NX Technology raised $200M from Deutsche Börse but at a $13.3B valuation, well below its prior $20B peak, signaling compressed multiples even for top-tier assets.
         one-liner: "Coinbase Ventures outlined 2026 investment focus on RWA tokenization, institutional exchanges, next-gen DeFi, and AI agents despite Q1 funding dropping 15% YoY to under $5B."
+        decoder: |
+          * **RWA tokenization**: representing Real World Assets (bonds, real estate) as blockchain tokens
+          * **x402**: Coinbase payment protocol using HTTP 402 status code for machine-to-machine crypto payments
         summary:
           what: "BlackRock projects tokenization reaching $20T by 2030; Bernstein forecasts institutional crypto trading growing from $5B to $18B; Kraken raised $200M at $13.3B valuation (down from $20B)."
           takeaway: "Evaluate opportunities in privacy-preserving DeFi protocols and AI agent payment infrastructure as institutional adoption accelerates."
@@ -549,6 +647,13 @@ sections:
         description: |
           Security researcher demonstrates a critical vulnerability in Web2.5 infrastructure by exploiting insecure deserialization in a blockchain-based oracle.
         one-liner: "Security researcher exploited insecure deserialization in blockchain oracle by embedding weaponized Python pickle payload in Ethereum transaction calldata, achieving root access to AWS infrastructure."
+        decoder: |
+          * **Oracle (blockchain)**: off-chain service that feeds external data into smart contracts
+          * **Insecure deserialization**: vulnerability where untrusted data is converted into executable objects
+          * **pickle**: Python serialization format that can execute arbitrary code during deserialization
+          * **Calldata**: the data payload attached to an Ethereum transaction
+          * **Reentrancy**: smart contract vulnerability where an external call re-enters the calling function before state updates
+          * **Flash loan**: uncollateralized loan that must be borrowed and repaid within a single transaction
         summary:
           what: "Attacker used smart contract's submitDiagnostics function to deliver malicious serialized object; oracle's pickle.loads() executed reverse shell when parsing blockchain data."
           why: "Web3 systems trust blockchain as immutable truth but fail to sanitize payloads from on-chain sources, creating attack vector where blockchain becomes trusted delivery mechanism."
@@ -563,6 +668,11 @@ sections:
         description: |
           Visa and Mastercard do not earn money by lending, but by operating the card networks that route payments and collect assessment and usage fees at scale, while issuers supply the credit, absorb fraud risk, and capture most of the merchant fee through interchange.
         one-liner: "Visa and Mastercard monetize payment rails through network assessments and usage fees at scale, not lending; issuers capture interchange and absorb credit risk."
+        decoder: |
+          * **Payment rails**: the infrastructure networks (Visa, Mastercard) that route card transactions between parties
+          * **Interchange**: fee paid by the merchant's bank to the cardholder's bank on each transaction
+          * **Acquirer**: the bank or processor that handles card payments on behalf of the merchant
+          * **Assessment fees**: per-transaction charges collected by the card network (Visa/MC) itself
         summary:
           what: "On $100 transaction: merchant pays discount fee, acquirer takes $0.25, issuer gets $1.75 interchange, networks charge per-transaction assessments."
       - id: crypto-10

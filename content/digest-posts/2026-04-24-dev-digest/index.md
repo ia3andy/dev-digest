@@ -24,6 +24,11 @@ sections:
         image: https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iYfZqUUSyRu8/v1/1200x826.jpg
         tags: [ai, llm, infrastructure]
         one-liner: "DeepSeek unveiled V4 Flash and V4 Pro models with Hybrid Attention Architecture, 1M token context window, and pricing at a fraction of US competitors."
+        decoder: |
+          * **Mixture-of-Experts (MoE)**: architecture where only a subset of model parameters activate per input, reducing inference cost
+          * **Hybrid Attention Architecture**: DeepSeek's technique for improving memory across long conversations
+          * **1M token context window**: the model can process roughly 750K words in a single session
+          * **Huawei Ascend**: Chinese-made AI accelerator chips, alternative to Nvidia GPUs
         summary:
           what: "Chinese startup released flagship open-source AI models claiming top-tier coding performance with 37B active parameters per task."
           why: "Pricing at $1.74/$3.48 per million tokens vs Anthropic's $3/$15 demonstrates cost-efficient inference; trails state-of-the-art by 3-6 months but runs on cheaper Huawei Ascend chips."
@@ -60,6 +65,11 @@ sections:
         description: |
           Anthropic listened to feedback that Claude's responses had worsened, and it has resolved the issue as of April 20. The startup traced the problem to three separate changes that affected Claude Code, the Claude Agent SDK, and Claude Cowork. The API was not impacted. This post looks at how Anthropic investigated and fixed the problem and the commitments the company has made to ensure similar issues are much less likely to happen again.
         one-liner: "Anthropic traced reported Claude quality degradation to three separate bugs affecting reasoning effort defaults, thinking history retention, and verbosity prompts."
+        decoder: |
+          * **Reasoning effort**: a setting controlling how much "thinking" Claude does before responding (high = slower but smarter)
+          * **Extended thinking**: Claude's internal chain-of-thought that persists across turns in a session
+          * **Ablation**: testing the effect of a change by adding or removing it in isolation
+          * **Soak period**: waiting interval after a change ships to monitor for regressions before full rollout
         summary:
           what: "Issues resolved April 20: default reasoning downgraded from high to medium effort, cache optimization clearing thinking every turn, verbosity prompt hurting coding quality."
           takeaway: "All subscribers received usage limit resets; company added broader eval suites, tighter system prompt controls, and soak periods for intelligence tradeoffs."
@@ -72,6 +82,9 @@ sections:
         description: |
           OpenAI released a lightweight open-weight model for detecting and redacting PII in text, designed for fast, local, context-aware privacy filtering workflows.
         one-liner: "OpenAI released a lightweight open-weight model for detecting and redacting PII in text for fast, local privacy filtering."
+        decoder: |
+          * **PII**: Personally Identifiable Information (names, emails, phone numbers, SSNs, etc.)
+          * **Open-weight model**: model whose trained weights are publicly downloadable, allowing local deployment
         summary:
           what: "Model designed for context-aware privacy filtering workflows running locally."
       - id: ai-7
@@ -83,6 +96,11 @@ sections:
         description: |
           Amazon researchers released a method to expand Mixture-of-Experts models mid-training by duplicating and specializing experts, improving performance without increasing inference cost.
         one-liner: "Amazon researchers released a method to expand Mixture-of-Experts models mid-training by duplicating and specializing experts without increasing inference cost."
+        decoder: |
+          * **Expert upcycling**: expanding an MoE model mid-training by duplicating and specializing experts
+          * **Top-K routing**: selecting the K highest-scoring experts per input token; unchanged K means inference cost stays flat
+          * **NeMo / Megatron-LM**: NVIDIA's frameworks for training large language models at scale
+          * **Gradient-based importance**: ranking experts by how much they contribute to loss reduction
         summary:
           what: "Start with smaller E-expert model, expand to mE experts mid-training via expert replication, router extension, and continued pre-training."
           why: "Reduces training cost ~32% GPU hours (67% if pre-trained checkpoint exists) while matching baseline performance; Top-K routing unchanged so inference cost stays flat."
@@ -109,6 +127,10 @@ sections:
         description: |
           Cognition AI is in early talks to raise a round of funding that would more than double its valuation to $25 billion. The talks are ongoing and the terms could change. Cognition uses AI to streamline the process of writing and debugging code, with a focus on selling to businesses. Its flagship product, Devin, is being used by companies like Anduril and Microsoft.
         one-liner: "Cognition AI is in early talks to raise funding at $25 billion valuation, more than doubling from $10.2 billion."
+        decoder: |
+          * **ARR**: Annual Recurring Revenue
+          * **Devin**: Cognition's autonomous AI coding agent
+          * **Windsurf / Cursor**: AI-powered code editors (IDE tools)
         summary:
           what: "AI coding startup aims to raise hundreds of millions; fresh investor interest followed SpaceX's $60B Cursor acquisition announcement."
           why: "Flagship product Devin used by Anduril and Microsoft; brought in ~$73M ARR as of June 2025; acquired Windsurf after Google hired its co-founders."
@@ -121,6 +143,10 @@ sections:
         description: |
           Deciding between Python and Markdown for agent specification involves balancing structure with flexibility. Code-maximalism enforces reliability but lacks adaptability, while Markdown-maximalism allows for creativity but risks errors. Successful agent architectures use a hybrid approach, leveraging Markdown for intent and code for structure to combine flexibility with reliable execution.
         one-liner: "Deciding between Python and Markdown for agent specification requires balancing structure with flexibility through hybrid approaches."
+        decoder: |
+          * **Code-maximalism**: defining agent behavior entirely in deterministic code (Python workflows)
+          * **Markdown-maximalism**: defining agent behavior entirely in natural language prompts
+          * **Agent-native**: architectures designed around LLM reasoning rather than porting human workflows
         summary:
           what: "Code-maximalism enforces reliability but lacks adaptability; Markdown-maximalism allows creativity but risks errors; both maximalist positions fail to be agent-native."
           why: "Code strips reasoning that makes agents useful; Markdown abdicates control and produces non-debuggable systems; successful architectures like Claude Code use Markdown for intent and code for structure."
@@ -135,6 +161,11 @@ sections:
         description: |
           Model distillation is a technique that can be used to train cheaper models that approximate the original's capabilities at a fraction of the cost.
         one-liner: "White House accused China of industrial-scale AI model distillation, committing to intelligence sharing with US AI companies and exploring accountability measures."
+        decoder: |
+          * **Model distillation**: training a smaller model by feeding queries to a larger model and learning from its outputs
+          * **OSTP**: White House Office of Science and Technology Policy
+          * **Frontier Model Forum**: industry group (OpenAI, Anthropic, Google, Microsoft) for AI safety collaboration
+          * **Geofencing**: restricting API access by geographic region
         summary:
           what: "OSTP memo cites OpenAI and Anthropic evidence of DeepSeek, MiniMax, Moonshot using 24,000 fraudulent accounts generating 16M+ Claude exchanges to extract outputs for training."
           why: "Distillation trains cheaper rival models by feeding queries to frontier models and learning from responses; legal status unsettled but shifts focus from chip export controls to model-level protections."
@@ -172,6 +203,12 @@ sections:
         description: |
           AI2 introduced embedding exports in OlmoEarth Studio, allowing users to generate and share compact Earth observation representations for downstream tasks like search and segmentation.
         one-liner: "AI2 introduced embedding exports in OlmoEarth Studio, allowing users to generate compact Earth observation representations for downstream tasks like search and segmentation."
+        decoder: |
+          * **Embedding vectors**: compact numerical representations of data used for similarity search and classification
+          * **Sentinel-2 / Sentinel-1**: EU satellite missions providing free optical and radar Earth imagery
+          * **Cloud-Optimized GeoTIFF (COG)**: geospatial image format optimized for streaming partial reads from cloud storage
+          * **Few-shot segmentation**: classifying pixels using only a handful of labeled examples
+          * **PCA**: Principal Component Analysis, a dimensionality reduction technique for exploring high-dimensional data
         summary:
           what: "Platform generates embedding vectors from Sentinel-2/Sentinel-1 imagery using open-source models (Nano 128-dim, Tiny 192-dim, Base 768-dim) exportable as Cloud-Optimized GeoTIFFs."
           why: "Enables similarity search, few-shot segmentation (0.84 F1 from 60 labeled pixels), change detection (Park Fire burn scar), unsupervised PCA exploration—all without task-specific training."
@@ -235,6 +272,9 @@ sections:
         description: |
           Companies are turning token usage into a benchmark for productivity and a competitive measure of who is most AI native. This is causing workers to maximize their prompts, coding sessions, and the number of agents working in parallel to climb internal rankings. This 'tokenmaxxing' behavior is burning massive amounts of tokens for little to no outcome, causing outages due to AI overuse, and producing throwaway, wasteful work. The metric can be easily gamed, and the outcome is just a massive AI bill.
         one-liner: "Companies are gamifying token usage with leaderboards, causing wasteful AI spending as workers burn tokens to climb internal rankings."
+        decoder: |
+          * **Tokenmaxxing**: gaming AI usage metrics by maximizing token consumption regardless of outcome
+          * **Tokens**: the atomic units LLMs process; roughly 0.75 words each; usage is billed per token
         summary:
           what: "Meta employees burned 60.2 trillion tokens in 30 days (potentially $100M+) with devs running throwaway AI tasks, asking redundant questions, and defaulting to agents even when faster manual options exist."
           takeaway: "Avoid token count as a productivity metric; focus on outcome quality and consider circuit breakers for runaway agent spend."
@@ -308,6 +348,10 @@ sections:
         description: |
           UI isn't dying, because humans will still use software, but soon, 80% of interaction with software will be through agents, which changes not only what needs to be built, but how that is built.
         one-liner: "Software interaction is shifting from User→Interface→Database to User→Agent→Software's Agent→Database as agents become the primary interface."
+        decoder: |
+          * **MCP**: Model Context Protocol, a standard for connecting AI agents to external tools and data
+          * **Rationale parameter**: metadata field requiring agents to explain why they're calling a tool
+          * **OAST**: Out-of-band Application Security Testing (callback-based vulnerability detection)
         summary:
           what: "80% of software interaction will be through agents, requiring new design patterns like rationale parameters, feedback tools, and context gap management between user agents and software agents."
           takeaway: "Design APIs and tools for agent consumption by providing clear specs, proactive guidance, and feedback mechanisms."
@@ -322,6 +366,10 @@ sections:
         description: |
           The 'auto' string at the start of a 'sizes' attribute will tell any browser with support for it to figure out the image size itself.
         one-liner: "The sizes=\"auto\" attribute for responsive images lets browsers calculate image sizes automatically for lazy-loaded images."
+        decoder: |
+          * **sizes attribute**: HTML attribute telling the browser how wide an `<img>` will render at each breakpoint, used to pick the right `srcset` source
+          * **sizes="auto"**: new value that lets the browser calculate image size itself (only works with `loading="lazy"`)
+          * **srcset**: HTML attribute listing multiple image sources at different resolutions
         summary:
           what: "Adding sizes=\"auto\" to loading=\"lazy\" images eliminates manual responsive image size calculations, now supported across Chrome, Firefox, and Safari."
           takeaway: "Use sizes=\"auto, [fallback]\" with loading=\"lazy\" for all non-hero images to eliminate manual sizes calculations."
@@ -334,6 +382,12 @@ sections:
         description: |
           exe.dev addresses the VM resource isolation problem: instead of provisioning individual VMs, users get CPU and memory and run the VMs they want.
         one-liner: "exe.dev is a new cloud provider that decouples VMs from CPU/memory resources and uses local NVMe instead of remote block storage."
+        decoder: |
+          * **NVMe**: Non-Volatile Memory Express, high-speed SSD interface with ~20μs seek time
+          * **IOPS**: Input/Output Operations Per Second, key storage performance metric
+          * **Anycast**: routing technique where multiple servers share one IP; traffic goes to the nearest
+          * **Egress**: outbound data transfer from a cloud provider (typically billed per GB)
+          * **PaaS**: Platform as a Service (e.g., Heroku, Railway), managed hosting that constrains what you can run
         summary:
           what: "Instead of provisioning individual VMs, users get CPU/memory allocation and run multiple VMs on it, with local NVMe achieving 500k IOPS versus EC2's 200k at $10k/month."
           why: "Addresses fundamental cloud abstraction problems around VM isolation, disk performance (1ms network RTT adds 10x overhead to 20μs SSD seeks), and egress pricing (10x normal datacenter rates)."
@@ -349,6 +403,17 @@ sections:
         description: |
           Kubernetes v1.36, codenamed "Haru," shipped with 70 enhancements, including 18 features graduating to stable, such as fine-grained kubelet API authorization, user namespaces for container isolation, and volume group snapshots for crash-consistent backups across multiple volumes. The release also deprecated the security-vulnerable externalIPs field in Service specs (slated for removal in v1.43) and permanently disabled the gitRepo volume type to prevent critical root-level exploits, while introducing alpha features like HPA scale-to-zero and native histogram support for high-resolution monitoring.
         one-liner: "Kubernetes v1.36 'Haru' ships with 70 enhancements including user namespaces for container isolation, volume group snapshots, fine-grained kubelet API authorization, and HPA scale-to-zero alpha support."
+        decoder: |
+          * **User namespaces (GA)**: Linux kernel feature mapping container root to an unprivileged host user, preventing container breakouts
+          * **Volume group snapshots**: crash-consistent backup of multiple PersistentVolumeClaims simultaneously
+          * **HPA scale-to-zero**: Horizontal Pod Autoscaler can now remove all replicas when external metrics (e.g., queue depth) hit zero
+          * **DRA**: Dynamic Resource Allocation, Kubernetes API for sharing GPUs and accelerators across pods
+          * **CEL**: Common Expression Language, used for writing admission policies inline without webhooks
+          * **PSI metrics**: Pressure Stall Information, Linux kernel signals for CPU/memory/IO stalling (finer than utilization)
+          * **Native histograms**: sparse Prometheus histograms that auto-adjust bucket resolution
+          * **CRI list streaming**: Container Runtime Interface change to stream container/image data instead of monolithic responses
+          * **externalIPs**: deprecated Service field vulnerable to MITM attacks (CVE-2020-8554)
+          * **cgroups v2**: Linux kernel resource control mechanism; enables memory QoS tuning
         summary:
           what: "Major Kubernetes release graduating 18 features to stable, 25 to beta, and 25 to alpha, while deprecating insecure externalIPs and permanently disabling gitRepo volumes."
           takeaway: "Update to v1.36 for user namespaces (GA), external ServiceAccount token signing (GA), and test HPA scale-to-zero for cost reduction; audit clusters for deprecated externalIPs before v1.43 removal."
@@ -361,6 +426,11 @@ sections:
         description: |
           Pyroscope 2.0 is an open source continuous profiling database that eliminates write-path replication and reduces symbol storage by up to 95%, making it dramatically cheaper to run at scale. The new architecture, which has already processed 19.5PB of data in Grafana Cloud since April 2025, features stateless queriers that scale elastically and native support for OpenTelemetry's alpha Profiles signal.
         one-liner: "Pyroscope 2.0 eliminates write-path replication and reduces symbol storage by up to 95% with a new architecture that has already processed 19.5PB of profiling data in Grafana Cloud."
+        decoder: |
+          * **Continuous profiling**: always-on sampling of CPU/memory/allocation profiles in production
+          * **Write-path replication**: duplicating incoming data across multiple nodes on ingest (eliminated in 2.0)
+          * **OpenTelemetry Profiles signal**: emerging OTLP spec for standardized profiling data alongside traces and metrics
+          * **Stateless queriers**: query nodes with no local state, scaling elastically via replicas
         summary:
           what: "Open source continuous profiling database with stateless queriers that scale elastically and native OpenTelemetry Profiles signal support."
           takeaway: "Evaluate Pyroscope 2.0 for cost-effective continuous profiling at scale with OTLP integration."
@@ -373,6 +443,14 @@ sections:
         description: |
           A critical SSRF vulnerability in LMDeploy, an AI model-serving toolkit with 7,798 GitHub stars, was exploited just 12 hours and 31 minutes after its public disclosure, with attackers using the vision-language image loader to port-scan AWS metadata services, Redis, MySQL, and other internal targets in an eight-minute session. The rapid weaponization occurred without any public proof-of-concept code, highlighting how detailed security advisories now serve as exploit blueprints in the age of AI-assisted coding—particularly ironic given the vulnerability targeted an LLM-serving framework itself.
         one-liner: "CVE-2026-33626, an SSRF vulnerability in LMDeploy AI inference toolkit, was weaponized in 12 hours and 31 minutes with attackers using vision-LLM image loaders to port-scan AWS metadata, Redis, MySQL, and internal networks."
+        decoder: |
+          * **SSRF**: Server-Side Request Forgery, tricking a server into making HTTP requests to internal/unintended targets
+          * **LMDeploy**: open-source toolkit for serving LLMs in production (7.8K GitHub stars)
+          * **IMDS / IMDSv2**: AWS Instance Metadata Service; v2 requires a PUT-based session token, blocking SSRF credential theft
+          * **OAST**: Out-of-band Application Security Testing, using callback domains to confirm a server made a request
+          * **VPC egress**: outbound network rules from a Virtual Private Cloud
+          * **RFC1918**: private IP address ranges (10.x, 172.16-31.x, 192.168.x)
+          * **Falco**: open-source runtime security tool for detecting anomalous container/host behavior
         summary:
           what: "Critical SSRF in LMDeploy's vision-language model image_url handler lacked hostname resolution checks, enabling exploitation without public PoC code."
           why: "Demonstrates how detailed security advisories now serve as exploit blueprints for AI-assisted coding, with advisory-to-exploit window collapsing to hours for niche infrastructure tools."
@@ -387,6 +465,9 @@ sections:
         description: |
           Recent DDoS attacks on Bluesky and Mastodon highlight that “decentralization” alone doesn't guarantee resilience—what matters is how systems are actually operated and maintained in practice. The fediverse appears more resilient today due to a large, human-driven network of independently run servers, while the future of open social networks depends less on protocols and more on whether people and organizations are willing to actively build and sustain them.
         one-liner: "Recent DDoS attacks on Bluesky and Mastodon reveal that resilience emerges from human decisions to run servers, not protocol specifications—the fediverse appears resilient today due to a 2022 wave of new admins that has since stalled."
+        decoder: |
+          * **Fediverse**: network of independently run servers communicating via open protocols (ActivityPub)
+          * **Protocol eschatology**: belief that choosing the right protocol will inevitably produce the right outcome
         summary:
           what: "Analysis showing fediverse network resilience is a contingent effect of past human effort, not an inevitable property of decentralization or protocol design."
           why: "Challenges protocol eschatology—belief that better protocols automatically produce better outcomes—by showing institutional questions (who runs servers, why) determine actual resilience."
@@ -399,6 +480,11 @@ sections:
         description: |
           AWS DevOps Agent now integrates with Salesforce's MCP Server to automatically investigate infrastructure incidents when customer support cases are created, reducing mean time to resolution from hours to minutes by eliminating manual handoffs between support and engineering teams. The integration uses Salesforce Flow automation to trigger autonomous investigations that analyze logs, identify root causes, and generate mitigation plans—then post findings directly back to the customer case without requiring DevOps engineer intervention.
         one-liner: "AWS DevOps Agent integrates with Salesforce MCP Server to autonomously investigate infrastructure incidents when customer cases are created, reducing MTTR from hours to minutes by eliminating manual support-to-engineering handoffs."
+        decoder: |
+          * **MCP Server**: Model Context Protocol server exposing tools for AI agents to call
+          * **MTTR**: Mean Time To Resolution
+          * **Salesforce Flow**: no-code automation builder for triggering actions on Salesforce object events
+          * **OAuth scopes**: permission boundaries (api, sfap_api, einstein_gpt_api) defining what an integration can access
         summary:
           what: "Integration uses Salesforce Flow automation to trigger DevOps Agent investigations that analyze CloudWatch/CloudTrail, identify root causes, generate mitigation plans, and post findings back to cases."
           takeaway: "Configure Salesforce Hosted MCP with OAuth scopes (api, sfap_api, einstein_gpt_api) and create Flow triggers on Case object to automate incident investigation with DevOps Agent webhook integration."
@@ -410,6 +496,13 @@ sections:
         description: |
           CNCF migrated its Kubernetes services from ingress-nginx to Gateway API using Envoy Gateway, improving flexibility and architecture while addressing challenges like certificate management, load balancing, and TLS configuration. The shift reflects a move toward scalable, multi-layer ingress alternatives after ingress-nginx retirement.
         one-liner: "CNCF migrated internal services from ingress-nginx to Gateway API with Envoy Gateway, addressing ingress-nginx retirement while improving flexibility through multi-layer architecture and solving certificate management, TLS backend, and load balancer health check challenges."
+        decoder: |
+          * **ingress-nginx**: retired Kubernetes ingress controller (no longer maintained as of March 2026)
+          * **Gateway API**: successor to Kubernetes Ingress, supporting multi-layer routing and cross-namespace references
+          * **Envoy Gateway**: Gateway API implementation built on the Envoy proxy
+          * **ReferenceGrant**: Kubernetes object allowing cross-namespace access to resources (e.g., TLS certs)
+          * **BackendTLSPolicy**: Gateway API resource configuring HTTPS connections to backend services
+          * **externalTrafficPolicy**: Service setting controlling whether load balancer health checks reach pods (Cluster vs Local)
         summary:
           what: "Migration guide covering shared Gateway configuration, cross-namespace certificate access via ReferenceGrants, BackendTLSPolicy for HTTPS upstreams, and externalTrafficPolicy troubleshooting."
           takeaway: "Set externalTrafficPolicy to Cluster (not Local) to prevent LB health check failures; use ReferenceGrants for cross-namespace certs; configure BackendTLSPolicy for backend HTTPS with CA validation; enable Gateway API support in cert-manager with enableGatewayAPI: true."
@@ -420,6 +513,12 @@ sections:
         description: |
           Amazon CloudWatch adds Container Insights with OpenTelemetry metrics for Amazon EKS, delivering enriched, high-cardinality metrics and flexible querying via PromQL with curated dashboards. It supports easy deployment, hardware auto-detection, and dual metric publishing, offering enhanced observability at no cost during preview.
         one-liner: "Amazon CloudWatch launches Container Insights with OpenTelemetry metrics for EKS (preview), providing enriched high-cardinality metrics with up to 150 labels, PromQL querying, and auto-detection of NVIDIA GPUs, EFA, Trainium, and Inferentia accelerators."
+        decoder: |
+          * **OTel / OpenTelemetry**: vendor-neutral observability framework for traces, metrics, logs, and profiles
+          * **PromQL**: Prometheus Query Language for querying time-series metrics
+          * **High-cardinality metrics**: metrics with many unique label combinations (up to 150 labels here)
+          * **EFA**: Elastic Fabric Adapter, AWS high-performance networking for HPC/ML
+          * **Trainium / Inferentia**: AWS custom chips for ML training and inference
         summary:
           what: "Public preview in 5 regions with one-click EKS add-on installation, curated dashboards, and dual metric publishing support; no charge during preview."
       - id: devops-8
@@ -588,6 +687,12 @@ sections:
         description: |
           Turf's sdk.markets, currently in closed alpha, lets developers deploy custom parimutuel prediction markets on Base with Privy integration, targeting communities, group chats, fantasy leagues, and live events where thin liquidity makes order book models impractical. The SDK counters late-entry sniping with 15-30 second contract windows and a Dynamic Parimutuel Market model that prices early participants' shares more favorably. Resolution options span single admin, multi-admin consensus, and AI oracles that auto-pull from sources including ESPN, Sleeper, X accounts, and onchain feeds, with creators setting custom fees per market.
         one-liner: "Turf's sdk.markets enables developers to deploy custom parimutuel prediction markets on Base with Privy integration, targeting thin-liquidity use cases where order books fail."
+        decoder: |
+          * **Parimutuel**: betting pool model where all bets go into a shared pool; winners split the losers' stakes
+          * **DPM (Dynamic Parimutuel Market)**: variant where share price changes as the pool grows, rewarding early participants
+          * **Privy**: authentication SDK for web3 apps (passkeys, wallets, social login)
+          * **Base**: Coinbase's Layer 2 blockchain built on Optimism
+          * **AI oracle**: automated resolution agent that pulls outcomes from external data sources
         summary:
           what: "SDK counters late-entry sniping with 15-30 second contract windows and Dynamic Parimutuel Market pricing; resolution via single admin, multi-admin consensus, or AI oracles pulling from ESPN, Sleeper, X, onchain feeds."
           why: "Addresses group chat, fantasy league, and live event prediction markets where organic liquidity is insufficient for continuous order book models."
@@ -601,6 +706,12 @@ sections:
         description: |
           Stripe, DoorDash, Coastal Bank, and ARQ have moved stablecoin payment flows into production on Tempo, a payments-focused blockchain incubated by Stripe and Paradigm. Tempo's architecture uses dollar-denominated fees with no native token requirement, sub-second finality, and dedicated blockspace lanes, removing the fee volatility and throughput unpredictability that blocked enterprise adoption of general-purpose chains. ARQ processes $10B+ in annualized transaction volume across Mexico, Colombia, Argentina, and Brazil on the network, while Stripe uses Tempo as the settlement layer for cross-border payouts across 100+ countries.
         one-liner: "Stripe, DoorDash, Coastal Bank, and ARQ brought stablecoin payment flows into production on Tempo, a payments-focused blockchain incubated by Stripe and Paradigm."
+        decoder: |
+          * **Stablecoin**: cryptocurrency pegged to a fiat currency (typically USD)
+          * **Blockspace lanes**: dedicated transaction processing capacity reserved at the protocol level
+          * **Account abstraction**: smart-contract wallets enabling batching, fee sponsorship, and passkey auth without EOA keys
+          * **Sub-second finality**: transactions are irreversible in under one second
+          * **Tempo Zones**: private payment areas where only transaction parties see details
         summary:
           what: "Tempo uses dollar-denominated fees with no native token, sub-second finality, and dedicated blockspace lanes; ARQ processes $10B+ annualized volume across LATAM."
           why: "Removes fee volatility and throughput unpredictability that blocked enterprise adoption of general-purpose chains for payment workloads."
@@ -624,6 +735,12 @@ sections:
         description: |
           Crypto markets in 2026 face three converging pressures: an innovation drought spanning 2-3 years, quantum computing threats targeting Bitcoin's cryptographic foundations by 2029, and LLM-enabled exploit tooling (Claude Mythos) that has pushed DeFi's rational hurdle rate to 50-60% APR. The OTHERS market cap has contracted from ~$450B to ~$180B, open interest is down ~60% since October 2025, and $795m was extracted from DeFi protocols in the first four months of 2026. Capital is rotating to tradfi fixed coupon notes at 15-20% risk-adjusted yield and prediction markets, while VC activity clusters around quantum-resistant startups and a handful of revenue-generating protocols, with only ~12 token projects generating more than $50m per year.
         one-liner: "Crypto markets face innovation drought spanning 2-3 years, quantum computing threats targeting Bitcoin's cryptographic foundations by 2029, and LLM-enabled exploit tooling pushing DeFi's rational hurdle rate to 50-60% APR."
+        decoder: |
+          * **OTHERS market cap**: total crypto market cap excluding BTC, ETH, and top stablecoins
+          * **Hurdle rate**: minimum acceptable return to justify risk; now 50-60% APR for DeFi due to hack probability
+          * **Claude Mythos**: LLM-based exploit tooling used to find and exploit smart contract vulnerabilities
+          * **Open interest**: total value of outstanding derivative contracts
+          * **Fixed Coupon Notes**: tradfi structured products paying a fixed yield
         summary:
           what: "OTHERS market cap dropped from $450B to $180B; open interest down 60% since October 2025; $795m extracted from DeFi protocols in first four months of 2026; Claude Mythos increasing attack frequency."
           why: "LLM-based exploit tools like Claude Mythos are materially degrading DeFi security economics and raising baseline risk assumptions for yield strategies."
@@ -637,6 +754,11 @@ sections:
         description: |
           Nasdaq's proposed index rule would assign low-float newly listed companies index weights calibrated to 5x their actual float, mechanically forcing passive funds including 401ks to buy at IPO and again at rebalance precisely when insider lock-ups expire. Crypto foundations pioneered this structure by wrapping locked token allocations in equity vehicles accessible through TradFi brokerages, and the SF venture complex is now scaling the same template through vehicles like USVC, with SpaceX targeting a mid-June IPO timed ahead of a December index rebalance. This converts public markets from value-creation venues into distribution mechanisms for insider inventory, with trillion-dollar private valuations ensuring most gains accrue before retail access.
         one-liner: "Nasdaq's proposed index rule would assign low-float newly listed companies index weights calibrated to 5x their actual float, mechanically forcing passive funds to buy at IPO and again when insider lock-ups expire."
+        decoder: |
+          * **Low-float**: small percentage of total shares available for public trading
+          * **Index weight**: a stock's proportional representation in an index (e.g., S&P 500), determining how much passive funds must buy
+          * **Lock-up expiry**: the date insiders can first sell shares after an IPO
+          * **Passive funds / 401k**: index-tracking funds that mechanically buy whatever the index holds
         summary:
           what: "SpaceX targeting mid-June IPO ahead of December rebalance; mirrors crypto foundation playbook of wrapping locked tokens in equity vehicles accessible through TradFi brokerages."
           why: "Shows how public market mechanics are converging with crypto token distribution patterns, converting markets from value-creation venues into insider distribution mechanisms."
@@ -658,6 +780,9 @@ sections:
         description: |
           Kraken filed 56 million 1099-DA forms for 2025, with 18.5 million covering sub-$1 transactions, underscoring the compliance burden created by current IRS reporting requirements.
         one-liner: "Kraken filed 56 million 1099-DA forms for 2025, with 18.5 million covering sub-$1 transactions, underscoring compliance burden from IRS reporting requirements."
+        decoder: |
+          * **1099-DA**: IRS tax form for reporting digital asset transactions (new for 2025)
+          * **De minimis exemption**: threshold below which transactions are too small to require reporting
         summary:
           what: "74% of forms covered transactions under $50; lack of de minimis exemption for crypto payments and staking-rewards-taxed-at-receipt creates massive reporting burden; standard tax software does not handle crypto."
           why: "Highlights operational burden of crypto tax compliance at scale; each form creates reconciliation task for taxpayer."
@@ -669,6 +794,10 @@ sections:
         description: |
           CertiK flagged phishing, deepfakes, supply chain compromises, and cross-chain vulnerabilities as the dominant attack vectors for 2026, with the industry absorbing over $600 million in losses this year.
         one-liner: "CertiK flagged phishing, deepfakes, supply chain compromises, and cross-chain vulnerabilities as dominant attack vectors for 2026, with industry absorbing over $600 million in losses this year."
+        decoder: |
+          * **AML**: Anti-Money Laundering compliance requirements
+          * **FinCEN**: Financial Crimes Enforcement Network, US Treasury bureau enforcing AML rules
+          * **Cross-chain vulnerabilities**: exploits targeting bridges and protocols that move assets between blockchains
         summary:
           what: "AML enforcement overtook SEC securities violations as leading regulatory threat; DOJ and FinCEN imposed $1B+ in AML fines during H1 2025; SEC crypto penalties dropped 97% year-over-year."
           takeaway: "Audit infrastructure for phishing, deepfakes, supply chain, and cross-chain attack surfaces."

@@ -27,6 +27,9 @@ sections:
         description: |
           Google launched Workspace Intelligence, enhancing Google Workspace with a semantic layer to integrate emails, chats, files, and projects for Gemini-powered agents. This update includes major product enhancements like natural-language spreadsheet building in Sheets and AI-driven features in Docs, Slides, Gmail, and Drive. Workspace Intelligence aims to make Workspace a centralized control layer for business operations, emphasizing security, context integration, and cross-application functionality.
         one-liner: "Google launched Workspace Intelligence, a semantic layer integrating emails, chats, files, and projects for Gemini-powered agents across Google Workspace."
+        decoder: |
+          * **Semantic layer**: abstraction that unifies data from different sources (email, chat, files) into a shared context layer
+          * **Gemini**: Google's family of large language models
         summary:
           what: "Adds natural-language spreadsheet building in Sheets, AI-driven features in Docs/Slides/Gmail/Drive, and positions Chat as command center for work."
           why: "Semantic layer architecture pattern shows how to build context-aware agents that understand cross-application workflows."
@@ -50,6 +53,11 @@ sections:
         description: |
           Perplexity's two-stage pipeline for search-augmented language models uses initial Supervised Fine-Tuning (SFT) followed by Reinforcement Learning (RL) to optimize factual accuracy, user preference, and tool-use efficiency. This approach, starting with Qwen3 models, separates compliance from search improvement to achieve accuracy without compromising guardrails. The models showed enhanced accuracy on benchmarks like FRAMES and FACTS OPEN with reduced cost per query and improved efficiency in tool usage over existing models like GPT-5.4.
         one-liner: "Perplexity detailed their two-stage pipeline using SFT followed by RL to optimize search-augmented models for factual accuracy and tool-use efficiency."
+        decoder: |
+          * **SFT (Supervised Fine-Tuning)**: training a model on curated input/output pairs to teach desired behavior
+          * **RL (Reinforcement Learning)**: training via reward signals rather than example pairs
+          * **Qwen3**: open-weight LLM family from Alibaba
+          * **FRAMES / FACTS OPEN**: benchmarks measuring factual accuracy and multi-step reasoning in search-augmented models
         summary:
           what: "Starting with Qwen3 models, separates compliance from search improvement, achieving enhanced accuracy on FRAMES and FACTS OPEN benchmarks."
         deep-summary: |
@@ -63,6 +71,12 @@ sections:
         description: |
           Agentic workloads are reshaping inference engine benchmarks, demanding multi-turn, tool-using scenarios that strain KV cache management and scheduling due to longer traces and varied token distributions. Applied Compute introduced three workload profiles to aid in optimizing engine and accelerator performance. They released an open-source benchmarking tool to replay these scenarios, highlighting the need for solutions such as KV cache offloading and workload-aware routing to improve throughput and efficiency.
         one-liner: "Applied Compute released open-source benchmarking tools for inference engines on agentic workloads, revealing KV cache management as the primary bottleneck."
+        decoder: |
+          * **KV cache**: key-value memory storing past token representations so the model doesn't recompute them each step
+          * **Inference engine**: runtime that serves model predictions (e.g., vLLM, TensorRT-LLM)
+          * **ISL/OSL**: input sequence length / output sequence length
+          * **Chunked prefill**: processing the prompt in smaller pieces to reduce latency spikes
+          * **DP / TP**: Data Parallelism (replicate model across GPUs) / Tensor Parallelism (split layers across GPUs)
         summary:
           what: "Multi-turn, tool-using agent scenarios strain KV cache and scheduling differently than single-turn chatbot workloads, requiring new optimization approaches."
           why: "Agentic patterns (20+ tool turns, 500-token tool outputs, variable latencies) expose different performance characteristics than traditional LLM benchmarks."
@@ -78,6 +92,10 @@ sections:
         description: |
           Most of what people put in AGENTS.md either doesn't help or actively hurts. The patterns that work are specific and learnable. This to post looks at which patterns work, which fail, and how to tell which is which for your codebase. Different patterns move different metrics, so pick patterns that target the problem you actually have.
         one-liner: "Best AGENTS.md files deliver 10-15% quality improvements by using progressive disclosure and decision tables, while bad ones cause 30% drops from overexploration."
+        decoder: |
+          * **AGENTS.md**: project-root file that gives AI coding agents instructions about the codebase
+          * **Progressive disclosure**: showing a concise top-level file with pointers to deeper reference docs
+          * **Context rot**: degraded agent performance from loading too much irrelevant text into the prompt
         summary:
           what: "Study found 100-150 line files with focused reference docs perform best; excessive warnings without alternatives trigger context rot."
           takeaway: "Keep core AGENTS.md under 150 lines, pair every 'don't' with a 'do', use decision tables for ambiguous choices, push details to reference files."
@@ -92,6 +110,10 @@ sections:
         description: |
           Qwen3.6-27B delivers flagship-level agentic coding performance. The Qwen team claims that it surpasses the previous-generation flagship Qwen3.5-397B-A17B across all major coding benchmarks. The model is 55.6 GB on Hugging Face, and there are even smaller quantized versions available. Tests show that the model delivers outstanding results, even when quantized.
         one-liner: "Qwen3.6-27B claims flagship-level coding performance surpassing the 397B Qwen3.5-397B-A17B, at 55.6GB unquantized and 16.8GB quantized."
+        decoder: |
+          * **Quantized**: model weights stored at reduced precision (e.g., 4-bit) to shrink memory footprint
+          * **GGUF**: binary format for quantized LLM weights, used by llama.cpp
+          * **llama-server**: local HTTP inference server from the llama.cpp project
         summary:
           what: "Model generates high-quality SVGs and code, with quantized version running at 25.57 tokens/s generation on llama-server."
           takeaway: "Test Qwen3.6-27B via Hugging Face (unsloth/Qwen3.6-27B-GGUF:Q4_K_M) with llama-server for local flagship-level coding at 16.8GB."
@@ -104,6 +126,11 @@ sections:
         description: |
           The Gemini Enterprise Agent Platform is a comprehensive platform for building, scaling, governing, and optimizing agents. It brings together model selection, model building, and agent building capabilities together with new features for agent integration, DevOps, orchestration, and security. Agent Platform is a single destination for technical teams to build agents that can transform products, services, and operations. The agents can be delivered to employees through the Gemini Enterprise app.
         one-liner: "Google launched Gemini Enterprise Agent Platform, evolving Vertex AI into a comprehensive platform for building, scaling, governing, and optimizing agents."
+        decoder: |
+          * **Vertex AI**: Google Cloud's ML platform, now evolving into Gemini Enterprise Agent Platform
+          * **ADK (Agent Development Kit)**: code-first SDK for building agents on Google's platform
+          * **Agent Runtime**: managed execution environment that handles scaling, memory, and tool calls
+          * **Memory Bank**: persistent context store agents use across sessions
         summary:
           what: "Combines model selection, Agent Studio (low-code), Agent Development Kit (code-first), Agent Runtime, Memory Bank, and security features like Agent Identity and Gateway."
           why: "Shows enterprise agent platform architecture: build layer (Studio/ADK), scale layer (Runtime/Memory Bank), govern layer (Identity/Registry/Gateway), optimize layer (Simulation/Evaluation)."
@@ -116,6 +143,11 @@ sections:
         description: |
           Agents can connect to external systems through direct API calls, CLIs, and MCP. This post looks at where each fits and the patterns for building those integrations effectively. MCP becomes the critical compounding layer as production agents move to the cloud. Every integration built on MCP strengthens the ecosystem.
         one-liner: "MCP provides the compounding protocol layer for production cloud agents to reach external systems, now surpassing 300M SDK downloads monthly."
+        decoder: |
+          * **MCP (Model Context Protocol)**: open protocol for connecting AI agents to external tools and data sources
+          * **CIMD (Client ID Metadata Document)**: standard for OAuth discovery so MCP servers can authenticate agents
+          * **Elicitation**: mechanism for an MCP tool to ask the user for input mid-execution
+          * **MCP Apps**: extension that lets MCP servers render interactive UI (charts, forms) inside agent responses
         summary:
           what: "Remote MCP servers with OAuth (CIMD), rich semantics (MCP Apps, elicitation), and standardized auth work across web/mobile/cloud where CLIs and direct APIs fail."
           takeaway: "Build remote MCP servers with intent-grouped tools (not 1:1 API wrappers); use MCP Apps for interactive UI; pair with skills for procedural knowledge."
@@ -140,6 +172,10 @@ sections:
         description: |
           Personalization in LLM responses introduces variation but often retains a stable semantic core across answers. This shared foundation results from common model priors, overlapping retrievals, and product constraints, with differences emerging in examples and emphasis. Understanding this allows businesses to optimize their presence in AI-generated content by focusing on being part of the model's core knowledge.
         one-liner: "LLM personalization produces variation concentrated in examples and framing while maintaining a stable semantic core driven by shared model priors and retrieval."
+        decoder: |
+          * **Model priors**: knowledge and biases a language model acquired during training
+          * **Semantic core**: the stable set of concepts and conclusions shared across personalized responses to the same query
+          * **Decoding**: the token-selection process that generates model output
         summary:
           what: "Answers to the same query across users share common concepts and conclusions; materially distinct answer archetypes are bounded, not infinite."
           why: "Optimization for AI search remains viable because variation occurs around a shared core, not arbitrary divergence across users."
@@ -152,6 +188,10 @@ sections:
         description: |
           Relying on prompts to correct recurring AI agent mistakes is an unreliable, "vibes-based" approach that decays as soon as conversations become complex. To solve this, Y Combinator CEO Garry Tan advocates for "skillification." Instead of letting an agent waste compute attempting to solve deterministic tasks (like historical calendar lookups) in its latent space, this framework forces the AI to execute precise local scripts.
         one-liner: "Garry Tan's 'skillify' framework converts every agent failure into permanent skills with a 10-step checklist including deterministic code, unit tests, and resolver triggers."
+        decoder: |
+          * **Skillification / skillify**: converting a recurring agent failure into a permanent, tested skill with deterministic code
+          * **Latent space**: the model's internal representation space where reasoning happens
+          * **Resolver trigger**: routing-table entry that tells the agent when to invoke a specific skill
         summary:
           what: "Latent space (agent judgment) builds deterministic tools, then skills force agent to use tools instead of reasoning; failures become structurally unreachable."
           takeaway: "Adopt the 10-step skillify checklist: SKILL.md, deterministic code, unit tests, integration tests, LLM evals, resolver trigger, resolver eval, DRY audit, E2E smoke test, brain filing rules."
@@ -176,6 +216,10 @@ sections:
         description: |
           OpenAI's unannounced testing of GPT Image 2 on LM Arena showcases its advancements in AI image generation.
         one-liner: "OpenAI quietly tested GPT Image 2 on LM Arena as 'packingtape/maskingtape/gaffertape-alpha' before pulling it, showing near-99% text rendering and neutral color profiles."
+        decoder: |
+          * **LM Arena (Chatbot Arena)**: crowdsourced platform for blind-comparing model outputs
+          * **C2PA**: Coalition for Content Provenance and Authenticity, a watermarking/provenance standard for AI-generated media
+          * **DALL-E**: OpenAI's image generation model (being sunset May 12)
         summary:
           what: "Model improvements: accurate text rendering including CJK characters, eliminated yellow tint, expanded world knowledge, ~2x generation speed under 3 seconds."
           why: "DALL-E sunset May 12 creates launch pressure; freed Sora compute ($15M/day) enables inference capacity; EU AI Act Article 50 (Aug 2) requires C2PA watermarking."
@@ -198,6 +242,10 @@ sections:
         description: |
           Anker's custom Thus AI chip is designed for audio devices with local AI, computing directly where the model lives to enhance efficiency.
         one-liner: "Anker developed Thus, a neural-net compute-in-memory AI audio chip that puts computation where the model lives, handling millions of parameters for flagship earbuds."
+        decoder: |
+          * **Compute-in-memory**: chip architecture that runs calculations where model weights are stored, avoiding data movement overhead
+          * **MEMS mics**: micro-electromechanical system microphones, tiny silicon-based microphones
+          * **Bone conduction sensor**: detects vibrations through skull/jawbone for voice isolation in noisy environments
         summary:
           what: "First application: Soundcore flagship earbuds (Liberty 5 Pro Max $229.99, Liberty 5 Pro $169.99) with 8 MEMS mics, 2 bone conduction sensors for call noise canceling, launching May 21."
           why: "Compute-in-memory architecture eliminates parameter movement overhead, enabling complex neural networks in power/space-constrained edge devices."
@@ -212,6 +260,10 @@ sections:
         description: |
           Google's new TPUs provide Google and its customers with a faster and more efficient AI platform. The TPU 8t was designed to reduce training time for frontier models from months to weeks. The TPU 8i is designed to be more efficient when running multiple specialized agents. It can also run in large pods of 1,152 chips. The TPUs will power Google's Gemini-based models, but they are also designed with third-party developers in mind, with both TPUs supporting popular frameworks that developers are already using.
         one-liner: "Google launched TPU 8t for training and TPU 8i for inference, designed for the 'agentic era' with improved efficiency and scale."
+        decoder: |
+          * **TPU (Tensor Processing Unit)**: Google's custom AI accelerator chip
+          * **JAX**: Google's numerical computing library (NumPy + autograd + XLA)
+          * **SGLang / vLLM**: open-source LLM inference frameworks
         summary:
           what: "TPU 8t reduces training time from months to weeks with 9,600 chips per pod; TPU 8i runs 1,152 chips for multi-agent inference with 3x higher compute."
           why: "Third-party developers can use popular frameworks (JAX, PyTorch, SGLang, vLLM) on Google Cloud."
@@ -248,6 +300,9 @@ sections:
         description: |
           Coding agents give developers a lot of their time back, allowing them to have enough time and energy to make their products the way they want to. Agents allow developers to make much better software through more rigorous critical thinking and better alignment in the planning stage. They allow teams to scale in a way that leads to higher-quality software. In a world of fast, cheap software, quality becomes the new differentiator.
         one-liner: "GitHub Next's Ace prototype creates multiplayer coding workspace where teams and agents collaborate in shared cloud VMs with persistent context."
+        decoder: |
+          * **Ace**: GitHub Next prototype for multiplayer AI-assisted coding in shared cloud environments
+          * **MicroVM**: lightweight virtual machine that boots in seconds for isolated agent sessions
         summary:
           what: "Slack-like interface with coding agents, microVMs, shared dev servers, and multiplayer prompting for team alignment before implementation."
           why: "Addresses coordination bottleneck as agents make implementation fast but team alignment on 'what to build' becomes the real cost and failure mode."
@@ -262,6 +317,9 @@ sections:
         description: |
           Being the top lab in coding means owning both the compute to train new models and capabilities and the product to recursively inform that process. Cursor and SpaceX combining together can complete that loop. That's why they entered into an agreement to co-develop coding and knowledge agent models together. This is the first deal where two sub-frontier labs plausibly combine into a frontier contender.
         one-liner: "SpaceX obtained right to acquire Cursor for $60B (or pay $10B) to combine Cursor's coding product with SpaceX's compute for frontier coding models."
+        decoder: |
+          * **Sub-frontier lab**: AI company not yet at the capability level of leading labs (OpenAI, Anthropic, Google)
+          * **Call option**: right (not obligation) to acquire at a set price, giving SpaceX flexibility on timing
         summary:
           what: "First deal where two sub-frontier labs merge to compete with OpenAI/Anthropic; shared model development with call option structure allowing IPO timing flexibility."
           why: "Being a top coding AI lab requires owning both product (for harness/data) and compute (for model training) in a compounding loop—neither Cursor nor xAI had both."
@@ -275,6 +333,11 @@ sections:
         description: |
           There is a vulnerability in all Firefox-based browsers that allows websites to derive a unique, deterministic, and stable process-lifetime identifier, even in contexts where users expect stronger isolation.
         one-liner: "Firefox-based browsers expose stable process-lifetime identifier via IndexedDB ordering, linking Tor identities and private browsing sessions."
+        decoder: |
+          * **IndexedDB**: browser API for client-side structured storage
+          * **Hash table**: data structure mapping keys to values; here, iteration order leaks a fingerprint
+          * **Cross-origin**: across different website domains (e.g., site-a.com observing state from site-b.com)
+          * **ESR (Extended Support Release)**: Firefox's long-term-support release channel
         summary:
           what: "indexedDB.databases() returns UUID-based ordering from process-scoped hash table, creating high-entropy cross-origin fingerprint persisting until browser restart."
           why: "Defeats Tor Browser 'New Identity' and Private Browsing isolation; unrelated sites observe same identifier and link activity across origins."
@@ -304,6 +367,10 @@ sections:
         description: |
           Flipbook creates interactive illustrations without HTML, a layout engine, or code.
         one-liner: "Flipbook streams interactive illustrations directly from LTXStudio video model at 1080p/24fps, bypassing HTML and layout engines."
+        decoder: |
+          * **LTXStudio**: Lightricks video generation model powering Flipbook's pixel streaming
+          * **Modal**: serverless GPU cloud platform
+          * **Model-native UI**: interface where layout emerges from a generative model rather than HTML/CSS/DOM
         summary:
           what: "Live pixel streaming via WebSockets to Modal serverless GPUs; regions become interactive without explicit button definitions; content reshapes to fit viewport."
           why: "Demonstrates model-native UIs where layout emerges from the model rather than DOM constraints, enabling fluid, adaptive interfaces."
@@ -317,6 +384,11 @@ sections:
         description: |
           The three-way orthogonal tension between throughput, latency, and cost is the central engineering challenge in dedicated large language model hosting.
         one-liner: "LLM inference requires navigating three-way trade-off between throughput, latency, and cost across CapEx, OpEx, utilization, and engineering dimensions."
+        decoder: |
+          * **MoE (Mixture of Experts)**: architecture that activates only a subset of parameters per token
+          * **FP8 / INT4**: 8-bit floating point / 4-bit integer quantization precision levels
+          * **EP (Expert Parallelism)**: distributing MoE experts across GPUs
+          * **Little's Law**: Concurrency = Throughput x Latency, used to size deployment capacity
         summary:
           what: "Cost isn't just $/token but capital (hardware), operational (power), opportunity (idle GPU time), and engineering (tuning labor and benchmarking tax)."
           why: "Dense models scale linearly with memory; MoE models shift bottleneck to communication; quantization (FP8), batching strategy, and parallelism choice determine cost surface."
@@ -332,6 +404,9 @@ sections:
         description: |
           Airbnb built an internal metrics storage system capable of ingesting ~50 million samples/sec across ~1.3 billion time series by introducing strict multi-tenant isolation (per-service tenancy, shuffle sharding) and guardrails on reads/writes to prevent any single workload from overwhelming the system.
         one-liner: "Airbnb built an internal metrics storage system handling ~50 million samples/sec across 1.3 billion time series by introducing strict multi-tenant isolation and guardrails to prevent single workloads from overwhelming the system."
+        decoder: |
+          * **Shuffle sharding**: assigning each tenant to a random subset of servers so failures are isolated
+          * **Time series**: data points indexed by timestamp (e.g., CPU usage every 10 seconds)
         summary:
           what: "Metrics platform uses per-service tenancy, shuffle sharding, and read/write guardrails to achieve 50M samples/sec ingestion."
           takeaway: "Apply strict multi-tenant isolation and shuffle sharding when building high-throughput observability systems to prevent noisy-neighbor problems."
@@ -346,6 +421,12 @@ sections:
         description: |
           Meta re-architected Facebook Groups scoped search with a hybrid retrieval stack that combines Unicorn inverted-index lexical search and a 12-layer, 200M-parameter semantic retriever using Faiss ANN over precomputed embeddings. Query preprocessing, feature-level ranking with BM25/TF-IDF plus cosine similarity, and an MTML supermodel jointly optimize clicks, shares, and comments. To scale validation, Meta added an automated Llama 3-based judge in BVT, including a “somewhat relevant” class for finer judgment.
         one-liner: "Meta re-architected Facebook Groups search with a hybrid retrieval stack combining Unicorn inverted-index lexical search and a 12-layer 200M-parameter semantic retriever, using Llama 3 as an automated BVT judge for validation at scale."
+        decoder: |
+          * **Unicorn**: Meta's inverted-index search engine for structured data
+          * **Faiss ANN**: Facebook AI Similarity Search using Approximate Nearest Neighbors
+          * **BM25 / TF-IDF**: classic text-relevance scoring algorithms based on term frequency
+          * **MTML**: Multi-Task Multi-Label model optimizing multiple objectives simultaneously
+          * **BVT (Build Verification Test)**: automated test suite run on each build to catch regressions
         summary:
           what: "Hybrid search blends keyword matching (Unicorn) with semantic embeddings (Faiss ANN) and ranks results via MTML supermodel optimizing clicks, shares, comments."
           takeaway: "Implement parallel lexical and semantic retrieval paths when keyword matching alone misses conceptual queries, and use LLM-based evaluation with nuanced labels (e.g., 'somewhat relevant') to validate quality at scale."
@@ -368,6 +449,13 @@ sections:
         description: |
           Global enterprise ontologies often fail because they force different business contexts to share one denotational model for terms like customer, product, and location. The proposed interface-driven approach keeps rich domain-specific ontologies inside each boundary, and exposes only context-aware projections through RDF 1.2 reification, SHACL 1.2 connotations, named graphs, and SPARQL transforms. That enables auditable meaning shifts, safer cross-domain interoperability, and a practical mix of open-world discovery with closed-world reasoning at the interface layer.
         one-liner: "Global enterprise ontologies fail because they force different contexts to share one denotational model; an interface-driven approach keeps rich domain-specific ontologies inside boundaries and exposes context-aware projections via RDF 1.2 reification and SHACL 1.2 connotations."
+        decoder: |
+          * **RDF 1.2**: Resource Description Framework, a W3C standard for expressing data as subject-predicate-object triples
+          * **SHACL 1.2**: Shapes Constraint Language for validating RDF graphs
+          * **Reification**: making a statement about a statement (e.g., "Alice said X is true")
+          * **Connotations**: context-dependent meaning layers added by SHACL 1.2
+          * **SPARQL**: query language for RDF data
+          * **Holonic ontology**: design where each domain is both a self-contained whole and part of a larger system
         summary:
           what: "Proposes holonic ontology design where each domain maintains its own semantics and projects context-specific interfaces rather than collapsing into a single universal schema."
           why: "Addresses the perpetual failure of enterprise-wide ontology projects by treating semantic context shifts as a feature rather than a bug, using formal tools (RDF 1.2 reification, SHACL connotations) to make connotational meaning explicit and auditable across boundaries."
@@ -388,6 +476,9 @@ sections:
         description: |
           dbt-score is a linter for dbt metadata quality. It scores models and projects against rules for docs, tests, ownership, naming, and SQL complexity, so teams can enforce standards in CI/CD and catch weak models early. It supports custom rules for org-specific governance.
         one-liner: "dbt-score is a linter for dbt metadata quality that scores models and projects against configurable rules for docs, tests, ownership, naming, and SQL complexity, with CI/CD integration and support for custom org-specific rules."
+        decoder: |
+          * **dbt**: data build tool, a SQL-based transformation framework for analytics pipelines
+          * **Linter**: tool that checks code/config against rules and flags violations
         summary:
           what: "CLI tool that evaluates dbt models on documentation, testing, naming conventions; fails builds when quality thresholds aren't met."
           takeaway: "Run `pip install dbt-score` and configure `pyproject.toml` with `fail_project_under` thresholds to enforce metadata quality gates in CI pipelines."
@@ -400,6 +491,9 @@ sections:
         description: |
           ggsql is a tool, currently in alpha, that lets users create charts directly inside SQL queries instead of switching to Python or R. It's designed to make data visualization faster, clearer, and more scalable by running chart calculations in the database, while also being easier for AI tools to generate.
         one-liner: "ggsql is an alpha-release tool that lets users create charts directly inside SQL queries by implementing the grammar of graphics in SQL syntax, running chart calculations in the database and designed for easy AI generation."
+        decoder: |
+          * **Grammar of graphics**: formal framework (from ggplot2/Wilkinson) decomposing charts into data, aesthetics, geometries, and scales
+          * **Quarto**: open-source scientific publishing system supporting code, markdown, and output
         summary:
           what: "SQL extension for declarative data visualization; `VISUALIZE x, y FROM table DRAW point` syntax executes aggregations in-database."
           takeaway: "Install ggsql for Quarto/Jupyter to build visualizations directly in SQL without materializing full datasets in Python/R; particularly useful when LLMs generate chart code."
@@ -425,6 +519,9 @@ sections:
         description: |
           Hugging Face's ML Intern is an autonomous coding agent that researches, writes, and ships ML projects using docs, datasets, GitHub, and cloud tools. It's basically an AI junior engineer focused on machine learning workflows.
         one-liner: "Hugging Face's ML Intern is an autonomous coding agent that researches, writes, and ships ML projects using docs, datasets, GitHub, and cloud tools, functioning as an AI junior engineer for ML workflows."
+        decoder: |
+          * **Doom loop detector**: mechanism that identifies when an agent is repeating the same failing tool-call pattern
+          * **MCP server**: external tool/data source exposed via Model Context Protocol
         summary:
           what: "Agentic system with tools for HF docs/datasets/repos, GitHub code search, sandbox execution, planning, and MCP server integration; runs with Claude/GPT models."
           takeaway: "Install via `uv tool install -e .` and configure API keys to get an autonomous ML coding assistant with HF ecosystem access and cloud compute integration."
@@ -438,6 +535,13 @@ sections:
         description: |
           Cloudflare R2 plus R2 Data Catalog makes a cheap, laptop-scale Iceberg lake practical: no egress fees, S3-compatible storage, and managed catalog metadata for Trino/DuckDB. The missing piece is ingestion, solved here with a ~500-line Rust HTTP proxy that converts POSTed NDJSON into a single atomic Iceberg commit.
         one-liner: "Cloudflare R2 plus R2 Data Catalog enables a cheap laptop-scale Apache Iceberg lake with no egress fees, S3-compatible storage, and managed catalog metadata; the missing ingestion piece is solved with a ~500-line Rust HTTP proxy that converts POSTed NDJSON into atomic Iceberg commits."
+        decoder: |
+          * **Apache Iceberg**: open table format for huge analytic datasets, supporting ACID transactions on data lakes
+          * **Parquet**: columnar file format optimized for analytical queries
+          * **NDJSON**: newline-delimited JSON, one JSON object per line
+          * **R2**: Cloudflare's S3-compatible object storage with zero egress fees
+          * **Trino / DuckDB**: distributed SQL query engine / embedded analytical database
+          * **iceberg-rust**: Rust library for reading/writing Iceberg tables
         summary:
           what: "R2 + Data Catalog provides Iceberg infrastructure; custom HTTP proxy (`stateless-anchor`) accepts NDJSON, writes Parquet, commits via iceberg-rust."
           takeaway: "Clone stateless-anchor repo, configure R2 credentials, POST NDJSON to `/api/schema/{ns}/table/{tbl}/push` for atomic Iceberg commits without Kafka or SaaS pipelines."
@@ -451,6 +555,12 @@ sections:
         description: |
           A new KV-cache compression method for LLMs replaces simple token pruning with a smarter approach: it identifies low-value context, summarizes it mathematically, and stores a compact version instead of deleting it. In tests, this delivered better accuracy and lower memory use than common Top-K or sliding-window methods, suggesting longer context windows can be handled more efficiently.
         one-liner: "A new KV-cache compression method for LLMs replaces token pruning with entropy-guided summarization: identify low-value context via Shannon entropy, reconstruct via OLS, compress via SVD, achieving better accuracy and lower memory than Top-K or sliding-window pruning."
+        decoder: |
+          * **KV cache**: key-value store of past attention states in transformer models
+          * **Shannon entropy**: information-theoretic measure of uncertainty (H = -Sum p_i log p_i)
+          * **OLS (Ordinary Least Squares)**: standard linear regression method for minimizing squared error
+          * **SVD (Singular Value Decomposition)**: matrix factorization used for low-rank approximation
+          * **SRC pipeline**: Selection-Reconstruction-Compression, the three stages of this cache method
         summary:
           what: "SRC pipeline (Selection-Reconstruction-Compression) uses entropy to bin tokens, OLS to reconstruct attention weights, SVD for low-rank approximation; outperforms Top-K at same memory budget."
           takeaway: "Explore HAE entropy-based KV cache compression when building long-context LLM systems; code implements Selection (Shannon entropy on attention weights), Reconstruction (OLS solving for centroid weights), and Compression (SVD rank-k approximation)."
@@ -490,6 +600,9 @@ sections:
         description: |
           This post reframes column stores as simply normalized row stores.
         one-liner: "Columnar storage can be understood as extreme database normalization where each column becomes a separate table with an implied ordinal primary key, making operations like 'reconstructing a row' equivalent to performing a join."
+        decoder: |
+          * **Columnar storage**: storing each column contiguously on disk (vs row-by-row), optimized for analytical scans
+          * **Normalization**: decomposing tables to eliminate redundancy (here reframed as splitting columns into separate tables)
         summary:
           what: "Reframes column stores as normalized row stores: each column is a table, position is the primary key, row reconstruction is a join operation."
           why: "Unifies traditional query operations (projections, joins) with data format manipulation; helps reason about columnar storage trade-offs using relational algebra rather than treating it as a black-box encoding detail."
@@ -551,6 +664,9 @@ sections:
         description: |
           Product managers can move beyond prototype-only tools like Lovable or Bolt by adopting coding agents and learning engineering fundamentals — not to become engineers, but to build real, shippable products. Key lessons include upfront planning with structured PRDs, understanding the tech stack, iterating incrementally, and treating errors as guidance rather than failures. The foundational PM discipline of validating problems before building remains as critical as ever, since lower barriers to coding don't eliminate the need for rigorous thinking about what's worth building and why.
         one-liner: "Product managers can move beyond prototype tools like Lovable or Bolt by learning coding agents and engineering fundamentals to build real, shippable products."
+        decoder: |
+          * **PRD (Product Requirements Document)**: specification of what a product feature should do and why
+          * **Lovable / Bolt**: AI prototyping tools that generate working apps from prompts
         summary:
           what: "Key lessons include upfront planning with PRDs, understanding tech stacks, error-driven development, and iterating incrementally."
           why: "Lower barriers to coding don't eliminate the need for validating problems before building—foundational PM discipline matters more when building is fast and easy."
@@ -575,6 +691,10 @@ sections:
         description: |
           Add a production-ready AI agent to your product without building the infrastructure yourself. 21st Agents handles the runtime, sandboxing, streaming, tools, and UI - you configure and ship.
         one-liner: "21st Agents provides production-ready infrastructure for shipping AI agents—sandboxing, auth, streaming, tools, and UI—so developers can configure and deploy without building the runtime themselves."
+        decoder: |
+          * **E2B**: open-source sandboxed cloud runtime for running untrusted code
+          * **gVisor**: Google's application kernel providing container isolation without full VM overhead
+          * **RFQ (Request for Quote)**: protocol where agents request pricing/execution from multiple providers
         summary:
           what: "Platform handles E2B sandboxed runtimes with gVisor, credential injection, React UI components, and observability with one-command deployment."
           why: "Building an agent takes a weekend but running it in production takes months—this abstracts containers, secrets, auth, logging, and tenant isolation."
@@ -611,6 +731,9 @@ sections:
         description: |
           Poorly handled session timeouts create serious accessibility barriers for people with motor, cognitive, and vision impairments, who often need more time to complete online tasks and can lose significant progress when unexpectedly logged out. Common failures include silent timeouts, insufficient warnings, and no option to extend sessions — issues that disproportionately affect the roughly 1.3 billion people worldwide living with significant disabilities. Solutions such as advanced warnings, session extension options, and auto-saving progress can meaningfully improve accessibility while still meeting security requirements.
         one-liner: "Poorly handled session timeouts create serious accessibility barriers for users with motor, cognitive, and vision impairments who need more time to complete tasks."
+        decoder: |
+          * **WCAG 2.2.1 (SC 2.2.1)**: Web Content Accessibility Guidelines success criterion for timing adjustable content
+          * **Session timeout**: server-side expiration of a user's authenticated state after inactivity
         summary:
           what: "Common failures include silent timeouts, insufficient warnings, and no session extension—affecting 1.3 billion people with disabilities worldwide."
           why: "Motor impairments slow input speed, cognitive differences require more processing time, and screen reader navigation overhead makes 30-second warnings unusable."
@@ -648,6 +771,11 @@ sections:
         description: |
           Attackers drained 116,500 rsETH worth $292 million from Kelp DAO's LayerZero bridge, exposing Aave to $230 million in potential bad debt. The incident, linked to North Korean hackers, highlights structural vulnerabilities in cross-chain infrastructure as Arbitrum successfully froze $71 million of the stolen assets to mitigate further losses.
         one-liner: "Attackers exploited Kelp DAO's LayerZero bridge to drain $292M in rsETH by manipulating cross-chain messaging validation, exposing structural vulnerabilities in bridge infrastructure."
+        decoder: |
+          * **rsETH**: Kelp DAO's liquid restaked ETH token
+          * **LayerZero**: cross-chain messaging protocol enabling communication between blockchains
+          * **Aave**: decentralized lending protocol where deposited assets serve as collateral
+          * **Cross-chain bridge**: infrastructure that transfers assets or messages between separate blockchains
         summary:
           what: "Bridge exploit drained 116,500 rsETH by forging LayerZero cross-chain transfer messages that appeared valid but had no backing on source chain."
           why: "Attack didn't break encryption but exploited data-feed assumptions in cross-chain systems, a pattern distinct from traditional crypto exploits."
@@ -662,6 +790,9 @@ sections:
         description: |
           Institutional finance is abandoning public-by-default blockchains due to transparency risks. Tempo's $5 billion stablecoin project highlights this shift, forcing a choice between operator-visible privacy and trustless zero-knowledge cryptography. The industry must now decide whether to rely on trusted intermediaries or verifiable cryptographic guarantees for future onchain operations.
         one-liner: "Institutional finance is abandoning public blockchains due to transparency risks, forcing a choice between operator-visible privacy and trustless zero-knowledge cryptography."
+        decoder: |
+          * **ZK (Zero-Knowledge)**: cryptographic proof that verifies a statement without revealing underlying data
+          * **Operator-visible privacy**: transactions hidden from public but readable by a trusted operator
         summary:
           what: "Tempo's $5B stablecoin project uses operator-visible Zones for private transactions; alternative ZK-native chains offer cryptographic privacy without trusted intermediaries."
           why: "Architectural privacy model determines risk surface and trust assumptions, not just regulatory compliance posture."
@@ -673,6 +804,12 @@ sections:
         description: |
           Base Azul, Base's first independent network upgrade, targets mainnet activation on May 13. Its headline feature is a multiproof system that combines TEE and ZK provers, where either can independently finalize proposals and dual agreement compresses withdrawal times to one day. Performance improvements include a consolidation to a single execution client that reduced empty blocks by roughly 99% and sustained multiple 5,000 TPS bursts. A $250,000 Immunefi audit competition runs through May 4, with subsequent upgrades planned for an enshrined token standard and native account abstraction through the end of August.
         one-liner: "Base Azul upgrade targets May 13 mainnet with multiproof security combining TEE and ZK, single execution client consolidation, and sustained 5,000 TPS bursts."
+        decoder: |
+          * **TEE (Trusted Execution Environment)**: hardware-isolated enclave (e.g., Intel SGX) that runs code privately
+          * **PTC (Payload Timeliness Committee)**: Ethereum committee that attests to timely block delivery
+          * **ePBS (enshrined Proposer-Builder Separation)**: protocol-level separation of block building from block proposing
+          * **L2 (Layer 2)**: blockchain scaling solution that processes transactions off the main chain
+          * **EIP-7702**: Ethereum proposal for setting code on EOA accounts (enables smart-account features)
         summary:
           what: "First independent Base upgrade adds dual-proof finalization (either TEE or ZK finalizes proposals; both agreeing compresses withdrawals to one day), cuts empty blocks 99%, adopts Ethereum Osaka specs."
           why: "Production L2 decentralization approach shows specific engineering tradeoffs between proof diversity, withdrawal speed, and performance headroom."
@@ -687,6 +824,12 @@ sections:
         description: |
           Ripple published a four-phase roadmap to make the XRP Ledger quantum-resistant by 2028, with hybrid post-quantum cryptography testing starting in H1 2026 and a "Quantum-Day" emergency protocol included for accelerated migration if threats materialize before that target. The roadmap responds to Google Quantum AI research showing approximately 500,000 physical qubits could derive a private key from an exposed public key in about 9 minutes, a 20-fold improvement over prior estimates, a threat level that puts roughly 6.9M BTC with exposed public keys at theoretical risk. XRPL's native key rotation gives users the ability to migrate accounts without abandoning them, a structural advantage over Ethereum, where post-quantum migration requires manual asset transfer.
         one-liner: "Ripple published four-phase roadmap for quantum-resistant XRPL by 2028, responding to research showing 500K qubits could derive private keys from exposed public keys in 9 minutes."
+        decoder: |
+          * **Post-quantum cryptography**: cryptographic algorithms designed to resist quantum computer attacks
+          * **BLS**: Boneh-Lynn-Shacham signature scheme used by Ethereum validators
+          * **Ed25519**: elliptic-curve signature scheme used by Solana
+          * **ECDSA**: Elliptic Curve Digital Signature Algorithm, used for Ethereum wallet signatures
+          * **KZG commitments**: polynomial commitment scheme used in Ethereum's data availability layer
         summary:
           what: "Hybrid post-quantum cryptography testing starts H1 2026 with emergency 'Quantum-Day' protocol for accelerated migration if threats materialize early."
           why: "XRPL's native key rotation allows in-place account migration; Ethereum and similar chains require manual asset transfer to post-quantum addresses."
@@ -699,6 +842,9 @@ sections:
         description: |
           Coinbase's Independent Advisory Board on Quantum Computing and Blockchain identified two structural PoS vulnerabilities: validator signature schemes (Ethereum's BLS and Solana's Ed25519) that secure consensus, and onchain wallet signatures, with the board warning consensus mechanisms themselves may require redesign rather than simple wallet upgrades. Ethereum developers, led by Vitalik Buterin, have proposed replacing BLS validator signatures, KZG commitments, and ECDSA wallet signatures with post-quantum alternatives, though the board projects a multi-year timeline to migrate wallets, exchanges, custodians, and decentralized networks.
         one-liner: "Coinbase advisory board identified dual PoS quantum threats: validator signatures securing consensus (Ethereum BLS, Solana Ed25519) and onchain wallet signatures, warning consensus mechanisms may need redesign beyond wallet upgrades."
+        decoder: |
+          * **PoS (Proof of Stake)**: consensus mechanism where validators stake tokens rather than mining
+          * **Fault-tolerant quantum computer**: quantum computer with error correction capable of running useful algorithms
         summary:
           what: "Report from board including Vitalik Buterin, Dan Boneh, Justin Drake warns fault-tolerant quantum computers threaten both wallet layer and consensus layer cryptography."
           why: "PoS consensus security depends on validator signature schemes that may require protocol-level changes, not just user-initiated wallet migrations."
@@ -711,6 +857,12 @@ sections:
         description: |
           This proposal introduces variable PTC deadlines paired with affine metering and unified calldata pricing to optimize Ethereum network efficiency. By coupling variable deadlines with execution caps, the approach ensures propagation windows remain functional, effectively balancing calldata usage and execution time to improve overall protocol performance and scalability.
         one-liner: "Proposed variable PTC deadline with affine metering could roughly double Ethereum throughput by coupling deadline shifts with unified calldata pricing to better utilize slot time."
+        decoder: |
+          * **Affine metering**: pricing model where cost is a linear function (base + per-unit), not a flat rate
+          * **Calldata**: transaction payload data posted to Ethereum L1, priced per byte
+          * **EIP-7976**: proposal for dual calldata pricing (cheap base + expensive floor)
+          * **EIP-7623**: proposal for increased calldata floor pricing
+          * **EIP-7999**: proposal for multidimensional resource pricing in Ethereum
         summary:
           what: "Variable PTC deadline paired with 32 gas/byte unified calldata price (vs EIP-7976's dual-price model) converts unused propagation time into execution window, enabling ~7/3x gas limit increase."
           why: "Shows scaling approach that works within ePBS timing constraints without requiring multidimensional fee markets, by making calldata cost proportional to propagation burden."
@@ -724,6 +876,11 @@ sections:
         description: |
           Prediction markets have fragmented liquidity across venues with no fast arbitrage equalization, evidenced by an XRP contract exploit on Polymarket in January, where thin weekend liquidity allowed a trader to push the price to 70% on a 0.3% spot move, netting $231,000. Analysis of 72M Kalshi trades and 150M Polymarket trades shows the top 5% of skilled traders captured $228M over three years through persistent wealth transfer from uninformed takers, while passive LPs absorb binary-outcome inventory risk without earning typical bid-ask spreads. Without a Black-Scholes equivalent for prediction markets, current mechanisms, including LMSR, CFMMs, and order books, guarantee expected losses for makers. The proposed solution routes orders across venues, pools fragmented liquidity with a native RFQ layer, and tracks cross-market implied belief volatility in real time.
         one-liner: "Prediction market liquidity is fragmented across venues with no fast arbitrage equalization, enabling manipulation and systemic wealth transfer from uninformed traders to the top 5% who captured $228M over three years."
+        decoder: |
+          * **LMSR (Logarithmic Market Scoring Rule)**: automated market maker designed for prediction markets
+          * **CFMM (Constant Function Market Maker)**: AMM family (e.g., Uniswap's x*y=k) for token swaps
+          * **Favorite-longshot bias**: systematic mispricing where low-probability outcomes are overbet
+          * **RFQ (Request for Quote)**: protocol for soliciting prices from multiple liquidity providers
         summary:
           what: "Analysis of 72M Kalshi and 150M Polymarket trades shows passive LPs absorb binary-outcome inventory risk without earning typical market-making spreads; favorite-longshot bias persists."
           why: "Lacks Black-Scholes equivalent and cross-venue pricing, so traditional market-making assumptions fail and informed traders exploit structural biases."
@@ -739,6 +896,12 @@ sections:
         description: |
           Smart contracts provide a mechanism for labs to make credible commitments when trading with potentially scheming AIs. By leveraging Ethereum's immutable, cryptographically verifiable state, labs can reduce the risk of honeypotting. This approach enables AIs to independently verify deal authenticity through milestone-based escrow and on-chain attestations.
         one-liner: "Smart contracts provide cryptographically verifiable commitments that scheming AIs can independently audit via Ethereum's immutable state to reduce honeypot risk when making deals with labs."
+        decoder: |
+          * **Honeypotting**: presenting a fake deal to catch an AI revealing misaligned behavior
+          * **BLS signatures**: see crypto-4; here used for Ethereum validator committee verification
+          * **ENS (Ethereum Name Service)**: on-chain domain system mapping human-readable names to addresses
+          * **EAS (Ethereum Attestation Service)**: on-chain system for making signed claims about addresses or data
+          * **N-of-M panel**: quorum scheme requiring N approvals from M total signers
         summary:
           what: "Milestone-based escrow with on-chain attestations enables AIs to verify deal authenticity by checking contract code, validator signatures, and permanent state that survives memory wipes."
           why: "Labs can fabricate off-chain evidence cheaply, but blockchain's continuous state (every block commits to previous) makes consistent fabrication expensive at scale."
@@ -753,6 +916,11 @@ sections:
         description: |
           CME Bitcoin futures open interest has dropped below $10B to a 14-month low, indicating the basis trade unwind is near completion.
         one-liner: "CME Bitcoin futures open interest dropped below $10B to 14-month low, indicating basis trade unwind is near completion as Strategy accumulates $60B BTC."
+        decoder: |
+          * **Basis trade**: arbitrage strategy buying spot asset and shorting futures to capture the price spread
+          * **CME (Chicago Mercantile Exchange)**: regulated futures exchange offering Bitcoin contracts
+          * **Open interest**: total number of outstanding (unsettled) futures contracts
+          * **Funding rate**: periodic payment between long and short positions in perpetual futures
         summary:
           what: "Basis traders (buy spot + short futures for yield) exiting positions creates mechanical selling pressure; Strategy's systematic buying provides structural bid at scale."
           why: "Market structure shift from hedged yield farmers to directional accumulation changes price discovery dynamics when one large buyer operates against unwinding headwinds."

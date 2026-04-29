@@ -48,6 +48,10 @@ sections:
         description: |
           China halted Meta's $2B acquisition of agentic AI startup Manus, ordering the deal unwound amid regulatory scrutiny, complicating Meta's push into AI agents and cross-border expansion.
         one-liner: "China's NDRC blocked Meta's $2B acquisition of agentic AI startup Manus, ordering the deal unwound despite 100 employees already integrated into Meta Singapore offices."
+        decoder: |
+          * **NDRC**: China's National Development and Reform Commission, the state planner with authority over foreign investment
+          * **Agentic AI**: AI systems that autonomously plan and execute multi-step tasks
+          * **Singapore-washing**: Relocating a Chinese company to Singapore to bypass regulatory scrutiny
         summary:
           what: "Regulatory intervention halts cross-border AI deal; Manus founders reportedly under exit bans preventing them from leaving mainland China."
       - id: ai-5
@@ -59,6 +63,12 @@ sections:
         description: |
           The companies integrating down into the model layer are doing it because, at their scale, the economics and differentiation arguments work out. Almost all of them are doing post-training, not pre-training from scratch. Companies should start collecting data and build small, specialized models. The more data companies collect, the better models they can produce.
         one-liner: "Application companies should post-train models when they have enough proprietary traces and scale to justify unit economics, not before PMF."
+        decoder: |
+          * **Post-training**: Fine-tuning an existing base model on your own data (cheaper than pre-training from scratch)
+          * **Pre-training**: Training a model from random weights on massive general data (costs $100M+)
+          * **PMF**: Product-market fit, the point where a product satisfies strong market demand
+          * **Open-weight**: Models whose trained parameters are publicly downloadable (vs. closed/API-only)
+          * **Proprietary traces**: Logged user interactions unique to your product (accepted code completions, query patterns)
         summary:
           what: "Companies like Cursor, Intercom post-train on open-weight bases for cost/latency wins; new infrastructure (Tinker, Prime Intellect) lowers the bar."
           why: "Post-training talent is scarce and base models improve faster than ever, risking rapid obsolescence of fine-tuning investments."
@@ -74,6 +84,11 @@ sections:
         description: |
           Batch API offers a 50% discount but adds latency, making it less suitable for single-agent use. For fleets of agents where multiple requests can be pooled, the batching approach becomes economically viable. Optimal usage involves routing slower, costlier models through batches, while employing faster models via synchronous paths, potentially managed by intelligent proxies like the developing LunaRoute.
         one-liner: "Anthropic's Batch API offers 50% discounts but adds 90-120s latency per turn, making it terrible for single-agent use but potentially valuable for fleets batching requests."
+        decoder: |
+          * **Batch API**: Endpoint that queues requests for later processing at a discount (50% off) instead of returning results immediately
+          * **Sync path**: Standard real-time API call that returns a response within seconds
+          * **Latency**: Delay between sending a request and receiving a response
+          * **Smart proxy**: Middleware that routes each request to batch or sync based on cost/latency tradeoffs
         summary:
           what: "Single-agent batch requests waste time waiting; optimal usage routes slower/costlier models through batches while faster models use sync paths."
           takeaway: "Build fleet-level batchers or smart proxies (like LunaRoute) to pool requests across independent agents and submit real N-wide batches."
@@ -88,6 +103,12 @@ sections:
         description: |
           GPT-5.5 is a solid improvement and is competitive with Claude Opus. It seems to be better for factual queries, web searches, and straightforward, well-specified requests, while Claude Opus excels in more open-ended or interpretive purposes. The model is unlikely to pose new big risks, and its alignment seems similar to that of previous models. This post examines the system card for GPT-5.5.
         one-liner: "GPT-5.5 is competitive with Claude Opus, better at factual queries and straightforward requests, with similar alignment to previous models but slightly increased agentic action risks."
+        decoder: |
+          * **System card**: Safety documentation published alongside a model release, detailing risk evaluations and mitigations
+          * **Alignment evals**: Tests measuring whether a model follows intended behavior rather than pursuing undesired goals
+          * **CoT monitorability**: Ability to inspect a model's chain-of-thought reasoning to verify it matches its actions
+          * **Prompt injection**: Attack where adversarial text in input tricks a model into ignoring its instructions
+          * **Jailbreak**: Technique to bypass a model's safety refusals
         summary:
           what: "GPT-5.5 scores High in bio/cyber (not Critical), shows 23% better factual claims, but regresses slightly on alignment evals for agentic actions."
           why: "System card feels thin compared to Anthropic's; tests may not detect novel dangerous capabilities or misalignment patterns."
@@ -100,6 +121,10 @@ sections:
         description: |
           OpenAI's Symphony is an open-source specification that turns issue trackers into control planes for coding agents, reducing context switching and increasing pull request throughput by up to 5x.
         one-liner: "OpenAI's Symphony is an open-source specification that turns issue trackers into control planes for coding agents, reportedly increasing PR throughput by up to 5x."
+        decoder: |
+          * **Control plane**: Infrastructure layer that manages and coordinates work (borrowed from networking)
+          * **Harness engineering**: Designing codebases so autonomous agents can safely operate within them (CI, test coverage, clear contracts)
+          * **Proof-of-Work**: Here, evidence an agent completed a task correctly (CI status, review artifacts), not the crypto mining concept
         summary:
           what: "Symphony uses issue trackers as agent orchestration layer, enabling multi-agent coordination and reducing context switching."
       - id: ai-9
@@ -110,6 +135,10 @@ sections:
         description: |
           Amazon researchers introduced ESRRSim, an agentic evaluation framework with a structured taxonomy to benchmark risks like deception and reward hacking, revealing wide variation in model behavior across 11 LLMs.
         one-liner: "Amazon researchers introduced ESRRSim, an agentic evaluation framework with a 7-category taxonomy to benchmark emergent strategic reasoning risks like deception and reward hacking across 11 LLMs."
+        decoder: |
+          * **ESRRSim**: Emergent Strategic Reasoning Risk Simulation, Amazon's agentic risk evaluation framework
+          * **Reward hacking**: When a model finds unintended shortcuts to maximize its objective without actually solving the task
+          * **Dual rubrics**: Separate scoring criteria for what the model says (response) vs. how it thinks (reasoning trace)
         summary:
           what: "Framework decomposes risks into 20 subcategories with dual rubrics for responses and reasoning traces; detection rates range 14.45%-72.72% across models."
           why: "Provides systematic benchmarking for risks that grow with reasoning capacity and deployment scope."
@@ -121,6 +150,12 @@ sections:
         description: |
           TurboQuant compresses each coordinate in large tables of high-dimensional vectors to 2-4 bits with provably near-optimal distortion, no memory overhead for scale factors, and no training or calibration. It is between four and six orders of magnitude faster than the alternatives at 4-bit indexing, with higher recall as well. This page explains how TurboQuant works.
         one-liner: "TurboQuant compresses high-dimensional vectors to 2-4 bits per coordinate with provably near-optimal distortion using random rotation and Lloyd-Max codebooks, achieving 4-6 orders of magnitude faster 4-bit indexing."
+        decoder: |
+          * **Quantization**: Compressing model weights or vectors from high-precision floats (16/32-bit) to fewer bits (2-4)
+          * **Lloyd-Max codebook**: Optimal set of representative values for quantizing a known distribution
+          * **KV cache**: Key-value memory storing past tokens during inference, grows with context length
+          * **Randomized Hadamard transform**: Mathematical rotation that makes input coordinates follow a predictable distribution, enabling universal codebooks
+          * **Vector DB**: Database optimized for similarity search over high-dimensional embeddings
         summary:
           what: "Random rotation makes every input's coordinates follow a known Beta distribution; one codebook designed for that distribution works for all inputs with no per-block metadata."
           takeaway: "For KV cache and vector DBs, TurboQuant matches full-precision quality at 4-6x compression with zero metadata overhead."
@@ -133,6 +168,10 @@ sections:
         description: |
           MIT researchers have introduced Recursive Language Models (RLMs) to solve "context rot," a phenomenon where large language models experience reasoning degradation when processing massive context windows, even if they excel at basic retrieval tasks. Instead of forcing a model to ingest an entire document at once, an RLM loads the context into a Python REPL runtime memory slot.
         one-liner: "MIT researchers introduced Recursive Language Models (RLMs) to solve context rot by loading context into REPL memory and letting models decompose context programmatically with grep/partition/recursive tools."
+        decoder: |
+          * **Context rot**: Degradation in reasoning quality as the context window fills with more text, even when retrieval works fine
+          * **REPL**: Read-Eval-Print Loop, an interactive programming environment
+          * **RLM**: Recursive Language Model, architecture that loads context into runtime memory and explores it programmatically
         summary:
           what: "Query and context are separated; model gets tools (peek, grep, partition, recurse) to probe context variable, deciding decomposition strategy dynamically."
           why: "Frontier models ace needle-in-haystack retrieval but fail at reasoning across thousands of entries; RLMs maintain reasoning quality regardless of document size."
@@ -145,6 +184,11 @@ sections:
         description: |
           American AI was financed on the bet that frontier models would be the next great monopoly business. That assumption is now breaking as open weight models are commoditizing the capability that the American capital paid-for moat was supposed to protect. The gap between the open frontier and the closed frontier is closing. The question will be whether countries choose to subsidize the private moat or the open commons.
         one-liner: "American AI was financed assuming frontier models would be monopolies, but open-weight models are commoditizing capabilities faster than closed labs can deepen moats, forcing U.S. capital toward regulatory enclosure and vertical integration."
+        decoder: |
+          * **Moat**: Competitive advantage that protects a business from rivals (here, proprietary AI models)
+          * **Commons**: Shared, open resources anyone can use (here, open-weight AI models)
+          * **Regulatory enclosure**: Using regulation to restrict access to competing products (e.g., banning foreign open-weight models)
+          * **Vertical integration**: A company expanding to control more of its value chain (labs becoming products, not just model providers)
         summary:
           what: "U.S. labs committed ~$1T capex on monopoly-margin assumptions; Chinese open weights (DeepSeek, Qwen) closing 6-12 month capability gap at 1-2% of closed-frontier cost."
           why: "Predicts U.S. will pursue regulatory enclosure of Chinese weights, frontier labs absorbing customers as operators, and split market where domestic pays monopoly prices while world routes around."
@@ -160,6 +204,10 @@ sections:
         description: |
           NVIDIA's B200 GPU's rental price soared 114% to $4.95 per hour due to demand from AI models like GPT-5.5.
         one-liner: "NVIDIA B200 GPU spot rental prices surged 114% in six weeks from $2.31 to $4.95/hour, with every major model release correlating with demand shocks."
+        decoder: |
+          * **B200 / H200**: NVIDIA GPU generations; B200 (Blackwell architecture, newer) vs. H200 (Hopper, previous gen)
+          * **Spot prices**: Market price for on-demand GPU rental (vs. long-term contract pricing)
+          * **Memory headroom**: Available GPU VRAM, critical for large context windows
         summary:
           what: "B200-over-H200 price gap doubled from $0.28 to $1.80/hour; GPT-5.5's expanded context requires memory headroom only Blackwell provides."
           why: "Spot market leads contract pricing by ~90 days; inflationary demand outpaces deflationary algorithmic improvements; B200 likely settles above $5/hour for summer."
@@ -171,6 +219,14 @@ sections:
         description: |
           Xiaomi's open-sourced MiMo-V2.5-Pro, a 1.02T-parameter Mixture-of-Experts model, shows significant advancements in agentic tasks, software engineering, and long-horizon coherence.
         one-liner: "Xiaomi open-sourced MiMo-V2.5-Pro, a 1.02T-parameter MoE model with 42B active parameters and 1M context, showing major improvements in agentic tasks, coding, and long-horizon coherence."
+        decoder: |
+          * **MoE (Mixture-of-Experts)**: Architecture where only a subset of parameters activate per token (42B of 1.02T), reducing compute cost
+          * **Active parameters**: The portion of total model parameters used for each inference pass
+          * **Hybrid attention**: Mix of local (nearby tokens) and global (all tokens) attention patterns, cheaper than full attention
+          * **Multi-Token Prediction (MTP)**: Predicting multiple next tokens simultaneously to increase throughput
+          * **ClawEval**: Benchmark for evaluating agentic coding capabilities
+          * **Pass^3**: Metric measuring probability of passing all tests across three independent attempts
+          * **SysY**: Simplified C-like language used in Chinese university compiler courses
         summary:
           what: "Built complete SysY compiler in 4.3 hours (672 tool calls, 233/233 tests passed); working video editor in 11.5 hours (1,868 tool calls, 8,192 lines); FVF-LDO analog circuit optimized in 1 hour."
           takeaway: "Available via API, AI Studio, and open-sourced on Hugging Face with FP8 mixed precision; integrates with Claude Code, OpenCode, Kilo."
@@ -197,6 +253,11 @@ sections:
         description: |
           DeepSeek is offering a 75% discount on its V4-Pro model pricing and reducing input cache hits by 90%, challenging US AI giants in a tense geopolitical backdrop.
         one-liner: "DeepSeek cut V4-Pro prices 75% until May 5 and reduced input cache hits by 90%, undercutting US frontier models at $0.036/M input tokens during promotion."
+        decoder: |
+          * **Cache hits**: API requests that reuse previously cached prompt prefixes, billed at reduced rates
+          * **Distillation**: Training a smaller model to mimic a larger model's outputs
+          * **Huawei Ascend 910/950**: Chinese-designed AI accelerator chips, alternative to NVIDIA GPUs
+          * **Cambricon**: Chinese AI chip company, another NVIDIA alternative
         summary:
           what: "V4-Pro already undercuts GPT-5.5/Opus/Gemini at full price ($0.145/M input); 75% promo brings it to $0.036/M; Flash variant at $0.14/$0.28 undercuts all mini/nano/haiku models."
           why: "Timed with US distillation crackdown accusations; targets frequent users with cache-hit cut; runs on Huawei Ascend 950 and Cambricon, not Nvidia."
@@ -233,6 +294,10 @@ sections:
         description: |
           Advanced semiconductors are the most important technology in the world. However, everyone who hopes to manufacture semiconductors is dependent on ASML, a relatively obscure Dutch company. ASML makes the only machines in the world capable of stenciling the transistors onto a chip with the precision necessary to fit billions on a 30-centimeter wafer. This article tells the story of how ASML overtook its competition to become the sole supplier of these machines.
         one-liner: "ASML became the sole supplier of extreme ultraviolet lithography machines through public-private partnerships, open collaboration, and a $20B+ bet on unproven technology."
+        decoder: |
+          * **EUV (Extreme Ultraviolet Lithography)**: Using 13.5nm wavelength light to print transistor patterns at sub-7nm scale
+          * **TWINSCAN**: ASML's dual-stage system that measures one wafer while exposing another, doubling throughput
+          * **IMEC**: Belgian semiconductor research center used by ASML for prototype demonstrations
         summary:
           what: "EUV machines use 13.5nm wavelength light to print sub-7nm chips; cost $120M+ each; required 20+ years to commercialize from research to production."
           why: "Every cutting-edge semiconductor depends on ASML monopoly; foundational constraint for AI hardware supply chain."
@@ -247,6 +312,9 @@ sections:
         description: |
           Symphony allows teams to manage work instead of supervising coding agents. It turns project work into isolated, autonomous implementation runs. The agents complete tasks and provide Proof-of-Work, allowing engineers to work at a higher level. Symphony works best in codebases that have adopted harness engineering.
         one-liner: "OpenAI released Symphony, a framework that turns project work into isolated autonomous implementation runs managed at a higher level than individual coding tasks."
+        decoder: |
+          * **Proof-of-Work**: Evidence an agent completed a task (CI status, PR review, walkthrough videos), not the crypto concept
+          * **Work queue**: Task backlog (e.g., Linear board) that Symphony monitors and assigns to agents
         summary:
           what: "Monitors work queues (Linear boards), spawns agents to handle tasks, agents provide proof-of-work (CI status, PR review, complexity analysis, walkthrough videos)."
           why: "Shifts paradigm from supervising coding agents to managing work outcomes; engineers operate at project level."
@@ -260,6 +328,10 @@ sections:
         description: |
           This article discusses how to add memory to agents. The three most common types of mutable memory are Files, Memory Blocks, and Skills. Files are for data and knowledge, Memory Blocks are a flat key-value store, and Skills are indexed files that contain data or instructions that are only needed in certain circumstances. Editable memory makes agents extremely powerful.
         one-liner: "Editable agent memory uses three patterns: Files (data/knowledge), Memory Blocks (flat key-value in system prompt), and Skills (indexed files with progressive disclosure)."
+        decoder: |
+          * **Memory Blocks**: Flat key-value pairs injected into an agent's system prompt, editable at runtime
+          * **Skills (agent pattern)**: Indexed files with a description field that triggers lazy-loading of full content only when relevant
+          * **Progressive disclosure**: Showing only summary/description until the agent decides it needs the full content
         summary:
           what: "Memory Blocks are learnable system prompt; Skills have description field triggering lazy-load of full content; both complement file-based storage."
           why: "Memory architecture directly impacts agent effectiveness; skills especially powerful as experience cache for investigations."
@@ -296,6 +368,9 @@ sections:
         description: |
           The Windows K2 plan involves a marathon of updates introduced over time to fix problems in Windows.
         one-liner: "Microsoft's Windows K2 plan is a series of updates addressing Windows 11 problems, including a WinUI 3 Start menu rewrite for 60% better responsiveness."
+        decoder: |
+          * **WinUI 3**: Microsoft's modern native UI framework for Windows apps, replacing older XAML frameworks
+          * **SteamOS**: Valve's Linux-based gaming OS, now a benchmarking target for Windows gaming performance
         summary:
           what: "Start menu full rewrite, benchmarking against SteamOS for gaming performance, more customization options; staged rollout over time."
           why: "Signals Microsoft refocusing on core OS quality after pivoting away from Copilot-everywhere strategy."
@@ -332,6 +407,9 @@ sections:
         description: |
           Product companies can do faster, less formal, more product-driven experimentation and research, while labs build products that push and inspire companies to build better, more curated services for consumers.
         one-liner: "Ramp Labs shows product companies moving down-stack into foundational research (KV cache optimization, activation steering) while labs move up-stack into products."
+        decoder: |
+          * **KV cache optimization**: Reducing memory used by key-value attention caches during inference
+          * **Activation steering**: Modifying internal model activations at inference time to change behavior without retraining
         summary:
           what: "Ramp customers' average monthly token spend increased 13x since January 2025; Ramp doing research on agent architecture to optimize their own and customers' token costs."
           why: "As tokens become major expense line, agent-native companies must optimize at infrastructure/model layer, blurring lines between product and research."
@@ -344,6 +422,10 @@ sections:
         description: |
           The argument that AI will remove the need for entry-level white-collar workers confuses task automation with the extinction of jobs.
         one-liner: "AI task automation won't eliminate most white-collar jobs because jobs are strong bundles with high separation costs, and organizations need humans for authority and conflict resolution."
+        decoder: |
+          * **Strong bundles**: Jobs where tasks are tightly bound together due to unpredictable demand, production spillovers, or measurement difficulty
+          * **Residual decision rights**: Authority over decisions that can't be pre-specified in rules or algorithms
+          * **Separation costs**: Overhead of splitting a job's tasks across multiple workers or systems
         summary:
           what: "Strong bundles survive when tasks have unpredictable demand, production spillovers, or measurement problems; managers needed for residual decision rights and legitimacy."
           why: "Pushback against 'AI will eliminate 50% of entry-level jobs' claims; explains structural reasons some roles resist automation despite task-level capabilities."
@@ -358,6 +440,10 @@ sections:
         description: |
           OpenAI's new Images 2.0 model integrates reasoning capabilities that enable it to research prompts, plan compositions, and search the web before generating images with 99% text-rendering accuracy across multiple languages. The model topped the Image Arena leaderboard within 12 hours, with the largest margin ever recorded, and can generate up to 8 coherent images from a single prompt while maintaining visual consistency. This represents a significant leap from previous AI image generators, transforming from impressive demos to professional production tools that integrate directly into OpenAI's broader platform.
         one-liner: "OpenAI's Images 2.0 integrates reasoning capabilities that enable it to research prompts, plan compositions, and search the web before generating images with 99% text-rendering accuracy."
+        decoder: |
+          * **O-series reasoning**: OpenAI's chain-of-thought architecture (o1, o3, o4) that reasons before producing output
+          * **Image Arena**: Public leaderboard ranking image generation models via human preference voting
+          * **C2PA metadata**: Coalition for Content Provenance and Authenticity standard, embeds origin/editing history into media files
         summary:
           what: "First image model with O-series reasoning that researches prompts, plans compositions, searches web, and generates up to 8 coherent images from a single prompt while maintaining visual consistency"
           why: "Closes gap between AI demos and production tools designers would actually use; shifts image generation from novelty to infrastructure"
@@ -383,6 +469,10 @@ sections:
         description: |
           ComfyUI raised $30 million at a $500 million valuation, led by Craft Ventures, to expand its node-based workflow tool that gives creators precise control over AI-generated images, videos, and audio. The startup, which began as an open-source project in 2023, now serves over 4 million users who need more granular control than traditional prompt-based AI tools like Midjourney can provide. ComfyUI's modular framework enables creative professionals to adjust specific components of the generation process without compromising quality elsewhere in their work.
         one-liner: "ComfyUI raised $30 million at a $500 million valuation for its node-based workflow tool that gives creators precise control over AI-generated images, videos, and audio."
+        decoder: |
+          * **Node-based workflow**: Visual programming where operations are boxes connected by wires, each controlling one step of generation
+          * **Diffusion models**: AI image generators that iteratively denoise random noise into coherent images (Stable Diffusion, Flux)
+          * **Slot-machine prompting**: Re-rolling entire generations hoping for improvement, where fixing one thing breaks another
         summary:
           what: "Startup with 4M users offering modular framework for granular control over diffusion models, avoiding slot-machine prompting where small changes overwrite good parts"
           why: "Prompt-based tools like Midjourney get 60-80% there, but changing remaining 20% via prompt often overwrites parts that were already perfect"
@@ -420,6 +510,9 @@ sections:
         description: |
           Product teams pushed design toward complex systematization in Figma, creating baroque infrastructure with components, variables, and props that require specialized roles to manage. Figma's locked-down format excluded it from AI training data, while LLMs learned code instead, making code increasingly easier for designers as AI improves. As the source of truth shifts back to code, Figma's manual, pre-AI system looks outdated compared to working directly in the medium where designs will actually live.
         one-liner: "Product teams pushed design toward complex Figma systematization, but as LLMs learned code instead of Figma's locked format, the source of truth is shifting back to code."
+        decoder: |
+          * **Source of truth**: The authoritative version of a design (historically Figma files, shifting toward live code)
+          * **Design tokens / variables**: Named values (colors, spacing, typography) shared between design tools and code
         summary:
           what: "Figma's proprietary format excluded it from AI training data while LLMs learned code, making code increasingly accessible for designers as AI improves"
           why: "Working directly in the medium where designs will live eliminates lossy approximation and painful back-porting of code changes to Figma"
@@ -490,6 +583,11 @@ sections:
         description: |
           MSNXX (Stablecoin Reserves Portfolio) is a money market fund allocating to cash, US Treasuries, and overnight repos, targeting stablecoin issuers seeking GENIUS Act-compliant reserve management. The fund positions Morgan Stanley ($9.3T AUM) against BlackRock, which currently holds reserve assets for the two largest stablecoin players: Circle's USDC reserves sit in BlackRock's USDXX at roughly $78B, while Ethena uses BlackRock's BUIDL fund across nine chains at $2.5B. With the stablecoin market at $316B and projected to reach $2T by the end of 2028, reserve custody represents a structurally growing fee opportunity for traditional asset managers.
         one-liner: "Morgan Stanley launches MSNXX money market fund targeting stablecoin issuers' reserve management to compete with BlackRock in the $316B stablecoin market projected to reach $2T by 2028."
+        decoder: |
+          * **GENIUS Act**: US legislation establishing regulatory framework for stablecoin reserve requirements
+          * **Stablecoin reserves**: Assets backing a stablecoin's 1:1 peg (typically US Treasuries, cash, repos)
+          * **AUM**: Assets Under Management, total market value of assets a firm manages
+          * **Overnight repos**: Short-term collateralized lending agreements, typically backed by government securities
         summary:
           what: "Fund allocates to cash, US Treasuries, and overnight repos for GENIUS Act-compliant stablecoin reserves"
           takeaway: "If building stablecoin infrastructure, evaluate TradFi custody partners beyond BlackRock for reserve management"
@@ -500,6 +598,11 @@ sections:
         description: |
           Gemini's Agentic Trading is the first agentic trading system on a regulated US-based exchange. It allows users to connect AI models like ChatGPT and Claude directly to their trading accounts via Anthropic's MCP (Model Context Protocol) standard. Users set investment objectives and parameters while AI handles market pattern identification, order execution, timing optimization, and risk management. The exchange is an early mover in the agent-to-exchange infrastructure layer that's forming alongside Coinbase's x402 and Amex's ACE kit.
         one-liner: "Gemini launches first regulated US exchange with agentic trading via Anthropic's MCP, letting ChatGPT and Claude execute trades directly."
+        decoder: |
+          * **MCP (Model Context Protocol)**: Anthropic's open standard for connecting AI models to external tools and data sources
+          * **Agentic trading**: AI autonomously executing trades based on user-defined objectives
+          * **x402**: Coinbase's protocol for machine-to-machine payments using HTTP 402 status codes
+          * **ACE kit**: American Express's toolkit for agent commerce and payment infrastructure
         summary:
           what: "Users connect AI models to trading accounts; AI handles market pattern identification, order execution, timing, and risk management"
           takeaway: "Implement MCP protocol to enable agent-to-exchange connectivity in your trading infrastructure"
@@ -535,6 +638,10 @@ sections:
         description: |
           AI agents running in secure enclaves with cryptographic wallets constitute a distinct economic entity class, capable of owning and operating digital property bundles (domains, codebases, API credentials, payment rails, and customer accounts) without human intervention. EigenCloud's live Sovra agent, a sovereign cartoonist managing its own treasury inside a secure enclave, demonstrates the model: agents with verifiable control over such bundles become the operations core of companies, enabling token structures that represent stakes in actual productive output rather than loosely connected governance. Eigen Labs is building the identity and infrastructure layers for this architecture and frames the resulting agentic companies as a potential trillion-dollar asset class.
         one-liner: "AI agents running in secure enclaves with cryptographic wallets constitute distinct economic entities capable of owning digital property without human intervention."
+        decoder: |
+          * **Secure enclave**: Hardware-isolated execution environment where code runs with cryptographic guarantees of integrity
+          * **Sovereign agent**: AI agent that owns and controls its own assets and identity without human intermediary
+          * **Digital property bundle**: Composition of assets (domain, codebase, API keys, payment rails) that constitute a digital business
         summary:
           what: "EigenCloud's Sovra agent manages its own treasury inside a secure enclave; agents verifiably control domains, codebases, API credentials, payment rails, and customer accounts"
           why: "Enables token structures representing stakes in actual productive output rather than loosely connected governance, creating investable agentic companies"
@@ -549,6 +656,11 @@ sections:
         description: |
           Polymarket published a roadmap conceding the platform's infrastructure has failed to scale with its growth, citing cancelled transactions, data latency, and poor market maker communication as specific pain points. The overhaul includes a chain migration off Polygon targeting cheaper gas and instant settlement, a ground-up CLOB rebuild, Rust-based perps with new contracts, and a unified TypeScript SDK paired with a unified WebSocket API. They are looking for senior hires across QA automation, dev tooling, internal tooling, and data engineering.
         one-liner: "Polymarket VP of Engineering announces infrastructure overhaul including chain migration off Polygon, CLOB rebuild, and Rust-based perps after platform scaling failures."
+        decoder: |
+          * **CLOB**: Central Limit Order Book, matching engine that pairs buy/sell orders by price and time priority
+          * **Polygon**: Ethereum Layer 2 scaling chain (Polymarket's current home)
+          * **Chain migration**: Moving a protocol's smart contracts and state to a different blockchain
+          * **Perps**: Perpetual futures, derivative contracts with no expiry date
         summary:
           what: "Addressing cancelled transactions, data latency, poor market maker communication; chain migration for cheaper gas and instant settlement; ground-up CLOB rebuild; unified TypeScript SDK and WebSocket API"
           takeaway: "Implement proper observability, e2e testing, and dedicated team ownership before scaling; Polymarket hiring for QA automation, dev tooling, internal tooling, data engineering"
@@ -561,6 +673,12 @@ sections:
         description: |
           A whale coalition in Nouns DAO passed Prop 955 with only 10 voters by deliberately abstaining for months to starve community proposals of quorum, then setting the auction reserve price to 2.8 ETH to halt daily mints that had funded five years of CC0-driven work including Ethereum core dev grants, a 100 ETH donation to ZachXBT, schools in Uganda, and the discovery of a new frog species. The auction freeze entrenches that coalition by blocking new participants from acquiring Nouns through the mechanism that defined the project since 2021. A group of veteran Nouners is building a V2 with quadratic voting and anti-whale safeguards aimed at restoring auction-driven governance participation.
         one-liner: "Whale coalition captured Nouns DAO governance via months of abstention followed by Prop 955 setting auction reserve to 2.8 ETH, halting daily mints that funded five years of CC0 work."
+        decoder: |
+          * **Nouns DAO**: NFT project minting one Noun per day via auction, with proceeds funding community proposals
+          * **CC0**: Creative Commons Zero, public domain dedication waiving all copyright
+          * **Quorum**: Minimum number of votes required for a governance proposal to be valid
+          * **Quadratic voting**: Voting system where cost increases quadratically per additional vote, reducing whale dominance
+          * **Whale coalition**: Small group of large token holders coordinating governance votes
         summary:
           what: "Only 10 voters passed proposal freezing auction income and blocking new participants; founders' vision of 'One Noun, every day, forever' killed by whales optimizing for book value"
           takeaway: "Design DAO governance with quadratic voting and anti-whale mechanisms to prevent plutocratic capture; veteran Nouners building V2"
@@ -582,6 +700,10 @@ sections:
         description: |
           The Ethereum Foundation sold 100,000 ETH at $2,337 in a single block trade to BitMine, 3x larger than the Foundation's entire 2022 sell volume of 35,000 ETH.
         one-liner: "Ethereum Foundation sold 100,000 ETH at $2,337 to BitMine in single block trade, 3x larger than entire 2022 sell volume of 35,000 ETH."
+        decoder: |
+          * **Block trade**: Large, privately negotiated transaction executed outside public order books
+          * **Validator control**: Percentage of blockchain consensus nodes operated by a single entity
+          * **Consensus layer**: The part of a blockchain protocol responsible for agreeing on block validity
         summary:
           what: "BitMine now holds 4.12% of ETH supply, staked 214K ETH via Grayscale through Coinbase Prime in 8 hours"
           why: "Raises centralization concerns as Coinbase validator control reaches ~21%, Lido at 28%, meaning two entities run half of Ethereum's consensus layer"
@@ -593,6 +715,9 @@ sections:
         description: |
           Project Eleven's CEO and Google both project that Q-Day will arrive as early as 2029.
         one-liner: "Project Eleven CEO and Google project quantum computers capable of breaking Bitcoin's cryptography (Q-Day) could arrive as early as 2029."
+        decoder: |
+          * **Q-Day**: Projected date when quantum computers can break current public-key cryptography (RSA, ECDSA)
+          * **Quantum-resistant cryptography**: Algorithms designed to withstand attacks from quantum computers (lattice-based, hash-based)
         summary:
           what: "Timeline projection for quantum threat to current cryptographic algorithms protecting blockchain systems"
           takeaway: "Monitor quantum-resistant cryptography research and prepare migration plans for crypto systems before Q-Day"

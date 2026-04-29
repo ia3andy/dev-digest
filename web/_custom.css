@@ -140,6 +140,41 @@
   @apply list-disc pl-5 mb-2 space-y-1;
 }
 
+/* Decoder collapsible */
+.digest-decoder {
+  @apply mt-3 rounded-lg overflow-hidden
+    bg-gradient-to-br from-violet-50 to-violet-100/50
+    dark:from-violet-950 dark:to-violet-900/50
+    border border-violet-200 dark:border-violet-800;
+}
+
+.digest-decoder > summary {
+  @apply cursor-pointer flex items-center gap-2 px-4 py-3
+    text-sm font-medium text-violet-700 dark:text-violet-300
+    hover:bg-violet-100/50 dark:hover:bg-violet-800/30
+    select-none transition-colors duration-150;
+}
+
+.digest-decoder > summary::-webkit-details-marker {
+  @apply hidden;
+}
+
+.digest-decoder[open] .digest-deep-icon {
+  @apply rotate-180;
+}
+
+.digest-decoder-content {
+  @apply px-4 pb-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed;
+}
+
+.digest-decoder-content p {
+  @apply mb-1;
+}
+
+.digest-decoder-content strong {
+  @apply text-violet-700 dark:text-violet-300;
+}
+
 /* Original article collapsible */
 .digest-description {
   @apply mt-2 rounded-lg overflow-hidden

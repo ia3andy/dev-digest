@@ -18,6 +18,10 @@ sections:
         description: |
           Google will invest between $10 billion and $40 billion in Anthropic. The amount depends on whether Anthropic can meet certain performance targets. Anthropic recently received a $5 billion investment from Amazon, with an option for more investment based on performance. The investments value Anthropic at $350 billion. The funds will help the startup close the gap between demand and supply of compute for AI training and inference.
         one-liner: "Google will invest $10-40 billion in Anthropic contingent on performance targets, following Amazon's $5 billion investment."
+        decoder: |
+          * **TPU** — Google's custom AI chip (Tensor Processing Unit)
+          * **Compute** — processing power for training and running AI models
+          * **Inference** — running a trained model to generate outputs (vs. training it)
         summary:
           what: "Major cloud providers investing in AI labs with compute capacity as payment, valuing Anthropic at $350 billion."
       - id: ai-2
@@ -39,6 +43,9 @@ sections:
         description: |
           Anthropic has released a feature for Claude Managed Agents called Memory. It allows agents to remember and use information from prior sessions and accumulate knowledge over time without requiring manual prompt updates. Memory is a filesystem-based layer, so data is stored as files that can be exported, managed through APIs, and scoped with permissions for various organizational needs. The feature is available now in public beta to all Managed Agents users.
         one-liner: "Anthropic released Memory for Claude Managed Agents in public beta, allowing filesystem-based persistent storage across sessions with audit trails."
+        decoder: |
+          * **Claude Managed Agents** — Anthropic's hosted, persistent AI agent service for enterprises
+          * **Filesystem-based memory** — storing agent knowledge as files (exportable, auditable) rather than in opaque databases
         summary:
           what: "Memory feature lets agents accumulate knowledge over time without manual prompt updates, with full programmatic control and rollback capabilities."
           takeaway: "Available now via Claude Console and APIs for all Managed Agents users."
@@ -78,6 +85,11 @@ sections:
         description: |
           Monitoring LLM behavior necessitates adopting the AI Evaluation Stack, separating tests into deterministic assertions (syntax and routing integrity) and model-based evaluations (semantic quality). Engineers use offline pipelines for pre-deployment regression testing with human-reviewed "Golden Datasets" while online pipelines monitor real-world performance for drift and failures. A continuous feedback loop from production telemetry ensures AI systems adapt, maintaining high performance as user behavior evolves.
         one-liner: "Production LLM monitoring requires separating deterministic assertions (syntax, routing) from model-based evaluations (semantic quality) in offline and online pipelines."
+        decoder: |
+          * **AI Evaluation Stack** — framework splitting AI tests into deterministic (pass/fail) and model-based (semantic quality) layers
+          * **LLM-as-Judge** — using a stronger AI model to grade a weaker model's outputs
+          * **Golden Dataset** — curated set of input/expected-output pairs for regression testing
+          * **Drift** — gradual change in model behavior over time without code changes
         summary:
           what: "The AI Evaluation Stack framework for enterprise-ready AI with two-layer checks and continuous feedback loops."
           why: "Traditional unit testing doesn't work for stochastic AI systems; need structured evaluation pipeline."
@@ -92,6 +104,9 @@ sections:
         description: |
           Coding agents are the first AI product people are paying for at volume and regularly. However, compute demand has started to grow faster than anyone can build it out. The industry isn't ready for the agent boom. The most obvious move for AI labs now is to cut limits and raise prices.
         one-liner: "Coding agents drove Anthropic to 3x revenue growth in early 2026, but compute demand is growing faster than infrastructure can scale."
+        decoder: |
+          * **HBM** — High Bandwidth Memory, fast GPU-attached RAM now 30% of AI infrastructure spend
+          * **EUV lithography** — extreme ultraviolet chip fabrication, bottleneck with only ~700 machines projected by 2030
         summary:
           what: "Bottlenecks moving from GPUs to HBM memory (30% of infrastructure spend), energy grid capacity, and TSMC fab constraints."
           why: "Expect higher prices and usage limits as labs can't meet demand; only ~700 EUV lithography machines will exist by 2030."
@@ -104,6 +119,11 @@ sections:
         description: |
           Instruction-tuned image generation models can act as generalist vision systems, achieving state-of-the-art results across tasks by reframing perception as image generation.
         one-liner: "Google's Vision Banana achieves state-of-the-art results by instruction-tuning Nano Banana Pro to reframe perception tasks as image generation."
+        decoder: |
+          * **Instruction-tuned** — model fine-tuned to follow natural language commands
+          * **SAM** — Segment Anything Model (Meta's image segmentation)
+          * **DINO** — self-supervised vision model from Meta
+          * **Perception as image generation** — reframing vision tasks (detection, segmentation) as "draw the answer"
         summary:
           what: "Image generation models can serve as generalist vision learners, matching specialists like SAM 3 and Depth Anything."
           why: "Paradigm shift where generative pretraining becomes central to computer vision, similar to text generation's role in NLP."
@@ -116,6 +136,10 @@ sections:
         description: |
           Stash is a tool that gives agents persistent memory. It enables agents to remember, recall, consolidate memories, and learn across sessions. Stash is open source, self-hosted, and works with any MCP-compatible agent.
         one-liner: "Stash is an open-source MCP server providing persistent memory for AI agents through an 8-stage consolidation pipeline that turns observations into structured knowledge."
+        decoder: |
+          * **MCP** — Model Context Protocol, standard for connecting AI agents to external tools/data
+          * **pgvector** — PostgreSQL extension for storing and searching vector embeddings
+          * **Consolidation pipeline** — process that compresses raw observations into structured knowledge over time
         summary:
           what: "Self-hosted Postgres + pgvector solution that remembers, recalls, and consolidates memories across sessions for any MCP-compatible agent."
           takeaway: "Run via docker compose; works with Claude Desktop, Cursor, Windsurf, Cline, Continue, and OpenAI Agents."
@@ -127,6 +151,11 @@ sections:
         description: |
           Efficient video intelligence advances include compact universal vision encoders like EUPE, which distill capabilities from specialized models such as DINO and SAM. Techniques like LongVU use adaptive token allocation and compression for long-form video understanding while edge and on-device deployment handle real-time processing. Persistent challenges include streaming understanding, sparse-event detection, real-time sub-watt inference for AR glasses, and robust multi-modal reasoning.
         one-liner: "2026 video AI advances include universal encoders like EUPE distilling CLIP/DINO/SAM into sub-100M parameters, adaptive compression for hour-long videos, and EdgeTAM tracking at 16 FPS on iPhone."
+        decoder: |
+          * **EUPE** — compact universal vision encoder distilling multiple specialist models into one
+          * **Token allocation** — deciding how many compute tokens to spend per video frame or region
+          * **EdgeTAM** — on-device tracking model running at 16 FPS on mobile hardware
+          * **Factorized spatial-temporal attention** — processing space and time dimensions separately to save compute
         summary:
           what: "Production video systems now use factorized spatial-temporal attention, adaptive token allocation, and aggressive quantization for edge deployment."
       - id: ai-11
@@ -137,6 +166,10 @@ sections:
         description: |
           A framework from Meta for test-time scaling in coding agents summarized past rollouts into structured representations, enabling better selection and reuse to improve benchmark performance.
         one-liner: "Meta's test-time scaling framework for coding agents uses structured rollout summaries and recursive tournament voting to improve from 70.9% to 77.6% on SWE-Bench Verified."
+        decoder: |
+          * **SWE-Bench Verified** — benchmark of real GitHub issues for evaluating coding agents
+          * **Test-time scaling** — spending more compute during inference (not training) to improve results
+          * **Rollout** — a single end-to-end attempt by an agent to solve a problem
         summary:
           what: "Long-horizon agent scaling is about representing trajectories as compact summaries for better selection and reuse, not just generating more attempts."
           why: "Test-time compute for agents requires different techniques than for bounded outputs like math problems."
@@ -149,6 +182,9 @@ sections:
         description: |
           Thinking Machines Lab has been hiring more researchers from Meta than from any other single employer. The AI startup is expanding on multiple fronts, and it just signed a multibillion-dollar cloud deal with Google that gives it access to Nvidia's latest GB300 chips. Meta's large pay packages are well known, but Thinking Machines' $12 billion valuation and 140-employee count mean there's still a lot of financial upside to joining the startup.
         one-liner: "Thinking Machines Lab secured a multibillion-dollar Google cloud deal for GB300 chips and is hiring heavily from Meta, including PyTorch co-founder Soumith Chintala as CTO."
+        decoder: |
+          * **GB300** — NVIDIA's latest AI chip (Blackwell generation)
+          * **PyTorch** — dominant open-source ML framework, co-created by Soumith Chintala
         summary:
           what: "AI startup valued at $12 billion with ~140 employees raiding Meta talent while Meta poaches TML's founders."
           why: "Shows bidirectional talent war and infrastructure partnerships becoming critical for AI startups."
@@ -170,6 +206,10 @@ sections:
         description: |
           What does it mean when a company doing $2.7B in annualized revenue has gross margins of negative 23%? In Cursor's case, it means AI coding tools have inverted the old SaaS playbook, where serving the next customer is supposed to be cheap. Power users consume more model capacity and compute, so the best customers can become the most expensive. That reframes the rumored SpaceX deal as more than a $60B headline. Access to Colossus would loosen Cursor's dependence on Anthropic and OpenAI fees, where that negative 23% lives.
         one-liner: "SpaceX secured a $60B option to acquire Cursor or pay $10B for collaboration, giving Cursor access to Colossus to address -23% gross margins at $2.7B ARR."
+        decoder: |
+          * **Colossus** — xAI/SpaceX supercomputer cluster
+          * **ARR** — Annual Recurring Revenue
+          * **Negative gross margins** — cost of serving each customer exceeds subscription revenue
         summary:
           what: "Cursor's negative margins driven by Anthropic/OpenAI fees show economics where best customers are most expensive to serve."
           why: "AI coding tools need infrastructure partnerships to survive; per-user compute costs exceed subscription revenue for power users."
@@ -183,6 +223,8 @@ sections:
         description: |
           Cohere and Aleph Alpha are partnering to create a sovereign, enterprise-grade AI alternative, combining Canadian AI scale with German research expertise.
         one-liner: "Cohere and Aleph Alpha partnered in a transatlantic alliance backed by $600M from Schwarz Group, targeting the $600B sovereign AI market."
+        decoder: |
+          * **Sovereign AI** — AI infrastructure controlled within national borders for data/regulatory compliance
         summary:
           what: "Canadian and German companies combining scale and research for enterprise-grade sovereign alternative to US labs."
       - id: ai-16
@@ -194,6 +236,9 @@ sections:
         description: |
           The raw output of ChatGPT's proof was quite poor and required experts to sift through and actually understand it, but it appears the AI discovered a new way to think about large numbers and their anatomy.
         one-liner: "A 23-year-old with no advanced math training used GPT-5.4 Pro to solve a 60-year-old Erdős conjecture through a novel method no human mathematician had considered."
+        decoder: |
+          * **Erdős conjecture** — open problem from mathematician Paul Erdős about properties of primitive sets of integers
+          * **Primitive sets** — sets of positive integers where no element divides another
         summary:
           what: "AI discovered a new approach to primitive sets and Erdős sums by applying a well-known formula from related math areas."
           why: "Shows LLMs can make genuine mathematical contributions beyond pattern matching, though expert verification and refinement still required."
@@ -207,6 +252,9 @@ sections:
         description: |
           Meta has partnered with AWS to utilize Amazon's Graviton chips for its AI, enhancing scalability and efficiency.
         one-liner: "Meta partnered with AWS to deploy tens of millions of Graviton5 cores for agentic AI workloads requiring CPU-intensive real-time reasoning and orchestration."
+        decoder: |
+          * **Graviton** — AWS custom ARM-based CPU, optimized for throughput workloads
+          * **Agentic AI workloads** — tasks where AI reasons, plans, and calls tools (CPU-heavy, not just GPU inference)
         summary:
           what: "Shift from GPU-only training to CPU-intensive agent workloads—reasoning, code generation, search, multi-step task coordination."
           why: "Agentic AI creates different infrastructure requirements; Graviton5's 192 cores and 5x larger cache handle these workloads more efficiently."
@@ -218,6 +266,10 @@ sections:
         description: |
           The national lab thesis is legitimate for nations, but for everyone else, it's a solution to a problem they don't have.
         one-liner: "Analysis argues enterprises don't need sovereign labs—they need local deployment and data isolation, not pre-trained frontier models."
+        decoder: |
+          * **GDPR** — EU General Data Protection Regulation
+          * **DPDPA** — India's Digital Personal Data Protection Act
+          * **Private inference** — running AI models on your own infrastructure, data never leaves your control
         summary:
           what: "Sovereign AI is about data flows and jurisdictional control, not model nationality; only 1.5 of 7 sovereign lab claims actually hold."
           why: "Clarifies what enterprises actually need for GDPR/DPDPA compliance versus geopolitical marketing."
@@ -245,6 +297,13 @@ sections:
         description: |
           HashiCorp released Vault 2.0 under IBM's versioning model with two-year support, introducing identity-based security, workload identity federation without static credentials, performance improvements, and breaking changes while adding SCIM, SPIFFE support, and enhanced PKI automation.
         one-liner: "HashiCorp Vault 2.0 adopts IBM's versioning model with two-year support and introduces workload identity federation to eliminate static credentials across multi-cloud environments."
+        decoder: |
+          * **SCIM** — System for Cross-domain Identity Management, protocol for automated user provisioning
+          * **SPIFFE** — Secure Production Identity Framework for Everyone, workload identity standard
+          * **OIDC** — OpenID Connect, identity layer on OAuth 2.0
+          * **PKI** — Public Key Infrastructure, system for managing digital certificates
+          * **Workload identity federation** — authenticating services via tokens instead of static credentials
+          * **OpenBao** — open-source fork of Vault created after BSL license change
         summary:
           what: "First major version since 2018, adds OIDC-based secret syncing to AWS/Azure/GCP, SCIM 2.0, SPIFFE support, and breaking changes to legacy components."
           takeaway: "Review migration docs if running 1.x; Azure auth now requires explicit configuration instead of environment variable fallbacks."
@@ -259,6 +318,11 @@ sections:
         description: |
           DigitalOcean Dedicated Inference is a managed LLM hosting service that deploys AI models on dedicated GPUs with Kubernetes-native orchestration, targeting teams that need predictable performance and economics for high-volume inference workloads beyond simple pay-per-token pricing. The service handles day-two operations like cluster lifecycle management and routing while giving users control over model choice, capacity, and scaling, using industry-standard components like vLLM for serving and the Kubernetes Gateway API for intelligent, KV cache-aware load balancing.
         one-liner: "DigitalOcean Dedicated Inference deploys LLMs on dedicated GPUs with vLLM and KV cache-aware routing for predictable high-volume inference economics beyond pay-per-token pricing."
+        decoder: |
+          * **vLLM** — high-throughput open-source LLM inference engine
+          * **KV cache** — key-value cache storing previously computed attention states to avoid recomputation
+          * **DOKS** — DigitalOcean Kubernetes Service
+          * **BYOM** — Bring Your Own Model
         summary:
           what: "Kubernetes-native platform separating control plane (lifecycle management) from data plane (inference traffic), with intelligent gateway routing and prefix cache awareness."
           why: "Traditional pay-per-token pricing doesn't scale for sustained high-volume workloads; dedicated GPU economics matter when contexts are long and throughput is consistent."
@@ -273,6 +337,12 @@ sections:
         description: |
           This post details how to implement PCI-DSS-compliant data protection and audit logging on Google Kubernetes Engine (GKE). It covers customer-managed encryption keys (CMEK), tokenization, DLP scanning, and 12-month immutable audit trails. The implementation framework addresses specific PCI requirements by securing cardholder data with controlled encryption keys that can be instantly revoked during breaches, while maintaining automated logging across GKE clusters, GCS buckets, and BigQuery to answer assessor questions like "show me every time someone accessed cardholder data in the last 90 days."
         one-liner: "Building PCI-DSS compliance on GKE requires customer-managed encryption keys for instant breach containment, tokenization to reduce scope, and 12-month immutable audit trails."
+        decoder: |
+          * **PCI-DSS** — Payment Card Industry Data Security Standard
+          * **CMEK** — Customer-Managed Encryption Keys (you control the keys, not the cloud provider)
+          * **PAN** — Primary Account Number (the 16-digit card number)
+          * **DLP** — Data Loss Prevention, scanning to prevent sensitive data from appearing where it shouldn't
+          * **Tokenization** — replacing sensitive data with random tokens that map back through a secure vault
         summary:
           what: "CMEK via Cloud KMS encrypts GKE boot disks, GCS buckets, BigQuery datasets with keys you control; tokenization isolates PAN to a single vault service; DLP scanning prevents cardholder data from landing where it shouldn't."
           why: "CMEK enables instant cryptographic containment during breaches by disabling keys (data becomes unreadable even if exfiltrated); tokenization removes most systems from PCI scope entirely by replacing PAN with random tokens."
@@ -301,6 +371,16 @@ sections:
         description: |
           Elasticsearch's simdvec is a hand-tuned SIMD kernel library that accelerates vector distance computations across all query types, using techniques like bulk scoring, prefetching, and architecture-specific optimizations to significantly outperform alternatives—especially at large scale when data exceeds CPU cache. Its biggest advantage comes not from raw compute speed but from efficiently hiding memory latency, enabling faster, more scalable vector search across diverse data types and hardware.
         one-liner: "Elasticsearch's simdvec uses hand-tuned AVX-512 and NEON kernels with bulk scoring and prefetching to outperform FAISS and jvector by up to 4x when vector data exceeds CPU cache."
+        decoder: |
+          * **SIMD** — Single Instruction Multiple Data, processing multiple values in one CPU operation
+          * **AVX-512** — Intel's 512-bit SIMD instruction set
+          * **NEON** — ARM's SIMD instruction set
+          * **HNSW** — Hierarchical Navigable Small World, graph-based approximate nearest neighbor algorithm
+          * **IVF** — Inverted File Index, partitioned vector search
+          * **FFI** — Foreign Function Interface, calling native C/C++ code from Java
+          * **Prefetching** — loading data from RAM into CPU cache before it's needed to hide latency
+          * **BBQ** — Better Binary Quantization, Elasticsearch's compact vector format
+          * **bfloat16** — 16-bit floating point format optimized for ML (brain float)
         summary:
           what: "Native C++ SIMD library called via Java FFI, supporting all Elasticsearch vector types (float32, int8, bfloat16, binary, BBQ) with architecture-specific memory latency hiding strategies."
           why: "Production vector indices don't fit in cache (10M int8 vectors at 1024 dims = 10GB); bulk scoring with x86 prefetching and ARM interleaved loading keeps pipelines fed during DRAM access, where single-pair throughput benchmarks mislead."
@@ -314,6 +394,9 @@ sections:
         description: |
           AI agents are increasingly capable of autonomously discovering and exploiting CI/CD misconfigurations, as demonstrated by a campaign targeting GitHub Actions workflows through injection, permissions abuse, and unpinned dependencies. Datadog IaC Security addresses these risks by scanning workflows pre-merge, enforcing best practices, and expanding detection coverage for triggers, supply chain integrity, and runtime security gaps.
         one-liner: "AI agents are autonomously exploiting GitHub Actions misconfigurations through injection attacks, permissions abuse, and unpinned dependencies."
+        decoder: |
+          * **IaC Security** — Infrastructure as Code scanning (catching misconfigurations before deployment)
+          * **Unpinned dependencies** — GitHub Actions referencing tags instead of commit SHAs, vulnerable to supply chain attacks
         summary:
           what: "Datadog IaC Security scans workflows pre-merge to detect dangerous triggers, supply chain issues, and runtime security gaps before bots discover them."
           takeaway: "Scan GitHub Actions workflows for injection vulnerabilities, excessive permissions, and unpinned action versions before merge; enforce best practices via IaC security tools."
@@ -351,6 +434,9 @@ sections:
         description: |
           OpenAI's GPT-5.5 achieved a state-of-the-art 64.66% score on Databricks' OfficeQA benchmark, representing a 13% improvement over GPT-5.4.
         one-liner: "OpenAI's GPT-5.5 achieved 64.66% on Databricks' OfficeQA benchmark with oracle retrieval and 52.63% in full-agent mode, a 46% error reduction over GPT-5.4."
+        decoder: |
+          * **OfficeQA** — Databricks benchmark using 89,000 pages of Treasury Bulletins requiring retrieval, table parsing, and calculations
+          * **Oracle retrieval** — benchmark mode where the correct document is pre-selected (tests reasoning, not search)
         summary:
           what: "GPT-5.5 powers Codex coding agent and improves multi-step enterprise document reasoning across 89,000 pages of Treasury Bulletins requiring retrieval, table interpretation, and calculations."
           why: "The 46% error reduction in agent harness (where model autonomously finds documents, parses, computes) shows gains hold in realistic end-to-end enterprise workflows, not just when retrieval is pre-solved."
@@ -362,6 +448,11 @@ sections:
         description: |
           Amazon Elastic Container Registry now automatically syncs OCI referrers like signatures, SBOMs, and attestations via pull through cache, eliminating manual retrieval and enabling seamless verification workflows across supported AWS regions.
         one-liner: "Amazon ECR pull through cache now automatically discovers and syncs OCI referrers including signatures, SBOMs, and attestations from upstream registries without manual retrieval."
+        decoder: |
+          * **OCI referrers** — metadata artifacts (signatures, SBOMs) linked to container images via OCI spec
+          * **SBOM** — Software Bill of Materials, inventory of components in a container image
+          * **Attestation** — cryptographic proof of how an image was built
+          * **Pull through cache** — ECR feature that mirrors upstream registry images into your private registry on first pull
         summary:
           what: "Previously required manual listing and fetching of upstream referrers; now automatic during referrers API requests, caching artifacts in private repositories."
           why: "Enables end-to-end image signature verification, SBOM discovery, and attestation retrieval workflows without client-side workarounds when using pull through cache."
@@ -376,6 +467,11 @@ sections:
         description: |
           Airtable cut archive storage costs by about 100x by moving cold, mostly immutable MySQL data into S3 as partitioned Parquet files and querying it with embedded Apache DataFusion. The dataset became 10x smaller, while S3 was about 10x cheaper per byte. A Flink-based migration, bulk and shadow validation, tiered caching, custom secondary indexes, and Parquet bloom filters preserved interactive latency and enterprise guarantees.
         one-liner: "Airtable cut archive storage costs by about 100x by moving cold MySQL data to S3 as partitioned Parquet files and querying with embedded Apache DataFusion."
+        decoder: |
+          * **Parquet** — columnar file format optimized for analytics (high compression, fast scans)
+          * **DataFusion** — Apache query engine written in Rust, embeddable in applications
+          * **Flink** — distributed stream/batch processing framework
+          * **S3** — AWS object storage
         summary:
           what: "Migrated petabytes of cell history and action logs from MySQL to S3 Parquet, achieving 10x compression and 10x cheaper storage per byte."
           why: "Demonstrates practical two-tier storage architecture for hot/cold data at scale without sacrificing interactive query latency."
@@ -390,6 +486,11 @@ sections:
         description: |
           Internal tables store and manage both data and metadata within the database system, while external tables only store metadata and reference data that lives outside the system, leaving the underlying data untouched. Internal tables enable tighter lifecycle management, whereas external tables decouple storage and compute, making it easier to scale, share, and access large datasets without moving or duplicating data.
         one-liner: "External tables let databases query data in object storage without loading it, evolving from CSV parsers in 2001 to the foundation of modern lakehouse architectures."
+        decoder: |
+          * **External tables** — database objects that query data stored outside the database (e.g., in S3) without loading it
+          * **DDL** — Data Definition Language (CREATE TABLE, ALTER TABLE)
+          * **Lakehouse** — architecture combining data lake storage with data warehouse query capabilities
+          * **Iceberg/Delta Lake** — open table formats adding ACID transactions to object storage
         summary:
           what: "External tables are DDL-defined pointers to data outside the database, originally for CSV/XML, now supporting Parquet, JSON, and open table formats on S3/cloud storage."
           why: "Reduces storage costs (up to 20x vs warehouse-managed), avoids ETL pipeline development, and enables always-current data access for cold/archival workloads."
@@ -405,6 +506,10 @@ sections:
         description: |
           Spotify's coding agent Honk automated a complex migration of ~1,800 data pipelines by using tooling (Backstage + Fleet Management) to find dependencies, generate code changes, and manage rollout, saving 10 weeks of engineering work. This worked thanks to systems being standardized and well-instrumented, and testing to reliably make and validate changes at scale.
         one-liner: "Spotify's Honk coding agent automated migration of roughly 1,800 data pipelines using Backstage lineage tracking and Fleet Management, saving an estimated 10 engineering weeks."
+        decoder: |
+          * **Backstage** — Spotify's open-source developer portal for service cataloging and lineage
+          * **Fleet Management** — Spotify's internal tool for coordinating changes across many repositories
+          * **Honk** — Spotify's background coding agent for automated migrations
         summary:
           what: "Used background AI agent with Backstage endpoint lineage, Codesearch queries, and context-engineered prompts to generate migration PRs across BigQuery Runner and dbt frameworks."
           why: "Shows production AI agent deployment with measurable ROI and key lessons: success depends on codebase standardization, comprehensive context files, and build-time testing."
@@ -429,6 +534,12 @@ sections:
         description: |
           Databases were built for predictable apps and human-written queries, not AI agents that generate queries on the fly, retry automatically, and can make silent mistakes at scale. Teams now need stronger guardrails like tighter permissions, timeouts, audit logs, idempotent writes, and clearer schemas so databases stay safe when AI becomes the caller.
         one-liner: "Databases designed for deterministic apps need new guardrails when AI agents become callers, including timeouts, idempotency keys, soft deletes, and role-per-agent access."
+        decoder: |
+          * **Idempotency key** — unique identifier ensuring a retried write produces the same result (prevents duplicates)
+          * **Soft delete** — marking records as deleted instead of removing them, enabling audit and recovery
+          * **PgBouncer** — PostgreSQL connection pooler
+          * **statement_timeout** — PostgreSQL setting that kills queries exceeding a time limit
+          * **idle_in_transaction_timeout** — kills sessions that sit idle with an open transaction
         summary:
           what: "AI agents violate database assumptions: they generate unpredictable queries, retry automatically, hold connections during LLM reasoning, and can make silent mistakes at scale."
           why: "Agents aren't constrained by code review or finite code paths; they reason to queries, pause mid-transaction, and write based on potentially incorrect understanding."
@@ -443,6 +554,12 @@ sections:
         description: |
           Cloud high availability can no longer assume regions are safe, independent failure domains: sanctions, data localization laws, conflict zones, and submarine cable cuts can take out an entire region or make it noncompliant. Treat region-level disruption as a first-class risk, with multi-region, jurisdiction-aware data placement, control-plane separation, and dependency audits. The added cost and complexity should be justified with Annual Loss Expectancy modeling rather than assumed.
         one-liner: "Cloud regions can fail as correlated units due to sanctions, data localization laws, conflicts, or submarine cable cuts, requiring multi-region architecture beyond multi-AZ."
+        decoder: |
+          * **Sovereign fault domain** — geographic/legal boundary where all infrastructure can fail together due to political events
+          * **AZ** — Availability Zone, isolated data center within a cloud region
+          * **RTO** — Recovery Time Objective, maximum acceptable downtime
+          * **ALE** — Annual Loss Expectancy (probability x impact), used to justify resilience investment
+          * **NACL** — Network Access Control List, VPC-level firewall rules
         summary:
           what: "Geopolitical events create sovereign fault domains that can simultaneously compromise all AZs in a region—a failure class that multi-AZ doesn't protect against."
           why: "Region-level disruptions from legal, political, or physical events are becoming realistic operational risks with minutes-to-days RTO if unplanned."
@@ -469,6 +586,9 @@ sections:
         description: |
           tda-mapper is a Python library that helps find hidden shapes, clusters, and patterns in messy data using the Mapper algorithm from topological data analysis. It's built to scale to large datasets, works with scikit-learn pipelines, and includes visual tools to explore complex data more clearly.
         one-liner: "tda-mapper is a Python library using the Mapper algorithm from topological data analysis to find hidden shapes, clusters, and patterns in high-dimensional data."
+        decoder: |
+          * **TDA** — Topological Data Analysis, mathematical approach finding shape/structure in high-dimensional data
+          * **Mapper algorithm** — TDA technique that builds a graph revealing clusters, loops, and flares in data
         summary:
           what: "Implements TDA Mapper with scikit-learn integration, Plotly/Matplotlib/PyVis visualization, and interactive web interface for exploratory analysis."
           takeaway: "Try tda-mapper for unsupervised exploration of complex datasets where traditional clustering may miss topological structure."
@@ -493,6 +613,12 @@ sections:
         description: |
           Jaeger v2 rebuilds its core on the OpenTelemetry Collector, natively ingesting OTLP and unifying metrics, logs, and traces in one deployment model to improve ingestion and eliminate translation steps. It's also adding agent-facing interfaces like MCP, ACP, and AG-UI so engineers can use natural language to translate incident context into deterministic trace queries and collaborate with AI agents.
         one-liner: "Jaeger v2 rebuilds on the OpenTelemetry Collector and adds MCP/ACP protocols so engineers and AI agents can collaborate on trace analysis via natural language."
+        decoder: |
+          * **OTLP** — OpenTelemetry Protocol, standard for transmitting metrics, logs, and traces
+          * **MCP** — Model Context Protocol (Anthropic's standard for agent-tool communication)
+          * **ACP** — Agent Client Protocol, interface for AI agents to interact with observability tools
+          * **AG-UI** — Agent-User Interface protocol
+          * **GenAI semantic conventions** — standardized attribute names for tracing LLM operations (prompt assembly, embeddings, tool calls)
         summary:
           what: "Natively ingests OTLP, unifies metrics/logs/traces, and translates natural-language incident queries into deterministic trace searches via Agent Client Protocol."
           why: "AI agent execution paths (prompt assembly, vector retrieval, tool calls, embeddings) need specialized tracing beyond traditional microservices patterns."
@@ -506,6 +632,12 @@ sections:
         description: |
           Enterprise LLM systems can produce fluent but factually wrong answers against private structured knowledge, creating a “hallucination tax” on pricing, policy, org, and legal data. Fine-tuning, RAG, and static verification each help, but none learn from repeated failures. Reflexion closes the loop by storing natural-language reflections from verified errors in episodic memory and reinjecting them into future prompts.
         one-liner: "Fine-tuning, RAG, and static verification each partially fix LLM hallucinations, but Reflexion closes the loop by storing natural-language error reflections in episodic memory."
+        decoder: |
+          * **Reflexion** — framework where an AI stores natural-language lessons from verified errors and reinjects them into future prompts
+          * **Episodic memory** — sliding window of past reflections used as context for the next attempt
+          * **Verbal reinforcement** — changing model behavior through prompt context rather than weight updates
+          * **KG triples** — Knowledge Graph entries in subject-predicate-object form (e.g., "Paris is-capital-of France")
+          * **ASTUTE RAG / Stable-RAG** — research papers showing limitations of retrieval-augmented generation
         summary:
           what: "Reflexion framework uses Actor-Evaluator-Self-Reflection loop to generate generalized lessons from verified failures and inject them into future prompts as verbal reinforcement."
           why: "Demonstrates how frozen-weight systems can improve through architecture rather than parameter updates, learning from repeated failure categories."
@@ -533,6 +665,10 @@ sections:
         description: |
           Data systems evolved to decouple storage and compute, making it cheaper and easier to scale.
         one-liner: "Object storage with table formats replaced HDFS because network bandwidth caught up to disk I/O and decoupling storage from compute saves money."
+        decoder: |
+          * **HDFS** — Hadoop Distributed File System, co-located storage requiring always-on cluster nodes
+          * **Manifest-based commits** — Iceberg/Delta solve S3's lack of atomic rename by tracking file lists in metadata files
+          * **Ephemeral compute** — spin-up/tear-down query engines (Spark, Trino) that don't run when idle
         summary:
           what: "Data locality died when cloud networks reached 25-100 Gbps; Iceberg and Delta Lake solved S3's rename problem via manifest-based commits, enabling ACID without filesystem semantics."
           why: "Ephemeral compute on S3 is cheaper than always-on HDFS nodes and eliminates the coupling problem of scaling storage and compute together."
@@ -545,6 +681,10 @@ sections:
         description: |
           Security patches and provider updates stopped last week.
         one-liner: "Apache Airflow 2 reached end of life on April 22, 2026, with no more security patches or provider package updates."
+        decoder: |
+          * **Airflow** — Apache workflow orchestrator for data pipelines
+          * **SubDAG** — deprecated Airflow feature for nesting DAGs, removed in Airflow 3
+          * **execution_date** — legacy Airflow context variable replaced in v3
         summary:
           what: "Support for Airflow 2.x ended after a one-year migration window since Airflow 3.0's April 2025 release; teams must upgrade to receive security fixes."
           takeaway: "Migrate to Airflow 3 now; expect SubDAG removal, context variable changes (execution_date, prev_ds, next_ds gone), and new event-driven scheduling features."
@@ -568,6 +708,9 @@ sections:
         description: |
           Adobe's new Project Page Turner uses AI to create personalized websites in real time for individual visitors, moving beyond traditional cookie- and segment-based personalization. The technology generates tailored web pages in under 100 milliseconds using large language models, allowing websites to essentially create themselves based on what they know about each user. This approach was developed in response to customer feedback and aims to replace static websites with dynamically generated experiences that feel custom-made for every visitor.
         one-liner: "Adobe's Project Page Turner generates personalized websites in real-time using LLMs, moving beyond cookie-based personalization."
+        decoder: |
+          * **AEM** — Adobe Experience Manager, enterprise content management platform
+          * **Zero-party data** — information a user intentionally shares (e.g., search queries), distinct from tracked behavior
         summary:
           what: "AI system creates custom web pages in under 100ms based on individual visitor data, sitting atop AEM infrastructure."
           why: "Shifts website architecture from static to dynamic generation; positions brand-controlled AI experiences against ChatGPT."
@@ -630,6 +773,11 @@ sections:
         description: |
           AIMAC is an AI accessibility checker that tests 43 AI models by prompting them to build web pages across 28 categories and auditing them for accessibility violations.
         one-liner: "AIMAC benchmarks 43 AI models by generating web pages across 28 categories and auditing for accessibility violations."
+        decoder: |
+          * **AIMAC** — AI Model Accessibility Checker benchmark
+          * **axe-core** — open-source accessibility testing engine
+          * **WCAG 2.2 Level AA** — Web Content Accessibility Guidelines standard for digital accessibility compliance
+          * **Accessibility debt** — weighted score of violations (critical=5pts, serious=2pts)
         summary:
           what: "Tests how accessible AI-generated HTML is without explicit accessibility prompting; GPT 5.3 Codex ranks #1 with 0.00 debt."
           why: "AI writing more code than ever; if models don't prioritize accessibility by default, web accessibility won't improve."
@@ -644,6 +792,10 @@ sections:
         description: |
           Bind your Lottie animation properties to real data. Change colors, text, and transforms at runtime, without re-exporting.
         one-liner: "LottieFiles Motion Tokens let developers bind Lottie animation properties to runtime data without re-exporting."
+        decoder: |
+          * **Lottie** — lightweight JSON animation format (After Effects to web/mobile)
+          * **Motion Tokens** — bindable properties in Lottie animations controllable via code at runtime
+          * **dotLottie** — compressed Lottie container format
         summary:
           what: "Mark any color, text, or transform in Lottie Creator as a token; control it via code at runtime in dotLottie format."
           why: "Eliminates re-export workflow for every animation update; enables data-driven motion and theming."
@@ -656,6 +808,11 @@ sections:
         description: |
           An experiment with Google's Antigravity IDE and Figma Console MCP enabled a two-way workflow — generating Figma components from code and React code from Figma designs — keeping design tokens in sync throughout. Metadata files were also generated to give AI agents structured rules and context for consistent, on-brand component usage. The experience points to a broader shift: design system teams must move from writing human-readable guidelines to encoding governance through machine-readable metadata and agentic workflows.
         one-liner: "Designer experiments with Google Antigravity and Figma Console MCP to build bidirectional workflows generating code from design and design from code."
+        decoder: |
+          * **Antigravity** — Google's experimental AI-powered IDE
+          * **Figma Console MCP** — Model Context Protocol server for programmatic Figma interaction
+          * **shadcn/ui** — copy-paste React component library built on Radix primitives
+          * **Design parity** — measuring whether code output matches Figma design specifications
         summary:
           what: "Two-way workflow syncing Figma components with React code and design tokens; generated metadata for both humans and AI agents."
           why: "Design system teams must shift from human guidelines to machine-readable metadata for AI governance; 'vibe coding' requires specs design."
@@ -683,6 +840,12 @@ sections:
         description: |
           OKLCH is emerging as a replacement for older color systems like HSL because it aligns with human perception—maintaining consistent brightness, stable hues, and more accurate color intensity. Created by Björn Ottosson, it simplifies tasks like building color scales, gradients, and accessible contrast, removing much of the manual tweaking designers have long relied on. Although already adopted in modern tools, browsers, and frameworks, the shift has gone largely unnoticed—even as it quietly fixes long-standing issues in digital color design.
         one-liner: "OKLCH color space, created by game developer Björn Ottosson, replaces HSL/RGB by matching human perception and is now default in major tools."
+        decoder: |
+          * **OKLCH** — perceptually uniform color space (Lightness, Chroma, Hue) replacing HSL
+          * **HSL** — Hue/Saturation/Lightness color model with broken perceptual uniformity
+          * **CIELAB** — 1976 perceptual color space with a known "blue turn" flaw that OKLCH fixes
+          * **Perceptually uniform** — equal numeric steps produce equal visual differences
+          * **Chroma** — colorfulness relative to white, more honest than HSL saturation
         summary:
           what: "OKLCH provides perceptually uniform lightness, stable hues, honest chroma; descended from Munsell 1905 system via CIELAB 1976."
           why: "HSL's broken math (L = RGB channel midpoint, not perceived brightness) forces decades of manual tweaking; OKLCH makes contrast/scales arithmetic."
@@ -698,6 +861,10 @@ sections:
         description: |
           Western Union plans to launch its Solana-based stablecoin USDPT next month, initially for internal settlement to replace SWIFT rails and enable faster, always-on cross-border transactions. The company is also rolling out a Digital Asset Network to connect crypto wallets with its global retail network, alongside a “Stable Card” that lets consumers hold and spend stablecoins worldwide, signaling a full-stack push into onchain payments.
         one-liner: "Western Union launches Solana-based USDPT stablecoin for internal settlement and retail cross-border payments."
+        decoder: |
+          * **USDPT** — Western Union's Solana-based USD stablecoin
+          * **SWIFT** — legacy interbank messaging network for cross-border payments (2-5 day settlement)
+          * **Stablecoin** — cryptocurrency pegged to a fiat currency (usually USD)
         summary:
           what: "USDPT stablecoin replacing SWIFT rails, plus Digital Asset Network connecting crypto wallets to retail locations and Stable Card for consumer spending"
           why: "Traditional finance embracing blockchain infrastructure for operational efficiency and always-on settlement"
@@ -711,6 +878,11 @@ sections:
         description: |
           Anthropic's Mythos AI model shifts DeFi security focus from smart contracts to systemic infrastructure risks, including key management and oracle networks. By simulating multi-step exploit chains, Mythos exposes cascading vulnerabilities, forcing protocols to adopt continuous, AI-driven auditing to survive in an increasingly adversarial, machine-speed environment.
         one-liner: "Anthropic's Mythos AI model identifies multi-step DeFi exploit chains by simulating adversaries across interconnected protocols."
+        decoder: |
+          * **DeFi** — Decentralized Finance, financial services built on blockchain smart contracts
+          * **Oracle network** — service feeding real-world data (prices, events) to smart contracts
+          * **Composable protocols** — DeFi systems that plug into each other, creating cascading dependency chains
+          * **Mythos** — Anthropic's AI model for simulating multi-step exploit chains
         summary:
           what: "AI model shifts security focus from smart contracts to infrastructure (key management, oracles, bridges), finding cascading vulnerabilities"
           why: "Reveals systemic risks in composable DeFi that human auditors miss; forces continuous AI-driven auditing at machine speed"
@@ -738,6 +910,11 @@ sections:
         description: |
           Revolut's PRAGMA foundation model, trained on 24 billion banking events, significantly outperforms traditional machine learning. By consolidating six production tasks, it achieved a 130% uplift in credit scoring and 65% in fraud recall. This shift toward transformer-based architectures offers banks massive competitive advantages in revenue and operational efficiency.
         one-liner: "Revolut's PRAGMA foundation model trained on 24B banking events achieves 130% credit scoring uplift over traditional ML."
+        decoder: |
+          * **PRAGMA** — Revolut's foundation model trained on 24B banking events
+          * **PR-AUC** — Precision-Recall Area Under Curve, metric for imbalanced classification (better than accuracy for rare events)
+          * **LoRA** — Low-Rank Adaptation, efficient fine-tuning that modifies a small subset of model weights
+          * **AML** — Anti-Money Laundering detection (requires network analysis across users, not individual histories)
         summary:
           what: "Transformer-based model consolidating six production tasks (credit, fraud, marketing) with massive performance gains vs custom ML"
           why: "Foundation models for finance create compounding competitive advantage in revenue optimization and cost reduction"
@@ -753,6 +930,11 @@ sections:
         description: |
           Automate MEV blockchain analysis by integrating the mevlog-rs MCP server with Claude Code or OpenClaw agents. This setup enables natural language queries for transaction data, supports remote NGINX-secured RPC endpoints for performance, and facilitates automated Telegram reporting for monitoring high-value token transfers and gas usage.
         one-liner: "Automate MEV blockchain analysis using mevlog-rs MCP server with Claude Code or OpenClaw agents for natural language queries."
+        decoder: |
+          * **MEV** — Maximal Extractable Value, profit from reordering/inserting blockchain transactions
+          * **mevlog-rs** — Rust-based MCP server for querying blockchain transaction data
+          * **RPC endpoint** — Remote Procedure Call server providing blockchain node access
+          * **Full node** — server storing complete blockchain history for direct queries
         summary:
           what: "MCP server enabling LLM-driven blockchain data queries with NGINX-secured remote endpoints and Telegram reporting"
           why: "Eliminates manual blockchain monitoring; enables scheduled queries for high-value transfers and gas analysis"
@@ -767,6 +949,9 @@ sections:
         description: |
           Ethereum ensures deterministic execution and distributed consensus, effectively decentralizing rule-making previously held by entities like Blizzard. While the execution layer is secure, the challenge remains in enabling independent parties to verify state transitions, shifting the focus from simple execution to robust, decentralized verification of system reality.
         one-liner: "Ethereum decentralized execution but verification remains non-standardized across RPCs, indexers, and proof formats."
+        decoder: |
+          * **State transitions** — changes to blockchain data recorded as transactions
+          * **Indexer** — service that reads blockchain data and structures it for fast queries
         summary:
           what: "Verification depends on system-specific encoding, extraction, and interpretation without portable, implementation-independent artifacts"
           why: "Non-portable verification creates new dependency on intermediaries for determining on-chain truth"
@@ -778,6 +963,10 @@ sections:
         description: |
           Stablecoins are shifting from trading tools to core financial infrastructure. Q1 2026 volume reached $4.5 trillion, with consumer-to-business transactions growing 128% year-over-year. Velocity doubled to 6x, while intra-country payments now account for 75% of volume, signaling a transition toward local, general-purpose payment rails on global blockchain networks.
         one-liner: "Stablecoin velocity doubled to 6x as intra-country payments reached 75% of volume in Q1 2026."
+        decoder: |
+          * **Velocity** — how many times a stablecoin unit changes hands per period (6x means each dollar transacts 6 times)
+          * **C2B** — Consumer-to-Business payments
+          * **BRLA** — Brazilian Real-pegged stablecoin
         summary:
           what: "$4.5T quarterly volume with 128% C2B growth YoY, non-USD stablecoins like BRLA gaining ground"
           why: "Stablecoins transitioning from cross-border tools to local payment infrastructure on global blockchain rails"
@@ -789,6 +978,9 @@ sections:
         description: |
           The x402 protocol provides a base layer for machine-native payments using HTTP 402 status codes. However, it lacks essential key and session management for production environments. Implementing a robust infrastructure layer for authentication, authorization, and key rotation is necessary to enable scalable, real-world adoption for AI agents.
         one-liner: "x402 protocol needs production-ready key and session management layer for scalable machine-native payments."
+        decoder: |
+          * **x402** — protocol using HTTP 402 (Payment Required) status codes for machine-native micropayments
+          * **Payment channels** — off-chain mechanism for streaming many small payments settled as one on-chain transaction
         summary:
           what: "HTTP 402-based payment protocol lacking authentication, authorization, and key rotation for real-world systems"
           why: "API keys, scoped access, and session management bridge protocol simplicity with production requirements like metering and delegation"
@@ -832,6 +1024,8 @@ sections:
         description: |
           Stablecoin-powered B2B payment volume is projected to increase from $3.5B in 2023 to $147B by 2026, driven by faster, cheaper cross-border settlements that outperform SWIFT's 2-5 day timelines and 3–5% fees.
         one-liner: "Stablecoin B2B payment volume forecast to reach $147B by 2026 from $3.5B in 2023."
+        decoder: |
+          * **MiCA** — Markets in Crypto-Assets, EU regulatory framework for crypto
         summary:
           what: "Growth driven by faster, cheaper settlements versus SWIFT's 2-5 day timeline and 3-5% fees"
           why: "MiCA and US regulatory clarity lowering corporate treasury entry barriers for stablecoin adoption"
