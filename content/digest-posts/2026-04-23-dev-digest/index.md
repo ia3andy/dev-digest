@@ -1,5 +1,5 @@
 ---
-title: "Dev Digest - April 23, 2026"
+title: "Devoured - April 23, 2026"
 description: "Microsoft is moving all GitHub Copilot subscribers to token-based billing in June, while Anthropic detailed production patterns for MCP-based agents surpassing 300M SDK downloads monthly. On the model side, Qwen3.6-27B delivers flagship-level coding performance in a 16.8GB quantized package, and a critical Firefox vulnerability linking Tor identities via IndexedDB ordering has been patched in Firefox 150."
 layout: digest-post
 date: 2026-04-23

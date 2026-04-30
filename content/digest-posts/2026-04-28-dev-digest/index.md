@@ -1,5 +1,5 @@
 ---
-title: "Dev Digest - April 28, 2026"
+title: "Devoured - April 28, 2026"
 description: "Open-weight models from DeepSeek and Xiaomi are rapidly closing the gap with US frontier labs at a fraction of the cost, with DeepSeek cutting V4-Pro prices 75% and Xiaomi open-sourcing a 1T-parameter model competitive with Claude Opus, while OpenAI's revised Microsoft deal opens its models to all cloud providers. GPU spot prices surged 114% in six weeks, and OpenAI released Symphony to orchestrate fleets of coding agents from issue trackers."
 layout: digest-post
 date: 2026-04-28

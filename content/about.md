@@ -4,7 +4,7 @@ description: Daily developer news digest, AI-curated from TLDR newsletters
 layout: page
 ---
 
-# About ia3andy Dev Digest
+# About Devoured
 
 A daily developer news digest built with [Roq](https://iamroq.dev). Each day, a script fetches TLDR newsletters (AI, Tech, DevOps, Data, Design, Crypto, Founders), summarizes them using Claude, and publishes the result as a blog post.
 

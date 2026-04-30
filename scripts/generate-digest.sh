@@ -183,7 +183,7 @@ generate_post() {
 
   cat > "$post_dir/index.md" <<FRONTMATTER
 ---
-title: "Dev Digest - ${title_date}"
+title: "Devoured - ${title_date}"
 description: "${digest_desc}"
 layout: digest-post
 date: ${target_date}

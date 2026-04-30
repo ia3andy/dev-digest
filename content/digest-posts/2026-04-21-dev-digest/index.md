@@ -1,5 +1,5 @@
 ---
-title: "Dev Digest - April 21, 2026"
+title: "Devoured - April 21, 2026"
 description: "GitHub Copilot is pausing new signups and shifting to token-based billing as costs double, while new open-source models like Kimi K2.6 and Qwen3.6-Max claim to surpass GPT-5.4 and Claude Opus 4.6 on coding benchmarks. Meanwhile, a $292M DeFi bridge exploit triggered $13B in withdrawals, and Cloudflare reported that building its AI engineering stack on its own platform nearly doubled weekly merge requests to over 10,000."
 layout: digest-post
 date: 2026-04-21

@@ -1,5 +1,5 @@
 ---
-title: "Dev Digest - April 22, 2026"
+title: "Devoured - April 22, 2026"
 description: "TypeScript 7.0 Beta landed with a full Go rewrite delivering 10x faster performance, while Anthropic's Mythos AI found 271 security vulnerabilities in Firefox 150 before release, matching elite human researchers and signaling that AI-powered code auditing is now production-ready for critical software."
 layout: digest-post
 date: 2026-04-22

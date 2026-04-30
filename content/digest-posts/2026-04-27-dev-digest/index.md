@@ -1,5 +1,5 @@
 ---
-title: "Dev Digest - April 27, 2026"
+title: "Devoured - April 27, 2026"
 description: "Google is investing up to $40B in Anthropic while coding agents drive unprecedented compute demand, with Cursor exploring a $60B SpaceX deal to solve negative margins from AI model costs. On the practical side, Anthropic shipped Memory for Claude Managed Agents and is testing Bugcrawl for codebase bug detection, Spotify's Honk agent automated 1,800 pipeline migrations saving 10 engineering weeks, and Airflow 2 reached end of life with no more security patches."
 layout: digest-post
 date: 2026-04-27
