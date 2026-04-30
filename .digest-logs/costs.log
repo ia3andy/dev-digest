@@ -1,0 +1,27 @@
+2026-04-29 14:47  summarize Crypto                    1 calls  $0.1997
+2026-04-29 14:47  summarize AI                        1 calls  $0.2548
+2026-04-29 14:48  summarize Data                      1 calls  $0.4408
+2026-04-29 14:48  summarize Design                    1 calls  $0.2430
+2026-04-29 14:48  summarize DevOps                    1 calls  $0.1850
+2026-04-29 14:55  write-content 2026-04-27-dev-digest  34 calls  $1.5695
+2026-04-29 15:01  summarize Design                    1 calls  $0.3415
+2026-04-29 15:01  summarize Crypto                    1 calls  $0.1691
+2026-04-29 15:01  summarize Tech                      1 calls  $0.1904
+2026-04-29 15:02  summarize AI                        1 calls  $0.2656
+2026-04-29 15:05  write-content 2026-04-28-dev-digest  21 calls  $1.0718
+2026-04-30 12:41  resummarize-all all             6 calls  $5,9562
+2026-04-30 12:45  resummarize 2026-04-27-dev-digest  1 calls  $1,2131
+2026-04-30 12:52  resummarize 2026-04-28-dev-digest  1 calls  $0,8437
+2026-04-30 12:57  resummarize 2026-04-27-dev-digest  1 calls  $1,3137
+2026-04-30 13:06  resummarize 2026-04-27-dev-digest 66 calls  $4,5875
+2026-04-30 14:36  resummarize-all all            337 calls  $15,3852
+2026-04-30 15:08  resummarize 2026-04-21-dev-digest 21 calls  $0,9213
+2026-04-30 15:10  resummarize 2026-04-21-dev-digest 10 calls  $0,3600
+2026-04-30 15:25  resummarize 2026-04-21-dev-digest  5 calls  $0,1708
+2026-04-30 15:53  resummarize 2026-04-28-dev-digest 23 calls  $1,1186
+2026-04-30 15:57  resummarize 2026-04-28-dev-digest  1 calls  $0,0106
+2026-04-30 16:00  resummarize 2026-04-22-dev-digest 19 calls  $0,8720
+2026-04-30 16:03  resummarize 2026-04-23-dev-digest 23 calls  $1,1173
+2026-04-30 16:05  resummarize 2026-04-24-dev-digest 26 calls  $1,2660
+2026-04-30 16:07  resummarize 2026-04-27-dev-digest 22 calls  $1,0088
+TOTAL: $35,0088
