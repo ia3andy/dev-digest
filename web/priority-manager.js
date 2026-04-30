@@ -143,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (const el of otherNews) {
       const title = el.querySelector('.digest-article-title')?.textContent || '';
-      const oneLiner = el.querySelector('.digest-one-liner')?.textContent || '';
+      const oneLiner = el.querySelector('.digest-summary-toggle')?.textContent?.trim() || '';
       const badge = el.querySelector('.digest-badge')?.textContent || '';
       const tags = (el.dataset.tags || '').split(',').map(t => t.trim()).filter(Boolean);
 

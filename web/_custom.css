@@ -68,9 +68,6 @@
   @apply text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100;
 }
 
-.digest-one-liner {
-  @apply text-base text-gray-700 dark:text-gray-300 mb-3;
-}
 
 .digest-summary {
   @apply space-y-2 text-sm px-4 pb-4;
@@ -229,10 +226,14 @@
 }
 
 .digest-summary-details > summary {
-  @apply cursor-pointer flex items-center gap-2 px-4 py-3
-    text-sm font-medium text-blue-700 dark:text-blue-300
+  @apply cursor-pointer flex items-start gap-2 px-4 py-3
+    text-sm text-gray-700 dark:text-gray-300
     hover:bg-blue-100/50 dark:hover:bg-blue-800/30
     select-none transition-colors duration-150;
+}
+
+.digest-summary-details > summary .digest-deep-icon {
+  @apply mt-0.5 text-blue-500 dark:text-blue-400;
 }
 
 .digest-summary-details > summary::-webkit-details-marker {
