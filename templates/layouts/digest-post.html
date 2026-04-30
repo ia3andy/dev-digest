@@ -25,6 +25,23 @@ window.UNSORTED_PRIORITY={cdi:feeds.get('unsorted-priority').raw};
         <button class="digest-btn-mark-read digest-btn-devour-again">Devour again</button>
       </div>
 
+      {#if page.previous or page.next}
+      <nav class="digest-post-nav">
+        {#if page.next}
+        <a href="{page.next.url}" class="digest-post-nav-card digest-post-nav-prev">
+          <span class="digest-post-nav-label"><i class="fa-solid fa-chevron-left"></i> Previous</span>
+          <span class="digest-post-nav-title">{page.next.title}</span>
+        </a>
+        {/if}
+        {#if page.previous}
+        <a href="{page.previous.url}" class="digest-post-nav-card digest-post-nav-next">
+          <span class="digest-post-nav-label">Next <i class="fa-solid fa-chevron-right"></i></span>
+          <span class="digest-post-nav-title">{page.previous.title}</span>
+        </a>
+        {/if}
+      </nav>
+      {/if}
+
       <div class="page-footer">
         {#if page.data.author??}
         {#let author=cdi:authors.get(page.data.author)}

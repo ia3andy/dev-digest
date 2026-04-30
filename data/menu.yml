@@ -5,6 +5,3 @@ items:
   - title: "Settings"
     path: "/settings"
     icon: "fa-solid fa-sliders"
-  - title: "About"
-    path: "/about"
-    icon: "fa fa-thumbs-up"

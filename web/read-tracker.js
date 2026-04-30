@@ -89,9 +89,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const articlePage = document.querySelector('.article-page[data-post-date]');
     if (!articlePage) return;
     const date = articlePage.dataset.postDate;
+    let anyRead = false;
     for (const el of articlePage.querySelectorAll('.digest-article[data-article-id]')) {
-      el.classList.toggle('is-article-read', isArticleRead(date, el.dataset.articleId));
+      const read = isArticleRead(date, el.dataset.articleId);
+      el.classList.toggle('is-article-read', read);
+      if (read) anyRead = true;
     }
+    articlePage.classList.toggle('is-partial', anyRead && !isPostRead(date));
   }
 
   // Per-article scroll tracking on detail pages
@@ -187,12 +191,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('click', (e) => {
-    const btn = e.target.closest('.digest-btn-mark-read, .digest-btn-mark-all-read');
+    const btn = e.target.closest('.digest-btn-mark-read, .digest-btn-mark-all-read, .digest-btn-start-again');
     if (!btn) return;
     const container = btn.closest('[data-post-date]');
     if (!container) return;
     const date = container.dataset.postDate;
-    if (btn.classList.contains('digest-btn-devour-again')) {
+    if (btn.classList.contains('digest-btn-start-again')) {
+      readState[date] = false;
+      saveReadState();
+      updateReadUI();
+      setupArticleObservers();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (btn.classList.contains('digest-btn-devour-again')) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       const onScrollEnd = () => {
         toggleRead(date);

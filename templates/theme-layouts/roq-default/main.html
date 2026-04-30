@@ -1,0 +1,21 @@
+{#include roq-templates/theme-layouts/roq-default/default}
+
+{@io.quarkiverse.roq.frontmatter.runtime.model.Site site}
+
+<nav class="topbar">
+  <a href="{site.url}" class="topbar-brand">
+    <img src="{site.image('mascot.svg')}" alt="{site.data.name}" class="topbar-mascot"/>
+    <span class="topbar-name shimmer">{site.data.get('simple-name')}</span>
+  </a>
+  <div class="topbar-menu">
+    {#for item in cdi:menu.items}
+    <a href="{site.url(item.path)}" class="topbar-link"><i class="{item.icon}"></i> {item.title}</a>
+    {/for}
+  </div>
+  {#insert darkmode}{#include partials/roq-default/sidebar-darkmode /}{/}
+</nav>
+<main class="main-content">
+  {#insert /}
+</main>
+
+{/include}

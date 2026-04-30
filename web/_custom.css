@@ -13,6 +13,88 @@
     --color-accent-950: #2d1a10;
 }
 
+/* --- Top bar navigation --- */
+.topbar {
+  @apply fixed top-0 left-0 right-0 z-40
+    flex items-center gap-4 px-4 py-2 h-14
+    mx-auto max-w-[1250px] 2xl:max-w-[1500px]
+    overflow-visible;
+}
+
+.topbar::before {
+  @apply content-[''] absolute top-0 bottom-0 -z-10
+    backdrop-blur-sm shadow-sm;
+  background: linear-gradient(90deg, var(--color-neutral-800) 0%, var(--color-neutral-900) 100%);
+  opacity: 0.95;
+  left: -100vw;
+  right: -100vw;
+}
+
+.dark .topbar::before {
+  background: linear-gradient(90deg, var(--color-neutral-800) 0%, var(--color-neutral-900) 100%);
+  opacity: 0.95;
+}
+
+.topbar::after {
+  @apply content-[''] absolute bottom-0 h-0.5
+    bg-[#0E0E0C];
+  left: -100vw;
+  right: -100vw;
+}
+
+.dark .topbar::after {
+  @apply bg-gray-700;
+}
+
+.topbar-brand {
+  @apply flex flex-col sm:flex-row items-center gap-0 sm:gap-2 no-underline shrink-0;
+}
+
+.topbar-mascot {
+  @apply h-10 sm:h-14 w-auto mb-[-14px] sm:mb-[-16px] relative z-10;
+}
+
+.topbar-name {
+  @apply text-xs sm:text-3xl font-semibold tracking-wide font-heading leading-none order-first sm:order-none;
+}
+
+.topbar-menu {
+  @apply flex items-center gap-1 ml-auto;
+}
+
+.topbar-link {
+  @apply px-3 py-1.5 text-sm font-medium rounded-md no-underline
+    text-gray-300
+    hover:text-white
+    hover:bg-white/10
+    transition-colors;
+}
+
+.topbar-link i {
+  @apply mr-1.5 text-accent-400;
+}
+
+nav.topbar .dark-mode-toggle {
+  @apply static w-9 h-9 text-sm shadow-none border-none cursor-pointer;
+  @apply text-gray-300;
+  background-image: none;
+  background-color: transparent;
+}
+
+nav.topbar .dark-mode-toggle:hover {
+  @apply text-white scale-100 shadow-none;
+  background-image: none;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.wrapper {
+  @apply mx-auto;
+}
+
+.main-content {
+  @apply md:ml-0 pt-16;
+}
+
 /* Mascot logo sizing */
 .roq-hero-logo {
     @apply w-[180px];
@@ -310,6 +392,40 @@
   @apply m-4 mt-0;
 }
 
+/* Post navigation (prev/next) */
+.digest-post-nav {
+  @apply grid grid-cols-2 gap-4 mt-8 mb-4;
+}
+
+.digest-post-nav-card {
+  @apply flex flex-col gap-1 p-4 rounded-xl no-underline
+    border border-gray-200 dark:border-gray-700
+    bg-white dark:bg-gray-800
+    hover:border-accent-300 dark:hover:border-accent-700
+    transition-colors duration-200;
+}
+
+.digest-post-nav-prev {
+  @apply text-left col-start-1;
+}
+
+.digest-post-nav-next {
+  @apply text-right col-start-2;
+}
+
+.digest-post-nav-label {
+  @apply text-xs text-gray-400 dark:text-gray-500;
+}
+
+.digest-post-nav-title {
+  @apply text-sm font-semibold text-accent-600 dark:text-accent-400;
+}
+
+/* Post titles match nav bg */
+.post-title a {
+  @apply text-neutral-800 hover:text-neutral-900 dark:text-neutral-200 dark:hover:text-neutral-100 font-semibold;
+}
+
 /* --- Read tracking --- */
 
 /* Status ribbon on listing cards */
@@ -402,6 +518,21 @@
 }
 
 .digest-toast .digest-btn-undo {
+  @apply hidden;
+}
+
+.digest-toast .digest-btn-start-again {
+  @apply hidden;
+}
+
+.article-page.is-partial .digest-toast .digest-btn-start-again {
+  @apply inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md
+    text-amber-600 hover:text-white hover:bg-amber-500
+    dark:text-amber-400 dark:hover:text-white dark:hover:bg-amber-600
+    transition-colors cursor-pointer border border-amber-300 dark:border-amber-700 bg-transparent;
+}
+
+.article-page.is-read .digest-toast .digest-btn-start-again {
   @apply hidden;
 }
 
