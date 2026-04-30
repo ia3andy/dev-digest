@@ -435,6 +435,37 @@
     transition-colors cursor-pointer border border-emerald-300 dark:border-emerald-700 bg-transparent;
 }
 
+/* Per-article read state */
+.digest-article.is-article-read {
+  @apply opacity-50 transition-opacity duration-200;
+}
+
+/* Devour toast */
+.digest-devour-toast {
+  @apply fixed bottom-6 left-1/2 -translate-x-1/2 z-50
+    px-5 py-3 text-sm font-semibold rounded-xl shadow-lg
+    bg-emerald-500 text-white
+    hidden pointer-events-none;
+}
+
+.digest-btn-devour-again {
+  @apply ml-3 px-3 py-1 text-xs font-medium rounded-md cursor-pointer
+    bg-white/20 hover:bg-white/30
+    border-none text-white transition-colors pointer-events-auto;
+}
+
+.article-page.is-read .digest-devour-toast {
+  @apply block pointer-events-auto;
+  animation: devour-toast 8s ease forwards;
+}
+
+@keyframes devour-toast {
+  0% { opacity: 0; transform: translateX(-50%) translateY(1rem); }
+  5% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(1rem); display: none; pointer-events: none; }
+}
+
 /* --- Priority settings page --- */
 
 .priority-settings {

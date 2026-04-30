@@ -20,7 +20,10 @@ window.UNSORTED_PRIORITY={cdi:feeds.get('unsorted-priority').raw};
       {#include partials/digest-articles.html /}
       {/let}
 
-      {#readButtons postDate=page.date.format('yyyy-MM-dd') /}
+      <div class="digest-devour-toast" data-post-date="{page.date.format('yyyy-MM-dd')}">
+        Digest devoured!
+        <button class="digest-btn-mark-read digest-btn-devour-again">Devour again</button>
+      </div>
 
       <div class="page-footer">
         {#if page.data.author??}
