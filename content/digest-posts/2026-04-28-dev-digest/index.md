@@ -768,37 +768,6 @@ sections:
       * **WinUI 3**: Microsoft's modern UI framework for Windows apps
       * **SteamOS**: Valve's Linux-based operating system designed for gaming on Steam Deck and other devices
       * **K2**: Microsoft's codename for its Windows 11 improvement initiative
-  - id: tech-9
-    title: "OpenAI Misses Key Revenue, User Targets in High-Stakes Sprint Toward IPO (6 minute read)"
-    link: https://www.wsj.com/tech/ai/openai-misses-key-revenue-user-targets-in-high-stakes-sprint-toward-ipo-94a95273?st=YEXHpA&reflink=desktopwebshare_permalink&mod=tldr&utm_source=tldrnewsletter
-    image: https://images.wsj.net/im-57056001/social
-    description: |
-      OpenAI's Chief Financial Officer is worried the company might not be able to pay for future computing contracts if revenue doesn't grow fast enough.
-    tags:
-    - ai
-    - startup
-    - infrastructure
-    one-liner: "OpenAI missed internal revenue and user growth targets, raising concerns from executives about whether the company can afford its $600 billion in computing infrastructure commitments ahead of a planned IPO."
-    summary:
-      what: "OpenAI's CFO Sarah Friar has warned company leaders that the business might not be able to pay for future data center contracts if revenue doesn't grow fast enough, with the board questioning CEO Sam Altman's continued push to secure more computing power despite the slowdown."
-      why: "This reveals significant financial strain behind the AI infrastructure buildout, showing that even after raising $122 billion (the largest funding round in Silicon Valley history), OpenAI expects to burn through it in three years while facing intensifying competition from Google's Gemini and Anthropic."
-      takeaway: Watch whether OpenAI proceeds with its year-end IPO timeline and how the company balances infrastructure spending against business performance as the AI market becomes increasingly competitive.
-    deep-summary: |
-      * OpenAI missed its internal goal of reaching one billion weekly active users for ChatGPT by end of 2025 and also missed yearly revenue targets after Google's Gemini gained significant market share
-      * The company committed to roughly $600 billion in future data center spending through Altman's dealmaking spree last year, but now faces scrutiny from CFO and board as growth slows
-      * OpenAI raised $122 billion in the largest funding round in Silicon Valley history but expects to burn through that amount in three years, with some funding conditional on specific partner agreements
-      * CFO Sarah Friar has expressed reservations about the company's readiness for a public offering by year-end, citing inadequate internal controls for public company reporting standards
-      * The company has struggled with subscriber defection rates and missed multiple monthly revenue targets in early 2026 after losing ground to Anthropic in coding and enterprise markets
-      * OpenAI is cutting costs by eliminating projects like video-generation app Sora while its coding tool Codex grows quickly in popularity
-      * The company recently released GPT-5.5 which topped industry benchmarks, but AI companies including Anthropic are facing computing capacity crunches leading to price increases and outages
-      * OpenAI's memo to investors argues it has secured more computing capacity than Anthropic, countering criticism from Anthropic CEO Dario Amodei about \"pulling the risk dial too far\" on data center spending
-      * Leadership challenges include second-in-command Fidji Simo taking unexpected medical leave and ongoing Elon Musk lawsuit seeking to oust Altman and unwind the for-profit conversion
-      * Market reaction saw Nasdaq drop over 1% with declines in Nvidia, Oracle, and SoftBank (which committed $60 billion to OpenAI) falling 9.9% in Tokyo trading
-    decoder: |
-      * **Compute/Computing capacity**: The processing power from AI chips (primarily GPUs) needed to train and run large language models, typically measured in data center resources
-      * **Weekly active users (WAU)**: The number of unique users who interact with a product at least once per week, a key growth metric for consumer applications
-      * **Data center commitments**: Long-term contracts to purchase or lease server infrastructure and computing resources, often involving billions in multi-year spending obligations
-      * **Burn rate**: How quickly a company spends its cash reserves relative to revenue, critical for venture-backed companies with massive infrastructure costs
   - id: tech-11
     title: Products do labs (and labs do products) (10 minute read)
     link: https://x.com/bradwmorris/status/2047558389212107151?s=12&utm_source=tldrnewsletter
