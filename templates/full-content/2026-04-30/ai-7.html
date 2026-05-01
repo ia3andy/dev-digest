@@ -1,0 +1,68 @@
+I'll process the HTML you provided directly: ```html 
+<h1>Lessons on Building MCP Servers</h1>
+<p>I've been building MCP servers for a while now–I wrote about the general approach last year, started out by creating <a href="https://github.com/rcarmo/umcp">umcp</a>, and I've recently opened up an <a href="https://github.com/rcarmo/python-office-mcp-server">Office server</a> that's been battered by enough models against enough real documents that the patterns have settled.</p>
+<p>I'm still not a fan of MCP, but what follows is what I've learned about making tool chains actually work, condensed from swearing at logs rather than reading papers.</p>
+<blockquote>
+ <p><strong>Disclaimer:</strong> <em>This is a condensed version of <a href="https://github.com/rcarmo/umcp/blob/main/docs/CHAINING.md"><code>CHAINING.md</code></a>, which was itself stapled together from a bunch of notes in my Obsidian vault. The full version has more code examples and a techniques inventory table that Opus just _had</em> to add, and I've since beaten that out of it and restored most of the original text (minus typos).</p>
+</blockquote>
+<p>The short version: the MCP servers I design do most of the work, while the model walks breadcrumbs.</p>
+<h2>Models don't plan</h2>
+<p>They look at the conversation, scan the tool list, and grab whatever looks more probable. That's it. There is no hidden planner. If you want chains that finish somewhere sensible, the <em>server</em> has to make the next call blindingly obvious at every step.</p>
+<p>After a year or so, I have pared down my approach into these three things, roughly in order of how much pain they save you:</p>
+<ul>
+ <li>A small named core verb set covering most intents</li>
+ <li>Output that suggests the next call</li>
+ <li>An addressing scheme that survives between calls–anchors, IDs, paths, anything but line numbers.</li>
+</ul>
+<h2>Core verbs beat surface area</h2>
+<p>The <a href="https://github.com/rcarmo/python-office-mcp-server">Office</a> server exposes over 100 tools. Its <code>get_instructions()</code> funnels models toward eight:</p>
+<blockquote>
+ <p><em>…start with <code>office_help</code>, then prefer <code>office_read</code>, <code>office_inspect</code>, <code>office_patch</code>, <code>office_table</code>, <code>office_template</code>, <code>office_audit</code>, and <code>word_insert_at_anchor</code>. Treat specialised tools as fallback, diagnostic, legacy-compatibility, or expert tools when the core flow is insufficient.</em></p>
+</blockquote>
+<p>That single sentence does an outsized amount of work–it tells the model there <em>is</em> a recommended path, that the path is verb-shaped (<code>help -&gt; read -&gt; inspect -&gt; patch -&gt; audit</code>), and that everything else is opt-in.</p>
+<p>Without it, models cheerfully reach for <code>word_parse_sow_template</code> when <code>office_read</code> would do, and you end up with five-call detours for one-call jobs.</p>
+<p>So I quickly realized that I needed to be ruthless about which tools to surface and when. The specialised ones still ship–hidden under a "for experts" framing, and a handful of legacy ones filtered out of <code>tools/list</code> entirely.</p>
+<p>I also make liberal use of activation sets–the surface the model <em>sees</em> is small; the surface it <em>can reach</em> is large.</p>
+<h2>Naming is the chain</h2>
+<p>Again, models chain whatever is most likely (or rhymes), and the most effective tactic, for me, has been taking advantage of that.</p>
+<p>All Word tools are <code>word_*</code>, all Excel <code>excel_*</code>, all unified <code>office_*</code>. A model that just called <code>office_inspect</code> will reach for <code>office_patch</code> next, not <code>word_patch_with_track_changes</code>, because the prefix matches.</p>
+<p>This particular server also makes liberal use of annotations and a little intent/inferrer hack that reads those prefixes to assign <code>readOnlyHint</code>/<code>destructiveHint</code> automatically, so naming discipline turns into safety metadata for free.</p>
+<p>The prefix is the plan. The verb is the step. If you take one thing from this entire post, I'd suggest this notion…</p>
+<h2>Every response nominates the next call</h2>
+<p>This was the single change that made things behave on smaller models. The big ones will plan a chain from a tool list and a goal; the wee ones won't–they grab the first plausible tool and stop.</p>
+<p>The fix is stupid simple: every response ends with a breadcrumb dictionary of hints to follow. At minimum <code>next_tools: [...]</code>, plus <code>usage: "&lt;exact call&gt;"</code> whenever the current tool produced a value the next one needs.</p>
+<p>A model that can't assemble arguments from a schema can copy the <code>usage</code> string verbatim. In fact, they <em>will</em> copy it, because it is still the most likely outcome as it fills in tokens, and thus those usage hints funnel the path the model takes.</p>
+<h2>Discovery as a tool, not documentation</h2>
+<p>Another thing I hit upon was that signposting needed to be curated.</p>
+<p>Borrowing a page from intent mapping, <code>office_help(goal=...)</code> returns a structured record–recommended chain with rationale, fallbacks, diagnostic strings to watch for, one imperative <code>next_step</code> sentence. Not prose. Not a README, not skills. Data the model can act on without reading comprehension.</p>
+<p>Called with no arguments, it returns the catalogue. Called with an unknown goal, it returns the supported set rather than an error, which turns a potential workflow-stopping error into an actual useful catalogue.</p>
+<h2>Addressing: anchors, not offsets</h2>
+<p>The biggest reason simple models can't follow chains is the model losing the thread between calls. "Insert a paragraph after the introduction" is fine in English but catastrophic if you expect it to remember a byte offset across three tool calls.</p>
+<p>In this particular scenario, I cheated and since most Office documents have headings (or cells, or internal structured paths inside OOXML), I used either verbatim text from the document or immovable coordinates (which was particularly hard in PowerPoint, by the way).</p>
+<p>So besides suggestions and hints, return identifiers your tools will later accept as input. If you find yourself returning data the model has to <em>describe back to you</em> in natural language, you've made a chain that will misfire on a Tuesday afternoon when you're not watching.</p>
+<h2>Modes turn one tool into four</h2>
+<p>I started out with individual editing tools per format, which was very easy to do automated tests for but incredibly wasteful of context, so at one point I decided to make things much simpler for initial discovery, and since I needed to make all outputs auditable, I then tagged available sub-operations risk-wise.</p>
+<p><code>office_patch</code> is the same code path whether you ask for <code>dry_run</code>, <code>best_effort</code>, <code>safe</code>, or <code>strict</code>. One tool, four modes, one entry in <code>tools/list</code>.</p>
+<p>Discovery cost scales with tool count, not mode count. And <code>dry_run -&gt; safe -&gt; strict</code> is an escalation chain the model figures out on its own without being told.</p>
+<p>If you have N tools that differ only in how cautious they are, collapse them. You're wasting everyone's context budget.</p>
+<h2>Diagnostics as the back-edge</h2>
+<p>Linear chains are easy. Real chains have loops, and loops only happen when the server invites the model back in. Every mutating tool returns a standard envelope with <code>status</code>, <code>matched_targets</code>, <code>unmatched_targets</code>, and <code>next_tools</code>.</p>
+<p>The model then branches on a small subset of options "locally" without needing to go over the entire context, and if you name the diagnostic fields with exact strings the model will see again in your instructions, it will just reinforce them.</p>
+<p>In this particular case, again, I cheated. I figured out that the models were starting to call tools at random because they couldn't introspect the document well enough and ended up breaking files, so I <em>always</em> gave them at least one read-only tool, so the penalty for "I'm confused, let me look again" is one extra round-trip, not a destructive cock-up.</p>
+<h2>My MCP Design Checklist</h2>
+<ul>
+ <li>Pick five to ten core verbs and name them in <code>get_instructions()</code> or your local equivalent</li>
+ <li>Use consistent prefixes by surface</li>
+ <li>Provide a discovery tool that returns recommendations as data, not prose</li>
+ <li>Make the discovery tool browseable–no-arg returns the catalogue, unknown input returns the supported set</li>
+ <li>Embed forward breadcrumbs in every tool response</li>
+ <li>Provide a map/anchors tool so addresses survive between calls</li>
+ <li>Give every mutating tool a mode enum including <code>dry_run</code></li>
+ <li>Return named diagnostic fields and cite the recovery tools</li>
+ <li>Standardise the mutation envelope. If one tool changes something in a specific way, make sure the others are consistent (arguments, semantics, etc.)</li>
+ <li>Reject unknown arguments strictly (this is much easier in some runtimes than others)</li>
+ <li>Provide an audit tool so the model has somewhere to land</li>
+ <li>Cache anything the recovery loop calls more than once, because, well, it <em>will</em> get called dozens of times even if you carefully curate paths through your tooling with hints.</li>
+ <li>Make repeat calls safe–models retry, and they should be allowed to (idempotence is hard, and often impossible).</li>
+</ul>
+<p>Do the boring work in the schema and the descriptions. The model will happily do the clever bit if you stop making it guess.</p>

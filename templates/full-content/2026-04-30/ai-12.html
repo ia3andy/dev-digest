@@ -1,0 +1,14 @@
+<p>The inference market is the fastest growing market in the world &amp; it's splitting up. Each modality is developing its own inference stack.</p>
+<p>NVIDIA's data center revenue was flat through 2022. Then ChatGPT launched. Three years later : 17x growth.</p>
+<p>Databases did the same thing. What started as one market fragmented into relational, document, key-value, graph, time series, vector, &amp; others. Each category reflects different workload requirements : real-time transactions vs batch analytics, ACID compliance vs eventual consistency.</p>
+<p>The inference market is fragmenting for the same reason : workloads are different. Images &amp; video are compute-heavy. Longer context windows demand more memory for KV cache. Edge devices have power constraints. A single architecture can't optimize for all of them.</p>
+<p>The model ecosystem reflects this. A few dominant LLMs with long half-lives sit alongside 90,000+ image generation models on Hugging Face, with new variants appearing daily. Each model type has different serving requirements, which fragments the infrastructure. Today, we see these segments :</p>
+<h2>Latency Tiers : Real-Time, Near-Real-Time, &amp; Batch</h2>
+<p>Latency defines three distinct segments. Real-time (sub-100ms) serves voice assistants, live translation, &amp; autonomous vehicles. Users won't wait, so infrastructure must be geographically distributed with dedicated capacity.</p>
+<p>Near-real-time (100ms-2s) covers chatbots, code completion, &amp; search augmentation. Most LLM applications today operate here, where batching &amp; queuing optimize throughput without degrading experience.</p>
+<p>Batch (seconds to hours) handles document processing &amp; content generation at scale. Cost efficiency matters more than speed, so workloads run during off-peak hours on spot instances.</p>
+<h2>Multimodal (Image, Video, Audio)</h2>
+<p>The bottleneck shifts. For chatbots, the problem is memory. The model holds the entire conversation in its head, &amp; that memory grows with every turn. For image &amp; video generation, the problem is raw compute. A single image requires 50 sequential passes through the model. Different architectures, different constraints, different infrastructure.</p>
+<h2>Edge (On-Device &amp; On-Premise)</h2>
+<p>Privacy requirements, connectivity constraints, &amp; latency sensitivity push inference to edge devices. Mobile phones, industrial sensors, medical devices. Apple runs a 3-billion-parameter model on-device for Apple Intelligence. Tesla runs vision models on FSD chips drawing 72 watts. Quantized models, specialized chips, &amp; limited memory create different optimization challenges than cloud inference.</p>
+<p>The database market produced Oracle, MongoDB, Databricks, &amp; Snowflake. A $100B inference market fragmenting the same way creates room for similar winners.</p>

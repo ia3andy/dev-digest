@@ -1,0 +1,154 @@
+<h1>Link CLI</h1>
+<p>Link CLI lets agents get secure, one-time-use payment credentials from a Link wallet — so they can complete purchases on your behalf without ever storing your real card details.</p>
+<h2>Installation</h2>
+<pre><code>npm i -g @stripe/link-cli</code></pre>
+<p>Or run directly with <code>npx</code>:</p>
+<pre><code>npx @stripe/link-cli</code></pre>
+<p>You can install the skill via <code>npx skills add stripe/link-cli</code>.</p>
+<h3>MCP Server</h3>
+<p>Link CLI can also run as a local MCP server. Add the following to your MCP client config (<code>.mcp.json</code>, etc.)</p>
+<pre><code>\{
+  "mcpServers": \{
+    "link": \{
+      "command": "npx",
+      "args": ["@stripe/link-cli", "--mcp"]
+    }
+  }
+}</code></pre>
+<h2>Quickstart</h2>
+<h3>Login</h3>
+<p>The <code>link-cli</code> requires a Link account. You can log in to your existing one or <a href="https://app.link.com">register online</a>.</p>
+<pre><code>link-cli auth login</code></pre>
+<p>You'll receive a verification URL and a short phrase. Visit the URL, log in to your Link account, and enter the phrase to approve the connection.</p>
+<h3>List payment methods</h3>
+<pre><code>link-cli payment-methods list</code></pre>
+<p>Returns the cards and bank accounts saved to your Link account. Use the <code>id</code> field as <code>payment_method_id</code> in the next step. If you have no payment methods, you can <a href="https://app.link.com/wallet">add new ones in Link</a>.</p>
+<h3>Create a spend request</h3>
+<p>To request a secure, one-time payment credential from your Link wallet, you create a spend request. You specify a payment method in your account, as well as some merchant details, line items, and amounts.</p>
+<pre><code>link-cli spend-request create \
+  --payment-method-id csmrpd_xxx \
+  --merchant-name "Stripe Press" \
+  --merchant-url "https://press.stripe.com" \
+  --context "Purchasing 'Working in Public' from press.stripe.com. The user initiated this purchase through the shopping assistant." \
+  --amount 3500 \
+  --line-item "name:Working in Public,unit_amount:3500,quantity:1" \
+  --total "type:total,display_text:Total,amount:3500" \
+  --request-approval</code></pre>
+<p>The <code>--request-approval</code> flag triggers a push notification (or email) to the user for approval, then polls until the request is approved or denied.</p>
+<p>Users can easily approve requests with the <a href="https://link.com/download">Link app</a>.</p>
+<h4>Credential types</h4>
+<p>By default, a spend request provisions a virtual card. For merchants that support the <a href="https://mpp.dev">Machine Payments Protocol</a> (HTTP 402) and the Stripe payment method, you can instead include <code>--credential-type "shared_payment_token"</code>.</p>
+<h3>Execute payment</h3>
+<p>The approved spend request includes a <code>card</code> object with <code>number</code>, <code>cvc</code>, <code>exp_month</code>, <code>exp_year</code>, <code>billing_address</code>, and <code>valid_until</code>. Enter these into the merchant's checkout form.</p>
+<pre><code>link-cli spend-request retrieve lsrq_001 --format json</code></pre>
+<p>By default, retrieving a spend request will not include card details. Use the <code>--include=card</code> to see unmasked card details.</p>
+<p>For agent polling, pass <code>--interval</code> and optionally <code>--max-attempts</code>:</p>
+<pre><code>link-cli spend-request retrieve lsrq_001 --interval 2 --max-attempts 150 --format json</code></pre>
+<p>Polling exits successfully only after the request reaches a terminal status such as <code>approved</code>, <code>denied</code>, or <code>expired</code>. If polling reaches <code>--timeout</code> or exhausts <code>--max-attempts</code> while the request is still non-terminal, the command exits non-zero with <code>code: "POLLING_TIMEOUT"</code> so callers do not treat a still-pending request as complete.</p>
+<p>If the merchant supports MPP, use <code>link-cli mpp pay</code> instead:</p>
+<pre><code>link-cli mpp pay https://climate.stripe.dev/api/contribute \
+  --spend-request-id lsrq_001 \
+  --method POST \
+  --data '\{"amount":100}' \
+  --format json</code></pre>
+<h2>Advanced</h2>
+<h3>Authentication</h3>
+<pre><code>link-cli auth login --client-name "Claude Code" --format json   # identify the connecting agent
+link-cli auth status --format json                               # check auth status
+link-cli auth logout --format json                               # disconnect</code></pre>
+<p>When <code>--client-name</code> is provided, the name is shown in the Link app when the user approves the connection — e.g. <code>Claude Code on my-macbook</code> instead of <code>link-cli on my-macbook</code>.</p>
+<p><code>auth status --format json</code> includes an <code>update</code> field when a newer version is available:</p>
+<pre><code>\{
+  "authenticated": true,
+  "update": \{
+    "current_version": "0.1.2",
+    "latest_version": "0.2.0",
+    "update_command": "npm install -g @stripe/link-cli"
+  }
+}</code></pre>
+<p>Set <code>NO_UPDATE_NOTIFIER=1</code> to suppress update checks (e.g. in CI).</p>
+<h3>Spend request lifecycle</h3>
+<p>A spend request moves through: <strong>create</strong> → <strong>request approval</strong> → <strong>approved</strong> (with credentials).</p>
+<p><strong>Required fields for create:</strong> <code>payment_method_id</code>, <code>merchant_name</code>, <code>merchant_url</code>, <code>context</code>, <code>amount</code></p>
+<p><strong>Constraints:</strong> <code>context</code> must be at least 100 characters; <code>amount</code> must not exceed 50000 (cents); <code>currency</code> must be a 3-letter ISO code. <strong>Test mode:</strong> Pass <code>--test</code> to create testmode credentials (uses test card <code>4242424242424242</code>). Useful for development and integration testing without using real payment methods.</p>
+<pre><code># Update before approval
+link-cli spend-request update lsrq_001 \
+  --merchant-url https://press.stripe.com/working-in-public \
+  --format json
+
+# Request approval separately (alternative to create --request-approval)
+link-cli spend-request request-approval lsrq_001 --format json
+
+# Retrieve at any time (includes card credentials once approved)
+link-cli spend-request retrieve lsrq_001 --format json</code></pre>
+<h3>Output formats</h3>
+<p>All commands accept <code>--format json</code> for structured JSON output. Other formats: <code>yaml</code>, <code>md</code>, <code>jsonl</code>, <code>toon</code> (default). Errors are returned as JSON with <code>code</code> and <code>message</code> fields, with exit code 1.</p>
+<h3>MPP</h3>
+<p>Use <code>mpp pay</code> to complete purchases on merchants that use the <a href="https://mpp.dev">Machine Payments Protocol</a>. The spend request must use <code>credential_type: "shared_payment_token"</code> and be approved. The SPT is one-time-use — if payment fails, create a new spend request.</p>
+<pre><code>link-cli mpp pay https://climate.stripe.dev/api/contribute \
+  --spend-request-id lsrq_001 \
+  --method POST \
+  --data '\{"amount":100}' \
+  --header "X-Custom: value" \
+  --format json</code></pre>
+<p>Use <code>mpp decode</code> to validate a raw <code>WWW-Authenticate</code> header and extract the <code>network_id</code> needed for <code>shared_payment_token</code> spend requests:</p>
+<pre><code>link-cli mpp decode \
+  --challenge 'Payment id="ch_001", realm="merchant.example", method="stripe", intent="charge", request="..."' \
+  --format json</code></pre>
+<h3>Environment variables</h3>
+<table>
+ <thead>
+  <tr>
+   <th>Variable</th>
+   <th>Effect</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>LINK_API_BASE_URL</code></td>
+   <td>Override the API base URL</td>
+  </tr>
+  <tr>
+   <td><code>LINK_AUTH_BASE_URL</code></td>
+   <td>Override the auth base URL</td>
+  </tr>
+  <tr>
+   <td><code>LINK_HTTP_PROXY</code></td>
+   <td>Route all requests through an HTTP proxy (requires <code>undici</code>)</td>
+  </tr>
+ </tbody>
+</table>
+<h2>Onboard</h2>
+<p>Run the guided setup flow — authenticates, checks payment methods, shows the app download QR, and walks through both demo flows:</p>
+<pre><code>link-cli onboard</code></pre>
+<h2>Demo</h2>
+<p>Run an interactive demo of both Link payment flows (always uses test mode — no real charges):</p>
+<pre><code>link-cli demo              # shows menu to choose flow
+link-cli demo --only-card  # virtual card flow only
+link-cli demo --only-spt   # machine payment (SPT) flow only</code></pre>
+<h2>Development</h2>
+<pre><code>pnpm install
+pnpm run build
+pnpm run link-cli --help</code></pre>
+<p>Watch mode:</p>
+<pre><code>pnpm run dev</code></pre>
+<p>Run tests:</p>
+<pre><code>pnpm run test</code></pre>
+<p>Type-check and lint:</p>
+<pre><code>pnpm run typecheck
+pnpm biome check .</code></pre>
+<h2>Releasing</h2>
+<p>This project uses <a href="https://github.com/changesets/changesets">Changesets</a> to manage versioning and publishing. Only <code>@stripe/link-cli</code> is published to npm — internal packages (<code>@stripe/link-sdk</code>, <code>@stripe/link-typescript-config</code>) are ignored by changesets.</p>
+<h3>Add a changeset</h3>
+<p>When you make a user-facing change, add a changeset before merging:</p>
+<pre><code>pnpm changeset</code></pre>
+<p>Follow the prompts to select the package (<code>@stripe/link-cli</code>) and the semver bump type (patch, minor, or major). This creates a markdown file in <code>.changeset/</code> describing the change.</p>
+<h3>Version</h3>
+<p>Once changesets have accumulated on <code>main</code>, create a version PR:</p>
+<pre><code>pnpm changeset version</code></pre>
+<p>This consumes all pending changesets, bumps the version in <code>packages/cli/package.json</code>, and updates <code>CHANGELOG.md</code>.</p>
+<h3>Publish</h3>
+<p>After the version PR is merged:</p>
+<pre><code>pnpm run build
+pnpm changeset publish</code></pre>
+<p>This publishes <code>@stripe/link-cli</code> to npm. CI also runs <code>pnpm --filter @stripe/link-cli publish --dry-run --no-git-checks</code> on every push to <code>main</code> to verify the package is publishable.</p>

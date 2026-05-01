@@ -216,6 +216,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  function scrollToReadingPosition() {
+    if (window.location.hash) {
+      const target = document.getElementById(window.location.hash.slice(1));
+      if (target) {
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+      }
+      return;
+    }
+    if (!articlePage) return;
+    const date = articlePage.dataset.postDate;
+    if (isPostRead(date)) return;
+    const hasRead = articlePage.querySelector('.digest-article.is-article-read');
+    if (!hasRead) return;
+    const firstUnread = articlePage.querySelector('.digest-article:not(.is-article-read):not([data-priority="5"])');
+    if (firstUnread) {
+      setTimeout(() => {
+        const y = firstUnread.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }, 100);
+    }
+  }
+
+  function shareUrl(title, url) {
+    if (navigator.share) {
+      navigator.share({ title, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(url).then(() => {
+        const btn = document.activeElement;
+        if (btn && btn.classList.contains('digest-share-btn')) {
+          const original = btn.innerHTML;
+          btn.classList.add('is-copied');
+          btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg> Copied!';
+          setTimeout(() => { btn.innerHTML = original; btn.classList.remove('is-copied'); }, 2000);
+        }
+      });
+    }
+  }
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.digest-share-btn');
+    if (!btn) return;
+    const articleId = btn.dataset.shareArticle;
+    if (articleId) {
+      const base = window.location.origin + window.location.pathname;
+      shareUrl(btn.title, base + '#' + articleId);
+    } else {
+      shareUrl(document.title, window.location.href.split('#')[0]);
+    }
+  });
+
   if (articlePage) {
     const digestContainer = document.querySelector('.digest-articles');
     if (digestContainer) {
@@ -233,4 +283,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   updateReadUI();
+  scrollToReadingPosition();
 });

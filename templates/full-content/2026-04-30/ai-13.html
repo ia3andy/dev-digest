@@ -1,0 +1,40 @@
+<h1>ProEval</h1>
+<p>Slash GenAI evaluation costs by up to 100x while actively discovering model failure patterns to guide better AI development.</p>
+<ol>
+ <li>💰 <strong>Cut GenAI eval costs up to 100×</strong> — achieve ±1% accuracy with a fraction of the samples</li>
+ <li>🔍 <strong>Discover failure cases</strong> — proactively surface diverse bugs under strict evaluation budgets</li>
+ <li>🧠 <strong>Transfer learning over benchmarks</strong> — pre-trained GP surrogates generalize to new models instantly</li>
+ <li>🧩 <strong>Easy Integration</strong> - Easily to integrate into the GenAI evaluation systems with different modalities</li>
+ <li>✅ <strong>Validated on reasoning, safety &amp; classification</strong> — GSM8K, MMLU, StrategyQA, Jigsaw, and more</li>
+</ol>
+<h2>Installation</h2>
+<pre><code>pip install -r requirements.txt</code></pre>
+<h2>Quick Start</h2>
+<pre><code>from proeval import BQPriorSampler, LLMPredictor, DATASET_CONFIGS
+from proeval.sampler import load_predictions, extract_model_predictions
+import numpy as np
+
+# Estimate a model's error rate with ~1% of the data
+sampler = BQPriorSampler(noise_variance=0.3)
+result = sampler.sample(predictions="svamp", target_model="gemini25_flash", budget=50)
+
+# Compare against the true error rate
+df = load_predictions("svamp")
+pred_matrix, model_names = extract_model_predictions(df)
+true_mean = np.mean(pred_matrix[:, model_names.index("gemini25_flash")])
+
+print(f"Estimated error rate: \{result.estimates[-1]:.4f}")
+print(f"MAE: \{result.mae(true_mean):.4f}")</code></pre>
+<h2>Experiments</h2>
+<p>Here is an example of how to run the experiments:</p>
+<pre><code>python -m experiment.exp_performance_estimation --dataset svamp --n-runs 5</code></pre>
+<p>You can find the comprehensive experiment details and dataset settings here.</p>
+<h2>Citation</h2>
+<p>If the work did some helps on your research/project, please cite our tech report. Thank you!</p>
+<pre><code>@article\{huang2026proeval,
+  title=\{\{\{ProEval}: Proactive Failure Discovery and Efficient Performance Estimation for Generative AI Evaluation}},
+  author=\{Huang, Yizheng and Zeng, Wenjun and Kumaresan, Aditi and Wang, Zi},
+  journal=\{arXiv preprint arXiv:2604.23099 [cs.LG]},
+  year=\{2026},
+  url=\{https://arxiv.org/abs/2604.23099}
+}</code></pre>

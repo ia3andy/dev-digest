@@ -1,0 +1,383 @@
+<p>Most tutorials on client-side data storage reach for IndexedDB, localStorage, or a third-party sync service. This one goes somewhere different: a real SQLite database, running as WebAssembly in the browser, with the database file living on the user's own Google Drive.</p>
+<p>This is the setup behind <a href="https://overtimeiq.vercel.app?ref=devto">OvertimeIQ</a> — but everything in this article stands alone as a practical reference. You don't need to care about overtime tracking for any of this to be useful.</p>
+<p>By the end, you'll know how to:</p>
+<ul>
+ <li>Initialize sql.js and run real SQL in the browser</li>
+ <li>Persist the database across page reloads via localStorage</li>
+ <li>Upload and download the database file from Google Drive</li>
+ <li>Handle sync conflicts correctly</li>
+ <li>Protect against data corruption on interrupted uploads</li>
+</ul>
+<hr>
+<h2>Why SQLite in the browser?</h2>
+<p>Before we write any code, it's worth asking why you'd reach for SQLite instead of IndexedDB or a cloud-synced store.</p>
+<p>The answer is <strong>portability</strong>. A SQLite database is a single binary file. You can open it on any device, in any SQLite-compatible tool, without installing anything. You can attach it to an email, drop it in Dropbox, or — as we'll do here — store it on Google Drive. The user owns a file, not a schema locked inside a browser's internal storage.</p>
+<p>For apps where user data portability matters — personal finance tools, health tracking, anything sensitive — this is a meaningful architectural choice, not just a curiosity.</p>
+<p>The trade-off: sql.js ships a ~1.5MB WASM binary. We'll deal with that below.</p>
+<hr>
+<h2>Setting up sql.js</h2>
+<p>Install the package:</p>
+<pre><code>npm install sql.js
+</code></pre>
+<p>The WASM binary needs to be accessible at a URL your code can load. Copy it into your <code>public</code> folder at build time:</p>
+<pre><code>// vite.config.js
+import \{ defineConfig } from 'vite'
+import \{ viteStaticCopy } from 'vite-plugin-static-copy'
+
+export default defineConfig(\{
+  plugins: [
+    viteStaticCopy(\{
+      targets: [
+        \{
+          src: 'node_modules/sql.js/dist/sql-wasm.wasm',
+          dest: ''
+        }
+      ]
+    })
+  ]
+})
+</code></pre>
+<p>Now initialise sql.js. This is async — the WASM binary has to load before you can do anything:</p>
+<pre><code>// lib/db.js
+import initSqlJs from 'sql.js'
+
+let db = null
+
+export async function initDB(existingBuffer = null) \{
+  const SQL = await initSqlJs(\{
+    locateFile: file =&gt; `/$\{file}` // points to /sql-wasm.wasm in public/
+  })
+
+  if (existingBuffer) \{
+    // Restore from a saved buffer (localStorage or Drive download)
+    db = new SQL.Database(new Uint8Array(existingBuffer))
+  } else \{
+    // Fresh database
+    db = new SQL.Database()
+  }
+
+  return db
+}
+</code></pre>
+<p><strong>Lazy loading matters here.</strong> Don't initialise the database on app load. Initialise it on first access. With a Service Worker caching the WASM binary after the first load, subsequent loads are instant — but you still don't want to block your UI render on a 1.5MB download for users on their first visit.</p>
+<hr>
+<h2>Running SQL</h2>
+<p>sql.js has two main operations:</p>
+<pre><code>// For SELECT — returns an array of result objects
+export function runQuery(sql, params = []) \{
+  const stmt = db.prepare(sql)
+  stmt.bind(params)
+  const rows = []
+  while (stmt.step()) \{
+    rows.push(stmt.getAsObject())
+  }
+  stmt.free()
+  return rows
+}
+
+// For INSERT / UPDATE / DELETE — no return value
+export function execSQL(sql, params = []) \{
+  const stmt = db.prepare(sql)
+  stmt.run(params)
+  stmt.free()
+}
+
+// Convenience wrapper for single-row queries
+export function getOne(sql, params = []) \{
+  const rows = runQuery(sql, params)
+  return rows.length &gt; 0 ? rows[0] : null
+}
+</code></pre>
+<p>Usage is exactly what you'd expect from a SQL library:</p>
+<pre><code>execSQL(
+  'INSERT INTO logs (job_id, date, start_time, end_time, duration_hours, location) VALUES (?, ?, ?, ?, ?, ?)',
+  [1, '2025-04-14', '20:00', '23:30', 3.5, 'office']
+)
+
+const logs = runQuery(
+  'SELECT * FROM logs WHERE date &gt;= ? ORDER BY date DESC',
+  ['2025-01-01']
+)
+</code></pre>
+<hr>
+<h2>Schema migrations</h2>
+<p>You need a migration runner. The pattern I use: a <code>schema_version</code> table with a single integer, and a list of migration functions keyed by version number.</p>
+<pre><code>const MIGRATIONS = \{
+  1: (db) =&gt; \{
+    db.run(`
+      CREATE TABLE IF NOT EXISTS jobs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        hourly_rate REAL NOT NULL,
+        weekend_multiplier REAL DEFAULT 1.5,
+        holiday_multiplier REAL DEFAULT 2.0,
+        work_start TEXT NOT NULL,
+        work_end TEXT NOT NULL,
+        color TEXT DEFAULT '#3B8BD4',
+        is_default INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL
+      )
+    `)
+    db.run(`
+      CREATE TABLE IF NOT EXISTS logs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        job_id INTEGER REFERENCES jobs(id),
+        date TEXT NOT NULL,
+        start_time TEXT NOT NULL,
+        end_time TEXT NOT NULL,
+        crosses_midnight INTEGER DEFAULT 0,
+        duration_hours REAL NOT NULL,
+        location TEXT NOT NULL,
+        notes TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    `)
+    db.run('CREATE INDEX IF NOT EXISTS idx_logs_date ON logs(date)')
+  }
+}
+
+export async function runMigrations(db) \{
+  db.run('CREATE TABLE IF NOT EXISTS schema_version (version INTEGER NOT NULL)')
+
+  const row = getOne('SELECT version FROM schema_version')
+  const currentVersion = row ? row.version : 0
+
+  const pendingVersions = Object.keys(MIGRATIONS)
+    .map(Number)
+    .filter(v =&gt; v &gt; currentVersion)
+    .sort((a, b) =&gt; a - b)
+
+  for (const version of pendingVersions) \{
+    MIGRATIONS[version](db)
+    if (currentVersion === 0) \{
+      execSQL('INSERT INTO schema_version (version) VALUES (?)', [version])
+    } else \{
+      execSQL('UPDATE schema_version SET version = ?', [version])
+    }
+  }
+}
+</code></pre>
+<p>Run migrations immediately after initializing the database, before anything else touches it.</p>
+<hr>
+<h2>Serializing to Uint8Array</h2>
+<p>This is the key operation that makes everything else work. sql.js can export the entire database state as a <code>Uint8Array</code> — a binary blob that is identical to what SQLite would write to disk.</p>
+<pre><code>export function serializeDB() \{
+  return db.export() // Returns Uint8Array
+}
+</code></pre>
+<p>That <code>Uint8Array</code> is your database file. Everything that follows — localStorage persistence, Drive upload, Drive download — is just moving that blob around.</p>
+<hr>
+<h2>localStorage persistence</h2>
+<p>After every write operation, serialize and save:</p>
+<pre><code>const DB_STORAGE_KEY = 'otiq_db'
+
+export function saveDB() \{
+  const buffer = serializeDB()
+  // Convert Uint8Array to a regular array for JSON serialisation
+  localStorage.setItem(DB_STORAGE_KEY, JSON.stringify(Array.from(buffer)))
+  // Trigger the Drive upload debounce (see below)
+  scheduleDriveUpload()
+}
+
+export function loadFromLocalStorage() \{
+  const stored = localStorage.getItem(DB_STORAGE_KEY)
+  if (!stored) return null
+  return new Uint8Array(JSON.parse(stored))
+}
+</code></pre>
+<p>On app load, check localStorage first. If there's a saved buffer, restore from it. Then compare with Drive to decide whether to download a newer version.</p>
+<p><strong>Storage size note:</strong> A SQLite file with thousands of rows will likely stay well under 5MB — comfortably within localStorage limits. If your use case could grow very large, consider using the Origin Private File System instead, but for personal data tools localStorage is generally fine. Always call <code>navigator.storage.persist()</code> on first load to request durable storage — without it, browsers can evict localStorage under storage pressure.</p>
+<pre><code>async function requestDurableStorage() \{
+  if (navigator.storage &amp;&amp; navigator.storage.persist) \{
+    const granted = await navigator.storage.persist()
+    if (!granted) \{
+      // Show a warning banner — Drive sync is the backup
+      showStorageWarning()
+    }
+  }
+}
+</code></pre>
+<hr>
+<h2>Google Drive as cloud sync</h2>
+<p>The Drive setup requires Google OAuth with the <code>drive.file</code> scope — the minimal scope that grants access only to files this specific app created. It cannot read other Drive files. This is the right choice for privacy-sensitive apps.</p>
+<p>I'll cover the full PKCE OAuth flow in the next article in this series. For now, assume you have a valid <code>access_token</code>.</p>
+<h3>Finding the database file</h3>
+<p>On login, search for an existing database file:</p>
+<pre><code>async function findDBFile(accessToken) \{
+  const response = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=name='overtimeiq.db'&amp;fields=files(id,modifiedTime)`,
+    \{ headers: \{ Authorization: `Bearer $\{accessToken}` } }
+  )
+  const data = await response.json()
+  return data.files?.[0] ?? null // \{ id, modifiedTime } or null
+}
+</code></pre>
+<h3>Creating the file (first time)</h3>
+<pre><code>async function createDBFile(accessToken, dbBuffer) \{
+  const metadata = \{
+    name: 'overtimeiq.db',
+    mimeType: 'application/octet-stream'
+  }
+
+  const formData = new FormData()
+  formData.append('metadata', new Blob([JSON.stringify(metadata)], \{ type: 'application/json' }))
+  formData.append('file', new Blob([dbBuffer], \{ type: 'application/octet-stream' }))
+
+  const response = await fetch(
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&amp;fields=id',
+    \{
+      method: 'POST',
+      headers: \{ Authorization: `Bearer $\{accessToken}` },
+      body: formData
+    }
+  )
+  const data = await response.json()
+  return data.id // Store this file ID in settings.drive_file_id
+}
+</code></pre>
+<h3>Downloading the file</h3>
+<pre><code>async function downloadDBFile(accessToken, fileId) \{
+  const response = await fetch(
+    `https://www.googleapis.com/drive/v3/files/$\{fileId}?alt=media`,
+    \{ headers: \{ Authorization: `Bearer $\{accessToken}` } }
+  )
+  const buffer = await response.arrayBuffer()
+  return new Uint8Array(buffer)
+}
+</code></pre>
+<hr>
+<h2>The sync decision logic</h2>
+<p>On every app load after login, you need to decide: use the local database, or download from Drive?</p>
+<pre><code>async function syncOnLogin(accessToken) \{
+  const driveFile = await findDBFile(accessToken)
+
+  if (!driveFile) \{
+    // First time — upload local DB and store the file ID
+    const buffer = loadFromLocalStorage() ?? serializeDB()
+    const fileId = await createDBFile(accessToken, buffer)
+    execSQL('UPDATE settings SET drive_file_id = ? WHERE id = 1', [fileId])
+    execSQL('UPDATE settings SET last_synced_at = ? WHERE id = 1', [new Date().toISOString()])
+    return
+  }
+
+  const driveModifiedTime = new Date(driveFile.modifiedTime).getTime()
+  const localSyncedAt = getOne('SELECT last_synced_at FROM settings WHERE id = 1')?.last_synced_at
+  const localTime = localSyncedAt ? new Date(localSyncedAt).getTime() : 0
+
+  const diff = Math.abs(driveModifiedTime - localTime)
+
+  if (diff &lt; 30_000) \{
+    // Within 30 seconds — same-device multi-tab edge case, no action
+    return
+  }
+
+  if (driveModifiedTime &gt; localTime) \{
+    // Drive is newer — download and replace
+    const buffer = await downloadDBFile(accessToken, driveFile.id)
+    await reinitializeFromBuffer(buffer) // Re-init sql.js with the new buffer
+    showToast('Synced from Drive')
+  } else \{
+    // Local is newer — upload
+    await uploadDBToDrive(accessToken, driveFile.id)
+  }
+
+  execSQL('UPDATE settings SET last_synced_at = ? WHERE id = 1', [new Date().toISOString()])
+}
+</code></pre>
+<p><strong>Conflict resolution policy:</strong> When in doubt, prefer the Drive copy. Drive is the source of truth. If <code>modifiedTime</code> comparison is inconclusive (e.g., clock skew between devices), take the Drive copy and show a toast: <em>"Synced from Drive — local changes from this session may have been overwritten."</em></p>
+<hr>
+<h2>The upload safety pattern</h2>
+<p>Never upload directly to <code>overtimeiq.db</code>. Upload to a temp file first, then rename atomically. A browser crash, network interruption, or error mid-upload should never corrupt the live database.</p>
+<pre><code>async function uploadDBToDrive(accessToken, fileId) \{
+  const buffer = serializeDB()
+
+  // Step 1: Upload to temp file
+  const tempMetadata = \{ name: 'overtimeiq_tmp.db' }
+  const formData = new FormData()
+  formData.append('metadata', new Blob([JSON.stringify(tempMetadata)], \{ type: 'application/json' }))
+  formData.append('file', new Blob([buffer], \{ type: 'application/octet-stream' }))
+
+  const uploadResponse = await fetch(
+    `https://www.googleapis.com/upload/drive/v3/files/$\{fileId}?uploadType=multipart`,
+    \{
+      method: 'PATCH',
+      headers: \{ Authorization: `Bearer $\{accessToken}` },
+      body: formData
+    }
+  )
+
+  if (!uploadResponse.ok) throw new Error('Upload failed')
+
+  // Step 2: Rename temp file to live file atomically
+  await fetch(
+    `https://www.googleapis.com/drive/v3/files/$\{fileId}`,
+    \{
+      method: 'PATCH',
+      headers: \{
+        Authorization: `Bearer $\{accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(\{ name: 'overtimeiq.db' })
+    }
+  )
+}
+</code></pre>
+<p>If Step 1 succeeds but Step 2 fails, the user has a temp file but the live file is intact. On the next sync, the timestamp comparison will catch the discrepancy and prompt a re-upload.</p>
+<hr>
+<h2>Debouncing the Drive upload</h2>
+<p>You don't want to upload to Drive on every keypress or every individual log entry mutation. Debounce it:</p>
+<pre><code>let driveUploadTimeout = null
+
+export function scheduleDriveUpload() \{
+  if (driveUploadTimeout) clearTimeout(driveUploadTimeout)
+  driveUploadTimeout = setTimeout(async () =&gt; \{
+    const accessToken = getAccessToken() // From your auth store
+    const fileId = getOne('SELECT drive_file_id FROM settings WHERE id = 1')?.drive_file_id
+    if (accessToken &amp;&amp; fileId) \{
+      await uploadDBToDrive(accessToken, fileId)
+      execSQL('UPDATE settings SET last_synced_at = ? WHERE id = 1', [new Date().toISOString()])
+    }
+  }, 10_000) // 10 seconds after the last write
+}
+</code></pre>
+<p>The localStorage write happens synchronously on every mutation — data is safe locally the instant you write it. The Drive upload is fire-and-forget with a 10-second debounce so a bulk import (100 rows at once) only triggers one upload.</p>
+<hr>
+<h2>Putting it all together</h2>
+<p>The initialization sequence on app load:</p>
+<pre><code>async function initializeApp() \{
+  // 1. Try to restore from localStorage
+  const storedBuffer = loadFromLocalStorage()
+
+  // 2. Initialize sql.js with the stored buffer (or fresh)
+  await initDB(storedBuffer)
+
+  // 3. Run schema migrations
+  await runMigrations(db)
+
+  // 4. Seed defaults if this is the first launch
+  if (!getOne('SELECT id FROM jobs WHERE id = 1')) \{
+    seedDefaultJob()
+    seedHolidays()
+  }
+
+  // 5. Request durable storage
+  await requestDurableStorage()
+
+  // 6. If authenticated, sync with Drive
+  const accessToken = getStoredAccessToken()
+  if (accessToken) \{
+    await syncOnLogin(accessToken)
+  }
+}
+</code></pre>
+<hr>
+<h2>What this doesn't cover</h2>
+<p>This article focused on the storage and sync layer. Two things worth a separate deep dive:</p>
+<p><strong>The Google OAuth PKCE flow</strong> — how to get the <code>access_token</code> and <code>refresh_token</code> without a client secret, and how to silently refresh the token mid-session. That's the next article in this series.</p>
+<p><strong>The midnight rate calculation</strong> — how to correctly split a shift that crosses midnight across two different rate multipliers, including the December 31 → January 1 edge case. I'll cover that in a later article on the earnings engine.</p>
+<hr>
+<h2>The case for this architecture</h2>
+<p>The pattern here — SQLite on the user's cloud storage, managed entirely client-side — works well for a specific category of app: personal data tools where the data is sensitive, the user count is small, and data portability is a first-class feature.</p>
+<p>It's not the right choice for collaborative tools, apps with large binary assets, or anything requiring server-side processing of the data. But for personal productivity software, financial tracking, health logging, or any domain where "your data should be yours" is a meaningful promise — this architecture delivers it genuinely, not as marketing copy.</p>
+<p>The database is a file. The user can open it in DB Browser for SQLite today. They'll be able to open it in twenty years. That kind of portability is hard to promise with any other approach.</p>

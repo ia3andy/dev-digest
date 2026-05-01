@@ -1,0 +1,75 @@
+<p>We're introducing the Cursor SDK so you can build agents with the same runtime, harness, and models that power Cursor.</p>
+<p>The agents that run in the Cursor desktop app, CLI, and web app are now accessible with a few lines of TypeScript. Run it on your machine or on Cursor's cloud against a dedicated VM, with any frontier model.</p>
+<p>Coding agents are evolving from interactive tools for individual developers to programmatic infrastructure for organizations. The Cursor SDK lets you deploy agents without the overhead of building and maintaining the entire agent stack. Many teams are invoking agents directly from CI/CD pipelines, creating automations for end-to-end workflows, and embedding agents into their core products.</p>
+<p>The Cursor SDK is now available in public beta for all users. Just run <code>npm install @cursor/sdk</code> to get started.</p>
+<pre><code>import \{ Agent } from "@cursor/sdk";
+
+const agent = await Agent.create(\{
+  apiKey: process.env.CURSOR_API_KEY!,
+  model: \{ id: "composer-2" },
+  local: \{ cwd: process.cwd() },
+});
+
+const run = await agent.send("Summarize what this repository does");
+
+for await (const event of run.stream()) \{
+  console.log(event);
+}</code></pre>
+<h2>Deploy agents to production quickly</h2>
+<p>Building fast, reliable, and capable coding agents that run safely against your data requires meaningful engineering effort: secure sandboxing, durable state and session management, environment setup, and context management. And when a new model ships, teams often have to rework their agent loops to take advantage.</p>
+<p>The Cursor SDK eliminates this complexity so you can focus on building useful agents.</p>
+<p><strong>Use production-ready cloud infrastructure</strong></p>
+<p>Cloud sessions initiated from the SDK run on the same optimized runtime we use for <a href="https://cursor.com/docs/cloud-agent">Cloud Agents</a>. Each agent gets its own dedicated VM with strong sandboxing, a clone of the repo, and a fully configured development environment.</p>
+<p>Agents keep going when your laptop sleeps or network drops. You can stream the conversation and reconnect later. When the agent finishes, it can open a PR, push a branch, or attach demos and screenshots.</p>
+<pre><code>// Initiate cloud agent to start a task...:
+const agent = await Agent.create(\{
+  apiKey: process.env.CURSOR_API_KEY!,
+  model: \{ id: "gpt-5.5" },
+  cloud: \{
+    repos: [\{ url: "https://github.com/cursor/cookbook", startingRef: "main" }],
+    autoCreatePR: true,
+  },
+});
+
+const run = await agent.send("Fix the auth token expiry bug");
+console.log(`Started $\{run.id}`);
+
+// ...check back in later, from anywhere:
+const result = await (
+  await Agent.getRun(run.id, \{ runtime: "cloud", agentId: run.agentId })
+).wait();
+console.log(result.git?.branches[0]?.prUrl);</code></pre>
+<p>The SDK uses our updated <a href="https://cursor.com/docs/cloud-agent/api/endpoints">Cloud Agents API</a>, which allows cloud agent runs to show up in Cursor's Agents Window and web app. You can start a task programmatically and then jump into Cursor to inspect progress or take over the work.</p>
+<p>When you need a different runtime, the same SDK can run agents on <a href="https://cursor.com/blog/self-hosted-cloud-agents">self-hosted workers</a>, keeping code and tool execution inside your network, or locally on your machine for fast iteration.</p>
+<p><strong>Use the full Cursor harness</strong></p>
+<p>Agents launched through the SDK benefit from the same harness that powers Cursor across our desktop app, CLI, and web app:</p>
+<ul>
+ <li><strong>Intelligent context management:</strong> Codebase indexing, semantic search, and instant grep help agents get to the right outcome faster and more efficiently.</li>
+ <li><strong>MCP servers:</strong> Agents can connect to external tools and data sources over stdio or HTTP, either through a <code>.cursor/mcp.json</code> config file or passed inline on the call.</li>
+ <li><strong>Skills:</strong> Agents pick up skills automatically from your repo's <code>.cursor/skills/</code> directory.</li>
+ <li><strong>Hooks:</strong> Observe, control, and extend the agent loop across cloud, self-hosted, and local with a <code>.cursor/hooks.json</code> file.</li>
+ <li><strong>Subagents:</strong> Delegate subtasks to named subagents with their own prompts and models, which the main agent spawns via the <code>Agent</code> tool.</li>
+</ul>
+<p><strong>Build on any model</strong></p>
+<p>The Cursor SDK gives you access to every model supported in Cursor. Route agents to the best model for the task at hand, with your desired balance of cost and capability, with a single field change.</p>
+<p>And with Composer 2, a specialized coding model that achieves frontier-level performance at a fraction of the cost of general-purpose models, you get the best combination of intelligence and efficiency for most coding agent tasks.</p>
+<h2>What developers are building</h2>
+<p>Teams are using the Cursor SDK to ship custom agents faster. For example, programmatic agents that are kicked off directly from CI/CD to summarize changes, identify root causes for CI failures, and update PRs with fixes. Others are building custom agent platforms like internal applications that let GTM teams query product data without writing code.</p>
+<p>Some customers are even embedding Cursor directly into customer-facing products, where end users now get an agent experience without leaving the host application.</p>
+<p>Hear directly from some of our customers building on the Cursor SDK:</p>
+<blockquote>
+ <p>Cursor offers a great cloud experience for running many agents in parallel from the editor and CLI. We're excited about the SDK as a path to running our own programmatic agents on that same cloud runtime, without managing VMs or working around memory limits, to keep our codebase healthy without constant developer intervention.</p>
+</blockquote>
+<p><strong>George Jacob</strong>, Senior Engineering Manager, Faire</p>
+<h2>Start from a sample project</h2>
+<p>We've added a few starter projects to a <a href="https://github.com/cursor/cookbook">public GitHub repo</a> that you can fork and extend for your own use cases:</p>
+<ul>
+ <li><strong>Quickstart:</strong> A minimal Node.js example that creates a local agent, sends one prompt, and streams the response.</li>
+ <li><strong>Prototyping tool:</strong> A web app for spinning up agents to scaffold new projects and iterate on ideas in a sandboxed cloud environment.</li>
+ <li><strong>Kanban board:</strong> An agent-powered kanban tool where engineers can drag a card and have agents programmatically pick up the work, open a PR, and post the result back as an attachment.</li>
+ <li><strong>Coding agent CLI:</strong> A lightweight command-line interface that lets you spawn Cursor agents from your terminal.</li>
+</ul>
+<h2>What's next</h2>
+<p>The Cursor SDK is available to all users and is billed based on standard, token-based consumption pricing.</p>
+<p>We are continuing to invest in the Cursor SDK, with a focus on making it even easier for teams to build programmatic agents across more languages, workflows, and deployment patterns.</p>
+<p>Learn more by reading our <a href="https://cursor.com/docs/sdk/typescript">docs</a>. You can also use Cursor with our <a href="https://cursor.com/marketplace/cursor/cursor-sdk">Cursor SDK plugin</a> to help you start building.</p>

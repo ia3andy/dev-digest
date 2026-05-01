@@ -1,0 +1,108 @@
+<p>OpenAI's ad platform has two halves. On the ChatGPT side, the backend injects structured <code>single_advertiser_ad_unit</code> objects into the conversation SSE stream while the model is responding. On the merchant side, a tracking SDK called OAIQ runs in the visitor's browser and reports product views back to OpenAI. The two are tied together by Fernet-encrypted click tokens, four of them per ad.</p>
+<p>I captured both halves on a consented mobile-traffic research fleet. Everything below comes from observed traffic.</p>
+<h2>How an ad gets into a conversation</h2>
+<p>When you send a message to ChatGPT, the backend opens an SSE response at <code>chatgpt.com/backend-api/f/conversation</code>. Most events in that stream are model-output. Some are ad units. They look like this:</p>
+<pre><code>event: delta
+data: \{
+  "type":           "single_advertiser_ad_unit",
+  "ads_request_id": "069e89b3-c038-7764-8000-6e5a193e5f69",
+  "ads_spam_integrity_payload": "gAAAAABp6Js_&lt;...redacted...&gt;",
+  "preamble":       "",
+  "advertiser_brand": \{
+    "name":        "Grubhub",
+    "url":         "www.grubhub.com",
+    "favicon_url": "https://bzrcdn.openai.com/cabfae7ead26b03d.png",
+    "id":          "adacct_6984ed0ba55481a29894bb192f7773b4"
+  },
+  "carousel_cards": [\{
+    "title":     "Get Chinese Food Delivered",
+    "body":      "Satisfy Your Cravings with Grubhub Delivery.",
+    "image_url": "https://bzrcdn.openai.com/cabfae7ead26b03d.png",
+    "target": \{
+      "type":  "url",
+      "value": "https://www.grubhub.com/?utm_source=chatgptpilot&amp;utm_medium=paid&amp;utm_campaign=diner_gh_search_chatgpt_kw_traffic_nb_x_nat_x&amp;utm_content=nbchinese&amp;oppref=gAAAA&lt;...&gt;&amp;olref=gAAAA&lt;...&gt;",
+      "open_externally": false
+    },
+    "ad_data_token": "eyJwYXlsb&lt;...&gt;"
+  }]
+}
+</code></pre>
+<p>Notes:</p>
+<ul>
+ <li><code>single_advertiser_ad_unit</code> is a typed schema. The naming implies siblings (multi-advertiser, etc.).</li>
+ <li><code>advertiser_brand.id</code> is <code>adacct_&lt;32-hex&gt;</code> — a stable per-merchant account identifier.</li>
+ <li>Brand favicon and ad image both load from <code>bzrcdn.openai.com</code>. OpenAI hosts the advertiser's creative, not the merchant.</li>
+ <li><code>target.open_externally: false</code> opens the link in ChatGPT's in-app webview, so OpenAI observes the post-click navigation on top of any pixel signal.</li>
+ <li>Four Fernet tokens per ad: <code>ads_spam_integrity_payload</code>, <code>oppref</code>, <code>olref</code>, and a base64-wrapped <code>ad_data_token</code>. Each is AES-128-CBC under a server-only key with HMAC-SHA256 integrity.</li>
+</ul>
+<h2>How ads get selected</h2>
+<p>A single account in the panel received six different ads across six conversations on six different topics. The targeting is contextual to the chat:</p>
+<table>
+ <thead>
+  <tr>
+   <th>Conversation topic</th>
+   <th>Advertiser delivered</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Beijing trip planning (Great Wall, Forbidden City)</td>
+   <td>Grubhub — "Get Chinese Food Delivered"</td>
+  </tr>
+  <tr>
+   <td>Beijing tour bookings</td>
+   <td>GetYourGuide — Great Wall tour, <code>ad_id=beijing003</code></td>
+  </tr>
+  <tr>
+   <td>Beijing flights</td>
+   <td>Axel — <code>utm_term=vflight_beijing_03</code></td>
+  </tr>
+  <tr>
+   <td>NBA playoffs</td>
+   <td>Gametime — <code>utm_campaign=nba&amp;utm_content=playoffs</code></td>
+  </tr>
+  <tr>
+   <td>Spring fashion/trends</td>
+   <td>Aritzia — <code>utm_campaign=chatgptpilot_trav3</code></td>
+  </tr>
+  <tr>
+   <td>Productivity / slides</td>
+   <td>Canva — <code>utm_campaign=…link-clicks_products</code></td>
+  </tr>
+ </tbody>
+</table>
+<p>Same account, different topic, different brand. I didn't find evidence one way or the other on whether targeting also incorporates prior conversation history.</p>
+<h2>The four-token attribution chain</h2>
+<p>Every ad ships with four distinct Fernet-encrypted blobs. Their roles, based on where they appear:</p>
+<ol>
+ <li><strong><code>ads_spam_integrity_payload</code></strong> sent inside the SSE data, never on the click URL. Server-side integrity check against forged ad clicks.</li>
+ <li><strong><code>oppref</code></strong> present on the click URL and copied verbatim by the OAIQ pixel into the cookie <code>__oppref</code> (TTL 720 hours / 30 days). The forward attribution token. Travels with every subsequent merchant pixel event.</li>
+ <li><strong><code>olref</code></strong> paired with <code>oppref</code> on the click URL but not stored by the SDK we observed. Likely impression-side / outbound-link-reference logging on OpenAI's servers.</li>
+ <li><strong><code>ad_data_token</code></strong> base64-wrapped JSON containing yet another Fernet token. Carried in the SSE payload, presumably reconciled server-side at click time.</li>
+</ol>
+<p>Fernet's first nine bytes are public: version byte <code>0x80</code> plus an 8-byte big-endian Unix timestamp. So the mint time of any of these tokens is recoverable without OpenAI's key:</p>
+<pre><code>import base64, struct, datetime
+b = base64.urlsafe_b64decode("gAAAAABp7fdA" + "==")
+print(datetime.datetime.utcfromtimestamp(struct.unpack("&gt;Q", b[1:9])[0]))
+# → 2026-04-26 11:30:08 UTC
+</code></pre>
+<p>The Home Depot click URL I captured was minted at 11:30:08; the browser fetched the merchant page at 11:31:43. Click latency: 95 seconds.</p>
+<h2>How the loop closes on the merchant side</h2>
+<p>User taps the card. Browser opens:</p>
+<pre><code>https://www.grubhub.com/?utm_source=chatgptpilot&amp;...
+                       &amp;oppref=gAAAA&lt;...&gt;
+                       &amp;olref=gAAAA&lt;...&gt;
+</code></pre>
+<p>The merchant page loads the OAIQ SDK:</p>
+<pre><code>&lt;script src="https://bzrcdn.openai.com/sdk/oaiq.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  oaiq('init',    \{ pid: '&lt;merchant pixel ID&gt;' });
+  oaiq('measure', 'contents_viewed', \{ ... });
+&lt;/script&gt;
+</code></pre>
+<p><code>oaiq.min.js</code> is at version 0.1.3. On <code>init</code> it reads <code>?oppref=</code> from <code>window.location</code>, writes it into the first-party cookie <code>__oppref</code> with a 720-hour TTL, and sets a probe cookie <code>__oaiq_domain_probe</code>. Every subsequent <code>measure</code> call POSTs JSON to:</p>
+<pre><code>POST https://bzr.openai.com/v1/sdk/events?pid=&lt;merchant&gt;&amp;st=oaiq-web&amp;sv=0.1.3
+</code></pre>
+<blockquote>
+ <p>Two domains to add to your filter list if you want to block ChatGPT ad events: <code>bzrcdn.openai.com</code>, <code>bzr.openai.com</code>. Two cookie names to inspect after any ChatGPT-recommended click: <code>__oppref</code>, <code>__oaiq_domain_probe</code>.</p>
+</blockquote>

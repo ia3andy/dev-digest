@@ -1,0 +1,25 @@
+<h1>TheColorAPI color conversion, naming, scheming &amp; placeholders</h1>
+<h3>Your fast, modern, swiss army knife for color.</h3>
+<p>Pass in any valid color and get conversion into any other format, the name of the color, placeholder images and a multitude of schemes.</p>
+<p>There are only two endpoints you need to worry about, <code>/id</code> and <code>/scheme</code>, and you can read the docs about both. Each endpoint is available in JSON[P], HTML &amp; SVG format. The SVG format can be saved or used as an <code>img[src]</code> attribute for super-easy embedding/sharing!</p>
+<p>Try Josh's favorite, for example, in JSON, HTML or SVG format.</p>
+<h2>How do I convert/identify a color?</h2>
+<p>All you really need to do is access the <code>/id</code> endpoint, and pass in a color value as a query string. Read the docs for more details, but all these are valid:</p>
+<ul>
+ <li><code>/id?hex=ffa</code> or <code>/id?hex=00ffa6</code></li>
+ <li><code>/id?rgb=rgb(255,0,0)</code> or <code>/id?rgb=20,43,55</code></li>
+ <li>Same goes for cmyk, hsl, and hsv formats</li>
+</ul>
+<p>Every <code>color</code> object returned by the API:</p>
+<ul>
+ <li>Is named (from a matched dataset of over 2000 names+colors) <em>e.g. #24B1E0 == Cerulean</em></li>
+ <li>Has an image URL for demonstration <em>e.g. Cerulean image</em></li>
+ <li>Is transposed into hex, rgb, cmyk, hsl, hsv and XYZ formats</li>
+ <li>Is matched to a best-contrast color for text overlay, etc</li>
+</ul>
+<h2>How do I generate color schemes?</h2>
+<p>The parameters are generally the same as those necessary for the <code>/id</code> endpoint (supply a color, like above), but here you can also specify a scheme mode to guide the generation.</p>
+<p>Scheme modes include <code>monochrome</code>, <code>monochrome-dark</code>, <code>monochrome-light</code>, <code>analogic</code>, <code>complement</code>, <code>analogic-complement</code>, <code>triad</code> and <code>quad</code>.</p>
+<p>Every <code>scheme</code> object returned by the API is seeded by the color of your request and can be any length you specify (within limits). It will also include a <code>color</code> object for each constituent color.</p>
+<h2>Anything else?</h2>
+<p>If you find this open source API useful, please support the developer!</p>

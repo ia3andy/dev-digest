@@ -1,0 +1,151 @@
+<h2>LLM Inference for Large-Context Offline Workloads</h2>
+<p>oLLM is a lightweight Python library for large-context LLM inference, built on top of Huggingface Transformers and PyTorch. It enables running models like <a href="https://huggingface.co/openai/gpt-oss-20b">gpt-oss-20B</a>, <a href="https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct">qwen3-next-80B</a> or <a href="https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct">Llama-3.1-8B-Instruct</a> on 100k context using ~$200 consumer GPU with 8GB VRAM. No quantization is used—only fp16/bf16 precision.</p>
+<p><em><a href="https://github.com/Mega4alik/ollm/wiki/Releases">Latest updates</a> (1.0.3)</em> 🔥</p>
+<ul>
+ <li><code>AutoInference</code> with any Llama3 / gemma3 model + <a href="https://github.com/huggingface/peft">PEFT</a> adapter support</li>
+ <li><code>kvikio</code> and <code>flash-attn</code> are optional now, meaning no hardware restrictions beyond HF transformers</li>
+ <li>Multimodal <strong>voxtral-small-24B</strong> (audio+text) added. <a href="https://github.com/Mega4alik/ollm/blob/main/example_audio.py">[sample with audio]</a></li>
+ <li>Multimodal <strong>gemma3-12B</strong> (image+text) added. <a href="https://github.com/Mega4alik/ollm/blob/main/example_image.py">[sample with image]</a></li>
+ <li><strong>qwen3-next-80B</strong> (160GB model) added with ⚡️1tok/2s throughput (our fastest model so far)</li>
+ <li>gpt-oss-20B flash-attention-like implementation added to reduce VRAM usage</li>
+ <li>gpt-oss-20B chunked MLP added to reduce VRAM usage</li>
+</ul>
+<h2>8GB Nvidia 3060 Ti Inference memory usage:</h2>
+<table>
+ <thead>
+  <tr>
+   <th>Model</th>
+   <th>Weights</th>
+   <th>Context length</th>
+   <th>KV cache</th>
+   <th>Baseline VRAM (no offload)</th>
+   <th>oLLM GPU VRAM</th>
+   <th>oLLM Disk (SSD)</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><a href="https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct">qwen3-next-80B</a></td>
+   <td>160 GB (bf16)</td>
+   <td>50k</td>
+   <td>20 GB</td>
+   <td>~190 GB</td>
+   <td>~7.5 GB</td>
+   <td>180 GB</td>
+  </tr>
+  <tr>
+   <td><a href="https://huggingface.co/openai/gpt-oss-20b">gpt-oss-20B</a></td>
+   <td>13 GB (packed bf16)</td>
+   <td>10k</td>
+   <td>1.4 GB</td>
+   <td>~40 GB</td>
+   <td>~7.3GB</td>
+   <td>15 GB</td>
+  </tr>
+  <tr>
+   <td><a href="https://huggingface.co/google/gemma-3-12b-it">gemma3-12B</a></td>
+   <td>25 GB (bf16)</td>
+   <td>50k</td>
+   <td>18.5 GB</td>
+   <td>~45 GB</td>
+   <td>~6.7 GB</td>
+   <td>43 GB</td>
+  </tr>
+  <tr>
+   <td><a href="https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct">llama3-1B-chat</a></td>
+   <td>2 GB (bf16)</td>
+   <td>100k</td>
+   <td>12.6 GB</td>
+   <td>~16 GB</td>
+   <td>~5 GB</td>
+   <td>15 GB</td>
+  </tr>
+  <tr>
+   <td><a href="https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct">llama3-3B-chat</a></td>
+   <td>7 GB (bf16)</td>
+   <td>100k</td>
+   <td>34.1 GB</td>
+   <td>~42 GB</td>
+   <td>~5.3 GB</td>
+   <td>42 GB</td>
+  </tr>
+  <tr>
+   <td><a href="https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct">llama3-8B-chat</a></td>
+   <td>16 GB (bf16)</td>
+   <td>100k</td>
+   <td>52.4 GB</td>
+   <td>~71 GB</td>
+   <td>~6.6 GB</td>
+   <td>69 GB</td>
+  </tr>
+ </tbody>
+</table>
+<p>By "Baseline" we mean typical inference without any offloading</p>
+<p>How do we achieve this:</p>
+<ul>
+ <li>Loading layer weights from SSD directly to GPU one by one</li>
+ <li>Offloading KV cache to SSD and loading back directly to GPU, no quantization or PagedAttention</li>
+ <li>Offloading layer weights to CPU if needed</li>
+ <li>FlashAttention-2 with online softmax. Full attention matrix is never materialized.</li>
+ <li>Chunked MLP. Intermediate upper projection layers may get large, so we chunk MLP as well</li>
+</ul>
+<p>Typical use cases include:</p>
+<ul>
+ <li>Analyze contracts, regulations, and compliance reports in one pass</li>
+ <li>Summarize or extract insights from massive patient histories or medical literature</li>
+ <li>Process very large log files or threat reports locally</li>
+ <li>Analyze historical chats to extract the most common issues/questions users have</li>
+</ul>
+<p><strong>Supported GPUs</strong>: NVIDIA (with additional performance benefits from <code>kvikio</code> and <code>flash-attn</code>), AMD, and Apple Silicon (MacBook).</p>
+<h2>Getting Started</h2>
+<p>It is recommended to create venv or conda environment first</p>
+<pre><code>python3 -m venv ollm_env
+source ollm_env/bin/activate</code></pre>
+<p>Install oLLM with <code>pip install --no-build-isolation ollm</code> or <a href="https://github.com/Mega4alik/ollm">from source</a>:</p>
+<pre><code>git clone https://github.com/Mega4alik/ollm.git
+cd ollm
+pip install --no-build-isolation -e .
+
+# for Nvidia GPUs with cuda (optional): 
+pip install kvikio-cu\{cuda_version} Ex, kvikio-cu12 #speeds up the inference</code></pre>
+<blockquote>
+ <p>💡 <strong>Note:</strong> <strong>voxtral-small-24B</strong> requires additional pip dependencies to be installed as <code>pip install "mistral-common[audio]"</code> and <code>pip install librosa</code></p>
+</blockquote>
+<p>Check out the <a href="https://github.com/Mega4alik/ollm/wiki/Troubleshooting">Troubleshooting</a> in case of any installation issues</p>
+<h2>Example</h2>
+<p>Code snippet sample</p>
+<pre><code>from ollm import Inference, file_get_contents, TextStreamer
+o = Inference("llama3-1B-chat", device="cuda:0", logging=True) #llama3-1B/3B/8B-chat, gpt-oss-20B, qwen3-next-80B
+o.ini_model(models_dir="./models/", force_download=False)
+o.offload_layers_to_cpu(layers_num=2) #(optional) offload some layers to CPU for speed boost
+past_key_values = o.DiskCache(cache_dir="./kv_cache/") #set None if context is small
+text_streamer = TextStreamer(o.tokenizer, skip_prompt=True, skip_special_tokens=False)
+
+messages = [\{"role":"system", "content":"You are helpful AI assistant"}, \{"role":"user", "content":"List planets"}]
+input_ids = o.tokenizer.apply_chat_template(messages, reasoning_effort="minimal", tokenize=True, add_generation_prompt=True, return_tensors="pt").to(o.device)
+outputs = o.model.generate(input_ids=input_ids,  past_key_values=past_key_values, max_new_tokens=500, streamer=text_streamer).cpu()
+answer = o.tokenizer.decode(outputs[0][input_ids.shape[-1]:], skip_special_tokens=False)
+print(answer)</code></pre>
+<p>or run sample python script as <code>PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True python example.py</code></p>
+<pre><code># with AutoInference, you can run any LLama3/gemma3 model with PEFT adapter support
+# pip install peft 
+from ollm import AutoInference
+o = AutoInference("./models/gemma3-12B", # any llama3 or gemma3 model
+  adapter_dir="./myadapter/checkpoint-20", # PEFT adapter checkpoint if available
+  device="cuda:0", multimodality=False, logging=True)
+...</code></pre>
+<p><strong>More samples</strong></p>
+<ul>
+ <li><a href="https://github.com/Mega4alik/ollm/blob/main/example_image.py">gemma3-12B image+text</a></li>
+ <li><a href="https://github.com/Mega4alik/ollm/blob/main/example_audio.py">voxtral-small-24B audio+text</a></li>
+ <li><a href="https://github.com/Mega4alik/peftee?tab=readme-ov-file#usage">AutoInference + SFT</a></li>
+</ul>
+<h2>Roadmap</h2>
+<p><em>For visibility of what's coming next (subject to change)</em></p>
+<ul>
+ <li>Qwen3-Next quantized version</li>
+ <li>Qwen3-VL or alternative vision model</li>
+ <li>Qwen3-Next MultiTokenPrediction in R&amp;D</li>
+</ul>
+<h2>Contact us</h2>
+<p>If there's a model you'd like to see supported, feel free to suggest it in the <a href="https://github.com/Mega4alik/ollm/discussions/4">discussion</a> — I'll do my best to make it happen.</p>
