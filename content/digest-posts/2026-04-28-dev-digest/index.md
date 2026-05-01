@@ -799,43 +799,6 @@ sections:
       * **Weekly active users (WAU)**: The number of unique users who interact with a product at least once per week, a key growth metric for consumer applications
       * **Data center commitments**: Long-term contracts to purchase or lease server infrastructure and computing resources, often involving billions in multi-year spending obligations
       * **Burn rate**: How quickly a company spends its cash reserves relative to revenue, critical for venture-backed companies with massive infrastructure costs
-  - id: tech-10
-    content-template-path: full-content/2026-04-28/tech-10
-    title: The Moat or the Commons (10 minute read)
-    link: https://www.warman.life/blog/2026-04-27-the-moat-or-the-commons/?utm_source=tldrnewsletter
-    description: |
-      Open weight models are commoditizing the capability that the American capital-financed AI monopoly was supposed to protect.
-    tags:
-    - ai
-    - policy
-    - infrastructure
-    - economics
-    one-liner: "U.S. frontier AI labs raised a trillion dollars expecting monopoly profits, but open-weight models from Chinese labs are commoditizing AI capabilities at a fraction of the cost, prompting a shift toward regulatory protectionism and vertical integration."
-    summary:
-      what: "This essay argues that open-weight models from Chinese labs like DeepSeek, Qwen, and GLM now offer comparable performance to closed U.S. models at 1-10% of the cost, threatening the monopoly-based financial assumptions behind trillion-dollar AI infrastructure investments and likely triggering regulatory restrictions and strategic pivots from frontier labs."
-      why: "The analysis predicts developers will face manufactured scarcity through three mechanisms: security-justified restrictions on Chinese open weights, frontier labs becoming service operators rather than tool vendors, and a split market where U.S. users pay monopoly prices while the rest of the world uses open alternatives, drawing parallels to the decline of the U.S. auto industry under protectionism."
-      takeaway: "Build on open-weight models now while they remain accessible, architect systems for jurisdictional flexibility to move workloads across countries if needed, and treat the regulatory environment as a technical dependency that will shift within your development timeline."
-    deep-summary: |
-      * U.S. frontier labs and hyperscalers have committed roughly $1 trillion to AI infrastructure over the next four years, financed on the assumption of monopoly-grade margins similar to regulated utilities, not commodity SaaS margins
-      * Open-weight models from Chinese labs (DeepSeek, Qwen, Kimi, GLM) are commoditizing frontier capabilities, with DeepSeek's $5.6M training cost competing against $500M-$1B U.S. equivalents at 10-30x better inference costs
-      * The performance gap between open and closed frontiers runs 6-12 months and is closing, not widening, undermining the moat that was supposed to justify the capital structure
-      * The open ecosystem stack (vLLM, llama.cpp, Ollama, LangChain) is mostly Western-built but geographically agnostic, enabling anyone to run frontier-equivalent models on their own hardware
-      * The original closed-lab business model assumed users would be locked in when apprenticeship-phase subsidies ended and prices rose, but defection to free open-weight alternatives now costs only a weekend of integration work
-      * When technology fails to provide natural scarcity, U.S. capital manufactures it through regulatory enclosure (policy barriers), vertical integration (moving up the value chain), and bundled distribution (leveraging adjacent monopolies)
-      * First prediction: Chinese open-weight models will be restricted through supply-chain security advisories, procurement guidelines, and cloud provider delistings without requiring new legislation, making them radioactive for any compliance-sensitive organization
-      * Second prediction: Frontier labs will pivot from selling models to becoming operators who sell outputs (legal research, drug discovery, financial analysis), capturing service margins instead of tool-vendor margins while making models inaccessible to customers
-      * Third prediction: The market will bifurcate with U.S. users paying monopoly prices in a protected domestic market while 85% of the global market routes around U.S. infrastructure using open alternatives
-      * The historical parallel to U.S. automakers is precise: policy protection (voluntary export restraints, bailouts, 100% tariffs on BYD) correlated with decline from 80% domestic share in 1980 to below 40% today, as protection bred complacency rather than competitiveness
-      * The cost falls on U.S. consumers and developers who pay monopoly prices, startups who face architectural risk or relocation costs, closed labs who lose competitive discipline, and U.S. influence as global developers build on non-U.S. infrastructure
-      * The window for freely deployable open-weight models is shorter than most production system design cycles, making current architectural assumptions around permanent open access a trapdoor for mission-critical systems
-      * The central tension is between a capital structure that requires manufactured scarcity to justify its investments and an open commons that continues to compound capabilities, with users caught in between
-      * The policy choice will determine whether U.S. AI resembles the 2005 internet sector (open, exporting, dominant) or the 2025 auto industry (protected, uncompetitive, exporting nothing)
-    decoder: |
-      * **Open-weight models**: AI models whose parameters are publicly downloadable and modifiable, similar to open-source software but for neural networks, allowing anyone to run them locally or on their own infrastructure
-      * **Frontier labs**: The leading AI companies (OpenAI, Anthropic, Google DeepMind) developing state-of-the-art large language models at the capability frontier
-      * **Capex (capital expenditure)**: Large upfront infrastructure investments in data centers, GPUs, power, and networking required to train and serve frontier AI models
-      * **Regulatory enclosure**: Using policy, procurement rules, and compliance requirements to create market barriers that technology alone doesn't provide, manufacturing exclusion through regulation
-      * **Vertical integration**: When a company moves from selling tools to selling complete services, controlling more of the value chain (e.g., a model vendor becoming a legal research service operator)
   - id: tech-11
     title: Products do labs (and labs do products) (10 minute read)
     link: https://x.com/bradwmorris/status/2047558389212107151?s=12&utm_source=tldrnewsletter

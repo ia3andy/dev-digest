@@ -393,41 +393,6 @@ sections:
       * **Red teaming**: Security testing where experts attempt to find vulnerabilities and exploits
       * **API**: Application Programming Interface, allowing developers to integrate the model into their own applications
       * **High risk classification**: OpenAI's internal safety tier indicating the model could amplify existing pathways to severe harm but doesn't create unprecedented new threats
-  - id: tech-2
-    title: DeepSeek Unveils Flagship AI Model a Year After Breakthrough (6 minute read)
-    link: https://www.bloomberg.com/news/articles/2026-04-24/deepseek-unveils-newest-flagship-a-year-after-ai-breakthrough?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb3VyY2UiOiJTdWJzY3JpYmVyR2lmdGVkQXJ0aWNsZSIsImlhdCI6MTc3NzAxMzgxNywiZXhwIjoxNzc3NjE4NjE3LCJhcnRpY2xlSWQiOiJURFpBMFNUOU5KTFQwMCIsImJjb25uZWN0SWQiOiJBOEExRDhFQTI5OTc0OTRGQTQ1QUE2REJBMjAwNTM3MSJ9.hO5eOjk9zc9s2LzPUC7PV_aNR5TO7YM8GkpuoTEhq5o&utm_source=tldrnewsletter
-    image: https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iYfZqUUSyRu8/v1/1200x826.jpg
-    description: |
-      DeepSeek has unveiled its V4 Flash and V4 Pro series, which the startup claims have top-tier performance in coding benchmarks and big advancements in reasoning and agentic tasks. The company says its Hybrid Attention Architecture technique helped improve the ability of AI platforms to remember queries across long conversations. The service capacity for the V4 Pro series is extremely limited due to a computing crunch. However, the pricing for the model is expected to drop significantly after Huawei launches its Ascend 950-powered computing clusters in the second half of this year.
-    tags:
-    - ai
-    - llm
-    - china
-    one-liner: DeepSeek's V4 models undercut Claude and GPT pricing by 40-75% while delivering competitive benchmark performance using Mixture-of-Experts architecture.
-    summary:
-      what: "V4 Flash and V4 Pro are DeepSeek's new flagship open-source AI models using a trillion-parameter Mixture-of-Experts architecture that activates only 37 billion parameters per task, achieving $1.74/$3.48 per million tokens compared to Claude's $3/$15. They feature a 1 million-token context window and Hybrid Attention Architecture for better conversation memory."
-      why: "The release challenges Silicon Valley's assumption that competitive AI requires massive infrastructure investment, potentially disrupting the $650 billion annual AI spending trend by US tech giants while highlighting ongoing US-China technological competition and raising questions about export control effectiveness."
-      takeaway: "Developers can test V4 models on Hugging Face, though capacity is currently severely limited due to computing constraints."
-    deep-summary: |
-      * DeepSeek launched V4 Flash and V4 Pro one year after its R1 model triggered a trillion-dollar stock selloff by demonstrating competitive AI performance at dramatically lower costs
-      * The new models feature Hybrid Attention Architecture for better conversation memory and support a 1 million-token context window, allowing entire codebases to be processed in a single prompt
-      * Pricing undercuts US competitors by 40-75%: $1.74 input/$3.48 output per million tokens versus Anthropic Claude's $3/$15 and competitive with GPT pricing
-      * Uses Mixture-of-Experts architecture with trillion parameters but only activates up to 37 billion per task to keep inference costs low
-      * DeepSeek acknowledges trailing state-of-the-art US models by 3-6 months but emphasizes cost efficiency over raw capability as its competitive advantage
-      * Service capacity for V4 Pro is severely limited due to computing constraints, with significant price drops expected after Huawei Ascend 950 chip clusters launch in H2 2026
-      * Chinese semiconductor stocks rallied on the announcement, with SMIC up 10% and Hua Hong up 15%, while Chinese AI competitors like Zhipu dropped 9%
-      * DeepSeek is in talks with Tencent and Alibaba for its first external funding round after previously operating independently
-      * OpenAI and Anthropic have accused DeepSeek of \"distillation\"—using their AI model outputs to train competing systems with similar capabilities
-      * US government is investigating whether DeepSeek used banned Nvidia Blackwell processors in an Inner Mongolia data center, raising questions about export control effectiveness
-      * The release puts pressure on other Chinese AI startups like MiniMax and Zhipu, which lack the distribution advantages of major internet platforms
-      * Bloomberg Intelligence predicts the US will maintain a 6-month technical lead due to superior access to advanced Nvidia chips, but China's cost-efficiency reputation is reinforced
-    decoder: |
-      * **Mixture-of-Experts (MoE)**: Architecture containing many specialized sub-models (experts) where only a small subset activates for each task, reducing computational costs while maintaining large total capacity
-      * **Hybrid Attention Architecture**: DeepSeek's technique for improving how AI models maintain context and memory across long conversations
-      * **Context window/tokens**: The amount of text an AI can process in one request, measured in tokens (roughly 0.75 words each); 1 million tokens equals about 750,000 words or entire codebases
-      * **Distillation**: Training technique where a model learns from another model's outputs to replicate capabilities without the original development costs
-      * **Agentic tasks**: AI operations where models autonomously complete multi-step goals and make decisions without constant human guidance
-      * **Inference costs**: The computational expense of running a trained AI model to generate responses, distinct from initial training costs
   - id: tech-3
     content-template-path: full-content/2026-04-24/tech-3
     title: A Hundred Robots Are Running A Bio Lab (11 minute read)
@@ -515,45 +480,6 @@ sections:
       * **Trajectories**: Meta's internal term for AI prompt histories, which can be viewed by other employees
       * **Runaway agents**: AI agents that consume excessive tokens due to bugs or infinite loops, driving up costs unexpectedly
       * **Circuit breakers**: Automated limits that cut off AI access when usage spikes unexpectedly, preventing runaway costs
-  - id: tech-6
-    content-template-path: full-content/2026-04-24/tech-6
-    title: An update on recent Claude Code quality reports (11 minute read)
-    link: https://www.anthropic.com/engineering/april-23-postmortem?utm_source=tldrnewsletter
-    image: https://cdn.sanity.io/images/4zrzovbb/website/3f522820d47355885631ebda60e5d1f3e5c0fbc2-2000x1050.heif
-    tags:
-    - ai
-    - tools
-    - infrastructure
-    description: |
-      There have been reports over the past month that Claude's responses have worsened for some users. Anthropic traced these reports to three separate changes that affected Claude Code, the Claude Agent SDK, and Claude Cowork. The API was not impacted. Anthropic resolved these issues on April 20. This post explains what Anthropic found, what the company fixed, and what it will do differently from now to ensure similar issues will be much less likely to happen again.
-    one-liner: "Anthropic identified and fixed three separate bugs that caused Claude Code quality to degrade over the past month, affecting reasoning effort defaults, context caching, and verbosity prompts."
-    summary:
-      what: "Between March and April 2026, three distinct issues compounded to make Claude Code appear less intelligent: a March 4 change that lowered default reasoning effort to reduce latency (reverted April 7), a March 26 caching bug that repeatedly dropped conversation context (fixed April 10), and an April 16 system prompt change to reduce verbosity that hurt coding quality (reverted April 20)."
-      why: "The incident reveals how multiple product-layer changes can interact to create perceived model degradation even when the underlying API is unchanged, and demonstrates the challenge of distinguishing real quality issues from normal feedback variation in AI products."
-      takeaway: Anthropic reset usage limits for all subscribers as of April 23 and encourages users to report issues via the /feedback command or @ClaudeDevs on X.
-    deep-summary: |
-      * The first issue stemmed from changing Claude Code's default reasoning effort from high to medium on March 4 to address reports of frozen UI from excessive thinking time, but users reported the model felt less intelligent afterward
-      * Anthropic initially believed medium effort offered better latency-intelligence tradeoffs and helped users avoid hitting usage limits, but reverted to high/xhigh defaults on April 7 after user feedback
-      * The second issue was a caching optimization bug shipped March 26 that was supposed to clear old thinking sections once after an hour of inactivity, but instead cleared context history on every turn for the remainder of each session
-      * The caching bug caused Claude to lose memory of its own reasoning, leading to forgetfulness, repetition, odd tool choices, and ironically higher cache miss rates that drained usage limits faster
-      * The bug survived multiple code reviews, unit tests, end-to-end tests, and dogfooding because it only manifested in stale sessions and was masked by unrelated internal experiments
-      * When Anthropic back-tested the buggy code with Claude Opus 4.7 Code Review, it caught the bug while Opus 4.6 didn't, prompting them to improve their internal code review tooling
-      * The third issue was a system prompt change added April 16 to address Opus 4.7's verbosity by limiting text between tool calls to 25 words and final responses to 100 words unless detail was needed
-      * The verbosity prompt passed internal testing and existing evals, but broader ablation testing during the investigation revealed a 3% quality drop for both Opus 4.6 and 4.7, leading to an immediate revert on April 20
-      * Because each issue affected different user segments on different timelines, the aggregate effect appeared as inconsistent, widespread degradation that was difficult to diagnose
-      * Anthropic is implementing new safeguards including requiring more internal staff to use the exact public build, running comprehensive per-model evals for all system prompt changes, adding soak periods and gradual rollouts for intelligence tradeoffs, and improving Code Review tooling
-      * The company emphasized it never intentionally degrades models and confirmed the API and inference layer were unaffected throughout, with all issues isolated to the product layer
-      * User feedback via the /feedback command and specific reproducible examples shared online were critical to identifying and resolving the issues
-    decoder: |
-      * **Claude Code**: Anthropic's CLI tool for developers that uses Claude models to assist with coding tasks
-      * **Reasoning effort**: A parameter controlling how long Claude thinks before responding, with higher effort levels producing better but slower outputs
-      * **Extended thinking**: A feature where Claude's internal reasoning is preserved in conversation history so it can reference why it made previous decisions
-      * **Prompt caching**: An API optimization that stores input tokens from recent requests to make subsequent calls faster and cheaper, with prompts evicted after inactivity
-      * **Test-time compute**: The computational resources spent during inference (when generating responses), where more compute generally yields better outputs
-      * **System prompt**: Hidden instructions sent to the model before user messages that guide its behavior and output format
-      * **Evals**: Standardized test suites used to measure model performance on specific tasks
-      * **Ablations**: Experiments that systematically remove components (like lines from a prompt) to measure their individual impact on performance
-      * **Dogfooding**: The practice of a company using its own products internally before public release to catch issues
   - id: tech-7
     title: Microsoft Offers Its First Ever Buyouts to Shape Workforce Around AI Push (5 minute read)
     link: https://www.wsj.com/tech/microsoft-offers-buyouts-to-7-of-workforce-755b8534?st=SV6CcZ&reflink=desktopwebshare_permalink&utm_source=tldrnewsletter
@@ -996,39 +922,6 @@ sections:
       * **PromQL**: Prometheus Query Language, the widely-used query language for filtering and aggregating time-series metrics
       * **Container Insights**: AWS's monitoring solution specifically designed for containerized applications on ECS, EKS, and Fargate
       * **Trainium/Inferentia**: AWS-designed machine learning accelerator chips for training and inference workloads
-  - id: devops-8
-    title: I am building a cloud (6 minute read)
-    link: https://crawshaw.io/blog/building-a-cloud?utm_source=tldrdevops
-    description: |
-      Current cloud platforms are fundamentally flawed—overly restrictive, inefficient (especially with storage and networking), and built on abstractions that make simple computing tasks unnecessarily difficult.
-    tags:
-    - cloud
-    - infrastructure
-    - startup
-    one-liner: "A developer is launching exe.dev, a new cloud platform designed to fix what he sees as fundamental flaws in existing clouds—VMs tied to CPU resources, slow remote storage, and expensive networking."
-    summary:
-      what: "exe.dev is a cloud computing platform that lets you provision CPU and memory separately from VMs, uses local NVMe storage with async replication instead of remote block devices, and includes built-in TLS/auth proxies and anycast networking."
-      why: "The author argues that cloud abstractions haven't evolved with hardware—remote storage made sense for hard drives (10ms seek time) but creates 10x overhead with SSDs (20μs seek time), egress costs 10x what traditional data centers charge, and VMs shouldn't be tied to specific CPU/memory allocations since they're just cgroups. With AI agents generating more code, these inefficiencies will compound."
-      takeaway: "If you're frustrated with cloud provider constraints around VM sizing, storage performance, or networking costs, exe.dev is now available to try."
-    deep-summary: |
-      * The core thesis is that cloud providers built abstractions for hard drive-era computing that don't make sense with modern SSDs—seek latency dropped from 10ms to 20μs, making network round-trip overhead (1ms+) proportionally much worse
-      * VMs are fundamentally just Linux processes in cgroups, so tying them to specific CPU/memory allocations is an artificial constraint—you should be able to buy resources and run as many VMs as fit
-      * Working around this today requires nested virtualization (with performance penalties) plus managing your own reverse proxy, all because the abstraction is the wrong shape
-      * PaaS platforms try to solve this but create vendor lock-in and impose arbitrary limits that only surface deep into projects, making them worse than direct VM access
-      * Cloud egress pricing is typically 10x what traditional data centers charge, with the markup even worse at moderate volumes (though it improves significantly at $XXm/month scale)
-      * Kubernetes exists primarily to paper over these cloud provider inconsistencies, but it can't fix the underlying problems—it's \"putting lipstick on a pig\"
-      * The author believes AI agents will accelerate the need for better cloud abstractions because they'll generate more software, and wasting context window on contorting cloud APIs means less capacity to solve actual problems
-      * exe.dev's initial release decouples VM provisioning from resource allocation, uses local NVMe with async off-machine replication, and provides automatic TLS/auth proxies and anycast networking
-      * The team is going back to fundamentals, racking their own servers and rethinking every layer of the stack
-      * Future planned features include static IPs and access to automatic historical disk snapshots
-    decoder: |
-      * **cgroup**: Linux kernel feature that isolates and limits resources (CPU, memory, disk I/O) for processes, the underlying tech that makes containers and VMs work
-      * **IOPS**: Input/Output Operations Per Second, a measure of storage performance—higher is better for random reads/writes
-      * **remote block device**: Storage that appears as a local disk to your VM but actually lives on another server accessed over the network
-      * **egress**: Outbound network traffic from a cloud provider's network to the internet, typically charged per gigabyte
-      * **anycast**: Routing technique where multiple servers share the same IP address and traffic is automatically routed to the nearest one
-      * **gVisor**: Google's container runtime that provides stronger isolation than standard containers by implementing a user-space kernel
-      * **NVMe**: Modern SSD interface standard that's much faster than older SATA connections
 - name: Design
   articles:
   - id: design-1
