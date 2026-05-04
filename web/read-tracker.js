@@ -217,25 +217,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function scrollToReadingPosition() {
-    if (new URLSearchParams(window.location.search).get('swipe') === '1') return;
     if (window.location.hash) {
       const target = document.getElementById(window.location.hash.slice(1));
       if (target) {
         setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
       }
-      return;
-    }
-    if (!articlePage) return;
-    const date = articlePage.dataset.postDate;
-    if (isPostRead(date)) return;
-    const hasRead = articlePage.querySelector('.digest-article.is-article-read');
-    if (!hasRead) return;
-    const firstUnread = articlePage.querySelector('.digest-article:not(.is-article-read):not([data-priority="5"])');
-    if (firstUnread) {
-      setTimeout(() => {
-        const y = firstUnread.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-      }, 100);
     }
   }
 
