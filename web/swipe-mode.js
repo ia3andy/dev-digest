@@ -308,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (meta.nextUrl) {
       var nextBtn = el('a', 'swipe-completion-next');
       nextBtn.href = meta.nextUrl;
+      nextBtn.addEventListener('click', function() { localStorage.setItem('digest-swipe-active', '1'); });
       nextBtn.appendChild(document.createTextNode('Next: ' + meta.nextTitle + ' '));
       nextBtn.appendChild(svg(16, 16, ICON_ARROW_RIGHT));
       content.appendChild(nextBtn);
@@ -380,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!articles.length) return;
     var meta = extractPostMeta(document);
 
-    localStorage.setItem('digest-swipe-active', '1');
     savedScrollY = window.scrollY;
     document.body.classList.add('swipe-active');
     document.body.style.top = -savedScrollY + 'px';
@@ -395,6 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.appendChild(track);
 
     document.body.appendChild(overlay);
+    localStorage.setItem('digest-swipe-active', '1');
 
     var allFrames = track.querySelectorAll('.swipe-frame');
 
@@ -527,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   if (localStorage.getItem('digest-swipe-active') === '1') {
+    localStorage.removeItem('digest-swipe-active');
     var container = document.querySelector('.digest-articles');
     if (container && container.dataset.ready === undefined) {
       var loader = showLoading();
