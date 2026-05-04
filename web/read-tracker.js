@@ -217,6 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function scrollToReadingPosition() {
+    if (new URLSearchParams(window.location.search).get('swipe') === '1') return;
     if (window.location.hash) {
       const target = document.getElementById(window.location.hash.slice(1));
       if (target) {
@@ -281,6 +282,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  if (!articlePage) {
+    var cards = document.querySelectorAll('.card.post[data-post-date]');
+    var nextRead = localStorage.getItem('digest-next-read') || 'oldest';
+    var start = nextRead === 'newest' ? 0 : cards.length - 1;
+    var end = nextRead === 'newest' ? cards.length : -1;
+    var step = nextRead === 'newest' ? 1 : -1;
+    for (var i = start; i !== end; i += step) {
+      if (!isPostRead(cards[i].dataset.postDate)) {
+        var postLink = cards[i].querySelector('.post-title a');
+        if (postLink) {
+          var prefetch = document.createElement('link');
+          prefetch.rel = 'prefetch';
+          prefetch.href = postLink.href;
+          document.head.appendChild(prefetch);
+          var swipeCta = document.getElementById('swipe-home-btn');
+          if (swipeCta) {
+            var swipeLink = swipeCta.querySelector('.swipe-cta-btn');
+            if (swipeLink) swipeLink.href = postLink.href + '?swipe=1';
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  document.addEventListener('digest-mark-article-read', function(e) {
+    markArticleRead(e.detail.date, e.detail.articleId);
+  });
+
+  document.addEventListener('digest-mark-read', function(e) {
+    readState[e.detail.date] = true;
+    saveReadState();
+    updateReadUI();
+  });
+
+  document.addEventListener('digest-is-article-read', function(e) {
+    e.detail.result = isArticleRead(e.detail.date, e.detail.articleId);
+  });
 
   updateReadUI();
   scrollToReadingPosition();
