@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!articles.length) return;
     var meta = extractPostMeta(document);
 
-    window.location.hash = 'swipe';
+    history.pushState({ swipe: true }, '', window.location.pathname + '#swipe');
     savedScrollY = window.scrollY;
     document.body.classList.add('swipe-active');
     document.body.style.top = -savedScrollY + 'px';
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  function exit() {
+  function closeOverlay() {
     if (!overlay) return;
     if (overlay._obs) overlay._obs.disconnect();
     document.removeEventListener('keydown', onKeydown);
@@ -486,9 +486,17 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.remove('swipe-active');
       document.body.style.top = '';
       window.scrollTo(0, savedScrollY);
-      history.replaceState(null, '', window.location.pathname);
     });
   }
+
+  function exit() {
+    closeOverlay();
+    if (window.location.hash === '#swipe') history.back();
+  }
+
+  window.addEventListener('popstate', function() {
+    if (overlay && window.location.hash !== '#swipe') closeOverlay();
+  });
 
   // --- Entry points ---
 
