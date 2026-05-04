@@ -775,7 +775,7 @@ sections:
         content-template-path: full-content/2026-05-01/tech-13
         title: "Sequoia Ascent 2026 summary (30 minute read)"
         link: https://karpathy.bearblog.dev/sequoia-ascent-2026/
-        tags: [ai, agents, softwareengineering]
+        tags: [ai, agents, software-engineering]
         description: |
           This post contains an AI-generated summary of a fireside chat at Sequoia Ascent 2026.
         one-liner: "Andrej Karpathy argues that December 2025 marked an inflection point where AI agents became reliable enough to fundamentally change software development from writing code to orchestrating agents."

@@ -18,12 +18,9 @@ tag-priorities:
   ai: 1
   llm: 1
   agents: 1
-  quarkus: 1
-  java: 2
   devops: 4
   infrastructure: 4
   security: 4
-  data-engineering: 4
   frontend: 3
   design: 4
   startup: 4
@@ -34,33 +31,23 @@ tag-priorities:
   defi: 0
   ethereum: 0
   governance: 0
-  accessibility: 0
-  analytics: 0
   art: 0
   business: 0
   cloud: 0
   data: 0
   database: 0
-  dev: 0
   devtools: 0
   git: 0
   google: 0
   hardware: 0
-  html: 0
-  ios: 0
-  leadership: 0
   legal: 0
   mcp: 0
   mobile: 0
-  observability: 0
   payments: 0
   policy: 0
-  regulation: 0
   research: 0
-  science: 0
   testing: 0
   tools: 0
-  vue: 0
   advertising: 0
   api: 0
   apple: 0
@@ -105,7 +92,6 @@ tag-priorities:
   career: 0
   compensation: 0
   creative: 0
-  databases: 0
   datascience: 0
   engineering: 0
   ev: 0
@@ -114,7 +100,6 @@ tag-priorities:
   javascript: 0
   linux: 0
   markets: 0
-  open-source: 0
   postgres: 0
   rust: 0
   saas: 0
@@ -134,3 +119,30 @@ tag-priorities:
   web3: 0
   webassembly: 0
   zig: 0
+  algorithms: 0
+  animation: 0
+  aws: 0
+  browser: 0
+  burnout: 0
+  cryptography: 0
+  industry: 0
+  interpretability: 0
+  labor: 0
+  macos: 0
+  manufacturing: 0
+  monitoring: 0
+  multimodal: 0
+  networking: 0
+  opinion: 0
+  qa: 0
+  robotics: 0
+  semiconductor: 0
+  simd: 0
+  software-engineering: 0
+  teams: 0
+  venture: 0
+  web: 0
+  windows: 0
+  wordpress: 0
+  workplace: 0
+  xbox: 0

@@ -1,0 +1,150 @@
+<p>Every time your load balancer sends a request to the wrong GPU, that GPU recomputes a prefill it already computed somewhere else. The KV cache for that 4,000-token system prompt exists. It's just sitting on a different card. Your load balancer doesn't know. It can't know. It's counting connections, not tokens.</p>
+<p>That recomputation takes real time and real money. On a Llama 3.1 70B at half precision, a 4,000-token prefill takes over a second. If eight GPUs each recompute the same system prompt independently because round-robin sent one request to each, you just paid for the same work eight times. Multiply by every request, every hour, every day.</p>
+<p>This post is about the cost of that mistake, how to measure it, and what changes when your load balancer understands token locality.</p>
+<h2>What the KV Cache Actually Saves You</h2>
+<p>A transformer processes input tokens in two phases. <strong>Prefill</strong> computes the key-value pairs for every input token: the system prompt, the conversation history, the RAG context. This is the expensive part. It scales with token count and model size, and it's compute-bound on the GPU. <strong>Decode</strong> generates output tokens one at a time, each one reusing the key-value pairs from prefill. This is the cheap part.</p>
+<p>vLLM and other serving engines cache the key-value pairs from prefill in GPU memory. When a new request arrives with the same token prefix, the engine skips prefill entirely and jumps straight to decode. This is the KV cache hit.</p>
+<p>On our benchmarks, a cache hit on CodeLlama 13B returns in 18ms at P50. A cache miss takes around 500ms. That's a 28x gap in time-to-first-token, decided entirely by whether the tokens were already on that GPU.</p>
+<p>But here's the thing: the KV cache is <strong>per-GPU</strong>. GPU 0's cache doesn't help GPU 3. If your load balancer sends Request A to GPU 0 and the identical Request B to GPU 3, Request B pays full prefill cost even though the work was already done. The cache exists. It's just on the wrong card.</p>
+<h2>The Math on Wasted Prefill</h2>
+<p>Let's make this concrete. You're running a RAG application with a 4,000-token system prompt. You have 8 GPUs serving CodeLlama 13B. You're handling 30 concurrent users with a stress workload (heavy on large and extra-large prefixes). Here's what we measured on 8x A100s:</p>
+<p>Round-robin routing:</p>
+<ul>
+ <li>Cache hit rate: 12.5%</li>
+ <li>P99 TTFT: 6,800ms</li>
+ <li>Throughput: 36.3 req/s</li>
+</ul>
+<p>With 8 backends and random routing, you'd expect ~12.5% cache hits by chance. One in eight requests happens to land on the GPU that already has its prefix cached. The other 87.5% recompute from scratch.</p>
+<p>Prefix-aware routing:</p>
+<ul>
+ <li>Cache hit rate: 97.5%</li>
+ <li>P99 TTFT: 1,000ms</li>
+ <li>Throughput: 44.4 req/s</li>
+</ul>
+<p>Same GPUs. Same model. Same workload. The only change is which GPU receives which request.</p>
+<p>That throughput difference, 36.3 vs 44.4 requests per second, is a 22.3% improvement. On hardware costing ~$10/hour, that's either 22% more throughput for free or the same throughput on fewer GPUs. Over a month of continuous operation, on a single 8-GPU node, the wasted prefill in round-robin comes to roughly $1,200–$1,800 in GPU-hours (22% of ~$7,300/month at $10/hr) that produce no useful work. Multiply by the number of nodes in your cluster.</p>
+<h2>Where the Savings Compound</h2>
+<p>The benefit scales with three variables: <strong>model size</strong>, <strong>prefix length</strong>, and <strong>prefix sharing ratio</strong>.</p>
+<h3>Model size</h3>
+<p>Larger models have more expensive prefill, so cache misses cost more.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Model</th>
+   <th>XLarge Cache Hit Improvement</th>
+   <th>Aggregate Throughput Gain</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>Llama 3.1 8B</td>
+   <td>31.6%</td>
+   <td>~0% (inference too fast)</td>
+  </tr>
+  <tr>
+   <td>CodeLlama 13B</td>
+   <td>35.9%</td>
+   <td>+13.7% to +22.3%</td>
+  </tr>
+  <tr>
+   <td>Llama 3.1 70B</td>
+   <td>43.8%</td>
+   <td>~0% (compute-bound)</td>
+  </tr>
+ </tbody>
+</table>
+<p>The 8B numbers are the warning case. When prefill is already fast (~420ms total inference), the 7-10ms routing overhead eats into the savings. If prefill isn't your bottleneck, prefix-aware routing doesn't help.</p>
+<p>The 70B numbers tell a different story. Aggregate throughput doesn't change because the GPUs are already compute-saturated. But individual requests are 44% faster on cache hit (P50: 1,498ms hit vs 2,665ms miss). Your users feel the difference even if your throughput dashboard doesn't.</p>
+<p>The sweet spot is 13B-70B models where prefill is expensive enough to matter but the GPUs aren't so saturated that they can't benefit from skipping it.</p>
+<h3>Prefix length</h3>
+<p>Longer shared prefixes mean more wasted compute per cache miss.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Max Prefix Tokens</th>
+   <th>Cache Miss P50</th>
+   <th>Cache Hit P50</th>
+   <th>Improvement</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>8,192 (default)</td>
+   <td>638ms</td>
+   <td>448ms</td>
+   <td>29.7%</td>
+  </tr>
+  <tr>
+   <td>16,384</td>
+   <td>817ms</td>
+   <td>461ms</td>
+   <td>43.6%</td>
+  </tr>
+ </tbody>
+</table>
+<p>At 16K tokens, a cache miss wastes nearly 400ms of GPU compute that a hit avoids entirely. As context windows keep growing, this gap widens.</p>
+<h3>Prefix sharing ratio</h3>
+<p>This is the percentage of tokens shared across requests. A RAG application where every request includes the same 4,000-token knowledge base has a high sharing ratio. A chat application where every conversation is unique has a low one.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Sharing Ratio</th>
+   <th>Round-Robin Hits</th>
+   <th>Prefix-Aware Hits</th>
+   <th>Improvement</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>50%</td>
+   <td>~11%</td>
+   <td>91%</td>
+   <td>+80pp</td>
+  </tr>
+  <tr>
+   <td>70%</td>
+   <td>~13%</td>
+   <td>90%</td>
+   <td>+77pp</td>
+  </tr>
+  <tr>
+   <td>90%</td>
+   <td>~12%</td>
+   <td>97-98%</td>
+   <td>+85pp</td>
+  </tr>
+ </tbody>
+</table>
+<p>Even at 50% sharing, where half the tokens are unique, prefix-aware routing still achieves 91% cache hits. A consistent hash fallback (deterministic routing based on prefix when no learned route exists yet) ensures that requests with the same prefix land on the same GPU even before the system has observed them.</p>
+<h2>The P99 Story</h2>
+<p>Cost isn't just GPU-hours. It's also the cost of slow responses.</p>
+<p>At 30 concurrent users on CodeLlama 13B over 30 minutes of sustained load, round-robin routing produced a P99 TTFT of 6,800ms. That's 6.8 seconds before the first token appears. For an interactive application like code completion or chat, that's a broken experience. Users don't wait 6.8 seconds.</p>
+<p>Prefix-aware routing brought that same P99 down to 1,000ms. Same hardware, same model, same concurrency. An 85.3% improvement on tail latency.</p>
+<p>Why does the tail improve so much? Because tail latency in LLM serving is driven by cache misses under load. When the GPU is busy generating tokens for other requests, a new request that requires full prefill gets queued behind them. With round-robin, 87.5% of requests need full prefill, so the queue is always full of expensive work. With prefix-aware routing, 97.5% of requests skip prefill entirely, so the queue drains faster and the few remaining misses get processed sooner.</p>
+<p>This is the strongest argument for KV cache locality. Throughput improvements look good on a dashboard. Tail latency is what users actually experience.</p>
+<h2>What Doesn't Work</h2>
+<p>Prefix-aware routing isn't free, and it doesn't help everywhere.</p>
+<p><strong>Small models (≤8B):</strong> Inference is already fast enough that the routing overhead (~10ms for tokenization + tree lookup) approaches the prefill savings. The net effect is roughly zero.</p>
+<p><strong>Short prefixes (&lt;500 tokens):</strong> The prefill cost for short sequences is small enough that cache misses don't meaningfully hurt. The routing overhead (~3ms minimum) can exceed the savings.</p>
+<p><strong>Unique conversations:</strong> If every request has a completely different prefix (no shared system prompt, no shared context), there's nothing to cache. The routing tree learns routes that are never reused.</p>
+<p><strong>Load imbalance:</strong> Strict prefix affinity can create hot spots. If 80% of your traffic shares the same system prompt, prefix-aware routing sends 80% of traffic to one GPU. We handle this with a load-aware fallback that diverts requests when a backend's in-flight count exceeds twice the median. This trades a cache miss for a balanced GPU, reducing P95 by 36% and P99 by 45% compared to strict affinity. The cache hit rate drops about 5 points, which is the right trade.</p>
+<h2>Measuring Your Own Cache Locality</h2>
+<p>Before you change anything, measure your current cache hit rate. Most vLLM deployments expose this via Prometheus:</p>
+<ul>
+ <li><code>vllm:gpu_prefix_cache_hit_rate</code> (or <code>vllm:gpu_prefix_cache_queries_total</code> and <code>_hits_total</code> on older versions; check your <code>/metrics</code> endpoint)</li>
+ <li>Compare TTFT distributions between requests with shared vs unique prefixes</li>
+ <li>Look at your P99/P50 ratio. A ratio above 5x suggests cache thrashing</li>
+</ul>
+<p>If your cache hit rate is already above 80%, you're either lucky or your traffic naturally clusters. If it's below 30%, you're leaving performance on the table.</p>
+<p>The variables that matter most:</p>
+<ol>
+ <li><strong>How many GPUs are you routing across?</strong> More GPUs = lower chance of random cache hits. With 8 GPUs, random routing gives ~12.5% hits.</li>
+ <li><strong>How long are your shared prefixes?</strong> Longer = more wasted compute per miss.</li>
+ <li><strong>What's your prefix sharing ratio?</strong> Higher = more opportunity for reuse.</li>
+ <li><strong>What model size are you serving?</strong> Larger = more expensive prefill per miss.</li>
+</ol>
+<p>If you have many GPUs, long shared prefixes, high sharing ratios, and large models, you're likely wasting 20-40% of your GPU compute on redundant prefill.</p>
+<h2>The Takeaway</h2>
+<p>KV cache locality is not a tuning knob. It's a multiplier on your existing hardware. The same GPUs, serving the same model, handling the same traffic, produce measurably different throughput and latency depending on one decision: which GPU gets which request.</p>
+<p>Round-robin doesn't make that decision. Least-connections doesn't make that decision. They balance load without understanding what the load <em>is</em>. When every request carries thousands of tokens that might already be cached somewhere in your cluster, "balanced" and "efficient" are not the same thing.</p>
+<p>We built <a href="https://github.com/Ranvier-Systems/ranvier-core">Ranvier</a> to make that decision. It routes requests to the GPU that already has their token prefix cached, using an adaptive radix tree that learns routes in real time. The first post in this series covered <a href="https://ranvier.systems/2026/03/16/why-your-load-balancer-is-wasting-your-gpus.html">why your load balancer is wasting your GPUs</a>. This post covered what that waste costs. The next one will cover how we tokenize 50,000 requests per second without blocking the event loop.</p>

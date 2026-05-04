@@ -1,0 +1,92 @@
+<h1>What you're actually writing when you write a SKILL.md</h1>
+<h2>INTERNALS.md #2 · Skills are programs, not prompts. How the skills runtime actually loads, and why the architecture is everything.</h2>
+<p>A skill is a small program.</p>
+<p>It has three execution stages: 1\ what loads every turn, 2\ what loads on invocation, and 3\ what loads on demand. Because a skill is a program, it suffers from typical software rot—environment drift, version sensitivity, and silent, non-reproducible failures.</p>
+<p>You'll see these failures in specific shapes. A skill that cost 20% of your context window, silently, before the agent did any work. A skill that worked perfectly until you shared it with a teammate, and ran the build in the wrong directory. A skill tuned carefully on one model, producing worse output the moment you upgraded to a better one.</p>
+<p>These aren't separate bugs. They're four faces of the same misunderstanding: treating a loader specification like a prompt.</p>
+<p>This post is about what skills actually are underneath, and why understanding the runtime changes everything you do at the surface.</p>
+<p>A note on scope. Skills aren't a Claude-only thing anymore. Anthropic <a href="https://agentskills.io/">published the SKILL.md format as an open standard</a> in December 2025, and the same files now work across Claude Code, Kiro, Cursor, Codex CLI, and others. The mental model in this post applies to all of them. I'll use <em>Claude</em> as shorthand for the agent harness reading the skill. Swap in your runtime of choice.</p>
+<h2>What skills are not</h2>
+<p>The first time I wrote a Skill, I thought I was writing a long prompt the agent would consult.</p>
+<p>I wrote one big SKILL.md. Maybe 1,200 lines. Workflow at the top, a map of every module in our codebase, example code, message contracts between services, framework-specific patterns, and at the bottom a list of every gotcha I knew. It worked. It also consumed about 20% of the context window before the agent did any actual work.</p>
+<p>I rewrote it. Same instructions, same output, different architecture: a 180-line SKILL.md that pointed at three reference files and one helper script. The new version cost 7%.</p>
+<p>The instructions didn't change. The architecture did. That's where the 3× difference lived, and it was the first sign that I was not, in fact, writing a long prompt.</p>
+<p>A prompt is static text. You write it, you ship it, the model reads all of it on every turn. Skills don't work like that. Skills are a <em>loader specification</em>. You're describing what should be in context, when, and at what cost. The text matters, but the structure decides what survives the trip into the model's working memory.</p>
+<p>That reframe is the whole post. Everything else falls out of it.</p>
+<h2>The runtime</h2>
+<p>Skills run on a principle Anthropic calls <em>progressive disclosure</em>. The official documentation defines it plainly:</p>
+<blockquote>
+ <p>Skills can contain three types of content, each loaded at different times.</p>
+</blockquote>
+<p>This is why two skills with identical instructions can behave completely differently. One loads 180 lines on demand; the other dumps 1,200 lines every turn.</p>
+<p>Anthropic built these levels to protect your context window. If a skill front-loads everything, it crowds out the conversation history and tool outputs. By using progressive disclosure, you stop paying for "just in case" instructions and only pay for "just in time" execution.</p>
+<p><strong>Level 1: Metadata.</strong> The <code>name</code> and <code>description</code> from YAML frontmatter. Always loaded, every turn. The <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">official docs</a> put this at roughly 100 tokens per skill installed. The agent uses the description to decide whether the skill is relevant. It's a routing decision, not a usage decision. This is the most important level to get right. If the description is wrong, nothing else matters.</p>
+<p><strong>Level 2: SKILL.md body.</strong> The procedural instructions. Loaded only when the agent decides the skill applies, by reading the file via bash. Anthropic's <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices">best practices documentation</a> puts the recommended ceiling at 500 lines. This is where most people pile on content they shouldn't.</p>
+<p><strong>Level 3: References and scripts.</strong> Bundled files referenced from SKILL.md. References are markdown the agent reads only when the body points to them. Scripts are executable code the agent <em>runs</em>: output enters context, the source code does not. Effectively unlimited.</p>
+<p>The Anthropic engineering team (Barry Zhang, Keith Lazuka, and Mahesh Murag) described it in <a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">their October 2025 announcement</a> as: <em>"Like a well-organized manual that starts with a table of contents, then specific chapters, and finally a detailed appendix, skills let Claude load information only as needed."</em></p>
+<p>Get the architecture right and your skill costs almost nothing until it earns its place. Get it wrong and you pay every turn.</p>
+<h2>Mental model</h2>
+<p>Picture a kitchen during dinner service.</p>
+<p>There's a pinboard on the wall with recipe titles and one-line summaries. <em>Pasta Carbonara: Italian classic, use when guest wants creamy pasta with bacon.</em> The chef glances at it constantly. It's small enough to hold in peripheral vision. That's frontmatter.</p>
+<p>When a guest orders, the chef picks the matching card and pulls down the full recipe. Ingredients, steps, technique notes. The recipe is not on the wall. It would be too cluttered, too distracting, too much to scan during service. It comes down only when needed. That's SKILL.md.</p>
+<p>The recipe sometimes says <em>for the sauce, see Sauce Reference, page 47</em>. The chef walks to the binder, opens to page 47, reads only that page. Doesn't read the whole binder. That's <code>references/</code>.</p>
+<p>In the corner, a stand mixer. The recipe says <em>use the mixer for three minutes</em>. The chef does not read the mixer's circuit diagram. The chef hands it ingredients, presses a button, gets output. That's <code>scripts/</code>.</p>
+<p>The metaphor holds under pressure, which is the only test of a metaphor. Every failure mode I hit in my own skills traces back to violating the kitchen.</p>
+<h2>The Antipattern Ledger</h2>
+<p>When I first started migrating my workflows to the <code>SKILL.md</code>, I treated the runtime like a smart intern who could "just figure it out."</p>
+<p>I was wrong. Because the skills runtime is a deterministic loader, minor architectural choices—like where you put a single line of YAML—can silently break the agent's reasoning. These aren't just bugs; they are <strong>antipatterns</strong>. Each one below represents a moment where I violated the "Kitchen" logic and paid for it in context drift, high latency, or hallucinated outputs.</p>
+<h3>Frontmatter on reference files</h3>
+<p>The first thing I got wrong, before I understood progressive disclosure existed.</p>
+<p>I added YAML frontmatter to my reference files because SKILL.md had it, and the references felt important enough to deserve metadata. I didn't realize what frontmatter actually does.</p>
+<p>Frontmatter is what gets loaded into the system prompt at startup. Every file with frontmatter contributes its <code>name</code> and <code>description</code> to the always-loaded set. The pinboard. Adding frontmatter to a reference file pins it to the wall as if it were a top-level skill. It isn't. Now the pinboard shows fifty entries instead of five, most of them sub-pages that were never meant to be visible at routing time.</p>
+<p>In practice: the agent would occasionally trigger a reference file directly instead of the parent skill. Instructions out of context, without the skill body that gave them meaning. The output was subtly wrong and I couldn't figure out why, because the reference file looked fine in isolation. I didn't realize it had been promoted to skill-level visibility.</p>
+<p>The fix was one line per file: delete the frontmatter from references. They're not skills. They're chapters that other skills point to.</p>
+<h3>One monolithic skill</h3>
+<p>This is the 20%-to-7% story.</p>
+<p>When I built a skill to capture context across multiple modules and message systems, I put everything in one SKILL.md. It seemed cleaner. One file, one source of truth. Easy to read, easy to edit.</p>
+<p>It also meant that every time the skill triggered, the agent loaded the entire 1,200-line file. Module map, contracts, patterns, and gotchas. Even when the task only needed two of those four.</p>
+<p>Splitting it into a 180-line spine with three reference files dropped context consumption from 20% to 7%. Same task, same output, same model.</p>
+<p>This compounds. A skill that costs 7% instead of 20% means you can install three of them in the same context budget, run longer sessions before compaction, hit fewer cliffs on long-horizon tasks. The savings aren't local. They show up everywhere downstream.</p>
+<h3>Hardcoded workspace paths</h3>
+<p>I shared a skill with a teammate and it ran the build command in the wrong directory.</p>
+<p>My instructions said something like <em>navigate to </em><code>modules/web</code><em> and run the build</em>. That worked in my repo. My teammate's repo had four modules. <code>modules/web</code> didn't exist; they had <code>packages/frontend/web</code>. The skill silently picked the wrong directory and produced output in the wrong place. No error. Just wrong output.</p>
+<p>The fix was to write instructions that ask the agent to <em>discover</em> the right path rather than declare it. Search for the build configuration. Identify the module by its <code>package.json</code>. Read the workspace structure before assuming. The skill became more abstract, but it became portable.</p>
+<p>This is the failure mode that doesn't appear until you share. If you only ever run a skill on your own machine, you can hardcode anything and it will work. The moment another engineer runs it, every implicit assumption surfaces as a bug.</p>
+<h3>Missing gotchas</h3>
+<p>My monorepo uses Turborepo. The build command has to run from the repo root for the configuration to resolve correctly. If you run <code>build</code> from inside a module directory, the build still runs. But the cache misses, the dependency graph gets misread, and the output is subtly wrong.</p>
+<p>The agent's default was reasonable: <em>I'm working in the </em><code>web</code><em> module, so I'll run the build from the </em><code>web</code><em> module.</em> That's correct in 90% of repos. It was wrong in this one.</p>
+<p>No amount of "explain the why" in the instructions would have prevented it. The wrongness wasn't conceptual; it was environmental. The agent's prior was correct on average. My environment wasn't average.</p>
+<p>The fix was a single line in a Gotchas section: <em>Always run </em><code>turbo build</code><em> from the repository root, never from inside a module.</em> One line. The next time the agent reached for the build command, it consulted the gotcha and ran correctly.</p>
+<p>This is what Gotchas are for. The agent has reasonable defaults. Your environment isn't average. That gap is the whole job of the Gotchas section, and it's why mature skills treat it as the most important section to maintain over time.</p>
+<h3>Not knowing why the skill worked at all</h3>
+<p>The deepest mistake. I didn't write evals.</p>
+<p>I built a writing skill for my personal Claude desktop. It was based on <a href="https://laxmena.com/the-day-you-became-a-better-writer">Scott Adams' writing principles</a>: short sentences, active voice, front-loaded points, one idea per paragraph. I tuned it on Sonnet 4.6. It worked exactly the way I wanted: drafts came out clean, direct, in my voice.</p>
+<p>Then I upgraded to Opus. Better model, I assumed. Better output.</p>
+<p>The output was worse. Every sentence ran 5 to 7 words. Technically short. But choppy. No rhythm, no flow, nothing that read like me. The writing felt like bullet points dressed as prose.</p>
+<p>What happened is subtle. Sonnet read "write short sentences" and applied judgment: short where brevity sharpened the point, longer where the rhythm needed it. It understood the spirit. Opus read the same instruction and followed it literally. Every sentence, hard constraint, no exceptions.</p>
+<p>The more capable model has stronger priors about what "good writing" looks like. Its version of clear prose is the statistical center of good writing on the internet. My voice isn't the statistical center. Opus pulled hard toward its own aesthetic, and away from mine.</p>
+<blockquote>
+ <p><em>A skill tuned on one model is calibrated to that model's compliance characteristics, not just its capabilities.</em></p>
+</blockquote>
+<p>A more capable model isn't automatically a better fit. Sometimes it's worse, because it interprets your instructions instead of following them.</p>
+<p>I had no evals. No way to know how much had drifted, which instructions were being over-applied, or what a passing output even looked like quantitatively. I'd never defined what "sounds like me" meant in terms a test could check.</p>
+<p>Anthropic's <code>skill-creator</code>, the tool the team uses to build their own skills internally, has an explicit eval methodology. The core move is <em>paired runs</em>: for every test prompt, run the agent twice. Once with the skill, once without. You're not measuring whether the output is good. You're measuring whether it's <em>better than baseline</em>, and by how much.</p>
+<p>For a writing skill, not all assertions are scriptable. But some are: output length, sentence count, average sentence length, readability score. The rest is structured human review, with the previous output alongside the new one and a notes field. That's what Anthropic's <code>eval-viewer</code> in <code>skill-creator</code> produces.</p>
+<p>I now keep a small 'Golden Set' per skill—a practice we'll dissect in an upcoming post on automated skill validation—to ensure my voice doesn't drift when the underlying model changes. Three or four realistic prompts. Rerun the suite on every model bump, every skill edit. Check the deltas.</p>
+<p><em><strong>It worked when I tested it</strong></em><strong> is not evidence. It's the absence of measurement.</strong></p>
+<h2>What survives the post</h2>
+<p>Four things should stick.</p>
+<p><strong>Skills are loader specifications, not prompts.</strong> Frontmatter is a routing mechanism. SKILL.md is a triggered payload. References and scripts are deferred chapters. Once you see the architecture, every authoring decision becomes a question of <em>which level does this content belong at?</em></p>
+<p><strong>Architecture decides cost.</strong> The same instructions, in the wrong shape, can consume 3× the context window. That penalty compounds across every skill installed and every turn taken. The fix is structural, not prose-level.</p>
+<p><strong>The agent has reasonable priors. Your environment doesn't.</strong> Gotchas exist because the model's defaults are correct on average and your situation isn't average. Workspace paths, build systems, team conventions: none of it lives in the model's training. It has to live in the skill.</p>
+<p><strong>A model upgrade is not free.</strong> A skill tuned on one model is calibrated to that model's compliance characteristics. A more capable model interprets your instructions instead of following them, and for skills that encode personal or organizational voice, that interpretation is the failure. The only way to know if an upgrade helped or hurt is to measure it.</p>
+<h2>Sources</h2>
+<ul>
+ <li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">Agent Skills overview</a>, Claude API documentation</li>
+ <li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices">Agent Skills best practices</a>, Claude API documentation</li>
+ <li><a href="https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills">Equipping agents for the real world with Agent Skills</a>, Barry Zhang, Keith Lazuka, Mahesh Murag, Anthropic Engineering, October 2025</li>
+ <li><a href="https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md">skill-creator/SKILL.md</a>, Anthropic skills repository</li>
+ <li><a href="https://agentskills.io/">Agent Skills open standard</a>, December 2025</li>
+ <li><a href="https://laxmena.com/the-day-you-became-a-better-writer">The Day You Became a Better Writer</a>, Lakshmanan Meiyappan</li>
+ <li><a href="https://web.archive.org/web/20240302003157/https://dilbertblog.typepad.com/the_dilbert_blog/2007/06/the_day_you_bec.html">Scott Adams' original post</a>, via Internet Archive</li>
+</ul>

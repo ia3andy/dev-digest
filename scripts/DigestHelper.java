@@ -884,7 +884,7 @@ public class DigestHelper implements Runnable {
             "Avoid unexplained acronyms in one-liner/summary (the decoder handles jargon). " +
             "No shorthand or telegraphic style, write complete readable sentences.\n\n" +
             "Field guide:\n" +
-            "- tags: 1-4 lowercase (ai, java, security, frontend, devops, crypto, startup, design, infrastructure, llm, agents, etc.)\n" +
+            "- tags: 1-4 lowercase single-word or hyphenated (ai, java, security, frontend, devops, crypto, startup, design, infrastructure, llm, agents, opensource, software-engineering, etc.). Use singular forms. Be consistent with existing tag spellings.\n" +
             "- one-liner: 1 sentence hook, why should a developer care?\n" +
             "- what: 1-2 lines, what exactly is the product, feature, or event, in plain language\n" +
             "- why: why this matters beyond the obvious, in accessible terms (omit if self-evident)\n" +
@@ -1325,9 +1325,25 @@ public class DigestHelper implements Runnable {
         System.err.println("  Refreshed " + refreshed + " / " + urls.size() + " cache entries with contentHtml");
     }
 
+    static String canonicalizeTag(String tag, Map<String, Integer> existing) {
+        if (existing.containsKey(tag)) return tag;
+        String stripped = tag.replace("-", "");
+        for (String known : existing.keySet()) {
+            if (known.replace("-", "").equals(stripped)) return known;
+        }
+        String singularized = tag.endsWith("s") ? tag.substring(0, tag.length() - 1) : tag + "s";
+        if (existing.containsKey(singularized)) return singularized;
+        String singularizedStripped = singularized.replace("-", "");
+        for (String known : existing.keySet()) {
+            if (known.replace("-", "").equals(singularizedStripped)) return known;
+        }
+        return tag;
+    }
+
     static void syncTags(String postsDir, String feedsFile) throws IOException {
         var existing = parseTagPriorities(feedsFile);
         var allTags = new TreeSet<String>();
+        var renames = new LinkedHashMap<String, String>();
 
         var postDirs = Files.list(Path.of(postsDir))
                 .filter(Files::isDirectory)
@@ -1342,9 +1358,29 @@ public class DigestHelper implements Runnable {
                 if (m.matches()) {
                     for (String t : m.group(1).split(",")) {
                         String tag = t.trim().toLowerCase().replaceAll("[^a-z0-9-]", "");
-                        if (!tag.isEmpty() && !tag.equals("default")) allTags.add(tag);
+                        if (!tag.isEmpty() && !tag.equals("default")) {
+                            String canonical = canonicalizeTag(tag, existing);
+                            allTags.add(canonical);
+                            if (!canonical.equals(tag)) renames.put(tag, canonical);
+                        }
                     }
                 }
+            }
+        }
+
+        if (!renames.isEmpty()) {
+            System.err.println("  Normalizing tag variants: " + renames);
+            for (Path postDir : postDirs) {
+                Path postFile = postDir.resolve("index.md");
+                if (!Files.exists(postFile)) continue;
+                String content = Files.readString(postFile);
+                String updated = content;
+                for (var entry : renames.entrySet()) {
+                    updated = updated.replaceAll(
+                            "(tags:\\s*\\[[^\\]]*)\\b" + Pattern.quote(entry.getKey()) + "\\b",
+                            "$1" + entry.getValue());
+                }
+                if (!updated.equals(content)) Files.writeString(postFile, updated);
             }
         }
 

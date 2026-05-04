@@ -650,7 +650,7 @@ sections:
         content-template-path: full-content/2026-04-30/tech-10
         title: "Zig has one of the most stringent anti-LLM policies of any major open source project (3 minute read)"
         link: https://simonwillison.net/2026/Apr/30/zig-anti-ai/#atom-everything
-        tags: [open-source, ai, zig, ai-ethics]
+        tags: [opensource, ai, zig, ai-ethics]
         description: |
           Zig doesn't allow large language models for issues, pull requests, or comments on the bug tracker.
         one-liner: "The Zig programming language project bans all LLM-assisted contributions because they prioritize investing in long-term contributors over simply landing code."
@@ -1139,7 +1139,7 @@ sections:
       - id: data-12
         title: "Building a High-Scale Real-Time Recommendation Engine with Feature Stores and Redis Observability (5 minute read)"
         link: https://hackernoon.com/building-a-high-scale-real-time-recommendation-engine-with-feature-stores-and-redis-observability
-        tags: [ai, infrastructure, databases]
+        tags: [ai, infrastructure, database]
         description: |
           Real-time recommendation systems now need to combine rich contextual features with sub-100 ms latency at scale, often across billions of interaction records. Feature stores act as the consistency layer between offline training and online serving, reducing training-serving skew, while batch platforms compute expensive features and embeddings. Redis is used for low-latency vector similarity search, candidate retrieval, and caching eligibility filters, keeping request paths fast and efficient.
         one-liner: "Real-time recommendation systems can achieve sub-100ms latency at billion-record scale by using feature stores to bridge offline training and online serving, with Redis handling vector similarity and caching."
