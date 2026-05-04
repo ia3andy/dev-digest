@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (meta.nextUrl) {
       var nextBtn = el('a', 'swipe-completion-next');
-      nextBtn.href = meta.nextUrl + '#swipe';
+      nextBtn.href = meta.nextUrl;
       nextBtn.appendChild(document.createTextNode('Next: ' + meta.nextTitle + ' '));
       nextBtn.appendChild(svg(16, 16, ICON_ARROW_RIGHT));
       content.appendChild(nextBtn);
@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!articles.length) return;
     var meta = extractPostMeta(document);
 
-    history.replaceState(null, '', window.location.pathname + '#swipe');
+    localStorage.setItem('digest-swipe-active', '1');
     savedScrollY = window.scrollY;
     document.body.classList.add('swipe-active');
     document.body.style.top = -savedScrollY + 'px';
@@ -492,9 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function exit() {
     closeOverlay();
-    if (window.location.hash === '#swipe') {
-      history.replaceState(null, '', window.location.pathname);
-    }
+    localStorage.removeItem('digest-swipe-active');
   }
 
   // --- Entry points ---
@@ -528,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  if (window.location.hash === '#swipe') {
+  if (localStorage.getItem('digest-swipe-active') === '1') {
     var container = document.querySelector('.digest-articles');
     if (container && container.dataset.ready === undefined) {
       var loader = showLoading();

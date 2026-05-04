@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function scrollToReadingPosition() {
-    if (window.location.hash && window.location.hash !== '#swipe') {
+    if (window.location.hash) {
       const target = document.getElementById(window.location.hash.slice(1));
       if (target) {
         setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
@@ -286,7 +286,10 @@ document.addEventListener('DOMContentLoaded', () => {
           var swipeCta = document.getElementById('swipe-home-btn');
           if (swipeCta) {
             var swipeLink = swipeCta.querySelector('.swipe-cta-btn');
-            if (swipeLink) swipeLink.href = postLink.href + '#swipe';
+            if (swipeLink) {
+              swipeLink.href = postLink.href;
+              swipeLink.addEventListener('click', function() { localStorage.setItem('digest-swipe-active', '1'); });
+            }
           }
         }
         break;
