@@ -476,13 +476,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function closeOverlay() {
     if (!overlay) return;
-    if (overlay._obs) overlay._obs.disconnect();
+    var el = overlay;
+    overlay = null;
+    if (el._obs) el._obs.disconnect();
     document.removeEventListener('keydown', onKeydown);
-    overlay.classList.remove('is-visible');
-    overlay.addEventListener('transitionend', function done() {
-      overlay.removeEventListener('transitionend', done);
-      overlay.remove();
-      overlay = null;
+    el.classList.remove('is-visible');
+    el.addEventListener('transitionend', function done() {
+      el.removeEventListener('transitionend', done);
+      el.remove();
       document.body.classList.remove('swipe-active');
       document.body.style.top = '';
       window.scrollTo(0, savedScrollY);
