@@ -933,7 +933,6 @@ body.swipe-active {
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   overscroll-behavior: contain;
-  touch-action: pan-y;
 }
 
 /* Each vertical frame */
@@ -952,9 +951,9 @@ body.swipe-active {
   width: 100%;
   height: 100%;
   overflow-x: scroll;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
-  touch-action: pan-x;
 }
 
 .swipe-layer {
@@ -996,7 +995,8 @@ body.swipe-active {
 .swipe-card-content {
   position: relative;
   z-index: 1;
-  @apply flex flex-col justify-end p-6 pb-20 h-full;
+  min-height: 100dvh;
+  @apply flex flex-col justify-end p-6;
   padding-top: calc(env(safe-area-inset-top, 0px) + 3.5rem);
   padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 4rem);
 }
@@ -1048,7 +1048,10 @@ body.swipe-active {
 
 /* Layer 1+: Content layers */
 .swipe-layer-inner {
-  @apply p-6 h-full flex flex-col;
+  @apply p-6 flex flex-col;
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
   position: relative;
   z-index: 1;
   padding-top: calc(env(safe-area-inset-top, 0px) + 3.5rem);

@@ -174,10 +174,56 @@ document.addEventListener('DOMContentLoaded', () => {
     layer.appendChild(layerBg(imgUrl));
     var inner = el('div', 'swipe-layer-inner');
     inner.appendChild(text('h3', 'swipe-layer-title', 'Summary'));
-    if (a.what) inner.appendChild(summaryItem('swipe-summary-what', ICON_WHAT, 'What:', a.what));
-    if (a.why) inner.appendChild(summaryItem('swipe-summary-why', ICON_WHY, 'Why it matters:', a.why));
-    if (a.takeaway) inner.appendChild(summaryItem('swipe-summary-takeaway', ICON_TAKEAWAY, 'Takeaway:', a.takeaway));
+
+    var viewport = el('div', 'swipe-text-viewport');
+    if (a.what) viewport.appendChild(summaryItem('swipe-summary-what', ICON_WHAT, 'What:', a.what));
+    if (a.why) viewport.appendChild(summaryItem('swipe-summary-why', ICON_WHY, 'Why it matters:', a.why));
+    if (a.takeaway) viewport.appendChild(summaryItem('swipe-summary-takeaway', ICON_TAKEAWAY, 'Takeaway:', a.takeaway));
+    inner.appendChild(viewport);
     layer.appendChild(inner);
+
+    var btnUp = el('button', 'swipe-scroll-btn swipe-scroll-up');
+    btnUp.appendChild(svg(20, 20, ICON_CHEVRON_UP));
+    btnUp.setAttribute('aria-label', 'Scroll up');
+    layer.appendChild(btnUp);
+
+    var btnDown = el('button', 'swipe-scroll-btn swipe-scroll-down');
+    btnDown.appendChild(svg(20, 20, ICON_CHEVRON_DOWN));
+    btnDown.setAttribute('aria-label', 'Scroll down');
+    layer.appendChild(btnDown);
+
+    function updateButtons() {
+      var atTop = viewport.scrollTop <= 1;
+      var atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
+      btnUp.classList.toggle('is-hidden', atTop);
+      btnDown.classList.toggle('is-hidden', atBottom);
+    }
+
+    var pageSize = function() { return viewport.clientHeight * 0.4; };
+
+    btnDown.addEventListener('click', function(e) {
+      e.stopPropagation();
+      viewport.scrollBy({ top: pageSize(), behavior: 'smooth' });
+    });
+
+    btnUp.addEventListener('click', function(e) {
+      e.stopPropagation();
+      viewport.scrollBy({ top: -pageSize(), behavior: 'smooth' });
+    });
+
+    viewport.addEventListener('scroll', updateButtons);
+
+    requestAnimationFrame(function check() {
+      if (!layer.parentNode) return requestAnimationFrame(check);
+      var overflows = viewport.scrollHeight > viewport.clientHeight + 2;
+      btnDown.classList.toggle('is-hidden', !overflows);
+      btnUp.classList.add('is-hidden');
+      if (!overflows) {
+        btnDown.classList.add('is-permanent-hidden');
+        btnUp.classList.add('is-permanent-hidden');
+      }
+    });
+
     return layer;
   }
 
@@ -212,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btnDown.classList.toggle('is-hidden', atBottom);
     }
 
-    var pageSize = function() { return viewport.clientHeight * 0.8; };
+    var pageSize = function() { return viewport.clientHeight * 0.4; };
 
     btnDown.addEventListener('click', function(e) {
       e.stopPropagation();
