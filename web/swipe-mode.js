@@ -73,7 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
         takeaway: qAfterStrong(node, '.digest-summary-takeaway div'),
         deepDive: html(node, '.digest-deep-content'),
         decoder: html(node, '.digest-decoder-content'),
-        original: html(node, '.digest-description-content')
+        original: html(node, '.digest-description-content'),
+        pageUrl: node.dataset.pageUrl || ''
       };
     });
   }
@@ -256,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     var frame = el('div', 'swipe-frame');
     frame.dataset.articleId = article.id;
     frame.dataset.postDate = postDate;
+    if (article.pageUrl) frame.dataset.pageUrl = article.pageUrl;
 
     var img = article.image && !article.image.endsWith(PLACEHOLDER_SUFFIX) ? article.image : fallbackBg(article.id);
 
@@ -307,8 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (meta.nextUrl) {
       var nextBtn = el('a', 'swipe-completion-next');
-      nextBtn.href = meta.nextUrl;
-      nextBtn.addEventListener('click', function() { localStorage.setItem('digest-swipe-active', '1'); });
+      nextBtn.href = meta.nextUrl + '#swipe';
       nextBtn.appendChild(document.createTextNode('Next: ' + meta.nextTitle + ' '));
       nextBtn.appendChild(svg(16, 16, ICON_ARROW_RIGHT));
       content.appendChild(nextBtn);
@@ -339,7 +340,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     var frame = frames[idx];
     if (!frame) return;
-    shareBtn.dataset.shareArticle = frame.dataset.articleId;
+    if (frame.dataset.pageUrl) {
+      shareBtn.dataset.shareUrl = frame.dataset.pageUrl;
+      delete shareBtn.dataset.shareArticle;
+    } else {
+      shareBtn.dataset.shareArticle = frame.dataset.articleId;
+      delete shareBtn.dataset.shareUrl;
+    }
     shareBtn.title = (frame.querySelector('.swipe-card-title') || {}).textContent || '';
   }
 
@@ -395,7 +402,6 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.appendChild(track);
 
     document.body.appendChild(overlay);
-    localStorage.setItem('digest-swipe-active', '1');
 
     var allFrames = track.querySelectorAll('.swipe-frame');
 
@@ -482,18 +488,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (el._obs) el._obs.disconnect();
     document.removeEventListener('keydown', onKeydown);
     el.classList.remove('is-visible');
-    el.addEventListener('transitionend', function done() {
-      el.removeEventListener('transitionend', done);
+    var cleaned = false;
+    function cleanup() {
+      if (cleaned) return;
+      cleaned = true;
       el.remove();
       document.body.classList.remove('swipe-active');
       document.body.style.top = '';
       window.scrollTo(0, savedScrollY);
-    });
+    }
+    el.addEventListener('transitionend', cleanup);
+    setTimeout(cleanup, 400);
   }
 
   function exit() {
     closeOverlay();
-    localStorage.removeItem('digest-swipe-active');
+    if (window.location.hash === '#swipe') history.replaceState(null, '', window.location.pathname);
   }
 
   // --- Entry points ---
@@ -527,6 +537,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // TODO: auto-entry disabled until iOS navigation issues are resolved
-  localStorage.removeItem('digest-swipe-active');
+  if (window.location.hash === '#swipe') {
+    history.replaceState(null, '', window.location.pathname);
+    var container = document.querySelector('.digest-articles');
+    if (container && container.dataset.ready === undefined) {
+      var loader = showLoading();
+      waitForReady(function() { loader.remove(); enter(); });
+    } else {
+      waitForReady(enter);
+    }
+  }
 });

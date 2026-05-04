@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function scrollToReadingPosition() {
-    if (window.location.hash) {
+    if (window.location.hash && window.location.hash !== '#swipe') {
       const target = document.getElementById(window.location.hash.slice(1));
       if (target) {
         setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
@@ -244,10 +244,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.digest-share-btn');
     if (!btn) return;
-    const articleId = btn.dataset.shareArticle;
-    if (articleId) {
+    const shareUrlAttr = btn.dataset.shareUrl;
+    if (shareUrlAttr) {
+      shareUrl(btn.title, window.location.origin + shareUrlAttr);
+    } else if (btn.dataset.shareArticle) {
       const base = window.location.origin + window.location.pathname;
-      shareUrl(btn.title, base + '#' + articleId);
+      shareUrl(btn.title, base + '#' + btn.dataset.shareArticle);
     } else {
       shareUrl(document.title, window.location.href.split('#')[0]);
     }
@@ -289,10 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (swipeCta) {
             var swipeLink = swipeCta.querySelector('.swipe-cta-btn');
             if (swipeLink) {
-              swipeLink.href = postLink.getAttribute('href');
-              swipeLink.addEventListener('click', function() {
-                localStorage.setItem('digest-swipe-active', '1');
-              });
+              swipeLink.href = postLink.getAttribute('href') + '#swipe';
             }
           }
         }

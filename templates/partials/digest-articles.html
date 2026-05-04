@@ -4,7 +4,8 @@
 <div class="digest-articles">
 {#for section in sections}
   {#for article in section.articles}
-  <div class="digest-article" id="{article.id}" data-article-id="{article.id}" data-section="{section.name}" {#if article.link??}data-link="{article.link}"{/if} {#if article.tags??}data-tags="{#for tag in article.tags}{tag}{#if tag_hasNext},{/if}{/for}"{/if}>
+  {#let articlePageUrl=site.page(str:fmt('digest-articles/%s/%s.html', page.date.format('yyyy-MM-dd'), article.id)).url}
+  <div class="digest-article" id="{article.id}" data-article-id="{article.id}" data-section="{section.name}" {#if article.link??}data-link="{article.link}"{/if} {#if article.tags??}data-tags="{#for tag in article.tags}{tag}{#if tag_hasNext},{/if}{/for}"{/if} data-page-url="{articlePageUrl}">
     <img src="{article.image ?: site.image('article-placeholder.svg')}" alt="{article.title}" class="digest-article-img" loading="lazy"/>
     <div class="digest-article-content">
         <div class="digest-article-header">
@@ -111,6 +112,7 @@
 
     </div>
   </div>
+  {/let}
   {/for}
 {/for}
 </div>

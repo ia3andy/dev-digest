@@ -815,9 +815,8 @@ nav.topbar .dark-mode-toggle:hover {
 /* --- Swipe Mode --- */
 
 /* Entry CTA: mobile only */
-/* TODO: swipe mode disabled until iOS navigation issues are resolved */
 .swipe-cta {
-  @apply hidden !important;
+  @apply hidden;
 }
 
 @media (max-width: 768px) {
@@ -934,17 +933,17 @@ body.swipe-active {
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 /* Each vertical frame */
 .swipe-frame {
   width: 100%;
-  height: 100%;
+  height: 100dvh;
+  height: -webkit-fill-available;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   position: relative;
-  contain: layout style paint;
 }
 
 /* Horizontal layers within a frame */
@@ -955,7 +954,7 @@ body.swipe-active {
   overflow-x: scroll;
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
-  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
 }
 
 .swipe-layer {
