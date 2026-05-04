@@ -307,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (meta.nextUrl) {
       var nextBtn = el('a', 'swipe-completion-next');
-      nextBtn.href = meta.nextUrl + '?swipe=1';
+      nextBtn.href = meta.nextUrl + '#swipe';
       nextBtn.appendChild(document.createTextNode('Next: ' + meta.nextTitle + ' '));
       nextBtn.appendChild(svg(16, 16, ICON_ARROW_RIGHT));
       content.appendChild(nextBtn);
@@ -380,10 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!articles.length) return;
     var meta = extractPostMeta(document);
 
-    var url = new URL(window.location);
-    url.searchParams.set('swipe', '1');
-    history.replaceState(null, '', url);
-
+    window.location.hash = 'swipe';
     savedScrollY = window.scrollY;
     document.body.classList.add('swipe-active');
     document.body.style.top = -savedScrollY + 'px';
@@ -489,9 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.remove('swipe-active');
       document.body.style.top = '';
       window.scrollTo(0, savedScrollY);
-      var url = new URL(window.location);
-      url.searchParams.delete('swipe');
-      history.replaceState(null, '', url);
+      history.replaceState(null, '', window.location.pathname);
     });
   }
 
@@ -526,7 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  if (new URLSearchParams(window.location.search).get('swipe') === '1') {
+  if (window.location.hash === '#swipe') {
     var container = document.querySelector('.digest-articles');
     if (container && container.dataset.ready === undefined) {
       var loader = showLoading();
