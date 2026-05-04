@@ -11,7 +11,7 @@ sections:
   articles:
   - id: ai-1
     title: Introducing workspace agents in ChatGPT (9 minute read)
-    link: https://openai.com/index/introducing-workspace-agents-in-chatgpt/?utm_source=tldrai
+    link: https://openai.com/index/introducing-workspace-agents-in-chatgpt/
     description: |
       OpenAI introduced workspace agents in ChatGPT, allowing teams to create shared AI agents for complex tasks and workflows. These agents, powered by Codex, perform tasks like generating reports, writing code, and managing communication, while integrating with various tools like Slack. Workspace agents are currently available in research preview for select ChatGPT plans, aiming to streamline collaboration and improve productivity.
     tags:
@@ -26,7 +26,7 @@ sections:
   - id: ai-2
     content-template-path: full-content/2026-04-23/ai-2
     title: Google debuts Workspace Intelligence for Gemini Workspace (4 minute read)
-    link: https://www.testingcatalog.com/google-debuts-workspace-intelligence-for-gemini-workspace/?utm_source=tldrai
+    link: https://www.testingcatalog.com/google-debuts-workspace-intelligence-for-gemini-workspace/
     image: https://storage.ghost.io/c/2a/1b/2a1b1782-8506-4d7d-bf53-ad3fb52e2a0f/content/images/size/w1200/2026/04/Workspace-Intelligence-visual.png
     tags:
     - ai
@@ -63,7 +63,7 @@ sections:
   - id: ai-3
     content-template-path: full-content/2026-04-23/ai-3
     title: Ex-OpenAI researcher Jerry Tworek launches Core Automation to build the most automated AI lab in the world (1 minute read)
-    link: https://the-decoder.com/ex-openai-researcher-jerry-tworek-launches-core-automation-to-build-the-most-automated-ai-lab-in-the-world/?utm_source=tldrai
+    link: https://the-decoder.com/ex-openai-researcher-jerry-tworek-launches-core-automation-to-build-the-most-automated-ai-lab-in-the-world/
     image: https://the-decoder.com/wp-content/uploads/2026/04/core_auto.png
     description: |
       Core Automation is an AI lab started by Jerry Tworek, a former OpenAI researcher, that aims to build the most automated AI lab in the world. It will start by automating its own research before developing new algorithms that go beyond pre-training and reinforcement learning. The lab will also create architectures designed to scale better than transformers. The team contains experts in frontier models, optimization, and systems engineering.
@@ -81,7 +81,7 @@ sections:
   - id: ai-4
     content-template-path: full-content/2026-04-23/ai-4
     title: Advancing Search-Augmented Language Models (19 minute read)
-    link: https://research.perplexity.ai/articles/advancing-search-augmented-language-models?utm_source=tldrai
+    link: https://research.perplexity.ai/articles/advancing-search-augmented-language-models
     image: https://framerusercontent.com/images/F2Vydb82uGSniCkZ7UG2IkEi2M.png?width=2816&height=1728
     tags:
     - ai
@@ -115,7 +115,7 @@ sections:
   - id: ai-5
     content-template-path: full-content/2026-04-23/ai-5
     title: Benchmarking Inference Engines on Agentic Workloads (9 minute read)
-    link: https://www.appliedcompute.com/research/inference-benchmark?utm_source=tldrai
+    link: https://www.appliedcompute.com/research/inference-benchmark
     image: https://cdn.sanity.io/images/rda7lbmb/production/d2e5e484dced8eae193ce45f8e68cef1786d232c-4800x2520.png?w=1200&q=75&auto=format
     tags:
     - ai
@@ -152,7 +152,7 @@ sections:
   - id: ai-6
     content-template-path: full-content/2026-04-23/ai-6
     title: A good AGENTS.md is a model upgrade. A bad one is worse than no docs at all (11 minute read)
-    link: https://www.augmentcode.com/blog/how-to-write-good-agents-dot-md-files?utm_source=tldrai
+    link: https://www.augmentcode.com/blog/how-to-write-good-agents-dot-md-files
     image: https://cdn.sanity.io/images/oraw2u2c/production/ec6322df1a2861100ef5aa99f5013ce3ecff20ca-1920x1280.png?w=1200&h=630&fit=crop&auto=format
     tags:
     - ai
@@ -188,7 +188,7 @@ sections:
   - id: ai-7
     content-template-path: full-content/2026-04-23/ai-7
     title: "Qwen3.6-27B: Flagship-Level Coding in a 27B Dense Model (2 minute read)"
-    link: https://simonwillison.net/2026/Apr/22/qwen36-27b/?utm_source=tldrai
+    link: https://simonwillison.net/2026/Apr/22/qwen36-27b/
     image: https://static.simonwillison.net/static/2026/Qwen3.6-27B-GGUF-Q4_K_M.png
     description: |
       Qwen3.6-27B delivers flagship-level agentic coding performance. The Qwen team claims that it surpasses the previous-generation flagship Qwen3.5-397B-A17B across all major coding benchmarks. The model is 55.6 GB on Hugging Face, and there are even smaller quantized versions available. Tests show that the model delivers outstanding results, even when quantized.
@@ -221,7 +221,7 @@ sections:
   - id: ai-8
     content-template-path: full-content/2026-04-23/ai-8
     title: "Introducing Gemini Enterprise Agent Platform, powering the next wave of agents (17 minute read)"
-    link: https://cloud.google.com/blog/products/ai-machine-learning/introducing-gemini-enterprise-agent-platform/?utm_source=tldrai
+    link: https://cloud.google.com/blog/products/ai-machine-learning/introducing-gemini-enterprise-agent-platform/
     image: https://storage.googleapis.com/gweb-cloudblog-publish/images/0_gemini_enterprise_agent_platform.max-2600x2600.jpg
     tags:
     - ai
@@ -262,7 +262,7 @@ sections:
   - id: ai-9
     content-template-path: full-content/2026-04-23/ai-9
     title: Building agents that reach production systems with MCP (14 minute read)
-    link: https://claude.com/blog/building-agents-that-reach-production-systems-with-mcp?utm_source=tldrai
+    link: https://claude.com/blog/building-agents-that-reach-production-systems-with-mcp
     image: https://cdn.prod.website-files.com/68a44d4040f98a4adf2207b6/69e934877a400eca8ba4a8d5_og_building-agents-that-reach-production-systems-with-mcp.jpg
     description: |
       Agents can connect to external systems through direct API calls, CLIs, and MCP. This post looks at where each fits and the patterns for building those integrations effectively. MCP becomes the critical compounding layer as production agents move to the cloud. Every integration built on MCP strengthens the ecosystem.
@@ -302,7 +302,7 @@ sections:
       * **Remote server**: An MCP server accessible over the network (not local-only), enabling use across web, mobile, and cloud-hosted agent platforms
   - id: ai-10
     title: Microsoft Moving All GitHub Copilot Subscribers To Token-Based Billing In June (2 minute read)
-    link: https://www.wheresyoured.at/exclusive-microsoft-moving-all-github-copilot-subscribers-to-token-based-billing-in-june/?utm_source=tldrai
+    link: https://www.wheresyoured.at/exclusive-microsoft-moving-all-github-copilot-subscribers-to-token-based-billing-in-june/
     image: https://storage.ghost.io/c/24/d8/24d8fcec-dfba-4f40-a467-823d2941ae46/content/images/2024/01/wyea--1.jpeg
     tags:
     - ai
@@ -335,7 +335,7 @@ sections:
   - id: ai-11
     content-template-path: full-content/2026-04-23/ai-11
     title: When LLMs Get Personal (20 minute read)
-    link: https://joshbudman.substack.com/p/when-llms-get-personal?utm_source=tldrai
+    link: https://joshbudman.substack.com/p/when-llms-get-personal
     image: "https://substackcdn.com/image/fetch/$s_!Dkzf!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe8dbd060-2e18-495a-9e5c-fe4f90e863a6_467x461.png"
     description: |
       Personalization in LLM responses introduces variation but often retains a stable semantic core across answers. This shared foundation results from common model priors, overlapping retrievals, and product constraints, with differences emerging in examples and emphasis. Understanding this allows businesses to optimize their presence in AI-generated content by focusing on being part of the model's core knowledge.
@@ -371,7 +371,7 @@ sections:
       * **Retrieval neighborhood**: The conceptual region of semantic space from which relevant source material is pulled to construct an answer
   - id: ai-12
     title: How to really stop your agents from making the same mistakes (7 minute read)
-    link: https://x.com/garrytan/status/2046876981711769720?utm_source=tldrai
+    link: https://x.com/garrytan/status/2046876981711769720
     tags:
     - ai
     - agents
@@ -410,7 +410,7 @@ sections:
   - id: ai-13
     content-template-path: full-content/2026-04-23/ai-13
     title: You're the Bread in the AI Sandwich (4 minute read)
-    link: https://every.to/context-window/you-re-the-bread-in-the-ai-sandwich?utm_source=tldrai
+    link: https://every.to/context-window/you-re-the-bread-in-the-ai-sandwich
     image: https://d24ovhgu8s7341.cloudfront.net/uploads/post/social_media_image/4120/full_page_cover_Context_window_-_How_to_Motivate_Your_AI_Employees(2).png
     description: |
       AI is enhancing engineering workflows by handling execution, leaving humans to plan, review, and ensure quality output. Humans excel at diagnosing problems from multiple angles, a challenge for AI. Organizational AI strategies in the future will likely include personalized assistants for employees or a singular super-agent with departmental plugins.
@@ -442,7 +442,7 @@ sections:
       * **Plugins**: Modular capabilities that can be added to an AI agent to expand what it can do, similar to apps on a phone
   - id: ai-14
     title: "OpenAI Is Quietly Testing GPT Image 2, and the AI Image Market Will Never Be the Same (8 minute read)"
-    link: https://techbullion.com/openai-is-quietly-testing-gpt-image-2-and-the-ai-image-market-will-never-be-the-same/?utm_source=tldrai
+    link: https://techbullion.com/openai-is-quietly-testing-gpt-image-2-and-the-ai-image-market-will-never-be-the-same/
     image: https://techbullion.com/wp-content/uploads/2026/04/startup-employee-looking-business-charts-using-ai-software-5-1000x600.jpg
     tags:
     - ai
@@ -474,7 +474,7 @@ sections:
       * **A/B test**: Experimental method where different users receive different versions of a product to compare performance before full rollout
   - id: ai-15
     title: Nvidia backs AI company Vast Data at $30 billion valuation (2 minute read)
-    link: https://www.cnbc.com/2026/04/22/nvidia-backs-ai-company-vast-data.html?utm_source=tldrai
+    link: https://www.cnbc.com/2026/04/22/nvidia-backs-ai-company-vast-data.html
     image: https://image.cnbcfm.com/api/v1/image/108278547-1773687656771-gettyimages-2266447996-AFP_A3HY9EX.jpeg?v=1776862342&w=1920&h=1080
     tags:
     - ai
@@ -490,7 +490,7 @@ sections:
   - id: ai-16
     content-template-path: full-content/2026-04-23/ai-16
     title: Anker made its own AI chip (3 minute read)
-    link: https://www.theverge.com/tech/916463/anker-thus-chip-announcement?utm_source=tldrai
+    link: https://www.theverge.com/tech/916463/anker-thus-chip-announcement
     image: https://platform.theverge.com/wp-content/uploads/sites/2/2026/04/anker-thus-chip-graphic.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200
     tags:
     - ai
@@ -528,7 +528,7 @@ sections:
   - id: tech-1
     content-template-path: full-content/2026-04-23/tech-1
     title: Google unveils two new TPUs designed for the “agentic era” (9 minute read)
-    link: https://arstechnica.com/ai/2026/04/google-unveils-two-new-tpus-designed-for-the-agentic-era/?utm_source=tldrnewsletter
+    link: https://arstechnica.com/ai/2026/04/google-unveils-two-new-tpus-designed-for-the-agentic-era/
     image: https://cdn.arstechnica.net/wp-content/uploads/2026/04/TPU-8t-board-1152x648.jpg
     tags:
     - ai
@@ -564,7 +564,7 @@ sections:
       * **FP4**: 4-bit floating-point precision, a lower-precision number format that enables faster AI computation with acceptable accuracy tradeoffs
   - id: tech-2
     title: "Tesla to Spend $3 Billion on ‘Research Fab,' Use Intel Tech (3 minute read)"
-    link: https://www.bloomberg.com/news/articles/2026-04-22/musk-to-spend-3-billion-on-research-fab-use-intel-technology?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb3VyY2UiOiJTdWJzY3JpYmVyR2lmdGVkQXJ0aWNsZSIsImlhdCI6MTc3NjkyMDI0NiwiZXhwIjoxNzc3NTI1MDQ2LCJhcnRpY2xlSWQiOiJURFgyTjNLSkg2VjQwMCIsImJjb25uZWN0SWQiOiJBOEExRDhFQTI5OTc0OTRGQTQ1QUE2REJBMjAwNTM3MSJ9.wJVdC14JELuqknkm-cx6G7ZlHBv0Xfy2_UwZEQgnR8M&utm_source=tldrnewsletter
+    link: https://www.bloomberg.com/news/articles/2026-04-22/musk-to-spend-3-billion-on-research-fab-use-intel-technology
     image: https://assets.bwbx.io/images/users/iqjWHBFdfxIU/izuydH7Q.s0A/v1/1200x800.jpg
     tags:
     - semiconductor
@@ -598,7 +598,7 @@ sections:
   - id: tech-3
     content-template-path: full-content/2026-04-23/tech-3
     title: The AI-native interview (6 minute read)
-    link: https://sierra.ai/blog/the-ai-native-interview?utm_source=tldrnewsletter
+    link: https://sierra.ai/blog/the-ai-native-interview
     image: https://sierra.ai/-/cdn/image?src=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fca4jck6w%2Fproduction%2F0bae6d52f934037189039d5ab7922e6a6873f347-2400x1260.png&width=1200&quality=75
     description: |
       Coding agents have upended software engineering. The role is now shifting from building machines to designing and honing them. Engineers now focus less on precise lines of code and more on whether software produces the right outcomes over time. This shift changes what should be evaluated in interviews. This post looks at how Sierra redesigned its engineering interview process from the ground up to reflect this new reality.
@@ -628,7 +628,7 @@ sections:
   - id: tech-4
     content-template-path: full-content/2026-04-23/tech-4
     title: "One Developer, Two Dozen Agents, Zero Alignment (15 minute read)"
-    link: https://maggieappleton.com/zero-alignment?utm_source=tldrnewsletter
+    link: https://maggieappleton.com/zero-alignment
     image: https://maggieappleton.com/og/zero-alignment.png
     description: |
       Coding agents give developers a lot of their time back, allowing them to have enough time and energy to make their products the way they want to. Agents allow developers to make much better software through more rigorous critical thinking and better alignment in the planning stage. They allow teams to scale in a way that leads to higher-quality software. In a world of fast, cheap software, quality becomes the new differentiator.
@@ -664,7 +664,7 @@ sections:
       * **Alignment**: Team agreement on what to build and why, ensuring everyone shares the same understanding of goals, priorities, and decisions before implementing
   - id: tech-5
     title: "Cursor and SpaceX: In search of a complete loop (13 minute read)"
-    link: https://kwokchain.com/2026/04/23/cursor-and-spacex-in-search-of-a-complete-loop/?utm_source=tldrnewsletter
+    link: https://kwokchain.com/2026/04/23/cursor-and-spacex-in-search-of-a-complete-loop/
     image: https://kwokchain.com/wp-content/uploads/2026/04/cursor-spacex-loops.png
     tags:
     - ai
@@ -702,7 +702,7 @@ sections:
       * **Claude Code**: Anthropic's AI coding product, the first major lab to recognize the importance of owning both the model and product layers in coding
   - id: tech-6
     title: We found a stable Firefox identifier linking all your private Tor identities (11 minute read)
-    link: https://fingerprint.com/blog/firefox-tor-indexeddb-privacy-vulnerability/?utm_source=tldrnewsletter
+    link: https://fingerprint.com/blog/firefox-tor-indexeddb-privacy-vulnerability/
     image: https://fingerprint.com/static/893bf56cdf5a22443c3b3ace0bb862df/blog_firefox_vulnerability.jpg
     description: |
       There is a vulnerability in all Firefox-based browsers that allows websites to derive a unique, deterministic, and stable process-lifetime identifier, even in contexts where users expect stronger isolation.
@@ -740,7 +740,7 @@ sections:
       * **New Identity**: Tor Browser feature that's supposed to fully reset the session by clearing cookies, history, and using new Tor circuits
   - id: tech-7
     title: "OpenAI unveils Workspace Agents, a successor to custom GPTs for enterprises that can plug directly into Slack, Salesforce and more (14 minute read)"
-    link: https://venturebeat.com/orchestration/openai-unveils-workspace-agents-a-successor-to-custom-gpts-for-enterprises-that-can-plug-directly-into-slack-salesforce-and-more?utm_source=tldrnewsletter
+    link: https://venturebeat.com/orchestration/openai-unveils-workspace-agents-a-successor-to-custom-gpts-for-enterprises-that-can-plug-directly-into-slack-salesforce-and-more
     image: https://images.ctfassets.net/jdtwqhzvc2n1/4Xdu5CqjmyRwz1NBaDX14Z/b43e969be10254ca838bf1ad60a187a6/ChatGPT_Image_Apr_22__2026__07_40_47_PM.png?w=800&q=75
     tags:
     - ai
@@ -778,7 +778,7 @@ sections:
   - id: tech-8
     content-template-path: full-content/2026-04-23/tech-8
     title: "Imagine every pixel on your screen, streamed live directly from a model (3 minute read)"
-    link: https://threadreaderapp.com/thread/2046982383430496444.html?utm_source=tldrnewsletter
+    link: https://threadreaderapp.com/thread/2046982383430496444.html
     image: https://threadreaderapp.com/images/screenshots/thread/2046982383430496444.jpg
     description: |
       Flipbook creates interactive illustrations without HTML, a layout engine, or code.
@@ -808,7 +808,7 @@ sections:
   - id: tech-9
     content-template-path: full-content/2026-04-23/tech-9
     title: "The LLM Inference Trilemma: Throughput, Latency, Cost (12 minute read)"
-    link: https://www.digitalocean.com/blog/llm-inference-tradeoffs?utm_source=tldrnewsletter
+    link: https://www.digitalocean.com/blog/llm-inference-tradeoffs
     image: https://doimages.nyc3.cdn.digitaloceanspaces.com/007BlogBanners2024/scales-1(spraytan).png
     tags:
     - ai
@@ -852,7 +852,7 @@ sections:
   articles:
   - id: data-1
     title: Building a fault-tolerant metrics storage system at Airbnb (9 minute read)
-    link: https://medium.com/airbnb-engineering/building-a-fault-tolerant-metrics-storage-system-at-airbnb-26a01a6e7017?utm_source=tldrdata
+    link: https://medium.com/airbnb-engineering/building-a-fault-tolerant-metrics-storage-system-at-airbnb-26a01a6e7017
     tags:
     - infrastructure
     - observability
@@ -872,7 +872,7 @@ sections:
   - id: data-2
     content-template-path: full-content/2026-04-23/data-2
     title: Modernizing the Facebook Groups Search to Unlock the Power of Community Knowledge (4 minute read)
-    link: https://engineering.fb.com/2026/04/21/ml-applications/modernizing-the-facebook-groups-search-to-unlock-the-power-of-community-knowledge/?utm_source=tldrdata
+    link: https://engineering.fb.com/2026/04/21/ml-applications/modernizing-the-facebook-groups-search-to-unlock-the-power-of-community-knowledge/
     image: https://engineering.fb.com/wp-content/uploads/2026/04/Modernizing-FB-Groups-search-Hero-2.png
     tags:
     - ai
@@ -906,7 +906,7 @@ sections:
       * **Unicorn**: Facebook's inverted index system for fast keyword-based document retrieval
   - id: data-3
     title: "Smarter URL Normalization at Scale: How MIQPS Powers Content Deduplication at Pinterest (10 minute read)"
-    link: https://medium.com/pinterest-engineering/smarter-url-normalization-at-scale-how-miqps-powers-content-deduplication-at-pinterest-4aa42e807d7d?utm_source=tldrdata
+    link: https://medium.com/pinterest-engineering/smarter-url-normalization-at-scale-how-miqps-powers-content-deduplication-at-pinterest-4aa42e807d7d
     tags:
     - infrastructure
     - backend
@@ -937,7 +937,7 @@ sections:
       * **Tracking parameters**: Query string parameters added to URLs for analytics (utm_source, fbclid, etc.) that don't change the underlying content
   - id: data-4
     title: The Interface Is the Contract (14 minute read)
-    link: https://ontologist.substack.com/p/the-interface-is-the-contract?utm_source=tldrdata
+    link: https://ontologist.substack.com/p/the-interface-is-the-contract
     image: "https://substackcdn.com/image/fetch/$s_!65WY!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F49f99318-0328-42fd-b9f9-5a2bb11435bb_2688x1536.png"
     tags:
     - architecture
@@ -978,7 +978,7 @@ sections:
       * **Projection schema**: The interface contract defining how a domain's internal ontology is represented to external systems, analogous to an API specification
   - id: data-5
     title: AI-Ready Data vs. Analytics-Ready Data (10 minute read)
-    link: https://medium.com/@community_md101/ai-ready-data-vs-analytics-ready-data-f67ef0804341?utm_source=tldrdata
+    link: https://medium.com/@community_md101/ai-ready-data-vs-analytics-ready-data-f67ef0804341
     tags:
     - ai
     - data
@@ -996,7 +996,7 @@ sections:
       * **Aggregation**: The process of summarizing detailed data into higher-level metrics (like daily averages), which can destroy variance and patterns AI needs
   - id: data-6
     title: dbt-score (GitHub Repo)
-    link: https://github.com/PicnicSupermarket/dbt-score?utm_source=tldrdata
+    link: https://github.com/PicnicSupermarket/dbt-score
     image: https://opengraph.githubassets.com/3e7eeb86a948c3cde56e019ca9a01b88107ddeab58f026416794f2457db6406f/PicnicSupermarket/dbt-score
     description: |
       dbt-score is a linter for dbt metadata quality. It scores models and projects against rules for docs, tests, ownership, naming, and SQL complexity, so teams can enforce standards in CI/CD and catch weak models early. It supports custom rules for org-specific governance.
@@ -1027,7 +1027,7 @@ sections:
   - id: data-7
     content-template-path: full-content/2026-04-23/data-7
     title: "ggsql: A grammar of graphics for SQL (11 minute read)"
-    link: https://opensource.posit.co/blog/2026-04-20_ggsql_alpha_release/?utm_source=tldrdata
+    link: https://opensource.posit.co/blog/2026-04-20_ggsql_alpha_release/
     image: https://opensource.posit.co/blog/2026-04-20_ggsql_alpha_release/ggsql.png
     tags:
     - sql
@@ -1060,7 +1060,7 @@ sections:
       * **Layer**: A single visual element type in a chart (points, lines, bars) that can render multiple graphical entities based on data categories
   - id: data-8
     title: Pgweb (GitHub Repo)
-    link: https://github.com/sosedoff/pgweb?utm_source=tldrdata
+    link: https://github.com/sosedoff/pgweb
     image: https://opengraph.githubassets.com/3991eaf4b02c1cf350b3002702062192890d5e57934a0ff8e8daffdde3664852/sosedoff/pgweb
     tags:
     - database
@@ -1079,7 +1079,7 @@ sections:
   - id: data-9
     content-template-path: full-content/2026-04-23/data-9
     title: ML Intern (GitHub Repo)
-    link: https://github.com/huggingface/ml-intern/?utm_source=tldrdata
+    link: https://github.com/huggingface/ml-intern/
     image: https://opengraph.githubassets.com/732fbdbde95f65d1fdeb9111fd243463ca2c76f08b618d2e3b49f0c6242fd3fb/huggingface/ml-intern
     tags:
     - ai
@@ -1118,7 +1118,7 @@ sections:
       * **Headless mode**: Running the agent non-interactively with a single prompt, automatically approving all actions without user confirmation
   - id: data-10
     title: The Last Mile to Apache Iceberg - Building a Basement Data Platform (8 minute read)
-    link: https://arturastutkus.substack.com/p/the-last-mile-to-apache-iceberg-building?utm_source=tldrdata
+    link: https://arturastutkus.substack.com/p/the-last-mile-to-apache-iceberg-building
     image: "https://substackcdn.com/image/fetch/$s_!46QK!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fab768af6-49ff-45cd-954a-c773d478bc38_1280x960.png"
     tags:
     - data
@@ -1161,7 +1161,7 @@ sections:
   - id: data-11
     content-template-path: full-content/2026-04-23/data-11
     title: Entropy-Guided KV Cache Summarization via Low-Rank Attention Reconstruction (9 minute read)
-    link: https://jchandra.com/posts/hae-ols/?utm_source=tldrdata
+    link: https://jchandra.com/posts/hae-ols/
     description: |
       A new KV-cache compression method for LLMs replaces simple token pruning with a smarter approach: it identifies low-value context, summarizes it mathematically, and stores a compact version instead of deleting it. In tests, this delivered better accuracy and lower memory use than common Top-K or sliding-window methods, suggesting longer context windows can be handled more efficiently.
     tags:
@@ -1200,7 +1200,7 @@ sections:
   - id: data-12
     content-template-path: full-content/2026-04-23/data-12
     title: Four Horsemen of the AIpocalypse (16 minute read)
-    link: https://www.wheresyoured.at/four-horsemen-of-the-aipocalypse/?utm_source=tldrdata
+    link: https://www.wheresyoured.at/four-horsemen-of-the-aipocalypse/
     image: https://storage.ghost.io/c/24/d8/24d8fcec-dfba-4f40-a467-823d2941ae46/content/images/2024/01/wyea--1.jpeg
     description: |
       Anthropic, OpenAI, and NVIDIA are all running into hard limits of AI economics and infrastructure: uptime issues, capacity shortages, and compute buildouts that lag far behind announced demand. Anthropic's Claude services are cited at 98.79%–99.25% uptime over 90 days, while the broader market reportedly has only 15.2GW of the 114GW of promised AI data-center capacity actually under construction. Rising inference costs are pushing major vendors like Microsoft and Anthropic toward token-based billing, tighter rate limits, and reduced subsidies.
@@ -1244,7 +1244,7 @@ sections:
   - id: data-13
     content-template-path: full-content/2026-04-23/data-13
     title: Five things I believe about the future of analytics (5 minute read)
-    link: https://roundup.getdbt.com/p/five-things-i-believe-about-the-future?utm_source=tldrdata
+    link: https://roundup.getdbt.com/p/five-things-i-believe-about-the-future
     image: "https://substackcdn.com/image/fetch/$s_!TGJi!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdac639e2-56fa-42b1-a4d6-35ab1eadcf7a_1600x912.jpeg"
     tags:
     - ai
@@ -1281,7 +1281,7 @@ sections:
       * **Data lake/warehouse**: Central repositories where companies store large volumes of structured data for analysis
   - id: data-14
     title: Columnar Storage is Normalization (3 minute read)
-    link: https://buttondown.com/jaffray/archive/columnar-storage-is-normalization/?utm_source=tldrdata
+    link: https://buttondown.com/jaffray/archive/columnar-storage-is-normalization/
     image: https://assets.buttondown.email/images/ade45dbb-1818-4db8-8d05-2a35d8c321cc.png
     tags:
     - database
@@ -1311,7 +1311,7 @@ sections:
   articles:
   - id: design-1
     title: "John Ternus says Apple is ‘about to change the world,' teases new products (3 minute read)"
-    link: https://9to5mac.com/2026/04/21/john-ternus-says-apple-is-about-to-change-the-world-teases-new-products/?utm_source=tldrdesign
+    link: https://9to5mac.com/2026/04/21/john-ternus-says-apple-is-about-to-change-the-world-teases-new-products/
     tags:
     - ai
     description: |
@@ -1324,7 +1324,7 @@ sections:
   - id: design-2
     content-template-path: full-content/2026-04-23/design-2
     title: Adobe Deploys Agents Across its Customer Experience Tools (2 minute read)
-    link: https://siliconangle.com/2026/04/20/adobe-deploys-agents-across-customer-experience-tools/?utm_source=tldrdesign
+    link: https://siliconangle.com/2026/04/20/adobe-deploys-agents-across-customer-experience-tools/
     image: https://d15shllkswkct0.cloudfront.net/wp-content/blogs.dir/1/files/2024/06/Adobe1.png
     description: |
       Adobe CX Enterprise is an enterprise platform to coordinate AI agents across marketing, content, and customer engagement workflows, introduced at Adobe Summit. Built on its Experience Platform, the system integrates Brand and Engagement Intelligence layers, a multi-agent coordinator, and partnerships with AWS, Anthropic, Google, IBM, Microsoft, Nvidia, and OpenAI. The company also reported a 269% year-over-year surge in AI-driven traffic to US retail sites, as it continues to push further into AI-powered search visibility and updates its GenStudio content platform.
@@ -1360,7 +1360,7 @@ sections:
   - id: design-3
     content-template-path: full-content/2026-04-23/design-3
     title: "New Touch-up Tools in Google Photos' Image Editor Let You Make Quick, Subtle Fixes (1 minute read)"
-    link: https://blog.google/products-and-platforms/products/photos/new-touch-up-tools-google-photos/?utm_source=tldrdesign
+    link: https://blog.google/products-and-platforms/products/photos/new-touch-up-tools-google-photos/
     image: https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Static_header.max-1440x810.png
     description: |
       Google Photos has added new touch-up tools to its image editor that enable subtle facial enhancements like skin smoothing, blemish removal, eye brightening, and teeth whitening. Users select a face, choose from tools, including heal, smooth, under eyes, irises, teeth, eyebrows, or lips, then adjust effect intensity. The feature is rolling out gradually on Android devices running Android 9.0 or higher with at least 4 GB of RAM.
@@ -1373,7 +1373,7 @@ sections:
       what: "Google Photos has added new touch-up tools to its image editor for facial enhancements like skin smoothing, blemish removal, eye brightening, and teeth whitening. Users select a face, choose from tools (heal, smooth, under eyes, irises, teeth, eyebrows, lips), and adjust intensity, with the feature rolling out to Android 9.0+ devices with at least 4 GB RAM."
   - id: design-4
     title: What Claude Design Actually Changes for Designers (6 minute read)
-    link: https://medium.com/design-bootcamp/what-claude-design-actually-changes-for-designers-0c5b04fae343?utm_source=tldrdesign
+    link: https://medium.com/design-bootcamp/what-claude-design-actually-changes-for-designers-0c5b04fae343
     image: https://miro.medium.com/v2/resize:fit:1200/0*gRYJphcrEJWbk-AG.png
     tags:
     - ai
@@ -1409,7 +1409,7 @@ sections:
   - id: design-5
     content-template-path: full-content/2026-04-23/design-5
     title: From Vibe Coder to Product Builder (6 minute read)
-    link: https://marcabraham.com/2026/04/17/from-vibe-coder-to-product-builder/?utm_source=tldrdesign
+    link: https://marcabraham.com/2026/04/17/from-vibe-coder-to-product-builder/
     image: https://marcabraham.com/wp-content/uploads/2026/04/as-i-learn-69e21f2c801e8.png
     description: |
       Product managers can move beyond prototype-only tools like Lovable or Bolt by adopting coding agents and learning engineering fundamentals — not to become engineers, but to build real, shippable products. Key lessons include upfront planning with structured PRDs, understanding the tech stack, iterating incrementally, and treating errors as guidance rather than failures. The foundational PM discipline of validating problems before building remains as critical as ever, since lower barriers to coding don't eliminate the need for rigorous thinking about what's worth building and why.
@@ -1443,7 +1443,7 @@ sections:
       * **Vibe coding**: Colloquial term for using AI-assisted coding tools to build quickly based on prompts and intuition
   - id: design-6
     title: Rethinking the shape of design teams in an AI world (11 minute read)
-    link: https://uxdesign.cc/rethinking-the-shape-of-design-teams-in-an-ai-world-82f986bf9a27?utm_source=tldrdesign
+    link: https://uxdesign.cc/rethinking-the-shape-of-design-teams-in-an-ai-world-82f986bf9a27
     image: https://miro.medium.com/v2/resize:fit:1200/1*ir0cDqBqOD5ya4W4P8ODWQ.png
     description: |
       The claim that Jenny Wen “broke” the design process has sparked debate, but critics like Sarah Gibbons argue the process isn't gone—experienced designers have simply internalized and compressed it, while skipping it entirely risks weakening junior talent. The bigger concern is that AI-driven speed could hollow out the workforce (fewer juniors becoming seniors) and strain traditional organizations, pushing a shift toward flatter, hybrid “full-stack” roles and new team models—balancing fast, autonomous “atom” structures for innovation with stable “tomato” systems to preserve rigor, skills development, and long-term resilience.
@@ -1480,7 +1480,7 @@ sections:
   - id: design-7
     content-template-path: full-content/2026-04-23/design-7
     title: Ship AI-powered Products Faster (Website)
-    link: https://21st.dev/agents?utm_source=tldrdesign
+    link: https://21st.dev/agents
     image: https://21st.dev/opengraph-an.png
     description: |
       Add a production-ready AI agent to your product without building the infrastructure yourself. 21st Agents handles the runtime, sandboxing, streaming, tools, and UI - you configure and ship.
@@ -1502,7 +1502,7 @@ sections:
       * **MCP servers**: Model Context Protocol servers that provide additional context or capabilities to AI models
   - id: design-8
     title: Templo's brand identity for climate non-profit Casi draws on the pragmatic mark-making of hieroglyphics (4 minute read)
-    link: https://www.itsnicethat.com/articles/templo-casi-branding-project-220426?utm_source=tldrdesign
+    link: https://www.itsnicethat.com/articles/templo-casi-branding-project-220426
     image: https://admin.itsnicethat.com/images/BQTL2sfvuudHTKGzli4ACfCaE_U=/277550/width-1440/13_CASI_geoglyph.jpg
     tags:
     - design
@@ -1520,7 +1520,7 @@ sections:
       * **Grotesk**: A style of sans-serif typeface characterized by clean, geometric forms without decorative elements
   - id: design-9
     title: Koto just proved that design for enterprise platforms doesn't have to be beige (6 minute read)
-    link: https://www.creativeboom.com/news/koto-just-proved-that-design-for-enterprise-platforms-doesnt-have-to-be-beige/?utm_source=tldrdesign
+    link: https://www.creativeboom.com/news/koto-just-proved-that-design-for-enterprise-platforms-doesnt-have-to-be-beige/
     image: https://www.creativeboom.com/upload/articles/25/254c1167310211ec2aee0906c20babeded8fe266_800.png
     tags:
     - design
@@ -1536,7 +1536,7 @@ sections:
   - id: design-10
     content-template-path: full-content/2026-04-23/design-10
     title: "Session Timeouts: The Overlooked Accessibility Barrier in Authentication Design (10 minute read)"
-    link: https://www.smashingmagazine.com/2026/04/session-timeouts-accessibility-barrier-authentication-design/?utm_source=tldrdesign
+    link: https://www.smashingmagazine.com/2026/04/session-timeouts-accessibility-barrier-authentication-design/
     image: https://files.smashing.media/articles/session-timeouts-accessibility-barrier-authentication-design/session-timeouts-accessibility-barrier-authentication-design.jpg
     description: |
       Poorly handled session timeouts create serious accessibility barriers for people with motor, cognitive, and vision impairments, who often need more time to complete online tasks and can lose significant progress when unexpectedly logged out. Common failures include silent timeouts, insufficient warnings, and no option to extend sessions — issues that disproportionately affect the roughly 1.3 billion people worldwide living with significant disabilities. Solutions such as advanced warnings, session extension options, and auto-saving progress can meaningfully improve accessibility while still meeting security requirements.
@@ -1571,7 +1571,7 @@ sections:
   - id: design-11
     content-template-path: full-content/2026-04-23/design-11
     title: Artist Uses AI to Reimagine His Older Work as the Ingredients for a New Series of Animal Art (3 minute read)
-    link: https://mymodernmet.com/jim-naughten-biophilia/?utm_source=tldrdesign
+    link: https://mymodernmet.com/jim-naughten-biophilia/
     image: https://mymodernmet.com/wp/wp-content/uploads/2026/04/jim-naughten-biophilia-thumbnail.jpg
     tags:
     - ai
@@ -1585,7 +1585,7 @@ sections:
       why: "The artist's candid ambivalence about using AI—appreciating the ability to work from home and recycle existing work with lower carbon footprint, while calling it an \"extremely odd process\"—reflects the complex relationship many creators have with generative tools."
   - id: design-12
     title: "Negative Space Logo Design: Creative Ideas and Inspiring Examples (6 minute read)"
-    link: https://graphicdesignjunction.com/2026/04/negative-space-logo-design/?utm_source=tldrdesign
+    link: https://graphicdesignjunction.com/2026/04/negative-space-logo-design/
     image: https://i0.wp.com/graphicdesignjunction.com/wp-content/uploads/2026/04/negative_space_logos.jpg
     tags:
     - design
@@ -1599,7 +1599,7 @@ sections:
   articles:
   - id: crypto-1
     title: Kelp DAO exploited for $292 million (5 minute read)
-    link: https://www.coindesk.com/tech/2026/04/22/the-protocol-kelp-dao-exploited-for-usd292-million?utm_source=tldrcrypto
+    link: https://www.coindesk.com/tech/2026/04/22/the-protocol-kelp-dao-exploited-for-usd292-million
     image: https://cdn.sanity.io/images/s3y3vcno/production/71a0ed456470eda07e70c0505f537f85cdd80d1e-1280x853.jpg?auto=format&w=960&h=540&crop=focalpoint&fit=clip&q=75&fm=jpg
     tags:
     - crypto
@@ -1636,7 +1636,7 @@ sections:
       * **Loan-to-value (LTV) ratio**: The maximum percentage of collateral value that can be borrowed against; setting to zero prevents new borrowing
   - id: crypto-2
     title: The question isn't whether privacy. It's what sort of privacy (5 minute read)
-    link: https://www.coindesk.com/opinion/2026/04/22/the-question-isn-t-whether-privacy-it-s-what-sort-of-privacy?utm_source=tldrcrypto
+    link: https://www.coindesk.com/opinion/2026/04/22/the-question-isn-t-whether-privacy-it-s-what-sort-of-privacy
     image: https://cdn.sanity.io/images/s3y3vcno/production/7f1f4d89bc25bb088eebb0c0bb9b5b565caa943b-5220x3480.jpg?auto=format&w=960&h=540&crop=focalpoint&fit=clip&q=75&fm=jpg
     description: |
       Institutional finance is abandoning public-by-default blockchains due to transparency risks. Tempo's $5 billion stablecoin project highlights this shift, forcing a choice between operator-visible privacy and trustless zero-knowledge cryptography. The industry must now decide whether to rely on trusted intermediaries or verifiable cryptographic guarantees for future onchain operations.
@@ -1670,7 +1670,7 @@ sections:
       * **Selective disclosure**: The ability to programmatically reveal specific transaction details to authorized parties (like regulators) while keeping them hidden from everyone else
   - id: crypto-3
     title: "Introducing Base Azul: Multiproof Security and 5,000 TPS (4 minute read)"
-    link: https://x.com/buildonbase/status/2046635596677042268?utm_source=tldrcrypto
+    link: https://x.com/buildonbase/status/2046635596677042268
     tags:
     - crypto
     - infrastructure
@@ -1712,7 +1712,7 @@ sections:
       * **ZKVM**: Zero-knowledge virtual machine that can generate ZK proofs for arbitrary program execution
   - id: crypto-4
     title: Ripple's Roadmap to Make XRP Quantum-Resistant by 2028 (5 minute read)
-    link: https://decrypt.co/364897/quantum-threat-bitcoin-crypto-how-xrp-ledger-preparing?utm_source=tldrcrypto
+    link: https://decrypt.co/364897/quantum-threat-bitcoin-crypto-how-xrp-ledger-preparing
     image: https://cdn.decrypt.co/resize/1024/height/512/wp-content/uploads/2025/06/ripple-logo-decrypt-style-01-gID_7.png
     tags:
     - crypto
@@ -1742,7 +1742,7 @@ sections:
       * **Exposed public keys**: Public keys that have been revealed on the blockchain through transactions, making them vulnerable to quantum attack, whereas addresses that have only received funds but never sent (thus not exposing public keys) remain safer
   - id: crypto-5
     title: Coinbase Flags Proof-of-Stake Chains as Quantum Risks (5 minute read)
-    link: https://decrypt.co/365079/coinbase-proof-of-stake-blockchains-ethereum-solana-quantum-risk?utm_source=tldrcrypto
+    link: https://decrypt.co/365079/coinbase-proof-of-stake-blockchains-ethereum-solana-quantum-risk
     image: https://cdn.decrypt.co/resize/1024/height/512/wp-content/uploads/2025/08/ethereum-decrypt-style-07-gID_7.jpg
     description: |
       Coinbase's Independent Advisory Board on Quantum Computing and Blockchain identified two structural PoS vulnerabilities: validator signature schemes (Ethereum's BLS and Solana's Ed25519) that secure consensus, and onchain wallet signatures, with the board warning consensus mechanisms themselves may require redesign rather than simple wallet upgrades. Ethereum developers, led by Vitalik Buterin, have proposed replacing BLS validator signatures, KZG commitments, and ECDSA wallet signatures with post-quantum alternatives, though the board projects a multi-year timeline to migrate wallets, exchanges, custodians, and decentralized networks.
@@ -1772,7 +1772,7 @@ sections:
       * **Post-quantum**: Cryptographic algorithms designed to resist attacks from quantum computers
   - id: crypto-6
     title: The case for a variable PTC deadline with affine metering (5 minute read)
-    link: https://ethresear.ch/t/the-case-for-a-variable-ptc-deadline-with-affine-metering-and-a-unified-calldata-price/24708?utm_source=tldrcrypto
+    link: https://ethresear.ch/t/the-case-for-a-variable-ptc-deadline-with-affine-metering-and-a-unified-calldata-price/24708
     image: https://ethresear.ch/uploads/default/optimized/3X/b/2/b236a4bfe27177f2f634c31e6b9d588ef2b5fe85_2_1024x806.png
     tags:
     - ethereum
@@ -1809,7 +1809,7 @@ sections:
       * **Execution window**: Time available for nodes to execute (run) the transactions in a block after it arrives
   - id: crypto-7
     title: Market Making in Prediction Markets Sucks (5 minute read)
-    link: https://x.com/uselotusai/status/2046639095531614455?utm_source=tldrcrypto
+    link: https://x.com/uselotusai/status/2046639095531614455
     tags:
     - predictionmarkets
     - trading
@@ -1846,7 +1846,7 @@ sections:
   - id: crypto-8
     content-template-path: full-content/2026-04-23/crypto-8
     title: Smart Contracts as Credible Commitments for Trading (10 minute read)
-    link: https://www.lesswrong.com/posts/2TdWiYZfPpdaTLmJS/smart-contracts-as-credible-commitments-for-trading-with-1?utm_source=tldrcrypto
+    link: https://www.lesswrong.com/posts/2TdWiYZfPpdaTLmJS/smart-contracts-as-credible-commitments-for-trading-with-1
     image: "https://res.cloudinary.com/lesswrong-2-0/image/upload/f_auto,q_auto/v1/mirroredImages/2TdWiYZfPpdaTLmJS/evezoraiuewo3sc3ygk0"
     description: |
       Smart contracts provide a mechanism for labs to make credible commitments when trading with potentially scheming AIs. By leveraging Ethereum's immutable, cryptographically verifiable state, labs can reduce the risk of honeypotting. This approach enables AIs to independently verify deal authenticity through milestone-based escrow and on-chain attestations.
@@ -1884,7 +1884,7 @@ sections:
       * **RLP encoding**: Recursive Length Prefix, Ethereum's serialization format for encoding transaction data before hashing
   - id: crypto-9
     title: Bitcoin Basis Trade Unwind Nears (3 minute read)
-    link: https://www.dlnews.com/articles/markets/basis-traders-are-done-dragging-down-bitcoin-price-says-investment-adviser/?utm_source=tldrcrypto
+    link: https://www.dlnews.com/articles/markets/basis-traders-are-done-dragging-down-bitcoin-price-says-investment-adviser/
     image: https://dl-production-assets.s3.eu-central-1.amazonaws.com/images/1776417676421-asset.webp
     description: |
       CME Bitcoin futures open interest has dropped below $10B to a 14-month low, indicating the basis trade unwind is near completion.

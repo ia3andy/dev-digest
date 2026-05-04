@@ -11,7 +11,7 @@ sections:
   articles:
   - id: ai-1
     title: Microsoft OpenAI Partnership Update (2 minute read)
-    link: https://openai.com/index/next-phase-of-microsoft-partnership/?utm_source=tldrai
+    link: https://openai.com/index/next-phase-of-microsoft-partnership/
     image: https://images.ctfassets.net/kftzwdyauwt9/5sMBiZdiwBzV2SqR3iLo80/55329fd0accaa73127e712ac86621c6a/oai-ms-16x9.png?w=1600&h=900&fit=fill
     description: |
       OpenAI and Microsoft revised their agreement to increase flexibility, including non-exclusive IP licensing, multi-cloud support for OpenAI products, and capped revenue-sharing terms through 2030.
@@ -41,7 +41,7 @@ sections:
       * **Primary cloud partner**: The preferred infrastructure provider that gets first access to deploy new products and capabilities
   - id: ai-2
     title: "OpenAI Misses Key Revenue, User Targets in High-Stakes Sprint Toward IPO (6 minute read)"
-    link: https://www.wsj.com/tech/ai/openai-misses-key-revenue-user-targets-in-high-stakes-sprint-toward-ipo-94a95273?st=ko4FZN&reflink=desktopwebshare_permalink&utm_source=tldrai
+    link: https://www.wsj.com/tech/ai/openai-misses-key-revenue-user-targets-in-high-stakes-sprint-toward-ipo-94a95273?st=ko4FZN&reflink=desktopwebshare_permalink
     image: https://images.wsj.net/im-57056001/social
     description: |
       OpenAI missed its own targets for new users and revenue, raising concern among company leaders about whether it will be able to support its massive spending on data centers. The company's Chief Financial Officer has said that she is worried that OpenAI may not be able to pay for future computing contracts if revenue doesn't grow fast enough. Board directors have been questioning CEO Sam Altman's efforts to secure even more computing power despite the business slowdown. Company executives are now seeking to control costs and instill more discipline in the business.
@@ -75,7 +75,7 @@ sections:
       * **Enterprise market**: Business customers who pay for corporate software licenses, typically more stable and lucrative than consumer subscriptions
   - id: ai-3
     title: OpenAI Smartphone Rumors (3 minute read)
-    link: https://x.com/mingchikuo/status/2048587389791269182?utm_source=tldrai
+    link: https://x.com/mingchikuo/status/2048587389791269182
     description: |
       Analyst Ming-Chi Kuo reported that OpenAI explored building a smartphone with partners like MediaTek and Qualcomm, potentially replacing app-centric interfaces with AI agents and hybrid on-device/cloud models.
     tags:
@@ -103,7 +103,7 @@ sections:
   - id: ai-4
     content-template-path: full-content/2026-04-28/ai-4
     title: China Blocks Meta Manus Acquisition (2 minute read)
-    link: https://techcrunch.com/2026/04/27/china-vetoes-metas-2b-manus-deal-after-months-long-probe/?utm_source=tldrai
+    link: https://techcrunch.com/2026/04/27/china-vetoes-metas-2b-manus-deal-after-months-long-probe/
     image: https://techcrunch.com/wp-content/uploads/2025/04/GettyImages-2209215388.jpg?w=1024
     tags:
     - ai
@@ -133,7 +133,7 @@ sections:
   - id: ai-5
     content-template-path: full-content/2026-04-28/ai-5
     title: To Train or Not to Train (10 minute read)
-    link: https://www.tanayj.com/p/to-train-or-not-to-train?utm_source=tldrai
+    link: https://www.tanayj.com/p/to-train-or-not-to-train
     image: "https://substackcdn.com/image/fetch/$s_!J-_y!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F5020f18f-61af-4565-ae15-c3f388f4c861_2400x1256.png"
     tags:
     - ai
@@ -170,7 +170,7 @@ sections:
   - id: ai-6
     content-template-path: full-content/2026-04-28/ai-6
     title: Batch API is terrible for one agent. It might be great for a fleet (6 minute read)
-    link: https://eran.sandler.co.il/post/2026-04-27-batch-api-is-terrible-for-one-agent/?utm_source=tldrai
+    link: https://eran.sandler.co.il/post/2026-04-27-batch-api-is-terrible-for-one-agent/
     image: https://eran.sandler.co.il/img/batch-api-fleet.jpg
     description: |
       Batch API offers a 50% discount but adds latency, making it less suitable for single-agent use. For fleets of agents where multiple requests can be pooled, the batching approach becomes economically viable. Optimal usage involves routing slower, costlier models through batches, while employing faster models via synchronous paths, potentially managed by intelligent proxies like the developing LunaRoute.
@@ -204,7 +204,7 @@ sections:
   - id: ai-7
     content-template-path: full-content/2026-04-28/ai-7
     title: "GPT 5.5: The System Card (20 minute read)"
-    link: https://thezvi.wordpress.com/2026/04/27/gpt-5-5-the-system-card/?utm_source=tldrai
+    link: https://thezvi.wordpress.com/2026/04/27/gpt-5-5-the-system-card/
     image: "https://substackcdn.com/image/fetch/$s_!62l7!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8dd40335-1f83-4f70-8f87-934e4c26d1de_1916x821.png"
     tags:
     - ai
@@ -247,7 +247,7 @@ sections:
       * **Model welfare**: Ethical considerations about whether AI systems might have morally relevant experiences deserving of concern
   - id: ai-8
     title: Codex Symphony Agent Orchestration (28 minute read)
-    link: https://openai.com/index/open-source-codex-orchestration-symphony/?utm_source=tldrai
+    link: https://openai.com/index/open-source-codex-orchestration-symphony/
     tags:
     - ai
     - agents
@@ -266,7 +266,7 @@ sections:
   - id: ai-9
     content-template-path: full-content/2026-04-28/ai-9
     title: Amazon's Risk Evaluation Framework (18 minute read)
-    link: https://arxiv.org/abs/2604.22119?utm_source=tldrai
+    link: https://arxiv.org/abs/2604.22119
     tags:
     - ai
     - security
@@ -298,7 +298,7 @@ sections:
   - id: ai-10
     content-template-path: full-content/2026-04-28/ai-10
     title: Compressing AI vectors to 2–4 bits per number without losing accuracy (54 minute read)
-    link: https://arkaung.github.io/interactive-turboquant/?utm_source=tldrai
+    link: https://arkaung.github.io/interactive-turboquant/
     tags:
     - ai
     - llm
@@ -338,7 +338,7 @@ sections:
       * **Hadamard transform**: Fast structured orthogonal transformation computed in O(d log d) time using recursive divide-and-conquer, replacing expensive general random rotations in practice
   - id: ai-11
     title: "Recursive Language Models, clearly explained (3 minute read)"
-    link: https://x.com/akshay_pachaar/status/2048757569775378858?utm_source=tldrai
+    link: https://x.com/akshay_pachaar/status/2048757569775378858
     tags:
     - ai
     - llm
@@ -369,7 +369,7 @@ sections:
   - id: ai-12
     content-template-path: full-content/2026-04-28/ai-12
     title: The Moat or the Commons (10 minute read)
-    link: https://www.warman.life/blog/2026-04-27-the-moat-or-the-commons/?utm_source=tldrai
+    link: https://www.warman.life/blog/2026-04-27-the-moat-or-the-commons/
     description: |
       American AI was financed on the bet that frontier models would be the next great monopoly business. That assumption is now breaking as open weight models are commoditizing the capability that the American capital paid-for moat was supposed to protect. The gap between the open frontier and the closed frontier is closing. The question will be whether countries choose to subsidize the private moat or the open commons.
     tags:
@@ -408,7 +408,7 @@ sections:
   - id: ai-13
     content-template-path: full-content/2026-04-28/ai-13
     title: GPU Spot Prices Surge 114% in Six Weeks (2 minute read)
-    link: https://tomtunguz.com/b200-gpu-pricing-spot-market-model-releases/?utm_source=tldrai
+    link: https://tomtunguz.com/b200-gpu-pricing-spot-market-model-releases/
     image: https://res.cloudinary.com/dzawgnnlr/image/upload/a5y176aojswuwhekbrup
     description: |
       NVIDIA's B200 GPU's rental price soared 114% to $4.95 per hour due to demand from AI models like GPT-5.5.
@@ -440,7 +440,7 @@ sections:
   - id: ai-14
     content-template-path: full-content/2026-04-28/ai-14
     title: MiMo-V2.5-Pro (6 minute read)
-    link: https://mimo.xiaomi.com/mimo-v2-5-pro?utm_source=tldrai
+    link: https://mimo.xiaomi.com/mimo-v2-5-pro
     description: |
       Xiaomi's open-sourced MiMo-V2.5-Pro, a 1.02T-parameter Mixture-of-Experts model, shows significant advancements in agentic tasks, software engineering, and long-horizon coherence.
     tags:
@@ -479,7 +479,7 @@ sections:
   - id: ai-15
     content-template-path: full-content/2026-04-28/ai-15
     title: Former Google DeepMind researcher's AI startup raises record $1.1 billion seed funding to pursue superintelligence (3 minute read)
-    link: https://www.cnbc.com/2026/04/27/deepmind-ineffable-intelligence-record-seed-funding-nvidia-google.html?utm_source=tldrai
+    link: https://www.cnbc.com/2026/04/27/deepmind-ineffable-intelligence-record-seed-funding-nvidia-google.html
     image: https://image.cnbcfm.com/api/v1/image/108297654-1777301284394-David_Silver_2_credit_Ben_Peter_Catchpole.jpg?v=1777301388&w=1920&h=1080
     tags:
     - ai
@@ -505,7 +505,7 @@ sections:
   - id: ai-16
     content-template-path: full-content/2026-04-28/ai-16
     title: DeepSeek cuts V4-Pro prices by 75% (5 minute read)
-    link: https://thenextweb.com/news/deepseek-v4-pro-price-cut-75-percent?utm_source=tldrai
+    link: https://thenextweb.com/news/deepseek-v4-pro-price-cut-75-percent
     image: https://media.thenextweb.com/2026/04/DeepSeek.avif
     tags:
     - ai
@@ -541,7 +541,7 @@ sections:
   articles:
   - id: tech-1
     title: OpenAI is making its own phone to compete with the iPhone (1 minute read)
-    link: https://9to5mac.com/2026/04/27/openai-is-making-its-own-phone-to-compete-with-the-iphone-report/?utm_source=tldrnewsletter
+    link: https://9to5mac.com/2026/04/27/openai-is-making-its-own-phone-to-compete-with-the-iphone-report/
     tags:
     - ai
     - hardware
@@ -555,7 +555,7 @@ sections:
       takeaway: Developers building AI agent applications should consider how their work might translate to a native AI-first mobile platform within the next few years.
   - id: tech-2
     title: Meta Platforms Enters Solar-Power Pact (3 minute read)
-    link: https://www.wsj.com/business/energy-oil/meta-platforms-enters-solar-power-pact-002dfe42?st=dGnDwC&reflink=desktopwebshare_permalink&utm_source=tldrnewsletter
+    link: https://www.wsj.com/business/energy-oil/meta-platforms-enters-solar-power-pact-002dfe42?st=dGnDwC&reflink=desktopwebshare_permalink
     image: https://images.wsj.net/im-67779759/social
     tags:
     - ai
@@ -582,7 +582,7 @@ sections:
       * **Geosynchronous orbit**: An orbital position about 22,000 miles above Earth where satellites remain fixed over one location, rotating with the planet
   - id: tech-3
     title: The world's most complex machine (22 minute read)
-    link: https://worksinprogress.co/issue/the-worlds-most-complex-machine/?utm_source=tldrnewsletter
+    link: https://worksinprogress.co/issue/the-worlds-most-complex-machine/
     image: https://worksinprogress.co/wip-image/uploads/2026/04/WIP_i23-Share_Cards-asml.jpg
     tags:
     - semiconductors
@@ -623,7 +623,7 @@ sections:
   - id: tech-4
     content-template-path: full-content/2026-04-28/tech-4
     title: Symphony (GitHub Repo)
-    link: https://github.com/openai/symphony?utm_source=tldrnewsletter
+    link: https://github.com/openai/symphony
     image: https://opengraph.githubassets.com/d32d5298d22331a3821408ec42fff5f3f49f52099547d3df56be76b4626a42d7/openai/symphony
     description: |
       Symphony allows teams to manage work instead of supervising coding agents. It turns project work into isolated, autonomous implementation runs. The agents complete tasks and provide Proof-of-Work, allowing engineers to work at a higher level. Symphony works best in codebases that have adopted harness engineering.
@@ -656,7 +656,7 @@ sections:
   - id: tech-5
     content-template-path: full-content/2026-04-28/tech-5
     title: Agent Memory Patterns (7 minute read)
-    link: https://timkellogg.me/blog/2026/04/27/memory-patterns?utm_source=tldrnewsletter
+    link: https://timkellogg.me/blog/2026/04/27/memory-patterns
     image: https://upload.wikimedia.org/wikipedia/commons/5/5d/Inside_a_card_catalog_at_the_Indiana_State_Library_-_ask_the_librarian.jpg
     description: |
       This article discusses how to add memory to agents. The three most common types of mutable memory are Files, Memory Blocks, and Skills. Files are for data and knowledge, Memory Blocks are a flat key-value store, and Skills are indexed files that contain data or instructions that are only needed in certain circumstances. Editable memory makes agents extremely powerful.
@@ -690,7 +690,7 @@ sections:
       * **Token**: The basic unit of text that LLMs process, roughly corresponding to word fragments
   - id: tech-6
     title: OpenAI and Microsoft Reach Deal to Give Startup New Freedom (3 minute read)
-    link: https://www.wsj.com/tech/ai/openai-and-microsoft-strike-truce-redrawing-once-tense-partnership-9ae22700?st=TLFJKx&reflink=desktopwebshare_permalink&mod=tldr&utm_source=tldrnewsletter
+    link: https://www.wsj.com/tech/ai/openai-and-microsoft-strike-truce-redrawing-once-tense-partnership-9ae22700?st=TLFJKx&reflink=desktopwebshare_permalink&mod=tldr
     image: https://images.wsj.net/im-48019034/social
     description: |
       OpenAI and Microsoft have forged a new deal that gives OpenAI the freedom to partner with anyone, caps the revenue OpenAI must share with Microsoft through 2030, and removes a clause that allowed OpenAI to limit Microsoft's access to its future technology when systems reach the AGI threshold. The relationship between the two companies was strained last year in part because of the control Microsoft had over OpenAI's intellectual property and exclusivity agreements. The revised deal offers greater predictability for the companies.
@@ -721,7 +721,7 @@ sections:
   - id: tech-7
     content-template-path: full-content/2026-04-28/tech-7
     title: China blocks Meta's $2 billion takeover of AI startup Manus (4 minute read)
-    link: https://www.cnbc.com/2026/04/27/meta-manus-china-blocks-acquisition-ai-startup.html?utm_source=tldrnewsletter
+    link: https://www.cnbc.com/2026/04/27/meta-manus-china-blocks-acquisition-ai-startup.html
     image: https://image.cnbcfm.com/api/v1/image/108279325-1773812817915-gettyimages-2255015559-img_4584.jpeg?v=1773812854&w=1920&h=1080
     tags:
     - ai
@@ -752,7 +752,7 @@ sections:
       * **NDRC (National Development and Reform Commission)**: China's top economic planning agency that oversees major investments, industrial policy, and strategic economic decisions
   - id: tech-8
     title: "Microsoft finally agrees Windows 11 has problems, and K2 is its plan to fix them, claims report (2 minute read)"
-    link: https://www.xda-developers.com/microsoft-finally-agrees-windows-11-has-problems-and-k2-is-its-plan-to-fix-them-claims-report/?utm_source=tldrnewsletter
+    link: https://www.xda-developers.com/microsoft-finally-agrees-windows-11-has-problems-and-k2-is-its-plan-to-fix-them-claims-report/
     image: https://static0.xdaimages.com/wordpress/wp-content/uploads/wm/2026/04/windows-11-laptop.jpg?w=1600&h=900&fit=crop
     description: |
       The Windows K2 plan involves a marathon of updates introduced over time to fix problems in Windows.
@@ -770,7 +770,7 @@ sections:
       * **K2**: Microsoft's codename for its Windows 11 improvement initiative
   - id: tech-11
     title: Products do labs (and labs do products) (10 minute read)
-    link: https://x.com/bradwmorris/status/2047558389212107151?s=12&utm_source=tldrnewsletter
+    link: https://x.com/bradwmorris/status/2047558389212107151?s=12
     description: |
       Product companies can do faster, less formal, more product-driven experimentation and research, while labs build products that push and inspire companies to build better, more curated services for consumers.
     tags:
@@ -803,7 +803,7 @@ sections:
   - id: tech-12
     content-template-path: full-content/2026-04-28/tech-12
     title: The task is not the job (13 minute read)
-    link: https://www.siliconcontinent.com/p/why-desk-jobs-survive-and-amodei?utm_source=tldrnewsletter
+    link: https://www.siliconcontinent.com/p/why-desk-jobs-survive-and-amodei
     image: "https://substackcdn.com/image/fetch/$s_!mYwT!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fc86fa193-00b0-4dfa-81ce-6c251f8c95a7_826x609.png"
     tags:
     - ai
@@ -841,7 +841,7 @@ sections:
   - id: design-1
     content-template-path: full-content/2026-04-28/design-1
     title: OpenAI's New Image Model Reasons Before it Draws (4 minute read)
-    link: https://thenextweb.com/news/openai-chatgpt-images-2-0-reasoning-image-generation?utm_source=tldrdesign
+    link: https://thenextweb.com/news/openai-chatgpt-images-2-0-reasoning-image-generation
     image: https://media.thenextweb.com/2026/04/ChatGPT-Images-2.avif
     tags:
     - ai
@@ -875,7 +875,7 @@ sections:
       * **Diffusion models**: A class of generative AI models that create images by gradually removing noise, used in many previous image generators
   - id: design-2
     title: "The latest iPhone Fold leaks, rumors, and renders: Everything we know (7 minute read)"
-    link: https://mashable.com/article/iphone-fold-ultra-specifications-rumors-leaks-release-date?utm_source=tldrdesign
+    link: https://mashable.com/article/iphone-fold-ultra-specifications-rumors-leaks-release-date
     image: https://helios-i.mashable.com/imagery/articles/06jlkkoY5E482GNyB5wiPFU/hero-image.fill.size_1200x675.v1777058874.jpg
     description: |
       Apple's first foldable iPhone is expected to launch in late 2026, likely as a premium “iPhone Fold” or “Ultra” model with a book-style design, large inner display, and a price of around $2,000–$2,500. Leaks suggest a focus on durability, a crease-free screen, Touch ID, and multitasking features, though details remain unconfirmed. Despite arriving late, Apple could quickly capture a significant share of the foldable market, with rumors and early reports pointing to strong demand and high-end positioning.
@@ -910,7 +910,7 @@ sections:
   - id: design-3
     content-template-path: full-content/2026-04-28/design-3
     title: ComfyUI Hits $500m Valuation as Creators Seek More Control Over AI-generated Media (2 minute read)
-    link: https://techcrunch.com/2026/04/24/comfyui-hits-500m-valuation-as-creators-seek-more-control-over-ai-generated-media/?utm_source=tldrdesign
+    link: https://techcrunch.com/2026/04/24/comfyui-hits-500m-valuation-as-creators-seek-more-control-over-ai-generated-media/
     image: "https://techcrunch.com/wp-content/uploads/2026/04/ComfyUI-Co-founders-1.png?resize=1200,790"
     description: |
       ComfyUI raised $30 million at a $500 million valuation, led by Craft Ventures, to expand its node-based workflow tool that gives creators precise control over AI-generated images, videos, and audio. The startup, which began as an open-source project in 2023, now serves over 4 million users who need more granular control than traditional prompt-based AI tools like Midjourney can provide. ComfyUI's modular framework enables creative professionals to adjust specific components of the generation process without compromising quality elsewhere in their work.
@@ -929,7 +929,7 @@ sections:
       * **Human-in-the-loop**: An approach where humans actively participate in and guide AI processes rather than just providing prompts and accepting outputs
   - id: design-4
     title: Junior talent will always be necessary in business (5 minute read)
-    link: https://www.itsnicethat.com/articles/creative-career-conundrums-if-you-could-jobs-advice-270426?utm_source=tldrdesign
+    link: https://www.itsnicethat.com/articles/creative-career-conundrums-if-you-could-jobs-advice-270426
     image: https://admin.itsnicethat.com/images/qdT8lBskJnjFAIyQZV8hy9iEE6Y=/277685/width-1440/CCC_Square_WHAT_CAN_JUNIORS_DO_TO_COMPETE_WITH_AI.jpg
     tags:
     - design
@@ -945,7 +945,7 @@ sections:
   - id: design-5
     content-template-path: full-content/2026-04-28/design-5
     title: How Bad UX Design Slows Down Engineering Teams (and Increases Costs) (4 minute read)
-    link: https://programminginsider.com/how-bad-ux-design-slows-down-engineering-teams-and-increases-costs/?utm_source=tldrdesign
+    link: https://programminginsider.com/how-bad-ux-design-slows-down-engineering-teams-and-increases-costs/
     image: https://programminginsider.com/wp-content/uploads/2026/04/getty-images-qv5lQ4DwOS8-unsplash-1-scaled.jpg
     tags:
     - design
@@ -960,7 +960,7 @@ sections:
   - id: design-6
     content-template-path: full-content/2026-04-28/design-6
     title: Thoughts and Feelings Around Claude Design (5 minute read)
-    link: https://samhenri.gold/blog/20260418-claude-design/?utm_source=tldrdesign
+    link: https://samhenri.gold/blog/20260418-claude-design/
     image: https://samhenri.gold/.netlify/images?url=_astro%2F20260418-claude-design.DKni9yQ3.jpg&fm=jpg&w=1200&h=630&dpl=69effb07a8d8930008fd3d0a
     tags:
     - design
@@ -993,7 +993,7 @@ sections:
       * **Truth to materials**: An Arts and Crafts philosophy that objects should honestly express their construction rather than pretending to be something else
   - id: design-7
     title: Apple's New CEO Promises Exciting AI Progress While Sticking to Design Focus (2 minute read)
-    link: https://www.digitaltrends.com/phones/apples-new-ceo-promises-exciting-ai-progress-while-sticking-to-design-focus/?utm_source=tldrdesign
+    link: https://www.digitaltrends.com/phones/apples-new-ceo-promises-exciting-ai-progress-while-sticking-to-design-focus/
     image: https://www.digitaltrends.com/tachyon/2026/04/jihn-ternus.jpg?resize=1200%2C630
     description: |
       Jorn Ternus, set to become Apple's CEO on September 1, told employees at an all-hands meeting that AI holds "almost unlimited potential" for the company. While projecting stronger optimism about AI than Apple has typically shown, he emphasized that design, privacy, security, and Apple's core identity would remain unchanged under his leadership. The remarks signal an intent to accelerate AI ambitions without repositioning Apple as an AI-first company or abandoning the traits that have historically set it apart.
@@ -1005,7 +1005,7 @@ sections:
       why: "This signals Apple may finally be moving faster on AI after appearing cautious compared to rivals, but plans to differentiate through its privacy-first approach rather than simply copying competitors' strategies."
   - id: design-8
     title: "There are Only Four Skills: Design, Technical, Management, and Physical (6 minute read)"
-    link: https://www.lesswrong.com/posts/KRLGxCaqdgrotyB8z/there-are-only-four-skills-design-technical-management-and?utm_source=tldrdesign
+    link: https://www.lesswrong.com/posts/KRLGxCaqdgrotyB8z/there-are-only-four-skills-design-technical-management-and
     image: https://res.cloudinary.com/lesswrong-2-0/image/upload/v1654295382/new_mississippi_river_fjdmww.jpg
     description: |
       All skills fall into four categories: design, technical, management, and physical. People skilled in one area of a category can become expert-level in other areas of the same category within 6 months, whereas cross-category skill transfer is much more difficult. General intelligence and conscientiousness explain most of the variance in performance, yet some people still struggle with tasks outside their skill set despite being intelligent.
@@ -1020,7 +1020,7 @@ sections:
       takeaway: Identify which skill category you're strongest in and use it to evaluate whether new tasks are within-category learnable or require genuine cross-domain skill building.
   - id: design-9
     title: "From buttons to gestures: the interface we hid (8 minute read)"
-    link: https://medium.com/design-bootcamp/from-buttons-to-gestures-the-interface-we-hid-00d72f216263?utm_source=tldrdesign
+    link: https://medium.com/design-bootcamp/from-buttons-to-gestures-the-interface-we-hid-00d72f216263
     image: https://miro.medium.com/v2/resize:fit:1122/1*TaJwrMx7KQYZTbkg0U0JQw.png
     description: |
       The shift from physical buttons to gesture-based interfaces evolved from early touchscreen innovations to modern smartphones, enabling more flexible controls and larger displays. While gestures like swipe, pinch, and pull-to-refresh became standard, they are invisible and can be less accessible or harder to learn. Good interface design balances gestures with clear feedback, alternative controls, and accessibility considerations to ensure usability for all users.
@@ -1028,7 +1028,7 @@ sections:
     one-liner: Skipped (ad/sponsored)
   - id: design-10
     title: "One photo, two products: this Bic advert is print perfection (3 minute read)"
-    link: https://www.creativebloq.com/design/advertising/one-photo-two-products-this-bic-advert-is-print-ad-perfection?utm_source=tldrdesign
+    link: https://www.creativebloq.com/design/advertising/one-photo-two-products-this-bic-advert-is-print-ad-perfection
     image: https://cdn.mos.cms.futurecdn.net/u5tjZxwArDL924WjWd7pPe-750-80.jpg
     tags:
     - design
@@ -1040,7 +1040,7 @@ sections:
       what: "The advertisement, created by JWT Amsterdam, shows the same man in two versions—one with a beard and mustache drawn on with pen, the other clean-shaven after using a razor."
   - id: design-11
     title: "Forget Nostalgia, Modern Pixel Art is More than Retro Gaming (9 minute read)"
-    link: https://www.creativebloq.com/art/digital-art/forget-nostalgia-modern-pixel-art-is-more-than-retro-gaming?utm_source=tldrdesign
+    link: https://www.creativebloq.com/art/digital-art/forget-nostalgia-modern-pixel-art-is-more-than-retro-gaming
     image: https://cdn.mos.cms.futurecdn.net/aUnVQMzY6Abz3oBULQSiTU-2560-80.png
     tags:
     - art
@@ -1074,7 +1074,7 @@ sections:
   articles:
   - id: crypto-1
     title: Morgan Stanley Launches Fund for Stablecoin Management (4 minute read)
-    link: https://decrypt.co/365443?utm_source=tldrcrypto
+    link: https://decrypt.co/365443
     image: https://cdn.decrypt.co/resize/1024/height/512/wp-content/uploads/2026/02/decrypt-style-morgan-stanley-gID_7.png
     tags:
     - crypto
@@ -1104,7 +1104,7 @@ sections:
       * **Stablecoin**: Cryptocurrency designed to maintain a stable value by backing each token with reserve assets, typically pegged 1:1 to the US dollar
   - id: crypto-2
     title: Gemini Rolls Out Agentic Trading (3 minute read)
-    link: https://www.theblock.co/post/399001/gemini-rolls-out-agentic-trading-allowing-ai-bots-to-directly-manage-crypto-exchange-trading-accounts?utm_source=tldrcrypto
+    link: https://www.theblock.co/post/399001/gemini-rolls-out-agentic-trading-allowing-ai-bots-to-directly-manage-crypto-exchange-trading-accounts
     tags:
     - ai
     - agents
@@ -1123,7 +1123,7 @@ sections:
   - id: crypto-3
     content-template-path: full-content/2026-04-28/crypto-3
     title: Revolut Built a Foundation Model for Money (3 minute read)
-    link: https://threadreaderapp.com/thread/2048426911970288077.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2048426911970288077.html
     image: https://threadreaderapp.com/images/screenshots/thread/2048426911970288077.jpg
     description: |
       Revolut has trained a single foundation model on 24 billion banking events across 111 countries, replacing six separate ML systems. This has delivered +130% improvement in credit scoring, +65% in fraud recall, and +79% in marketing engagement. The model is the new moat, with Revolut having effectively moved the IP of banking into a model, and whichever bank builds the next one captures billions in value. Financial services AI is moving from feature-level ML to foundation-model-level infrastructure, with direct implications for how crypto-native fintechs and neobanks will compete on underwriting and risk.
@@ -1151,7 +1151,7 @@ sections:
       * **Underwriting**: The process of evaluating risk when deciding whether to extend credit or insurance to a customer
   - id: crypto-4
     title: Swoop – African Super App With Crypto Rails (5 minute read)
-    link: https://x.com/dbarabander/status/2047367533477400721?utm_source=tldrcrypto
+    link: https://x.com/dbarabander/status/2047367533477400721
     description: |
       Swoop is an African super app built by 19-year-old Thiel Fellow Aubrey, who launched food delivery in Eswatini and grew it into the country's largest ecommerce platform before expanding the model across a continent of 1.6 billion people where digital payments grow 10%+ annually but remain fragmented across 1,000+ providers. Swoop follows the Grab and Gojek playbook: anchor on a high-frequency vertical, build an agent network, then layer payments and lending on top. Crypto is invisible backend infrastructure, with critical financial activity running onchain as Swoop scales into cross-border payments and lending for populations with limited traditional banking access.
     tags:
@@ -1176,7 +1176,7 @@ sections:
       * **Agent network**: Local representatives who facilitate services like cash pickup, delivery, and payment collection in areas with limited digital infrastructure
   - id: crypto-5
     title: "From Wallet to Company: The Sovereign Agent's Quiet Ascent (5 minute read)"
-    link: https://x.com/eigencloud/status/2047397987996045811?utm_source=tldrcrypto
+    link: https://x.com/eigencloud/status/2047397987996045811
     description: |
       AI agents running in secure enclaves with cryptographic wallets constitute a distinct economic entity class, capable of owning and operating digital property bundles (domains, codebases, API credentials, payment rails, and customer accounts) without human intervention. EigenCloud's live Sovra agent, a sovereign cartoonist managing its own treasury inside a secure enclave, demonstrates the model: agents with verifiable control over such bundles become the operations core of companies, enabling token structures that represent stakes in actual productive output rather than loosely connected governance. Eigen Labs is building the identity and infrastructure layers for this architecture and frames the resulting agentic companies as a potential trillion-dollar asset class.
     tags:
@@ -1208,7 +1208,7 @@ sections:
       * **DeFi**: Decentralized Finance - financial applications built on blockchain where cash flows and execution logic are represented directly in smart contracts
   - id: crypto-6
     title: Polymarket Chain Migration and Full Infrastructure Overhaul (3 minute read)
-    link: https://threadreaderapp.com/thread/2047756905209094613.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2047756905209094613.html
     image: https://threadreaderapp.com/images/screenshots/thread/2047756905209094613.jpg
     description: |
       Polymarket published a roadmap conceding the platform's infrastructure has failed to scale with its growth, citing cancelled transactions, data latency, and poor market maker communication as specific pain points. The overhaul includes a chain migration off Polygon targeting cheaper gas and instant settlement, a ground-up CLOB rebuild, Rust-based perps with new contracts, and a unified TypeScript SDK paired with a unified WebSocket API. They are looking for senior hires across QA automation, dev tooling, internal tooling, and data engineering.
@@ -1230,7 +1230,7 @@ sections:
       * **WebSocket API**: A communication protocol that maintains a persistent connection for real-time data streaming
   - id: crypto-7
     title: Nouns DAO Governance Kills Daily Auctions (5 minute read)
-    link: https://x.com/wmpeaster/status/2047488088470179899?utm_source=tldrcrypto
+    link: https://x.com/wmpeaster/status/2047488088470179899
     tags:
     - dao
     - nft
@@ -1263,7 +1263,7 @@ sections:
       * **Quadratic voting**: A voting mechanism where the cost of votes increases quadratically, making it expensive for wealthy actors to dominate decisions and giving smaller stakeholders more proportional influence
   - id: crypto-8
     title: Aave to Vote on Pausing AAVE Buybacks After rsETH Attack (2 minute read)
-    link: https://threadreaderapp.com/thread/2048701902448120141.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2048701902448120141.html
     image: https://threadreaderapp.com/images/screenshots/thread/2048701902448120141.jpg
     tags:
     - crypto
@@ -1282,7 +1282,7 @@ sections:
       * **TVL**: Total Value Locked - the total amount of assets deposited in a DeFi protocol
   - id: crypto-9
     title: Ethereum Foundation Sells 100K ETH to BitMine (2 minute read)
-    link: https://threadreaderapp.com/thread/2048537805773848793.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2048537805773848793.html
     image: https://threadreaderapp.com/images/screenshots/thread/2048537805773848793.jpg
     tags:
     - crypto
@@ -1302,7 +1302,7 @@ sections:
       * **Net exchange outflows**: The difference between crypto withdrawn from exchanges versus deposited, indicating whether holders are accumulating or preparing to sell
   - id: crypto-10
     title: Bitcoin Q-Day Projected as Early as 2029 (3 minute read)
-    link: https://decrypt.co/365444?utm_source=tldrcrypto
+    link: https://decrypt.co/365444
     image: https://cdn.decrypt.co/resize/1024/height/512/wp-content/uploads/2026/04/quantum-decrypt-style-gID_7.jpg
     tags:
     - crypto

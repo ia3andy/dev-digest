@@ -12,7 +12,7 @@ sections:
       - id: ai-1
         content-template-path: full-content/2026-04-30/ai-1
         title: "OpenAI has effectively abandoned first-party Stargate data centers in favor of more flexible deals (5 minute read)"
-        link: https://www.tomshardware.com/tech-industry/artificial-intelligence/openai-has-effectively-abandoned-first-party-stargate-data-centers-in-favor-of-more-flexible-deals-company-now-prefers-to-lease-compute-and-says-stargate-is-an-umbrella-term?utm_source=tldrai
+        link: https://www.tomshardware.com/tech-industry/artificial-intelligence/openai-has-effectively-abandoned-first-party-stargate-data-centers-in-favor-of-more-flexible-deals-company-now-prefers-to-lease-compute-and-says-stargate-is-an-umbrella-term
         image: https://cdn.mos.cms.futurecdn.net/cxdHyaNqiuHDMEZka4yNra-2000-80.jpg
         tags: [ai, infrastructure, startup]
         description: |
@@ -25,7 +25,7 @@ sections:
       - id: ai-2
         content-template-path: full-content/2026-04-30/ai-2
         title: "Google to sell TPU chips to 'select' customers in latest shot at Nvidia (2 minute read)"
-        link: https://finance.yahoo.com/markets/stocks/article/google-to-sell-tpu-chips-to-select-customers-in-latest-shot-at-nvidia-214900221.html?utm_source=tldrai
+        link: https://finance.yahoo.com/markets/stocks/article/google-to-sell-tpu-chips-to-select-customers-in-latest-shot-at-nvidia-214900221.html
         image: https://s.yimg.com/ny/api/res/1.2/fymMVr5HgFnvUIX8Hb5Kcg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://d29szjachogqwa.cloudfront.net/images/user-uploaded/a4f72cd5-221d-43a0-9b3a-b011529a3d4e_88ec95f302d2ffc676f0bb15a68a67436d8380f63fd61965558132ea53918798.net/images/2026-04/a4f72cd5-221d-43a0-9b3a-b011529a3d4e
         tags: [ai, infrastructure, hardware]
         description: |
@@ -42,7 +42,7 @@ sections:
       - id: ai-3
         content-template-path: full-content/2026-04-30/ai-3
         title: "Mistral Medium 3.5 powers remote Vibe agents (6 minute read)"
-        link: https://mistral.ai/news/vibe-remote-agents-mistral-medium-3-5?utm_source=tldrai
+        link: https://mistral.ai/news/vibe-remote-agents-mistral-medium-3-5
         image: https://mistral.ai/img/mistral-cover.png
         tags: [ai, llm, agents, devops]
         description: |
@@ -74,7 +74,7 @@ sections:
           * **NVIDIA NIM**: NVIDIA Inference Microservice, a containerized solution for deploying AI models at scale on NVIDIA GPUs
       - id: ai-4
         title: "Granite 4.1 LLMs: How They're Built (13 minute read)"
-        link: https://huggingface.co/blog/ibm-granite/granite-4-1?utm_source=tldrai
+        link: https://huggingface.co/blog/ibm-granite/granite-4-1
         tags: [ai, llm]
         description: |
           Granite 4.1 LLMs utilize a dense, decoder-only architecture with models of 3B, 8B, and 30B parameters, trained on 15 trillion tokens and using a five-phase pre-training approach. The 8B model matches the performance of the previous 32B Mixture-of-Experts model through a multi-stage reinforcement learning pipeline focused on data quality. These models, designed for efficient, reliable enterprise use, demonstrate competitive instruction-following and tool performance while maintaining cost efficiency and stable usage.
@@ -91,7 +91,7 @@ sections:
       - id: ai-5
         content-template-path: full-content/2026-04-30/ai-5
         title: "AI evals are becoming the new compute bottleneck (19 minute read)"
-        link: https://huggingface.co/blog/evaleval/eval-costs-bottleneck?utm_source=tldrai
+        link: https://huggingface.co/blog/evaleval/eval-costs-bottleneck
         image: https://cdn-uploads.huggingface.co/production/uploads/6413251362e6057cbb6259bd/ukJJW86oJu36zOJwqZJBG.png
         tags: [ai, infrastructure, benchmarks]
         description: |
@@ -128,7 +128,7 @@ sections:
       - id: ai-6
         content-template-path: full-content/2026-04-30/ai-6
         title: "Introducing AutoSP (6 minute read)"
-        link: https://pytorch.org/blog/introducing-autosp/?utm_source=tldrai
+        link: https://pytorch.org/blog/introducing-autosp/
         tags: [ai, llm, infrastructure]
         description: |
           AutoSP automates converting standard transformer training code into sequence-parallel code for long-context LLM training, integrated with DeepSpeed. It enables longer sequence training on multiple GPUs without significant runtime overhead, eliminating the need for complex manual code changes. AutoSP also offers an advanced activation-checkpointing strategy for better memory management, enhancing performance with minimal cost.
@@ -156,7 +156,7 @@ sections:
       - id: ai-7
         content-template-path: full-content/2026-04-30/ai-7
         title: "Lessons on Building MCP Servers (5 minute read)"
-        link: https://taoofmac.com/space/blog/2026/04/29/2341?utm_source=tldrai
+        link: https://taoofmac.com/space/blog/2026/04/29/2341
         image: https://taoofmac.com/placeholder/blog/2026/04/29/2341/640,360/hjfC4fHcuZU2gI45PBxtWCo8kl4=/wordcloud.jpg
         tags: [ai, agents, mcp, architecture]
         description: |
@@ -184,7 +184,7 @@ sections:
       - id: ai-8
         content-template-path: full-content/2026-04-30/ai-8
         title: "LaDiR: Latent Diffusion Enhances LLMs for Text Reasoning (2 minute read)"
-        link: https://machinelearning.apple.com/research/ladir?utm_source=tldrai
+        link: https://machinelearning.apple.com/research/ladir
         image: https://mlr.cdn-apple.com/media/Home_1200x630_48225d82e9.png
         tags: [ai, llm, research]
         description: |
@@ -214,7 +214,7 @@ sections:
           * **Bidirectional attention**: Attention mechanism that can look at both past and future context, unlike autoregressive models
       - id: ai-9
         title: "Microsoft World-R1 for 3D-Consistent Video Generation (4 minute read)"
-        link: https://microsoft.github.io/World-R1/?utm_source=tldrai
+        link: https://microsoft.github.io/World-R1/
         tags: [ai, video, 3d]
         description: |
           World-R1 is a reinforcement learning framework that improves 3D consistency in video generation by leveraging feedback from 3D and vision-language models without modifying the base architecture.
@@ -229,7 +229,7 @@ sections:
       - id: ai-10
         content-template-path: full-content/2026-04-30/ai-10
         title: "Reliable Data Analysis Agents (16 minute read)"
-        link: https://arxiv.org/abs/2604.24198?utm_source=tldrai
+        link: https://arxiv.org/abs/2604.24198
         tags: [ai, llm, agents]
         description: |
           DataPRM is an environment-aware process reward model that detects silent errors and better supervises data analysis agents, improving downstream performance and generalization across benchmarks.
@@ -257,7 +257,7 @@ sections:
           * **Ternary reward strategy**: A three-valued reward system (likely positive/neutral/negative) rather than binary, enabling finer-grained feedback distinctions
       - id: ai-11
         title: "Elon Musk Testifies He Was a ‘Fool' to Fund OpenAI (4 minute read)"
-        link: https://www.wsj.com/tech/ai/elon-musk-takes-stand-in-second-day-of-trial-against-openai-59d50fbf?st=MXGUnH&reflink=desktopwebshare_permalink&utm_source=tldrai
+        link: https://www.wsj.com/tech/ai/elon-musk-takes-stand-in-second-day-of-trial-against-openai-59d50fbf?st=MXGUnH&reflink=desktopwebshare_permalink
         image: https://images.wsj.net/im-72024075/social
         tags: [ai, legal, startup]
         description: |
@@ -281,7 +281,7 @@ sections:
       - id: ai-12
         content-template-path: full-content/2026-04-30/ai-12
         title: "Darwinian Specialization in AI (3 minute read)"
-        link: https://tomtunguz.com/inference-market-segmentation/?utm_source=tldrai
+        link: https://tomtunguz.com/inference-market-segmentation/
         image: https://res.cloudinary.com/dzawgnnlr/image/upload/ykcia5jnqbldgaussuxf
         tags: [ai, infrastructure]
         description: |
@@ -313,7 +313,7 @@ sections:
       - id: ai-13
         content-template-path: full-content/2026-04-30/ai-13
         title: "DeepMind ProEval for GenAI Evaluation (GitHub Repo)"
-        link: https://github.com/google-deepmind/proeval?utm_source=tldrai
+        link: https://github.com/google-deepmind/proeval
         image: https://opengraph.githubassets.com/baf5f4fe44d3dff215c3ec681947e0b34504e21196ae075f5664fa65d5dca586/google-deepmind/proeval
         tags: [ai, llm, evaluation]
         description: |
@@ -342,7 +342,7 @@ sections:
       - id: ai-14
         content-template-path: full-content/2026-04-30/ai-14
         title: "OpenAI Codex system prompt includes explicit directive to “never talk about goblins” (3 minute read)"
-        link: https://arstechnica.com/ai/2026/04/openai-codex-system-prompt-includes-explicit-directive-to-never-talk-about-goblins/?utm_source=tldrai
+        link: https://arstechnica.com/ai/2026/04/openai-codex-system-prompt-includes-explicit-directive-to-never-talk-about-goblins/
         image: https://cdn.arstechnica.net/wp-content/uploads/2026/04/GettyImages-935113346-1152x648.jpg
         tags: [ai, llm]
         description: |
@@ -369,7 +369,7 @@ sections:
           * **Codex CLI**: OpenAI's command-line interface tool that uses GPT models to help developers write code and execute commands
       - id: ai-15
         title: "AI Agents That Builds Themselves (4 minute read)"
-        link: https://x.com/joaomdmoura/status/2049562041007194275?utm_source=tldrai
+        link: https://x.com/joaomdmoura/status/2049562041007194275
         tags: [ai, agents, llm, engineering]
         description: |
           CrewAI built Iris, a Slack-native internal AI employee that writes code, files PRs, reviews teammates' work, and modifies its own codebase across CrewAI's engineering org.
@@ -396,7 +396,7 @@ sections:
           * **Provenance trail**: Record of why and how decisions were made for traceability
       - id: ai-16
         title: "Reverse Engineering With AI Unearths High-Severity GitHub Bug (4 minute read)"
-        link: https://www.darkreading.com/application-security/reverse-engineering-ai-unearths-high-severity-github-bug?utm_source=tldrai
+        link: https://www.darkreading.com/application-security/reverse-engineering-ai-unearths-high-severity-github-bug
         image: https://eu-images.contentstack.com/v3/assets/blt6d90778a997de1cd/blt0f7f3cdef8476589/69f258736bebffd429af87fc/Android_Code_Klaus_Ohlenschlaeger_Alamy.jpg?disable=upscale&width=1200&height=630&fit=crop
         tags: [security, ai, vulnerability]
         description: |
@@ -430,7 +430,7 @@ sections:
     articles:
       - id: tech-1
         title: "Apple Readies Photo-Editing Overhaul With New AI Tools in iOS 27 (4 minute read)"
-        link: https://www.bloomberg.com/news/articles/2026-04-28/apple-s-ios-27-macos-27-photo-editing-with-ai-to-extend-enhance-and-reframe?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb3VyY2UiOiJTdWJzY3JpYmVyR2lmdGVkQXJ0aWNsZSIsImlhdCI6MTc3NzUyMzM4NywiZXhwIjoxNzc4MTI4MTg3LCJhcnRpY2xlSWQiOiJURTZLU1pLR0NURlgwMCIsImJjb25uZWN0SWQiOiJCMzZENUE5QzIxMDQ0NjU4OTFBMTc1MTVDRDNBQkZFNiJ9.4ItI4zCzWT3enFn81hJxqH0zpA51Jm7PAszP5V9pTgQ&utm_source=tldrnewsletter
+        link: https://www.bloomberg.com/news/articles/2026-04-28/apple-s-ios-27-macos-27-photo-editing-with-ai-to-extend-enhance-and-reframe
         image: https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iZFbT_9xXB9g/v5/1200x800.jpg
         tags: [ai, mobile, apple]
         description: |
@@ -458,7 +458,7 @@ sections:
           * **Vision Pro**: Apple's mixed reality headset released in 2024 that displays 3D spatial content
       - id: tech-2
         title: "SpaceX Board has set a Mars bonus for Elon Musk (3 minute read)"
-        link: https://www.teslarati.com/spacex-elon-musk-compensation-bonus-colonize-mars/?utm_source=tldrnewsletter
+        link: https://www.teslarati.com/spacex-elon-musk-compensation-bonus-colonize-mars/
         image: https://www.teslarati.com/wp-content/uploads/2026/04/spacex-starship-mars-colonization-1000x600.jpg
         tags: [spacex, startup, compensation]
         description: |
@@ -486,7 +486,7 @@ sections:
           * **SEC registration statement**: Filing required when a private company prepares to go public, disclosing financials, risks, and corporate structure to potential investors
       - id: tech-3
         title: "A Falcon 9 rocket will hit the Moon this summer at seven times the speed of sound (3 minute read)"
-        link: https://arstechnica.com/space/2026/04/a-falcon-9-upper-stage-will-strike-the-moon-in-august/?utm_source=tldrnewsletter
+        link: https://arstechnica.com/space/2026/04/a-falcon-9-upper-stage-will-strike-the-moon-in-august/
         image: https://cdn.arstechnica.net/wp-content/uploads/2026/04/Firefly_i_Space_outside39mound_DSC_1723_desktop_463a0c9a28-1152x648.jpg
         tags: [space, spacex]
         description: |
@@ -500,7 +500,7 @@ sections:
           * **Disposal orbit**: A planned trajectory around the Sun that ensures spent rocket stages won't collide with Earth, the Moon, or active spacecraft.
       - id: tech-4
         title: "Tesla Semi: first truck rolls off high-volume production line (5 minute read)"
-        link: https://electrek.co/2026/04/29/tesla-semi-first-truck-high-volume-production-line/?utm_source=tldrnewsletter
+        link: https://electrek.co/2026/04/29/tesla-semi-first-truck-high-volume-production-line/
         tags: [ev, hardware]
         description: |
           Tesla's first Semi truck has rolled off the company's new high-volume production line at Gigafactory Nevada. Volume production is now underway for the long-delayed electric truck. The Long Range version of the truck costs $290,000, while the standard version costs roughly $260,000. The Semi is the lowest-priced Class 8 battery electric tractor in the market.
@@ -512,7 +512,7 @@ sections:
       - id: tech-5
         content-template-path: full-content/2026-04-30/tech-5
         title: "Build programmatic agents with the Cursor SDK (6 minute read)"
-        link: https://cursor.com/blog/typescript-sdk?utm_source=tldrnewsletter
+        link: https://cursor.com/blog/typescript-sdk
         image: https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/blog/cursor-sdk-og-image-final.png
         tags: [ai, agents, devops, infrastructure]
         description: |
@@ -541,7 +541,7 @@ sections:
       - id: tech-6
         content-template-path: full-content/2026-04-30/tech-6
         title: "Link CLI (GitHub Repo)"
-        link: https://github.com/stripe/link-cli?utm_source=tldrnewsletter
+        link: https://github.com/stripe/link-cli
         image: https://opengraph.githubassets.com/9ffba39348e21d6f640e3480b1f1e08cfe404ce4486312105ef3151d378a7772/stripe/link-cli
         tags: [agents, security, ai, payments]
         description: |
@@ -572,7 +572,7 @@ sections:
       - id: tech-7
         content-template-path: full-content/2026-04-30/tech-7
         title: "The $112 Billion Quarter (4 minute read)"
-        link: https://tomtunguz.com/2026-04-29-the-112-billion-quarter-hyperscalers-bet-the-farm-on-ai/?utm_source=tldrnewsletter
+        link: https://tomtunguz.com/2026-04-29-the-112-billion-quarter-hyperscalers-bet-the-farm-on-ai/
         tags: [ai, cloud, infrastructure]
         description: |
           Google, Amazon, and Microsoft reported a combined capital expenditure of $112 billion in Q1. Google is now outspending Microsoft on capex, and the gap is widening. The Bank of America has forecasted that hyperscaler debt issuance will hit $175 billion in 2026. The hyperscaler that owns the model layer will grow the fastest.
@@ -601,7 +601,7 @@ sections:
           * **Century bond**: A bond with a 100-year maturity, extremely rare in corporate finance and typically used only by highly creditworthy issuers
       - id: tech-8
         title: "PayPal's new CEO makes Venmo a standalone business unit as potential buyers circle (4 minute read)"
-        link: https://www.cnbc.com/2026/04/29/paypal-restructures-venmo-standalone-unit.html?utm_source=tldrnewsletter
+        link: https://www.cnbc.com/2026/04/29/paypal-restructures-venmo-standalone-unit.html
         image: https://image.cnbcfm.com/api/v1/image/108091426-1737650740598-1U8A1754.JPG?v=1777486699&w=1920&h=1080
         tags: [fintech, payments, business]
         description: |
@@ -613,7 +613,7 @@ sections:
       - id: tech-9
         content-template-path: full-content/2026-04-30/tech-9
         title: "Amazon chips no longer just a side dish, they're a $20B biz (5 minute read)"
-        link: https://www.theregister.com/2026/04/29/amazon_chips_20b_business/?utm_source=tldrnewsletter
+        link: https://www.theregister.com/2026/04/29/amazon_chips_20b_business/
         image: https://regmedia.co.uk/2025/12/04/aws_graviton_5.jpg
         tags: [ai, infrastructure, cloud]
         description: |
@@ -649,7 +649,7 @@ sections:
       - id: tech-10
         content-template-path: full-content/2026-04-30/tech-10
         title: "Zig has one of the most stringent anti-LLM policies of any major open source project (3 minute read)"
-        link: https://simonwillison.net/2026/Apr/30/zig-anti-ai/#atom-everything?utm_source=tldrnewsletter
+        link: https://simonwillison.net/2026/Apr/30/zig-anti-ai/#atom-everything
         tags: [open-source, ai, zig, ai-ethics]
         description: |
           Zig doesn't allow large language models for issues, pull requests, or comments on the bug tracker.
@@ -676,7 +676,7 @@ sections:
           * **Upstreaming**: Contributing code changes from a fork back to the original project so everyone benefits from improvements
       - id: tech-11
         title: "GitHub is sinking (3 minute read)"
-        link: https://dbushell.com/2026/04/29/github-is-sinking/?utm_source=tldrnewsletter
+        link: https://dbushell.com/2026/04/29/github-is-sinking/
         image: https://dbushell.com/images/articles/2026-04-29-github-is-sinking.png
         tags: [github, devops, infrastructure]
         description: |
@@ -706,7 +706,7 @@ sections:
           * **Upstream**: In Git terminology, the remote repository you push to and pull from
       - id: tech-12
         title: "White House Opposes Anthropic's Plan to Expand Access to Mythos Model (4 minute read)"
-        link: https://www.wsj.com/tech/ai/white-house-opposes-anthropics-plan-to-expand-access-to-mythos-model-dc281ab5?st=3717FL&reflink=desktopwebshare_permalink&mod=tldr&utm_source=tldrnewsletter
+        link: https://www.wsj.com/tech/ai/white-house-opposes-anthropics-plan-to-expand-access-to-mythos-model-dc281ab5?st=3717FL&reflink=desktopwebshare_permalink&mod=tldr
         image: https://images.wsj.net/im-40824992/social
         tags: [ai, security]
         description: |
@@ -734,7 +734,7 @@ sections:
       - id: tech-13
         content-template-path: full-content/2026-04-30/tech-13
         title: "Agents can now create Cloudflare accounts, buy domains, and deploy (6 minute read)"
-        link: https://blog.cloudflare.com/agents-stripe-projects/?utm_campaign=cf_blog&amp;utm_content=20260429&amp;utm_medium=organic_social&amp;utm_source=twitter
+        link: https://blog.cloudflare.com/agents-stripe-projects/
         image: https://cf-assets.www.cloudflare.com/zkvhlag99gkb/1z87ypuPVuagcw4apgVWEz/32925c589f5c49ea212c2b12359c3efc/BLOG-3288-OG.png
         tags: [agents, ai, devops, infrastructure]
         description: |
@@ -766,7 +766,7 @@ sections:
           * **Stripe Atlas**: Stripe's service for helping entrepreneurs incorporate and start companies
       - id: tech-14
         title: "Apple Has Given Up on the Vision Pro After M5 Refresh Flop (2 minute read)"
-        link: https://www.macrumors.com/2026/04/29/apple-vision-pro-m5-flop/?utm_source=tldrnewsletter
+        link: https://www.macrumors.com/2026/04/29/apple-vision-pro-m5-flop/
         image: https://images.macrumors.com/t/6JPlyW5hAfhOy7PUgM8Pe9jPoY8=/1920x/article-new/2025/10/M5-Vision-Pro-Thumb-2.jpg
         tags: [hardware, vr, apple]
         description: |
@@ -794,7 +794,7 @@ sections:
       - id: data-1
         content-template-path: full-content/2026-04-30/data-1
         title: "Flow generation through natural language: An agentic modeling approach (11 minute read)"
-        link: https://shopify.engineering/fine-tuning-agent-shopify-flow?utm_source=tldrdata
+        link: https://shopify.engineering/fine-tuning-agent-shopify-flow
         image: https://cdn.shopify.com/b/shopify-brochure2-assets/8bcfb3a503b8db17fd79da6e88503691.png
         tags: [ai, llm, agents, infrastructure]
         description: |
@@ -830,7 +830,7 @@ sections:
           * **LLM judge**: Language model used to evaluate quality of outputs by comparing them against reference examples or criteria
       - id: data-2
         title: "From Clicks to Conversions: Architecting Shopping Conversion Candidate Generation at Pinterest (7 minute read)"
-        link: https://medium.com/pinterest-engineering/from-clicks-to-conversions-architecting-shopping-conversion-candidate-generation-at-pinterest-04cae5e1455b?utm_source=tldrdata
+        link: https://medium.com/pinterest-engineering/from-clicks-to-conversions-architecting-shopping-conversion-candidate-generation-at-pinterest-04cae5e1455b
         image: https://miro.medium.com/v2/resize:fit:1200/1*Q_E0bjg-oNEdv-PuhmctYA.png
         tags: [ai, infrastructure]
         description: |
@@ -845,7 +845,7 @@ sections:
           * **Offsite conversions**: Purchase events that happen on advertiser websites after clicking an ad, rather than on-platform engagement
       - id: data-3
         title: "How Vinted Serves Personalised Search Autocomplete (9 minute read)"
-        link: https://vinted.engineering//2026/04/22/personalized-search-autocomplete/?utm_source=tldrdata
+        link: https://vinted.engineering//2026/04/22/personalized-search-autocomplete/
         image: https://vinted.engineering/sm.jpg
         tags: [search, infrastructure, ai]
         description: |
@@ -884,7 +884,7 @@ sections:
           * **Levenshtein edit distance**: Measure of string similarity based on minimum number of single-character edits (insertions, deletions, substitutions) needed to transform one string into another
       - id: data-4
         title: "Skipper: Building Airbnb's embedded workflow engine (12 minute read)"
-        link: https://medium.com/airbnb-engineering/skipper-building-airbnbs-embedded-workflow-engine-f6c34552146f?utm_source=tldrdata
+        link: https://medium.com/airbnb-engineering/skipper-building-airbnbs-embedded-workflow-engine-f6c34552146f
         tags: [infrastructure, backend, architecture]
         description: |
           Skipper is a lightweight, embedded workflow engine designed to provide durable and reliable execution for long-running business processes (like insurance claims and payments). Instead of relying on external orchestration tools or queues, Skipper uses a simple annotation-based approach to persist state in the service's existing database and achieves durability through deterministic replay.
@@ -898,7 +898,7 @@ sections:
           * **Durable execution**: Guaranteed process completion even across failures or restarts by persisting state to storage
       - id: data-5
         title: "GraphRAG beyond the demo: Lessons from the trenches (12 minute read)"
-        link: https://medium.com/data-science-at-microsoft/graphrag-beyond-the-demo-lessons-from-the-trenches-add83180f849?utm_source=tldrdata
+        link: https://medium.com/data-science-at-microsoft/graphrag-beyond-the-demo-lessons-from-the-trenches-add83180f849
         tags: [ai, llm, infrastructure]
         description: |
           GraphRAG is most useful when questions require multi-hop reasoning across documents, entity relationships, or system-level dependencies: use Vector RAG for simple factual lookups and keep GraphRAG as an opt-in backend. In production, the main pain points are heavy indexing cost, difficult updates, multi-layer evaluation, and infrastructure that usually needs batch jobs rather than request-path execution. Success depends on selective graph scope, explicit update policies, repeatable evals, and strong observability/cost controls.
@@ -924,7 +924,7 @@ sections:
           * **RAG**: Retrieval Augmented Generation, a pattern where LLMs retrieve relevant context before generating answers
       - id: data-6
         title: "A/B Testing Pitfalls: What Works and What Doesn't with Real Data (5 minute read)"
-        link: http://kdnuggets.com/a-b-testing-pitfalls-what-works-and-what-doesnt-with-real-data?utm_source=tldrdata
+        link: http://kdnuggets.com/a-b-testing-pitfalls-what-works-and-what-doesnt-with-real-data
         image: https://www.kdnuggets.com/wp-content/uploads/Rosidi-AB_Testing_Pitfalls-1.png
         tags: [datascience, testing, statistics]
         description: |
@@ -962,7 +962,7 @@ sections:
       - id: data-7
         content-template-path: full-content/2026-04-30/data-7
         title: "oLLM (GitHub Repo)"
-        link: https://github.com/Mega4alik/ollm?utm_source=tldrdata
+        link: https://github.com/Mega4alik/ollm
         image: https://opengraph.githubassets.com/27ba0ece41fc4cfab38810f45d0f01567509277b791935cf2333a0b06bf10d41/Mega4alik/ollm
         tags: [ai, llm, infrastructure]
         description: |
@@ -997,7 +997,7 @@ sections:
           * **Offloading**: Moving data from fast but limited GPU memory to slower but larger storage (CPU RAM or SSD) and loading it back only when needed
       - id: data-8
         title: "Materialized Tables in Apache Flink (14 minute read)"
-        link: https://rmoff.net/2026/04/28/materialized-tables-in-apache-flink/?utm_source=tldrdata
+        link: https://rmoff.net/2026/04/28/materialized-tables-in-apache-flink/
         image: https://rmoff.net/images/2026/04/h_IMG_5286.webp
         tags: [data, streaming, sql, infrastructure]
         description: |
@@ -1029,7 +1029,7 @@ sections:
           * **Upsert**: Update-or-insert operation that updates a row if it exists or inserts it if it doesn't, based on a primary key
       - id: data-9
         title: "HOT Updates in Postgres (12 minute read)"
-        link: https://boringsql.com/posts/hot-updates/?utm_source=tldrdata
+        link: https://boringsql.com/posts/hot-updates/
         image: https://boringsql.com/og-images/postgresql-hot-updates-og.jpg
         tags: [postgres, database, infrastructure, performance]
         description: |
@@ -1068,7 +1068,7 @@ sections:
           * **WAL (Write-Ahead Log)**: PostgreSQL's transaction log used for crash recovery and replication
       - id: data-10
         title: "Rocky (GitHub Repo)"
-        link: https://github.com/rocky-data/rocky?utm_source=tldrdata
+        link: https://github.com/rocky-data/rocky
         image: https://repository-images.githubusercontent.com/1209895914/4e607648-080d-4451-b995-e4439dc2c946
         tags: [data, rust, devops]
         description: |
@@ -1103,7 +1103,7 @@ sections:
       - id: data-11
         content-template-path: full-content/2026-04-30/data-11
         title: "Running SQLite in the browser with sql.js and WASM — a practical guide with Google Drive sync (5 minute read)"
-        link: https://dev.to/deeshansharma/running-sqlite-in-the-browser-with-sqljs-and-wasm-a-practical-guide-with-google-drive-sync-edh?utm_source=tldrdata
+        link: https://dev.to/deeshansharma/running-sqlite-in-the-browser-with-sqljs-and-wasm-a-practical-guide-with-google-drive-sync-edh
         image: https://media2.dev.to/dynamic/image/width=1200,height=627,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F6k598isyvt5k3c44981l.png
         tags: [webassembly, javascript, sqlite, frontend]
         description: |
@@ -1138,7 +1138,7 @@ sections:
           * **Origin Private File System**: Browser API for storing large files in a sandboxed filesystem partition with better performance than localStorage
       - id: data-12
         title: "Building a High-Scale Real-Time Recommendation Engine with Feature Stores and Redis Observability (5 minute read)"
-        link: https://hackernoon.com/building-a-high-scale-real-time-recommendation-engine-with-feature-stores-and-redis-observability?utm_source=tldrdata
+        link: https://hackernoon.com/building-a-high-scale-real-time-recommendation-engine-with-feature-stores-and-redis-observability
         tags: [ai, infrastructure, databases]
         description: |
           Real-time recommendation systems now need to combine rich contextual features with sub-100 ms latency at scale, often across billions of interaction records. Feature stores act as the consistency layer between offline training and online serving, reducing training-serving skew, while batch platforms compute expensive features and embeddings. Redis is used for low-latency vector similarity search, candidate retrieval, and caching eligibility filters, keeping request paths fast and efficient.
@@ -1155,7 +1155,7 @@ sections:
           * **Candidate retrieval**: The first stage of recommendation where a large catalog is narrowed to a smaller set of relevant items before more expensive ranking
       - id: data-13
         title: "How Linux 7.0 Broke PostgreSQL (9 minute read)"
-        link: https://read.thecoder.cafe/p/linux-broke-postgresql?utm_source=tldrdata
+        link: https://read.thecoder.cafe/p/linux-broke-postgresql
         image: https://substackcdn.com/image/fetch/$s_!gNX3!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F1d7bc6e6-ce29-42ec-a006-e56d38bedcd8_1600x800.png
         tags: [infrastructure, linux, database]
         description: |
@@ -1189,7 +1189,7 @@ sections:
           * **Restartable Sequences (rseq)**: Linux kernel facility allowing userspace code to detect if it was preempted during a critical section and restart the operation
       - id: data-14
         title: "Expedia's Service Telemetry Analyzer (6 minute read)"
-        link: https://medium.com/expedia-group-tech/expedias-service-telemetry-analyzer-60f2f96c5351?utm_source=tldrdata
+        link: https://medium.com/expedia-group-tech/expedias-service-telemetry-analyzer-60f2f96c5351
         tags: [ai, devops, infrastructure]
         description: |
           Expedia's Service Telemetry Analyzer uses LLMs plus Datadog's telemetry data to speed incident investigation and reduce time to know/recover.
@@ -1206,7 +1206,7 @@ sections:
       - id: design-1
         content-template-path: full-content/2026-04-30/design-1
         title: "Claude can now plug directly into Photoshop, Blender, and Ableton (2 minute read)"
-        link: https://www.theverge.com/ai-artificial-intelligence/919648/anthropic-claude-creative-connectors-adobe-blender?utm_source=tldrdesign
+        link: https://www.theverge.com/ai-artificial-intelligence/919648/anthropic-claude-creative-connectors-adobe-blender
         image: https://platform.theverge.com/wp-content/uploads/sites/2/2026/04/Claude-creative-connectors-Blender-.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200
         tags: [ai, creative, tools]
         description: |
@@ -1223,7 +1223,7 @@ sections:
       - id: design-2
         content-template-path: full-content/2026-04-30/design-2
         title: "Freepik Rebrands as Magnific: a Bootstrapped, Profitable $230m ARR AI Creative Platform (3 minute read)"
-        link: https://thenextweb.com/news/freepik-rebrands-as-magnific?utm_source=tldrdesign
+        link: https://thenextweb.com/news/freepik-rebrands-as-magnific
         image: https://media.thenextweb.com/2026/04/FreePik-is-now-Magnific.avif
         tags: [ai, startup, design]
         description: |
@@ -1253,7 +1253,7 @@ sections:
           * **Model-agnostic**: A platform approach that integrates multiple third-party AI models rather than being tied to a single provider
       - id: design-3
         title: "Pedometer++ 8 brings friendly design refresh and Expedition Mode to Apple Watch (3 minute read)"
-        link: https://9to5mac.com/2026/04/28/pedometer-8-brings-friendly-design-refresh-and-expedition-mode-to-apple-watch/?utm_source=tldrdesign
+        link: https://9to5mac.com/2026/04/28/pedometer-8-brings-friendly-design-refresh-and-expedition-mode-to-apple-watch/
         tags: [apple, design, wearables]
         description: |
           Pedometer++ 8.0 centers on a complete redesign of its Apple Watch app, introducing a bolder, more colorful interface that highlights key daily metrics like steps, distance, and flights climbed with improved clarity. A major part of the redesign is the new workout picker, built with larger touch targets and simpler navigation to make starting activities faster and more intuitive, especially for users frustrated with Apple's default Workout app. While the update also adds Expedition Mode for better battery life, the primary focus is on making the app more visually engaging, easier to use, and better suited for quick interactions on the go.
@@ -1262,7 +1262,7 @@ sections:
           what: "Pedometer++ 8.0 is a major redesign of the popular step-tracking app for Apple Watch, featuring a more colorful interface with improved visibility for daily metrics, a new workout picker with larger touch targets for easier starting of activities, and an Expedition Mode that extends battery life."
       - id: design-4
         title: "Advanced Icon Design: Dots (3 minute read)"
-        link: https://minoraxis.medium.com/advanced-icon-design-dots-590cf96bf279?utm_source=tldrdesign
+        link: https://minoraxis.medium.com/advanced-icon-design-dots-590cf96bf279
         image: https://miro.medium.com/v2/resize:fit:1200/1*hUc-38EuwsogeND4tDRWzQ.png
         tags: [design, frontend]
         description: |
@@ -1273,7 +1273,7 @@ sections:
           takeaway: "When designing icon sets, make dots slightly larger than your stroke width rather than matching them exactly for better visual balance."
       - id: design-5
         title: "Users Own the Present. You Own the Future (6 minute read)"
-        link: https://www.dir14.com/articles/users-own-the-present-you-own-the-future?utm_source=tldrdesign
+        link: https://www.dir14.com/articles/users-own-the-present-you-own-the-future
         image: https://www.dir14.com/og-image.jpg
         tags: [product, research, design]
         description: |
@@ -1307,7 +1307,7 @@ sections:
       - id: design-6
         content-template-path: full-content/2026-04-30/design-6
         title: "The AI Economy: Five Adobe Sneaks Worth Watching in 2026 (5 minute read)"
-        link: https://thelettertwo.com/2026/04/24/ai-economy-adobe-sneaks-2026-ai-prototypes-marketers/?utm_source=tldrdesign
+        link: https://thelettertwo.com/2026/04/24/ai-economy-adobe-sneaks-2026-ai-prototypes-marketers/
         image: https://thelettertwo.com/wp-content/uploads/2026/04/ai-economy-adobe-summit-sneaks-960x540-1.jpg
         tags: [ai, design, marketing]
         description: |
@@ -1337,7 +1337,7 @@ sections:
       - id: design-7
         content-template-path: full-content/2026-04-30/design-7
         title: "The Color api (Website)"
-        link: https://www.thecolorapi.com/?utm_source=tldrdesign
+        link: https://www.thecolorapi.com/
         tags: [frontend, design, api]
         description: |
           The Color API is a fast, modern tool for color conversion, naming, and scheme generation that accepts any valid color format and converts it to other formats.
@@ -1349,7 +1349,7 @@ sections:
       - id: design-8
         content-template-path: full-content/2026-04-30/design-8
         title: "Starwind UI (Website)"
-        link: https://starwind.dev/?utm_source=tldrdesign
+        link: https://starwind.dev/
         image: https://starwind.dev/images/starwind-ui-meta.png
         tags: [frontend, astro, ui]
         description: |
@@ -1365,7 +1365,7 @@ sections:
           * **Tailwind CSS**: A utility-first CSS framework that provides low-level utility classes for building custom designs
       - id: design-9
         title: "Professional, Branded File Delivery (Website)"
-        link: https://usekinet.app/?utm_source=tldrdesign
+        link: https://usekinet.app/
         image: https://usekinet.app/light_og.png
         tags: [saas, design]
         description: |
@@ -1378,7 +1378,7 @@ sections:
       - id: design-10
         content-template-path: full-content/2026-04-30/design-10
         title: "The New Designer Value Proposition: How to Reposition Your Design Services in the Age of AI Art (8 minute read)"
-        link: https://designworklife.com/the-new-designer-value-proposition-how-to-reposition-your-design-services-in-the-age-of-ai-art/?utm_source=tldrdesign
+        link: https://designworklife.com/the-new-designer-value-proposition-how-to-reposition-your-design-services-in-the-age-of-ai-art/
         image: https://designworklife.com/wp-content/uploads/2026/04/designer-positioning.webp
         tags: [ai, design, career]
         description: |
@@ -1407,7 +1407,7 @@ sections:
           * **Brand equity**: The commercial value and consumer perception built up around a brand name over time
       - id: design-11
         title: "How LA28's \"unapologetically type-forward\" approach nailed Olympic branding (5 minute read)"
-        link: https://www.creativebloq.com/design/branding/how-la28s-unapologetically-type-forward-approach-nailed-olympic-branding?utm_source=tldrdesign
+        link: https://www.creativebloq.com/design/branding/how-la28s-unapologetically-type-forward-approach-nailed-olympic-branding
         image: https://cdn.mos.cms.futurecdn.net/GxVCZvPeE277GPaf8LrzDm-2560-80.jpg
         tags: [design, branding]
         description: |
@@ -1434,7 +1434,7 @@ sections:
           * **Typographic system**: A flexible set of typography rules and variations that work together as a cohesive identity rather than a single fixed typeface
       - id: design-12
         title: "Logo Design After AI: How Designers Create Powerful Brand Logos in 2026 (11 minute read)"
-        link: https://graphicdesignjunction.com/2026/04/logo-design-after-ai/?utm_source=tldrdesign
+        link: https://graphicdesignjunction.com/2026/04/logo-design-after-ai/
         image: https://i0.wp.com/graphicdesignjunction.com/wp-content/uploads/2026/04/logo_design_after_ai.jpg
         tags: [design, ai]
         description: |
@@ -1465,7 +1465,7 @@ sections:
           * **Midjourney/DALL·E**: AI image generation tools that create visual designs from text prompts by learning patterns from existing images
       - id: design-13
         title: "Google is Redesigning its App Icons to Fix a Big Problem (2 minute read)"
-        link: https://www.androidpolice.com/google-redesigning-app-icons-fix-big-problem/?utm_source=tldrdesign
+        link: https://www.androidpolice.com/google-redesigning-app-icons-fix-big-problem/
         image: https://static0.anpoimages.com/wordpress/wp-content/uploads/wm/2025/06/google-pixel-9-home-screen.jpg?w=1600&h=900&fit=crop
         tags: [design, android, google]
         description: |
@@ -1480,7 +1480,7 @@ sections:
           * **Workspace**: Google's suite of productivity apps including Gmail, Calendar, Meet, Docs, Sheets, and Slides
       - id: design-14
         title: "Pia Salzer: A love letter to everyday aesthetics (5 minute read)"
-        link: https://www.creativeboom.com/inspiration/pia-salzer-a-love-letter-to-everyday-aesthetics/?utm_source=tldrdesign
+        link: https://www.creativeboom.com/inspiration/pia-salzer-a-love-letter-to-everyday-aesthetics/
         image: https://www.creativeboom.com/upload/articles/85/859c2f705c4f682481fe5d4d998bd956d0af9256_800.jpg
         tags: [illustration, design, art]
         description: |
@@ -1494,7 +1494,7 @@ sections:
     articles:
       - id: crypto-1
         title: "Czech Central Bank Governor Argues for Bitcoin in Sovereign Reserves (3 minute read)"
-        link: https://www.theblock.co/post/399330/this-is-the-future-czech-central-bank-governor-makes-case-for-bitcoin-in-sovereign-reserves?utm_source=tldrcrypto
+        link: https://www.theblock.co/post/399330/this-is-the-future-czech-central-bank-governor-makes-case-for-bitcoin-in-sovereign-reserves
         tags: [crypto, bitcoin]
         description: |
           Czech National Bank Governor Ales Michl made a direct case for holding bitcoin in central bank reserves, presenting internal CNB analysis showing a 1% BTC allocation could increase expected portfolio returns while keeping overall risk roughly unchanged due to Bitcoin's low correlation with other reserve assets. The CNB has already begun a test portfolio, making it a closely watched case among sovereign institutions and a direct counterpoint to the ECB's position that bitcoin is not liquid, secure, or safe enough for reserves.
@@ -1509,7 +1509,7 @@ sections:
           * **Correlation**: Statistical measure of how two assets move together; low correlation means Bitcoin price movements are independent from traditional reserve assets like bonds and currencies
       - id: crypto-2
         title: "Stable Sea Taps WisdomTree Tokenized Treasuries for Businesses (3 minute read)"
-        link: https://www.theblock.co/post/399349/stable-sea-taps-wisdomtree-tokenized-treasurys-businesses?utm_source=tldrcrypto
+        link: https://www.theblock.co/post/399349/stable-sea-taps-wisdomtree-tokenized-treasurys-businesses
         tags: [crypto, fintech, blockchain]
         description: |
           Stable Sea has integrated WisdomTree's tokenized Treasury money market fund to offer businesses access to yield-bearing tokenized US Treasuries, leveraging WisdomTree Connect's B2B and B2B2C distribution infrastructure. WisdomTree's tokenized fund, which recently received SEC exemptive relief for 24/7 trading at a stable $1 NAV with instant blockchain settlement, now represents over $772M across multi-chain deployments.
@@ -1525,7 +1525,7 @@ sections:
           * **Multi-chain deployments**: The same tokenized asset deployed across multiple different blockchain networks
       - id: crypto-3
         title: "Meet Franklin: Your AI Agent Should Pay Its Own Bills (4 minute read)"
-        link: https://x.com/FranklinRun_/status/2049257656196718830?utm_source=tldrcrypto
+        link: https://x.com/FranklinRun_/status/2049257656196718830
         tags: [ai, agents, crypto, infrastructure]
         description: |
           Franklin is an open-source AI agent framework that provisions each agent with a self-generated USDC wallet, replacing API keys and subscriptions with x402 micropayments settled per-call across 55+ models, image generation, web search, and trading data tools. A built-in smart router directs prompts to the cheapest capable model and escalates to frontier models only when required, cutting costs 60-80% compared to always using top-tier models. The project frames subscription-based AI as a transitional structure where heavy users get throttled and light users subsidize them, arguing that pay-per-use wallet-backed agents allow providers to serve full tasks without rationing.
@@ -1553,7 +1553,7 @@ sections:
           * **On-chain**: Transactions recorded on a blockchain ledger rather than through traditional payment processors
       - id: crypto-4
         title: "Machine Payments Protocol Ships Multi-Method Discovery (3 minute read)"
-        link: https://mpp.dev/blog/multi-method-discovery?utm_source=tldrcrypto
+        link: https://mpp.dev/blog/multi-method-discovery
         image: https://mpp.dev/api/og?title=MPP%20%E2%80%94%20Machine%20Payments%20Protocol&description=MPP's%20discovery%20schema%20now%20supports%20multiple%20payment%20offers%20per%20route%E2%80%94declare%20every%20method%2C%20currency%2C%20and%20intent%20ahead%20of%20time.&path=%2Fblog%2Fmulti-method-discovery
         tags: [payments, infrastructure, api]
         description: |
@@ -1571,7 +1571,7 @@ sections:
           * **Discovery document**: OpenAPI metadata that describes what payment methods and currencies a service accepts
       - id: crypto-5
         title: "Robinhood vs Hyperliquid Q1 Results (3 minute read)"
-        link: https://threadreaderapp.com/thread/2049237613220163912.html?utm_source=tldrcrypto
+        link: https://threadreaderapp.com/thread/2049237613220163912.html
         image: https://threadreaderapp.com/images/screenshots/thread/2049237613220163912.jpg
         tags: [crypto, defi, finance]
         description: |
@@ -1600,7 +1600,7 @@ sections:
           * **Protocol income**: Revenue generated by a DeFi protocol, typically from trading fees distributed to token holders rather than traditional corporate net income
       - id: crypto-6
         title: "The Beginning of Agentic Finance (8 minute read)"
-        link: https://x.com/castle_labs/status/2047316059842388221?utm_source=tldrcrypto
+        link: https://x.com/castle_labs/status/2047316059842388221
         tags: [ai, ethereum, agents, infrastructure]
         description: |
           Three EVM standards are converging into permissionless financial rails for AI agents: x402 (HTTP 402-based micropayments with 50M+ transactions since its May 2025 launch), ERC-8004 (on-chain identity and reputation with roughly 98K agent registrations across 10+ chains), and ERC-8183 (a job/escrow primitive co-developed by Virtuals and the Ethereum Foundation dAI team). Base handles the majority of x402 volume, and ERC-8211 extends the stack with dynamic execution for multi-step DeFi strategies. TradFi infrastructure is targeting the same problem from the off-chain side, with Visa's agent card CLI and Stripe/Tempo's Machine Payments Protocol backed by Anthropic, OpenAI, DoorDash, and Shopify as launch partners, while unresolved challenges around prompt injection, RPC data leakage, and on-chain transaction visibility remain active risk vectors for the space.
@@ -1642,7 +1642,7 @@ sections:
           * **Kohaku**: Ethereum SDK in development to embed privacy-preserving technology directly into wallets, making shielded transactions the default
       - id: crypto-7
         title: "The Stablecoin Remittance Problem: On/Off-Ramp Is the Real Bottleneck (2 minute read)"
-        link: https://threadreaderapp.com/thread/2049195999290352057.html?utm_source=tldrcrypto
+        link: https://threadreaderapp.com/thread/2049195999290352057.html
         image: https://threadreaderapp.com/images/screenshots/thread/2049195999290352057.jpg
         tags: [crypto, fintech]
         description: |
@@ -1657,7 +1657,7 @@ sections:
           * **G10 countries**: Group of ten major developed economies including US, UK, Canada, Japan, and major European nations
       - id: crypto-8
         title: "Most Prediction Market Users Lose Money to HFT (2 minute read)"
-        link: https://threadreaderapp.com/thread/2049068395279044751.html?utm_source=tldrcrypto
+        link: https://threadreaderapp.com/thread/2049068395279044751.html
         image: https://threadreaderapp.com/images/screenshots/thread/2049068395279044751.jpg
         tags: [trading, markets, fintech]
         description: |
@@ -1672,7 +1672,7 @@ sections:
           * **Market makers**: Sophisticated traders who provide liquidity by continuously offering to buy and sell, profiting from the spread between bid and ask prices
       - id: crypto-9
         title: "Retail Activity Lifts Prediction Market Volume Past $20B Monthly (3 minute read)"
-        link: https://www.theblock.co/post/399362/retail-activity-lifts-prediction-market-volume?utm_source=tldrcrypto
+        link: https://www.theblock.co/post/399362/retail-activity-lifts-prediction-market-volume
         tags: [crypto, finance]
         description: |
           Prediction market monthly volume has grown from $1.2B in early 2025 to over $20B.
@@ -1683,7 +1683,7 @@ sections:
           * **Prediction markets**: Platforms where users bet on the outcomes of future events (elections, sports, economics) with prices reflecting collective probability estimates
       - id: crypto-10
         title: "Polymarket Website Had More Visits Than Coinbase + Hyperliquid in Q1 (2 minute read)"
-        link: https://threadreaderapp.com/thread/2049406695709835385.html?utm_source=tldrcrypto
+        link: https://threadreaderapp.com/thread/2049406695709835385.html
         image: https://threadreaderapp.com/images/screenshots/thread/2049406695709835385.jpg
         tags: [crypto, web3]
         description: |
@@ -1700,7 +1700,7 @@ sections:
           * **Uniswap**: Largest decentralized exchange (DEX) for trading Ethereum tokens
       - id: crypto-11
         title: "Pump.fun Burns $370M in $PUMP Tokens (1 minute read)"
-        link: https://threadreaderapp.com/thread/2049232506143006844.html?utm_source=tldrcrypto
+        link: https://threadreaderapp.com/thread/2049232506143006844.html
         image: https://threadreaderapp.com/images/screenshots/thread/2049232506143006844.jpg
         tags: [crypto, web3]
         description: |
@@ -1717,7 +1717,7 @@ sections:
           * **Smart contract**: Self-executing blockchain code that automatically enforces programmed rules without requiring trust
       - id: crypto-12
         title: "Robinhood Primed for Rebound After Q1 Miss (1 minute read)"
-        link: https://www.dlnews.com/articles/markets/robinhood-primed-for-rebound-after-shares-tank-in-q1-miss-bernstein-says/?utm_source=tldrcrypto
+        link: https://www.dlnews.com/articles/markets/robinhood-primed-for-rebound-after-shares-tank-in-q1-miss-bernstein-says/
         image: https://dl-migration-assets.s3.eu-central-1.amazonaws.com/images/1772086301350.webp
         tags: [fintech, crypto]
         description: |

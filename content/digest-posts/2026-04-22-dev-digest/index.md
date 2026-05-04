@@ -11,7 +11,7 @@ sections:
   articles:
   - id: ai-1
     title: ChatGPT Images 2.0 (6 minute read)
-    link: https://openai.com/index/introducing-chatgpt-images-2-0/?utm_source=tldrai
+    link: https://openai.com/index/introducing-chatgpt-images-2-0/
     tags:
     - ai
     description: |
@@ -24,7 +24,7 @@ sections:
   - id: ai-2
     content-template-path: full-content/2026-04-22/ai-2
     title: OpenAI develops platform for always-on Agents on ChatGPT (2 minute read)
-    link: https://www.testingcatalog.com/openai-develops-platform-for-always-on-agents-on-chatgpt/?utm_source=tldrai
+    link: https://www.testingcatalog.com/openai-develops-platform-for-always-on-agents-on-chatgpt/
     image: https://storage.ghost.io/c/2a/1b/2a1b1782-8506-4d7d-bf53-ad3fb52e2a0f/content/images/size/w1200/2026/04/ChatGPT-Agents-04-21-2026_04_13_PM.jpg
     tags:
     - ai
@@ -42,7 +42,7 @@ sections:
       * **Skills**: Specific capabilities or functions that can be attached to an agent to define what tasks it can perform
   - id: ai-3
     title: Qwen3.5-Omni Technical Report (4 minute read)
-    link: https://www.alphaxiv.org/abs/2604.15804?utm_source=tldrai
+    link: https://www.alphaxiv.org/abs/2604.15804
     description: |
       Qwen3.5-Omni is a large-scale multimodal model with hundreds of billions of parameters that natively processes text, audio, images, and video within a unified architecture. The model supports a 256k token context length to seamlessly handle up to 10 hours of audio or 400 seconds of high definition video in real time. It leverages a Hybrid Attention Mixture of Experts framework alongside a dynamic alignment technique called ARIA to generate highly stable and emotionally nuanced multilingual speech synthesis with minimal latency.
     tags:
@@ -80,7 +80,7 @@ sections:
   - id: ai-4
     content-template-path: full-content/2026-04-22/ai-4
     title: Image Generation Prompting Guide (38 minute read)
-    link: https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide?utm_source=tldrai
+    link: https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide
     image: https://developers.openai.com/open-graph.png
     description: |
       A practical guide that outlines prompting strategies for image generation, covering techniques for controlling style, structure, and fidelity in production image workflows.
@@ -116,7 +116,7 @@ sections:
       * **compositional constraints**: Explicit prompt instructions controlling framing (close-up, wide, top-down), perspective (eye-level, low-angle), lighting (soft diffuse, golden hour), and element placement to direct the visual shot
   - id: ai-5
     title: Coding agents ignore their own budgets (5 minute read)
-    link: https://x.com/RampLabs/status/2046624992956146158?utm_source=tldrai
+    link: https://x.com/RampLabs/status/2046624992956146158
     tags:
     - ai
     - agents
@@ -151,7 +151,7 @@ sections:
   - id: ai-6
     content-template-path: full-content/2026-04-22/ai-6
     title: When Can LLMs Learn to Reason with Weak Supervision? (4 minute read)
-    link: https://salmanrahman.net/rlvr-weak-supervision?utm_source=tldrai
+    link: https://salmanrahman.net/rlvr-weak-supervision
     tags:
     - ai
     - llm
@@ -186,7 +186,7 @@ sections:
   - id: ai-7
     content-template-path: full-content/2026-04-22/ai-7
     title: Critical Bits in Neural Networks (6 minute read)
-    link: https://mkimhi.github.io/DNL/?utm_source=tldrai
+    link: https://mkimhi.github.io/DNL/
     description: |
       Deep Neural Lesion (DNL) identifies highly sensitive parameters where flipping just a few bits can collapse model performance across vision and language tasks. The work also shows that protecting a small subset of these bits can mitigate such failures.
     tags:
@@ -220,7 +220,7 @@ sections:
       * **Early layers**: Initial network layers that process raw inputs (edge detectors in vision, embedding layers in language), whose outputs feed all subsequent computation
   - id: ai-8
     title: "CrabTrap: an LLM-as-a-judge HTTP proxy to secure agents in production (9 minute read)"
-    link: https://x.com/pedroh96/status/2046604993982009825?utm_source=tldrai
+    link: https://x.com/pedroh96/status/2046604993982009825
     description: |
       CrabTrap is an open-source HTTP/HTTPS proxy that intercepts every request an AI agent makes and uses LLM-as-a-judge to determine if the request matches a policy of allowed traffic for that agent. Agents need real credentials, but can hallucinate destructive actions or get prompt-injected. This can have production consequences. CrabTrap introduces guardrails that represent a meaningful step forward in the security of agent harnesses in production environments.
     tags:
@@ -257,7 +257,7 @@ sections:
   - id: ai-9
     content-template-path: full-content/2026-04-22/ai-9
     title: Stitch's DESIGN.md format is now open-source so you can use it across platforms. (1 minute read)
-    link: https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-design-md/?utm_source=tldrai
+    link: https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-design-md/
     image: https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Google_Stitch_Thumbnail_Sets_A_New_Standard.max-1440x810.png
     description: |
       Stitch's DESIGN.md lets users export or import design rules from project to project. Stitch understands the reasoning behind design systems and can generate user interfaces that match branches. Google has open sourced the draft specification for DESIGN.md, which can be used across any tool or platform. A video breaking down the format is available in the article.
@@ -276,7 +276,7 @@ sections:
       * **WCAG**: Web Content Accessibility Guidelines, standards for making web content accessible to people with disabilities
   - id: ai-10
     title: OpenAI Is Working With Consultants to Sell Codex (3 minute read)
-    link: https://www.wsj.com/cio-journal/openai-is-working-with-consultants-to-sell-codex-f355b1b9?st=WkZB94&reflink=desktopwebshare_permalink&utm_source=tldrai
+    link: https://www.wsj.com/cio-journal/openai-is-working-with-consultants-to-sell-codex-f355b1b9?st=WkZB94&reflink=desktopwebshare_permalink
     image: https://images.wsj.net/im-14618252/social
     description: |
       OpenAI is working with several consulting firms to help sell its AI coding tool Codex to businesses. Codex now has four million weekly active users, up from three million just two weeks ago. The Codex consulting program is part of OpenAI's push to focus on coding and enterprise businesses. Consulting partners will get access to an AI coding tool as part of the program.
@@ -291,7 +291,7 @@ sections:
   - id: ai-11
     content-template-path: full-content/2026-04-22/ai-11
     title: "Sam Altman throws shade at Anthropic's cyber model, Mythos: ‘fear-based marketing' (2 minute read)"
-    link: https://techcrunch.com/2026/04/21/sam-altman-throws-shade-at-anthropics-cyber-model-mythos-fear-based-marketing/?utm_source=tldrai
+    link: https://techcrunch.com/2026/04/21/sam-altman-throws-shade-at-anthropics-cyber-model-mythos-fear-based-marketing/
     image: "https://techcrunch.com/wp-content/uploads/2025/04/GettyImages-2208831528.jpg?resize=1200,800"
     tags:
     - ai
@@ -305,7 +305,7 @@ sections:
   - id: ai-12
     content-template-path: full-content/2026-04-22/ai-12
     title: "Deep Research Max: a step change for autonomous research agents (6 minute read)"
-    link: https://blog.google/innovation-and-ai/models-and-research/gemini-models/next-generation-gemini-deep-research?utm_source=tldrai
+    link: https://blog.google/innovation-and-ai/models-and-research/gemini-models/next-generation-gemini-deep-research
     image: https://storage.googleapis.com/gweb-uniblog-publish-prod/images/gemini-3.1-pro_deep-research-and-max_keyword_.width-1300_2Br94Iq.png
     tags:
     - ai
@@ -339,7 +339,7 @@ sections:
   - id: ai-13
     content-template-path: full-content/2026-04-22/ai-13
     title: The fall of the theorem economy (63 minute read)
-    link: https://davidbessis.substack.com/p/the-fall-of-the-theorem-economy?utm_source=tldrai
+    link: https://davidbessis.substack.com/p/the-fall-of-the-theorem-economy
     image: "https://substackcdn.com/image/fetch/$s_!PjDj!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F23fb6d1a-c174-487f-8619-f57247788a4c_869x475.jpeg"
     tags:
     - ai
@@ -382,7 +382,7 @@ sections:
   - id: ai-14
     content-template-path: full-content/2026-04-22/ai-14
     title: Anthropics works on its always-on agent with UI extensions (3 minute read)
-    link: https://www.testingcatalog.com/anthropics-works-on-its-always-on-agent-with-new-ui-extensions/?utm_source=tldrai
+    link: https://www.testingcatalog.com/anthropics-works-on-its-always-on-agent-with-new-ui-extensions/
     image: https://storage.ghost.io/c/2a/1b/2a1b1782-8506-4d7d-bf53-ad3fb52e2a0f/content/images/size/w1200/2026/04/Conway-Claude-04-21-2026_02_13_AM.jpg
     description: |
       Anthropic's "Conway" is an always-on agent with UI extensions available on web and mobile, allowing users to manage connectors, install extensions, and configure the environment.
@@ -414,7 +414,7 @@ sections:
   - id: ai-15
     content-template-path: full-content/2026-04-22/ai-15
     title: Agent World Training Arena (3 minute read)
-    link: https://agent-tars-world.github.io/-/?utm_source=tldrai
+    link: https://agent-tars-world.github.io/-/
     tags:
     - ai
     - agents
@@ -455,7 +455,7 @@ sections:
   - id: tech-1
     content-template-path: full-content/2026-04-22/tech-1
     title: SpaceX says it can buy Cursor later this year for $60 billion or pay $10 billion for ‘our work together' (2 minute read)
-    link: https://www.cnbc.com/2026/04/21/spacex-says-it-can-buy-cursor-later-this-year-for-60-billion-or-pay-10-billion-for-our-work-together.html?utm_source=tldrnewsletter
+    link: https://www.cnbc.com/2026/04/21/spacex-says-it-can-buy-cursor-later-this-year-for-60-billion-or-pay-10-billion-for-our-work-together.html
     image: https://image.cnbcfm.com/api/v1/image/108286753-1775144948710-gettyimages-2267974761-AFP_A4VK6PE.jpeg?v=1775152292&w=1920&h=1080
     description: |
       SpaceX claims to have obtained the rights to buy Cursor for $60 billion later this year or pay $10 billion for the work the companies are doing together. SpaceXAI and Cursor are working to create the world's best coding and knowledge work AI. Cursor is currently in talks to raise $2 billion in a funding round that includes Andreessen Horowitz, Nvidia, and Thrive Capital. The partnership will help SpaceXAI catch up to competitors like OpenAI's Codex and Anthropic's Claude.
@@ -485,7 +485,7 @@ sections:
   - id: tech-2
     content-template-path: full-content/2026-04-22/tech-2
     title: ChatGPT's new Images 2.0 model is surprisingly good at generating text (3 minute read)
-    link: https://techcrunch.com/2026/04/21/chatgpts-new-images-2-0-model-is-surprisingly-good-at-generating-text/?utm_source=tldrnewsletter
+    link: https://techcrunch.com/2026/04/21/chatgpts-new-images-2-0-model-is-surprisingly-good-at-generating-text/
     image: "https://techcrunch.com/wp-content/uploads/2024/05/openAI-spiral-color-v2.jpg?resize=1200,675"
     tags:
     - ai
@@ -514,7 +514,7 @@ sections:
       * **2K resolution**: Image resolution of approximately 2048 pixels wide, higher quality than standard HD
   - id: tech-3
     title: Announcing TypeScript 7.0 Beta (16 minute read)
-    link: https://devblogs.microsoft.com/typescript/announcing-typescript-7-0-beta/?utm_source=tldrnewsletter
+    link: https://devblogs.microsoft.com/typescript/announcing-typescript-7-0-beta/
     tags:
     - typescript
     - performance
@@ -528,7 +528,7 @@ sections:
   - id: tech-4
     content-template-path: full-content/2026-04-22/tech-4
     title: Agents with Taste (6 minute read)
-    link: https://emilkowal.ski/ui/agents-with-taste?utm_source=tldrnewsletter
+    link: https://emilkowal.ski/ui/agents-with-taste
     image: https://emilkowal.ski/ui/agents-with-taste/opengraph-image.jpg?9a8b88fa5eb67180
     tags:
     - ai
@@ -563,7 +563,7 @@ sections:
   - id: tech-5
     content-template-path: full-content/2026-04-22/tech-5
     title: "Meta will train AI agents by tracking employees' mouse, keyboard use (2 minute read)"
-    link: https://arstechnica.com/ai/2026/04/meta-will-use-employee-tracking-software-to-help-train-ai-agents-report/?utm_source=tldrnewsletter
+    link: https://arstechnica.com/ai/2026/04/meta-will-use-employee-tracking-software-to-help-train-ai-agents-report/
     image: https://cdn.arstechnica.net/wp-content/uploads/2026/04/GettyImages-1788348389-1152x648.jpg
     tags:
     - ai
@@ -581,7 +581,7 @@ sections:
       * **Training data**: Real-world examples used to teach AI models how to perform specific tasks
   - id: tech-6
     title: Tim Cook's Impeccable Timing (15 minute read)
-    link: https://stratechery.com/2026/tim-cooks-impeccable-timing/?utm_source=tldrnewsletter
+    link: https://stratechery.com/2026/tim-cooks-impeccable-timing/
     image: https://stratechery.com/wp-content/uploads/2026/04/cook-1.png
     tags:
     - apple
@@ -614,7 +614,7 @@ sections:
   - id: tech-7
     content-template-path: full-content/2026-04-22/tech-7
     title: Is Claude Code going to cost $100/month? Probably not—it's all very confusing (4 minute read)
-    link: https://simonwillison.net/2026/Apr/22/claude-code-confusion/?utm_source=tldrnewsletter
+    link: https://simonwillison.net/2026/Apr/22/claude-code-confusion/
     image: https://static.simonwillison.net/static/2026/anthropic-x-card.jpg
     tags:
     - ai
@@ -648,7 +648,7 @@ sections:
   - id: tech-8
     content-template-path: full-content/2026-04-22/tech-8
     title: AWS Lambda functions can now mount Amazon S3 buckets as file systems with S3 Files (2 minute read)
-    link: https://aws.amazon.com/about-aws/whats-new/2026/04/aws-lambda-amazon-s3/?utm_source=tldrnewsletter
+    link: https://aws.amazon.com/about-aws/whats-new/2026/04/aws-lambda-amazon-s3/
     description: |
       Lambda functions can now mount Amazon S3 buckets as file systems and perform standard file operations without downloading data for processing.
     tags:
@@ -680,7 +680,7 @@ sections:
   - id: tech-9
     content-template-path: full-content/2026-04-22/tech-9
     title: Android 17 ends all-or-nothing access to your contacts (3 minute read)
-    link: https://www.malwarebytes.com/blog/mobile/2026/04/android-17-ends-all-or-nothing-access-to-your-contacts?utm_source=tldrnewsletter
+    link: https://www.malwarebytes.com/blog/mobile/2026/04/android-17-ends-all-or-nothing-access-to-your-contacts
     image: https://www.malwarebytes.com/wp-content/uploads/sites/2/2026/04/contacts-1.jpg
     tags:
     - android
@@ -712,7 +712,7 @@ sections:
   - id: tech-10
     content-template-path: full-content/2026-04-22/tech-10
     title: "Mozilla: Anthropic's Mythos found 271 security vulnerabilities in Firefox 150 (3 minute read)"
-    link: https://arstechnica.com/ai/2026/04/mozilla-anthropics-mythos-found-271-zero-day-vulnerabilities-in-firefox-150/?utm_source=tldrnewsletter
+    link: https://arstechnica.com/ai/2026/04/mozilla-anthropics-mythos-found-271-zero-day-vulnerabilities-in-firefox-150/
     image: https://cdn.arstechnica.net/wp-content/uploads/2026/04/GettyImages-2235759925-1152x648.jpg
     description: |
       The vulnerabilities detected by Mythos could have been discovered by automated fuzzing techniques or with an 'elite' security researcher, but using the AI model sped up the process by months.
@@ -744,7 +744,7 @@ sections:
   articles:
   - id: devops-1
     title: Advancing secret sync with workload identity federation (7 minute read)
-    link: https://www.hashicorp.com/en/blog/advancing-secret-sync-with-workload-identity-federation?utm_source=tldrdevops
+    link: https://www.hashicorp.com/en/blog/advancing-secret-sync-with-workload-identity-federation
     image: https://www.datocms-assets.com/2885/1776123199-ai_uc_hero.svg?w=1200&h=630&fit=crop&auto=format
     tags:
     - security
@@ -777,7 +777,7 @@ sections:
       * **Non-human identities (NHIs)**: Machine identities used by automation systems, services, and AI agents rather than human users
   - id: devops-2
     title: "Grafana 13 release: get value from your data faster, manage operations at scale, and more! (9 minute read)"
-    link: https://grafana.com/blog/grafana-13-release-all-the-latest-features/?utm_source=tldrdevops
+    link: https://grafana.com/blog/grafana-13-release-all-the-latest-features/
     tags:
     - devops
     - infrastructure
@@ -797,7 +797,7 @@ sections:
   - id: devops-3
     content-template-path: full-content/2026-04-22/devops-3
     title: "GitLab Extends Agentic AI with New Automated Security Remediation, Pipeline Setup, and Delivery Analytics (3 minute read)"
-    link: https://www.devopsdigest.com/gitlab-extends-agentic-ai-with-new-automated-security-remediation-pipeline-setup-and-delivery?utm_source=tldrdevops
+    link: https://www.devopsdigest.com/gitlab-extends-agentic-ai-with-new-automated-security-remediation-pipeline-setup-and-delivery
     tags:
     - ai
     - security
@@ -828,7 +828,7 @@ sections:
   - id: devops-4
     content-template-path: full-content/2026-04-22/devops-4
     title: Auto-diagnosing Kubernetes alerts with HolmesGPT and CNCF tools (5 minute read)
-    link: https://www.cncf.io/blog/2026/04/21/auto-diagnosing-kubernetes-alerts-with-holmesgpt-and-cncf-tools/?utm_source=tldrdevops
+    link: https://www.cncf.io/blog/2026/04/21/auto-diagnosing-kubernetes-alerts-with-holmesgpt-and-cncf-tools/
     image: https://www.cncf.io/wp-content/uploads/2026/04/Avery_ScholarshipRecipient-5.jpg
     tags:
     - devops
@@ -868,7 +868,7 @@ sections:
   - id: devops-5
     content-template-path: full-content/2026-04-22/devops-5
     title: Orchestrating AI Code Review at scale (20 minute read)
-    link: https://blog.cloudflare.com/ai-code-review/?utm_source=tldrdevops
+    link: https://blog.cloudflare.com/ai-code-review/
     image: https://cf-assets.www.cloudflare.com/zkvhlag99gkb/3g2Vqql5biqvjvXwxhDb3b/b0c7fd707437eff2a7acb9d3172368e4/BLOG-3284_OG.png
     tags:
     - ai
@@ -907,7 +907,7 @@ sections:
       * **Risk tier**: Classification system (trivial/lite/full) that determines which AI agents run based on diff size and file sensitivity, controlling cost by routing small changes to fewer cheaper models
   - id: devops-6
     title: Good architecture shouldn't need a carrot or a stick (5 minute read)
-    link: https://frederickvanbrabant.com/blog/2026-04-17-good-architecture-shouldnt-need-a-carrot-or-a-stick/?utm_source=tldrdevops
+    link: https://frederickvanbrabant.com/blog/2026-04-17-good-architecture-shouldnt-need-a-carrot-or-a-stick/
     image: https://frederickvanbrabant.com/images/posts/2026-04-17%20Good%20architecture%20shouldn%27t%20need%20a%20carrot%20or%20a%20stick/header.png
     tags:
     - architecture
@@ -941,7 +941,7 @@ sections:
   - id: devops-7
     content-template-path: full-content/2026-04-22/devops-7
     title: "Shared Dictionaries: compression that keeps up with the agentic web (10 minute read)"
-    link: https://blog.cloudflare.com/shared-dictionaries/?utm_source=tldrdevops
+    link: https://blog.cloudflare.com/shared-dictionaries/
     image: https://cf-assets.www.cloudflare.com/zkvhlag99gkb/2kxbrUm9B0NqHjj6BvZAyF/fef3817a0f046ef7883ec2bf213cb304/BLOG-3279_OG.png
     description: |
       Cloudflare introduced shared compression dictionaries to reduce redundant data transfers as pages grow heavier and are rebuilt more frequently by AI-driven activity. By sending only file differences between versions, early tests show major bandwidth and speed improvements, with a beta rollout planned for April 30.
@@ -979,7 +979,7 @@ sections:
       * **Available-Dictionary header**: Browser request header indicating which dictionary version it has cached and available for decompression
   - id: devops-8
     title: Simplifying Prometheus metrics collection across your AWS infrastructure (7 minute read)
-    link: https://aws.amazon.com/blogs/mt/simplifying-prometheus-metrics-collection-across-your-aws-infrastructure/?utm_source=tldrdevops
+    link: https://aws.amazon.com/blogs/mt/simplifying-prometheus-metrics-collection-across-your-aws-infrastructure/
     image: https://d2908q01vomqb2.cloudfront.net/972a67c48192728a34979d9a35164c1295401b71/2026/04/27/Feature-Image.png
     description: |
       AWS managed collectors for Amazon Managed Service for Prometheus replace multiple self-managed Prometheus servers by centrally scraping metrics from EC2, ECS, and MSK via VPC, reducing operational overhead while enabling unified monitoring, scaling, and security. Configuration uses exporters, DNS-based service discovery, and IAM-secured scrapers to collect and query metrics across environments, supporting resilient observability, cross-service alerting, and cost-optimized monitoring with best practice controls.
@@ -1019,7 +1019,7 @@ sections:
       * **Relabeling**: Prometheus feature for adding, modifying, or dropping metric labels during or after collection to normalize data across sources
   - id: devops-9
     title: Bringing more transparency to GitHub's status page (4 minute read)
-    link: https://github.blog/news-insights/company-news/bringing-more-transparency-to-githubs-status-page/?utm_source=tldrdevops
+    link: https://github.blog/news-insights/company-news/bringing-more-transparency-to-githubs-status-page/
     tags:
     - infrastructure
     - devops
@@ -1032,7 +1032,7 @@ sections:
       takeaway: Check GitHub's status page for the new per-service uptime metrics to understand which specific services have historically been most reliable for your workflow dependencies.
   - id: devops-10
     title: The zero-days are numbered (4 minute read)
-    link: https://blog.mozilla.org/en/privacy-security/ai-security-zero-day-vulnerabilities/?utm_source=tldrdevops
+    link: https://blog.mozilla.org/en/privacy-security/ai-security-zero-day-vulnerabilities/
     image: https://blog.mozilla.org/wp-content/blogs.dir/278/files/2026/04/Cursor_Orange_1920x1080-1080x720.jpeg
     tags:
     - security
@@ -1068,7 +1068,7 @@ sections:
   articles:
   - id: design-1
     title: Apple has already teased Siri's new design coming in iOS 27 (2 minute read)
-    link: https://9to5mac.com/2026/04/19/apple-has-already-teased-siris-new-design-coming-in-ios-27/?utm_source=tldrdesign
+    link: https://9to5mac.com/2026/04/19/apple-has-already-teased-siris-new-design-coming-in-ios-27/
     tags:
     - ai
     - ios
@@ -1087,7 +1087,7 @@ sections:
   - id: design-2
     content-template-path: full-content/2026-04-22/design-2
     title: Cursor in Talks to Raise $2B at $50B Valuation After Hitting $2B ARR in Three Years (5 minute read)
-    link: https://thenextweb.com/news/cursor-anysphere-2-billion-funding-50-billion-valuation-ai-coding?utm_source=tldrdesign
+    link: https://thenextweb.com/news/cursor-anysphere-2-billion-funding-50-billion-valuation-ai-coding
     image: https://cdn0.tnwcdn.com/wp-content/blogs.dir/1/files/2026/04/cursor-anysphere-2-billion-funding-50-billion-valuation-ai-coding.png
     tags:
     - ai
@@ -1124,7 +1124,7 @@ sections:
       * **Composer model**: Cursor's proprietary AI model launched in November 2025 that handles multi-file changes, automated testing loops, and self-correcting code generation
   - id: design-3
     title: Gemini Live Gets a Minimalist App Redesign that Lets You Do More (2 minute read)
-    link: https://www.digitaltrends.com/computing/gemini-live-gets-a-minimalist-app-redesign-that-lets-you-do-more/?utm_source=tldrdesign
+    link: https://www.digitaltrends.com/computing/gemini-live-gets-a-minimalist-app-redesign-that-lets-you-do-more/
     image: https://www.digitaltrends.com/tachyon/2025/11/google-gemini.jpg?resize=1200%2C630
     tags:
     - ai
@@ -1138,7 +1138,7 @@ sections:
   - id: design-4
     content-template-path: full-content/2026-04-22/design-4
     title: "MIT Report: Why Privacy-led UX is Now a Marketing Imperative in the AI Age (13 minute read)"
-    link: https://ppc.land/mit-report-why-privacy-led-ux-is-now-a-marketing-imperative-in-the-ai-age/?utm_source=tldrdesign
+    link: https://ppc.land/mit-report-why-privacy-led-ux-is-now-a-marketing-imperative-in-the-ai-age/
     image: https://ppc.land/content/images/size/w1200/2026/04/Privacy.jpg
     description: |
       Privacy-led user experience has become essential for AI growth rather than a constraint, as 77% of consumers don't understand how their data is collected and used. The TRUST framework (Translate, Reduce, Unify, Secure, and Track) can be used for designing better consent experiences. Transparency ranks as the top driver of customer trust at 44%. With 82% of customers abandoning brands due to privacy concerns, organizations must prioritize clear consent design to support their AI ambitions and marketing strategies.
@@ -1179,7 +1179,7 @@ sections:
       * **CMP**: Consent Management Platform, software that manages user consent preferences across websites and applications
   - id: design-5
     title: "The End of Prompting: Why the Future of AI Experience Design is Constraint-First (8 minute read)"
-    link: https://uxmag.com/articles/the-end-of-prompting-why-the-future-of-ai-experience-design-is-constraint-first?utm_source=tldrdesign
+    link: https://uxmag.com/articles/the-end-of-prompting-why-the-future-of-ai-experience-design-is-constraint-first
     image: https://uxmag.com/wp-content/uploads/2026/04/The-End-of-Prompting_-Why-the-Future-of-AI-Experience-Design-Is-Constraint-First-UX-Mag-site-1024x711.png
     tags:
     - ai
@@ -1194,7 +1194,7 @@ sections:
       takeaway: "When designing AI systems for production use, consider embedding verification and scope constraints at the architecture level rather than relying solely on prompt engineering."
   - id: design-6
     title: Build Stunning Vue and Nuxt Interfaces (Website)
-    link: https://inspira-ui.com/?utm_source=tldrdesign
+    link: https://inspira-ui.com/
     image: https://cdn.inspira-ui.com/og-image-v2.png
     description: |
       Production-ready UI components built for Vue and Nuxt that help developers ship faster while maintaining clean design and great user experience.
@@ -1216,7 +1216,7 @@ sections:
   - id: design-7
     content-template-path: full-content/2026-04-22/design-7
     title: Hue Generates a Design System from Any Brand URL (2 minute read)
-    link: https://abduzeedo.com/node/89286?utm_source=tldrdesign
+    link: https://abduzeedo.com/node/89286
     tags:
     - ai
     - design
@@ -1235,7 +1235,7 @@ sections:
       * **Design system**: A collection of reusable components and styling rules that enforce visual and functional consistency across a product
   - id: design-8
     title: "Test smart: how to approach AI and stay sane? (5 minute read)"
-    link: https://uxdesign.cc/test-smart-how-to-approach-ai-and-stay-sane-30bb54478d14?utm_source=tldrdesign
+    link: https://uxdesign.cc/test-smart-how-to-approach-ai-and-stay-sane-30bb54478d14
     image: https://miro.medium.com/v2/resize:fit:1200/1*Ym_8b5UGM29jdNyzOyfsig.png
     description: |
       AI isn't simply “stealing jobs”—it's reshaping how work is done, creating both risks and opportunities depending on how thoughtfully it's used. While it can greatly speed up repetitive tasks and support learning, over-reliance without critical thinking can harm quality, whereas excessive skepticism can slow progress. The key is balance: use AI as a tool to assist with routine work, idea generation, and efficiency, while relying on human judgment, creativity, and careful review for complex decisions and quality control. Ultimately, those who combine AI with critical thinking and responsible use will benefit most, rather than be replaced by it.
@@ -1250,7 +1250,7 @@ sections:
       takeaway: "Delegate repetitive tasks like generating test cases and boilerplate automation code to AI, but always critically review outputs and reserve exploratory testing, UX evaluation, and complex decisions for human expertise."
   - id: design-9
     title: Becoming an AI-native designer (9 minute read)
-    link: https://uxdesign.cc/becoming-an-ai-native-designer-828365b71109?utm_source=tldrdesign
+    link: https://uxdesign.cc/becoming-an-ai-native-designer-828365b71109
     tags:
     - ai
     - design
@@ -1265,7 +1265,7 @@ sections:
   articles:
   - id: crypto-1
     title: Vitalik to Spin Out Ecodev From Ethereum Foundation (2 minute read)
-    link: https://threadreaderapp.com/thread/2046351559164911762.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2046351559164911762.html
     image: https://threadreaderapp.com/images/screenshots/thread/2046351559164911762.jpg
     description: |
       Vitalik Buterin has decided to spin out the Ethereum Foundation's ecosystem development arm as a separate entity. The decision was made several weeks ago and reportedly signaled in a public tweet before being communicated internally at EF roughly one week ago. The structural details of the spinout remain unsettled, though there are rumors of a merger with the Enterprise Ethereum Alliance and staffing changes, leaving open questions about funding, governance, and the division of responsibilities between the new entity and the Foundation.
@@ -1294,7 +1294,7 @@ sections:
       * **Eco Unblocking (Ecosystem Unblocking)**: A separate EF department focused on removing obstacles to ecosystem growth
   - id: crypto-2
     title: Fed Chair Pick Signals Crypto-Friendly Stance (2 minute read)
-    link: https://www.theblock.co/post/398364/fed-pick-warsh-backs-cryptos-place-in-finance-as-warren-raises-sock-puppet-concerns-in-hearing?utm_source=tldrcrypto
+    link: https://www.theblock.co/post/398364/fed-pick-warsh-backs-cryptos-place-in-finance-as-warren-raises-sock-puppet-concerns-in-hearing
     tags:
     - crypto
     - policy
@@ -1308,7 +1308,7 @@ sections:
       * **CBDC**: Central Bank Digital Currency, a government-issued digital version of fiat currency (like a digital dollar controlled by the Federal Reserve)
   - id: crypto-3
     title: Coinbase Expands USDC Loans to UK Users (4 minute read)
-    link: https://cointelegraph.com/news/coinbase-crypto-backed-usdc-loans-uk-morpho-fca-rules?utm_source=tldrcrypto
+    link: https://cointelegraph.com/news/coinbase-crypto-backed-usdc-loans-uk-morpho-fca-rules
     image: https://payload.cointelegraph.com/api/article-covers/file/article-covers-262877-coinbase-crypto-backed-usdc-loans-uk-morpho-fca-rules.jpg?prefix=media%2Farticle-covers
     tags:
     - crypto
@@ -1330,7 +1330,7 @@ sections:
       * **FCA**: Financial Conduct Authority, the UK's financial services regulator
   - id: crypto-4
     title: Introducing Base Azul (3 minute read)
-    link: https://blog.base.dev/introducing-base-azul?utm_source=tldrcrypto
+    link: https://blog.base.dev/introducing-base-azul
     image: https://paragraph.com/api/og?title=Introducing+Base+Azul&blogName=Base+Engineering+Blog&coverPhotoUrl=https%3A%2F%2Fstorage.googleapis.com%2Fpapyrus_images%2Faa6123125cf8ff7dba6dd726b875dc201d626be8278b79ad4c0801beccfacd0d.jpg&blogImageUrl=https%3A%2F%2Fstorage.googleapis.com%2Fpapyrus_images%2F6a417c9a16819ad9d65b36381b293a19.jpg&publishedDate=1776790801565
     description: |
       Base Azul launches May 13, introducing multiproofs for faster withdrawals and Stage 2 decentralization. The upgrade consolidates the stack onto base-reth-node and base-consensus, aligns with Ethereum Osaka specs, and includes a $250,000 Immunefi audit competition to ensure network security and reliability for developers and node operators.
@@ -1371,7 +1371,7 @@ sections:
       * **Osaka**: Ethereum's upcoming execution layer specification that includes various performance and security EIPs
   - id: crypto-5
     title: The Missing Infrastructure for AI Agents (8 minute read)
-    link: https://x.com/a16zcrypto/status/2046243550715945367?utm_source=tldrcrypto
+    link: https://x.com/a16zcrypto/status/2046243550715945367
     description: |
       a16z Crypto maps five blockchain use cases for the AI agent economy, arguing that as agents become autonomous economic actors, gaps in identity, governance, payments, trust verification, and user control require infrastructure that traditional rails cannot provide. On the payments front, Stripe and Tempo's MPP marketplace cleared 34,000+ agent-to-agent transactions in its first week at fees as low as $0.003, while x402 processes roughly $1.6M monthly in agent-driven payments, with headless merchants proving difficult for conventional processors to underwrite. Scoped delegation frameworks from MetaMask, Coinbase AgentKit, and Merit Systems let users define agent permissions at the smart contract level, and NEAR Intents has handled over $15B in cumulative DEX volume since Q4 2024.
     tags:
@@ -1407,7 +1407,7 @@ sections:
       * **Scoped delegation**: Smart contract-level frameworks that define specific permissions and limits for what an agent can execute
   - id: crypto-6
     title: "Bitcoin and Quantum Computing: A Roadmap (8 minute read)"
-    link: https://nehanarula.org/2026/04/20/bitcoin-and-quantum-a-roadmap.html?utm_source=tldrcrypto
+    link: https://nehanarula.org/2026/04/20/bitcoin-and-quantum-a-roadmap.html
     tags:
     - bitcoin
     - crypto
@@ -1447,7 +1447,7 @@ sections:
       * **BIP 361**: A controversial proposal about how to handle legacy coins vulnerable to quantum attacks"
   - id: crypto-7
     title: The Problem with CLOBs (6 minute read)
-    link: https://x.com/meleemarkets/status/2046318159225897289?utm_source=tldrcrypto
+    link: https://x.com/meleemarkets/status/2046318159225897289
     tags:
     - crypto
     - defi
@@ -1477,7 +1477,7 @@ sections:
       * **Liquidity**: The availability of assets to trade without significantly moving the price; markets with good liquidity have tight spreads and deep order books
   - id: crypto-8
     title: DoorDash brings stablecoin payments to masses with Tempo (4 minute read)
-    link: https://www.coindesk.com/business/2026/04/21/doordash-is-bringing-stablecoin-payments-to-masses-with-stripe-backed-blockchain?utm_source=tldrcrypto
+    link: https://www.coindesk.com/business/2026/04/21/doordash-is-bringing-stablecoin-payments-to-masses-with-stripe-backed-blockchain
     image: https://cdn.sanity.io/images/s3y3vcno/production/7ddf6c1cb2e3fdeebbdb2bbbd0bd2ec0e6f3bd86-5320x3377.jpg?auto=format&w=960&h=540&crop=focalpoint&fit=clip&q=75&fm=jpg
     tags:
     - crypto
@@ -1496,7 +1496,7 @@ sections:
       * **Payment rails**: The underlying infrastructure and networks that move money between parties, traditionally banks and card networks, now potentially including blockchain-based systems
   - id: crypto-9
     title: Ripple Targets Quantum-Ready XRPL by 2028 (1 minute read)
-    link: https://www.theblock.co/post/398105/ripple-races-to-make-xrp-ledger-quantum-ready-as-computing-threat-turns-credible?utm_source=tldrcrypto
+    link: https://www.theblock.co/post/398105/ripple-races-to-make-xrp-ledger-quantum-ready-as-computing-threat-turns-credible
     tags:
     - crypto
     - security
@@ -1510,7 +1510,7 @@ sections:
       * **Quantum-ready**: Resistant to attacks from quantum computers, which could theoretically break traditional cryptographic algorithms used in current blockchains
   - id: crypto-10
     title: Tether Takes Large Post-IPO Stake in Antalpha (1 minute read)
-    link: https://www.theblock.co/post/398101/tether-discloses-2-million-share-stake-bitmain-linked-antalpha-ipo?utm_source=tldrcrypto
+    link: https://www.theblock.co/post/398101/tether-discloses-2-million-share-stake-bitmain-linked-antalpha-ipo
     tags:
     - crypto
     - infrastructure
@@ -1522,7 +1522,7 @@ sections:
       why: "This shows the stablecoin issuer diversifying beyond its core business into mining finance infrastructure, a sign of institutional capital flowing into the picks-and-shovels layer of crypto rather than just tokens."
   - id: crypto-11
     title: "MicroStrategy Surpasses 800,000 Bitcoin Holdings (2 minute read)"
-    link: https://cointelegraph.com/news/strategy-buys-34-164-bitcoin-total-holdings-hit-815-061-btc?utm_source=tldrcrypto
+    link: https://cointelegraph.com/news/strategy-buys-34-164-bitcoin-total-holdings-hit-815-061-btc
     image: https://payload.cointelegraph.com/api/article-covers/file/article-covers-262887-strategy-buys-34-164-bitcoin-total-holdings-hit-815-061-btc.jpg?prefix=media%2Farticle-covers
     tags:
     - crypto
@@ -1538,7 +1538,7 @@ sections:
       * **ATM (At-the-Market) program**: A mechanism to sell shares gradually through exchanges rather than in a single offering
   - id: crypto-12
     title: Revolut Emerges as a Major Crypto On-Ramp (1 minute read)
-    link: https://threadreaderapp.com/thread/2046615041068142973.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2046615041068142973.html
     image: https://threadreaderapp.com/images/screenshots/thread/2046615041068142973.jpg
     description: |
       Revolut's onchain crypto transfer volume has climbed from near zero in late 2022 to a sustained $1B-$1.8B per month by 2026.

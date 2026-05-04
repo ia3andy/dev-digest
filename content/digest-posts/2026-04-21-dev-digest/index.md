@@ -12,7 +12,7 @@ sections:
   - id: ai-1
     content-template-path: full-content/2026-04-21/ai-1
     title: Chronicle – Codex (6 minute read)
-    link: https://developers.openai.com/codex/memories/chronicle?utm_source=tldrai
+    link: https://developers.openai.com/codex/memories/chronicle
     image: https://developers.openai.com/og/codex/memories/chronicle.png
     tags:
     - ai
@@ -49,7 +49,7 @@ sections:
   - id: ai-2
     content-template-path: full-content/2026-04-21/ai-2
     title: Moonshot AI launches Kimi K2.6 on Kimi Chat and APIs (2 minute read)
-    link: https://www.testingcatalog.com/moonshot-ai-launches-kimi-k2-6-on-kimi-chat-and-apis/?utm_source=tldrai
+    link: https://www.testingcatalog.com/moonshot-ai-launches-kimi-k2-6-on-kimi-chat-and-apis/
     image: https://storage.ghost.io/c/2a/1b/2a1b1782-8506-4d7d-bf53-ad3fb52e2a0f/content/images/size/w1200/2026/04/Kimi-AI-with-K2-5-Visual-Coding-Meets-Agent-Swarm-04-20-2026_05_22_PM.jpg
     description: |
       Kimi K2.6 features robust capabilities for coding and agentic tasks across chat and agent modes on kimi.com, with weights on Hugging Face and APIs via platform.moonshot.ai. The lineup includes K2.6 Instant for quick replies, K2.6 Thinking for complex reasoning, K2.6 Agent for document and web tasks, and K2.6 Agent Swarm for large-scale processing. Kimi K2.6 claims top open-source benchmark scores, surpassing competitors like GPT-5.4 and Claude Opus 4.6 in SWE-bench Multilingual and BrowseComp.
@@ -80,7 +80,7 @@ sections:
       * **WebGL shaders**: Graphics programming code (GLSL/WGSL) that runs on GPUs to create visual effects in web browsers
   - id: ai-3
     title: "Qwen3.6-Max-Preview: Smarter, Sharper, Still Evolving (2 minute read)"
-    link: https://qwen.ai/blog?id=qwen3.6-max-preview&amp;utm_source=tldrai
+    link: https://qwen.ai/blog?id=qwen3.6-max-preview
     image: https://img.alicdn.com/imgextra/i1/O1CN013ltlI61OTOnTStXfj_!!6000000001706-55-tps-330-327.svg
     tags:
     - ai
@@ -110,7 +110,7 @@ sections:
       * **Terminal-Bench**: Benchmark measuring a model's ability to interact with command-line interfaces and execute system commands
   - id: ai-4
     title: "Jeff Bezos Nears $10 Billion Funding for AI Lab, FT Says (2 minute read)"
-    link: https://www.bloomberg.com/news/articles/2026-04-21/jeff-bezos-nears-10-billion-funding-round-for-ai-lab-ft-says?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb3VyY2UiOiJTdWJzY3JpYmVyR2lmdGVkQXJ0aWNsZSIsImlhdCI6MTc3Njc0ODE3NiwiZXhwIjoxNzc3MzUyOTc2LCJhcnRpY2xlSWQiOiJURFRLU0dUOU5KTFMwMCIsImJjb25uZWN0SWQiOiJBOEExRDhFQTI5OTc0OTRGQTQ1QUE2REJBMjAwNTM3MSJ9.sX-DZMr66hgD5DygNPFOhid8SRbXVApVC_dCvXKMmGw&utm_source=tldrai
+    link: https://www.bloomberg.com/news/articles/2026-04-21/jeff-bezos-nears-10-billion-funding-round-for-ai-lab-ft-says
     image: https://assets.bwbx.io/images/users/iqjWHBFdfxIU/ikK7A22x3lbk/v0/1200x800.jpg
     description: |
       Jeff Bezos' AI startup, which is aiming to develop models with the capability of understanding the physical world, is close to finalizing a $10 billion funding round. The company, code-named Project Prometheus, will use AI to accelerate engineering and manufacturing in fields like aerospace and automobiles. It was set up with an initial $6.2 billion in funding, sourced in part by Bezos himself. The new funding round, which is expected to close soon but has not been finalized, will include JPMorgan and BlackRock as investors.
@@ -124,7 +124,7 @@ sections:
   - id: ai-5
     content-template-path: full-content/2026-04-21/ai-5
     title: Improving Training Efficiency with Effective Training Time (19 minute read)
-    link: https://pytorch.org/blog/optimizing-effective-training-time-for-metas-internal-recommendation-ranking-workloads/?utm_source=tldrai
+    link: https://pytorch.org/blog/optimizing-effective-training-time-for-metas-internal-recommendation-ranking-workloads/
     tags:
     - ai
     - infrastructure
@@ -163,7 +163,7 @@ sections:
   - id: ai-6
     content-template-path: full-content/2026-04-21/ai-6
     title: Modular Post-Training (14 minute read)
-    link: https://allenai.org/blog/bar?utm_source=tldrai
+    link: https://allenai.org/blog/bar
     image: https://www.datocms-assets.com/64837/1777318531-bar-with-padding.jpg
     description: |
       AllenAI describes a post-training approach that builds independent domain experts and combines them using a mixture-of-experts architecture. This allows models to gain new capabilities without retraining from scratch or degrading existing skills.
@@ -204,7 +204,7 @@ sections:
   - id: ai-7
     content-template-path: full-content/2026-04-21/ai-7
     title: Even 'uncensored' models can't say what they want (6 minute read)
-    link: https://morgin.ai/articles/even-uncensored-models-cant-say-what-they-want.html?utm_source=tldrai
+    link: https://morgin.ai/articles/even-uncensored-models-cant-say-what-they-want.html
     image: https://morgin.ai/assets/covers/euphemismbench-flinch-profile.jpeg
     description: |
       Even uncensored models quietly nudge language away from the words that sentences actually want. There is no refusal or warning - the probability just moves in some instances. This is a mechanism that can be used to shape what billions of users read without them noticing.
@@ -239,7 +239,7 @@ sections:
   - id: ai-8
     content-template-path: full-content/2026-04-21/ai-8
     title: Google adds subagents to Gemini CLI to handle parallel coding tasks (4 minute read)
-    link: https://tessl.io/blog/google-adds-subagents-to-gemini-cli-to-handle-parallel-coding-tasks/?utm_source=tldrai
+    link: https://tessl.io/blog/google-adds-subagents-to-gemini-cli-to-handle-parallel-coding-tasks/
     image: https://cdn.sanity.io/images/ojuglg5y/production/36fe1421691d23b40158a0bc9c78ca4c1932c6fb-1456x816.png?w=1200&fit=max&auto=format
     tags:
     - ai
@@ -269,7 +269,7 @@ sections:
   - id: ai-9
     content-template-path: full-content/2026-04-21/ai-9
     title: Qwen3.5-Omni Technical Report (32 minute read)
-    link: https://arxiv.org/abs/2604.15804?utm_source=tldrai
+    link: https://arxiv.org/abs/2604.15804
     description: |
       Qwen3.5-Omni scales to hundreds of billions of parameters with a hybrid MoE architecture, supporting long-context multimodal inputs across text, audio, and video.
     tags:
@@ -303,7 +303,7 @@ sections:
   - id: ai-10
     content-template-path: full-content/2026-04-21/ai-10
     title: DeepMind's TIPSv2 Vision-Language Encoder (6 minute read)
-    link: https://gdm-tipsv2.github.io/?utm_source=tldrai
+    link: https://gdm-tipsv2.github.io/
     tags:
     - ai
     - vision
@@ -339,7 +339,7 @@ sections:
   - id: ai-11
     content-template-path: full-content/2026-04-21/ai-11
     title: "FlashDrive: Flash Vision-Language-Action Inference For Autonomous Driving (8 minute read)"
-    link: https://z-lab.ai/projects/flashdrive/?utm_source=tldrai
+    link: https://z-lab.ai/projects/flashdrive/
     image: https://z-lab.ai/assets/web-app-manifest-512x512.png
     description: |
       FlashDrive is an algorithm-system co-design framework that reduces end-to-end latency to 159ms with negligible accuracy loss. VLA inference is a cascade of stages, each hiding a different form of redundancy. Temporal overlap in vision, low entropy in reasoning, velocity smoothness in flow matching, and numerical headroom in weights each yield to a targeted shortcut. The speedups compound to 4.5x with negligible accuracy loss because the redundancies are orthogonal.
@@ -380,7 +380,7 @@ sections:
   - id: ai-12
     content-template-path: full-content/2026-04-21/ai-12
     title: "OpenAI Stargate: where the US sites stand (9 minute read)"
-    link: https://epochai.substack.com/p/openai-stargate-where-the-us-sites?utm_source=tldrai
+    link: https://epochai.substack.com/p/openai-stargate-where-the-us-sites
     image: "https://substackcdn.com/image/fetch/$s_!Zfei!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F077334c1-837b-4424-8793-e5af7871c1f2_1536x864.png"
     tags:
     - ai
@@ -415,7 +415,7 @@ sections:
   - id: ai-13
     content-template-path: full-content/2026-04-21/ai-13
     title: "Microsoft To Shift GitHub Copilot Users To Token-Based Billing, Tighten Rate Limits (4 minute read)"
-    link: https://www.wheresyoured.at/news-microsoft-to-shift-github-copilot-users-to-token-based-billing-reduce-rate-limits-2/?utm_source=tldrai
+    link: https://www.wheresyoured.at/news-microsoft-to-shift-github-copilot-users-to-token-based-billing-reduce-rate-limits-2/
     image: https://storage.ghost.io/c/24/d8/24d8fcec-dfba-4f40-a467-823d2941ae46/content/images/2024/01/wyea--1.jpeg
     description: |
       Microsoft plans to temporarily suspend individual account signups to GitHub Copilot. The weekly cost of running the service has doubled since the start of the year. Microsoft intends to tighten rate limits on individual and business accounts. It will also remove access to certain models for those with the cheapest subscriptions.
@@ -447,7 +447,7 @@ sections:
       * **Token burn**: The computational resources consumed when processing input and output through language models, which translates directly to infrastructure costs for providers
   - id: ai-14
     title: Claude can now build live artifacts (1 minute read)
-    link: https://x.com/claudeai/status/2046328619249684989?utm_source=tldrai
+    link: https://x.com/claudeai/status/2046328619249684989
     description: |
       Live artifacts are dashboards and trackers connected to apps and files with current data.
     tags:
@@ -464,7 +464,7 @@ sections:
   - id: ai-15
     content-template-path: full-content/2026-04-21/ai-15
     title: Anthropic and Amazon expand collaboration for up to 5 gigawatts of new compute (4 minute read)
-    link: https://www.anthropic.com/news/anthropic-amazon-compute?utm_source=tldrai
+    link: https://www.anthropic.com/news/anthropic-amazon-compute
     image: https://www.anthropic.com/api/opengraph-illustration?name=Object%20Stairs&backgroundColor=cactus
     tags:
     - ai
@@ -500,7 +500,7 @@ sections:
   articles:
   - id: tech-1
     title: "The Rise of Apple's New CEO: A Hardware Expert Takes Over in the AI Era (7 minute read)"
-    link: https://www.wsj.com/tech/the-rise-of-apples-new-ceo-a-hardware-expert-takes-over-in-the-ai-era-bdc7046e?st=yPQWmw&reflink=desktopwebshare_permalink&mod=tldr&utm_source=tldrnewsletter
+    link: https://www.wsj.com/tech/the-rise-of-apples-new-ceo-a-hardware-expert-takes-over-in-the-ai-era-bdc7046e?st=yPQWmw&reflink=desktopwebshare_permalink&mod=tldr
     image: https://images.wsj.net/im-17654598/social
     description: |
       John Ternus will become Apple's new CEO after a 25 year career on September 1. Current CEO Tim Cook will become executive chairman. Ternus is a mechanical engineer by background and he most recently led hardware engineering for all of Apple's products. This article takes a look at who Ternus is and his history at Apple.
@@ -515,7 +515,7 @@ sections:
   - id: tech-2
     content-template-path: full-content/2026-04-21/tech-2
     title: Amazon to invest up to another $25 billion in Anthropic as part of AI infrastructure deal (4 minute read)
-    link: https://www.cnbc.com/2026/04/20/amazon-invest-up-to-25-billion-in-anthropic-part-of-ai-infrastructure.html?utm_source=tldrnewsletter
+    link: https://www.cnbc.com/2026/04/20/amazon-invest-up-to-25-billion-in-anthropic-part-of-ai-infrastructure.html
     image: https://image.cnbcfm.com/api/v1/image/108254538-1770326418274-108254538-1768938695162-CNBC_Stage_01_062.jpg?v=1771351348&w=1920&h=1080
     description: |
       Amazon has agreed to invest up to $25 billion in Anthropic as part of an expanded agreement to build out AI infrastructure. The investment includes $5 billion into Anthropic now, with up to $20 billion tied to certain commercial milestones. Anthropic has committed to spending more than $100 billion on Amazon Web Services technologies over the next 10 years. It has secured up to 5 gigawatts of capacity for training and deploying its models.
@@ -546,7 +546,7 @@ sections:
       * **Annualized revenue**: Current revenue rate projected over a full year, indicating Anthropic's monthly revenue multiplied by 12
   - id: tech-3
     title: What Physical ‘Life Force' Turns Biology's Wheels? (14 minute read)
-    link: https://www.quantamagazine.org/what-physical-life-force-turns-biologys-wheels-20260420/?utm_source=tldrnewsletter
+    link: https://www.quantamagazine.org/what-physical-life-force-turns-biologys-wheels-20260420/
     image: https://www.quantamagazine.org/wp-content/uploads/2026/04/FlagellarMotors-crKristinaArmitage-Social.jpg
     tags:
     - biology
@@ -581,7 +581,7 @@ sections:
       * **Electron transport chains**: Molecular machines in cell membranes that pump protons out of the cell, maintaining the proton gradient
   - id: tech-4
     title: Quantum Computers Are Not a Threat to 128-bit Symmetric Keys (23 minute read)
-    link: https://words.filippo.io/128-bits/?utm_source=tldrnewsletter
+    link: https://words.filippo.io/128-bits/
     image: https://assets.buttondown.email/images/4de912cf-5147-4672-9800-4510d734d5ec.jpeg?w=960&fit=max
     tags:
     - crypto
@@ -622,7 +622,7 @@ sections:
       * **Birthday bound**: In cryptography, the phenomenon where collision probability grows with the square of attempts, requiring double the bit length (e.g., 256-bit hash for 128-bit collision security)
   - id: tech-5
     title: Jujutsu megamerges for fun and profit (13 minute read)
-    link: https://isaaccorbrey.com/notes/jujutsu-megamerges-for-fun-and-profit?utm_source=tldrnewsletter
+    link: https://isaaccorbrey.com/notes/jujutsu-megamerges-for-fun-and-profit
     image: https://isaaccorbrey.com/profile.png
     tags:
     - git
@@ -659,7 +659,7 @@ sections:
   - id: tech-6
     content-template-path: full-content/2026-04-21/tech-6
     title: The AI engineering stack we built internally — on the platform we ship (14 minute read)
-    link: https://blog.cloudflare.com/internal-ai-engineering-stack/?utm_source=tldrnewsletter
+    link: https://blog.cloudflare.com/internal-ai-engineering-stack/
     image: https://cf-assets.www.cloudflare.com/zkvhlag99gkb/78qRQVksnJ8pr4nxLwlrLy/babe894d6df02c55b50a503a1be7d18f/BLOG-3270_OG.png
     description: |
       93% of Cloudflare's R&amp;D organization used AI coding tools powered by infrastructure that they built on their own platform. The team built its own MCP servers, access layer, and AI tooling necessary for agents to be useful at Cloudflare. This has had a significant impact on the number of merge requests made. The four week rolling average has climbed from around 5,600 per week to over 8,700. This post looks at how Cloudflare achieved this.
@@ -703,7 +703,7 @@ sections:
   - id: tech-7
     content-template-path: full-content/2026-04-21/tech-7
     title: Random thoughts while gazing at the misty AI Frontier (10 minute read)
-    link: https://blog.eladgil.com/p/random-thoughts-while-gazing-at-the?utm_source=tldrnewsletter
+    link: https://blog.eladgil.com/p/random-thoughts-while-gazing-at-the
     image: "https://substackcdn.com/image/fetch/$s_!kbjr!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Faf5d54f6-3093-495e-b8bc-d70d22433b14_640x1424.png"
     description: |
       This post covers many topics in the AI space, including the percentage of GDP attributed to AI revenue in 2030, compute ceilings, and harnesses. It also covers anti-AI regulation and how violence against the technology will increase.
@@ -739,7 +739,7 @@ sections:
       * **Liftoff**: The hypothetical point where AI begins recursive self-improvement, potentially through coding agents building better AI systems
   - id: tech-8
     title: California Accuses Amazon of Price Fixing in Legal Filing (5 minute read)
-    link: https://www.nytimes.com/2026/04/20/technology/amazon-antitrust-suit-california.html?unlocked_article_code=1.clA.gSgN.W1jPWp8ljZcO&smid=url-share&utm_source=tldrnewsletter
+    link: https://www.nytimes.com/2026/04/20/technology/amazon-antitrust-suit-california.html?unlocked_article_code=1.clA.gSgN.W1jPWp8ljZcO&smid=url-share
     image: https://static01.nyt.com/images/2026/04/20/multimedia/20biz-amazon-tbkp/20biz-amazon-tbkp-facebookJumbo.jpg
     tags:
     - antitrust
@@ -753,7 +753,7 @@ sections:
       why: "The evidence demonstrates how platform dominance can enable indirect price manipulation across the entire online retail ecosystem, not just on Amazon's own site, raising questions about how major tech platforms wield market power."
   - id: tech-9
     title: ggsql (GitHub Repo)
-    link: https://github.com/posit-dev/ggsql?utm_source=tldrnewsletter
+    link: https://github.com/posit-dev/ggsql
     image: https://repository-images.githubusercontent.com/1109924834/9fab18be-19b8-41f0-8d93-86bfedda772c
     tags:
     - sql
@@ -786,7 +786,7 @@ sections:
   - id: tech-10
     content-template-path: full-content/2026-04-21/tech-10
     title: Google builds elite team to close the coding gap with Anthropic (2 minute read)
-    link: https://the-decoder.com/google-builds-elite-team-to-close-the-coding-gap-with-anthropic/?utm_source=tldrnewsletter
+    link: https://the-decoder.com/google-builds-elite-team-to-close-the-coding-gap-with-anthropic/
     image: https://the-decoder.com/wp-content/uploads/2026/04/google_gemini_shilouette.png
     tags:
     - ai
@@ -814,7 +814,7 @@ sections:
       * **Jetski**: Google's internal AI-powered coding assistant used by employees
   - id: tech-11
     title: Your Future Phone Will Have a Battery You Can Swap at Home — Thanks to the EU (2 minute read)
-    link: https://www.androidheadlines.com/2026/04/your-future-phone-will-have-a-battery-you-can-swap-at-home-thanks-to-the-eu.html?utm_source=tldrnewsletter
+    link: https://www.androidheadlines.com/2026/04/your-future-phone-will-have-a-battery-you-can-swap-at-home-thanks-to-the-eu.html
     tags:
     - regulation
     - hardware
@@ -827,7 +827,7 @@ sections:
       why: "This regulation could extend device lifespans, reduce electronic waste, and force a fundamental rethink of phone hardware design that has prioritized thinness and water resistance over repairability for over a decade."
   - id: tech-12
     title: Apple to Focus Hardware Team on Five Areas Under Johny Srouji (3 minute read)
-    link: https://www.bloomberg.com/news/articles/2026-04-21/apple-to-focus-hardware-team-on-five-areas-under-johny-srouji?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb3VyY2UiOiJTdWJzY3JpYmVyR2lmdGVkQXJ0aWNsZSIsImlhdCI6MTc3Njc0ODAyOCwiZXhwIjoxNzc3MzUyODI4LCJhcnRpY2xlSWQiOiJURFRFUkRLSkg2VjQwMCIsImJjb25uZWN0SWQiOiJBOEExRDhFQTI5OTc0OTRGQTQ1QUE2REJBMjAwNTM3MSJ9.ep5-Y80K0-QV5EKDr3JTZ8yDr3a36xX7NMm5GshsOME&utm_source=tldrnewsletter
+    link: https://www.bloomberg.com/news/articles/2026-04-21/apple-to-focus-hardware-team-on-five-areas-under-johny-srouji
     image: https://assets.bwbx.io/images/users/iqjWHBFdfxIU/idhEyF2tAp6E/v0/1200x800.jpg
     description: |
       Apple's newly combined hardware engineering and hardware technologies division will be organized into hardware engineering, silicon, advanced technologies, platform architecture, and project management divisions.
@@ -842,7 +842,7 @@ sections:
       why: "The reorganization signals Apple's strategic priorities in hardware development, with silicon design and advanced technologies getting dedicated focus alongside traditional hardware engineering and cross-platform coordination."
   - id: tech-13
     title: GitHub halts new Copilot signups amid soaring usage and rising costs (2 minute read)
-    link: https://www.neowin.net/news/github-halts-new-copilot-signups-amid-soaring-usage-and-rising-costs/?utm_source=tldrnewsletter
+    link: https://www.neowin.net/news/github-halts-new-copilot-signups-amid-soaring-usage-and-rising-costs/
     description: |
       GitHub has paused new signups for GitHub Copilot Pro, Pro+, and Student plans.
     tags:
@@ -856,7 +856,7 @@ sections:
       takeaway: "Developers interested in paid Copilot plans will need to wait for GitHub to reopen signups, likely after addressing infrastructure scaling or cost management issues."
   - id: tech-14
     title: Google's AI adoption (3 minute read)
-    link: https://x.com/Steve_Yegge/status/2046260541912707471?utm_source=tldrnewsletter
+    link: https://x.com/Steve_Yegge/status/2046260541912707471
     tags:
     - ai
     - llm
@@ -889,7 +889,7 @@ sections:
   articles:
   - id: design-1
     title: "Tim Cook stepping down as Apple CEO, John Ternus taking over (2 minute read)"
-    link: https://techcrunch.com/2026/04/20/tim-cook-stepping-down-as-apple-ceo-john-ternus-taking-over/?utm_source=tldrdesign
+    link: https://techcrunch.com/2026/04/20/tim-cook-stepping-down-as-apple-ceo-john-ternus-taking-over/
     image: https://techcrunch.com/wp-content/uploads/2026/01/tim-coook-apple-tv-GettyImages-2235568147-1.jpg?w=1024
     tags:
     - apple
@@ -918,7 +918,7 @@ sections:
       * **SVP**: Senior Vice President, a top executive position at Apple reporting directly to the CEO
   - id: design-2
     title: ‘WhatsApp Plus' subscription launching soon with new features (1 minute read)
-    link: https://9to5mac.com/2026/04/20/whatsapp-plus-subscription-launching-soon-with-new-features/?utm_source=tldrdesign
+    link: https://9to5mac.com/2026/04/20/whatsapp-plus-subscription-launching-soon-with-new-features/
     tags:
     - mobile
     - subscription
@@ -931,7 +931,7 @@ sections:
       why: "This represents a significant business model shift for WhatsApp, which has remained largely free since Meta acquired it, and reflects the broader industry trend of established platforms adding freemium subscription tiers to diversify beyond advertising revenue."
   - id: design-3
     title: How UX Designers Can Build A Personal AI Operating System (9 minute read)
-    link: https://uxplaybook.org/articles/how-to-build-ai-agents-ux-designer?utm_source=tldrdesign
+    link: https://uxplaybook.org/articles/how-to-build-ai-agents-ux-designer
     image: https://images.unsplash.com/photo-1721066115321-eb0eec055296?ixlib=rb-4.1.0&q=85&fm=jpg&crop=entropy&cs=srgb
     tags:
     - ai
@@ -948,7 +948,7 @@ sections:
       * **Judgment proxy**: An AI agent that makes decisions based on your codified thinking patterns rather than just generating documents or answering queries
   - id: design-4
     title: I do Design Innovation. I barely open Figma anymore. (5 minute read)
-    link: https://medium.com/design-bootcamp/i-do-design-innovation-i-barely-open-figma-anymore-0a46003fbe8b?utm_source=tldrdesign
+    link: https://medium.com/design-bootcamp/i-do-design-innovation-i-barely-open-figma-anymore-0a46003fbe8b
     image: https://miro.medium.com/v2/da:true/resize:fit:1200/0*aX_i-jlvS0diBzx7
     description: |
       In AI-native teams, design is shifting away from static tools like Figma toward shaping behavior—timing, logic, and interaction—which can't be fully captured in traditional mockups. Designers increasingly work across coding, research, and strategy, using prototypes and pull requests as “behavioral specs” that engineers and even AI systems can interact with directly. This creates a new model of design work: faster, more code-adjacent, and focused on systems and frameworks rather than screens, while traditional Figma-based workflows still coexist in more structured environments.
@@ -981,7 +981,7 @@ sections:
   - id: design-5
     content-template-path: full-content/2026-04-21/design-5
     title: The New Designer/Developer Collaboration (4 minute read)
-    link: https://www.lukew.com/ff/entry.asp?2148&amp;utm_source=tldrdesign
+    link: https://www.lukew.com/ff/entry.asp?2148
     image: http://static.lukew.com/ariasite_figma_pages.png
     tags:
     - ai
@@ -1016,7 +1016,7 @@ sections:
   - id: design-6
     content-template-path: full-content/2026-04-21/design-6
     title: Free Online Vector Design Tool (Website)
-    link: https://graphite.art/?utm_source=tldrdesign
+    link: https://graphite.art/
     image: https://static.graphite.art/logos/splash.png
     tags:
     - graphics
@@ -1051,7 +1051,7 @@ sections:
       * **Parametric editing**: Designing by defining relationships and constraints through adjustable parameters, so changes propagate automatically through the system
   - id: design-7
     title: The Future of UI Design is Agentic Design (7 minute read)
-    link: https://uxplanet.org/the-future-of-ui-design-is-agentic-design-803977cd041f?utm_source=tldrdesign
+    link: https://uxplanet.org/the-future-of-ui-design-is-agentic-design-803977cd041f
     image: https://miro.medium.com/v2/resize:fit:1200/1*jPQbTPp3Q-SrZyjSsyRzjw.png
     description: |
       Agentic design is reshaping UI workflows. Tools like Anima Agent are enabling designers to generate elaborate interfaces directly inside Figma using AI. The plugin defaults to Claude Sonnet 4.6 and supports three core scenarios: building new designs from scratch, creating variants of existing ones, and assembling screens from a pre-existing design system. Generated designs come with auto-layout built in, though they may require manual cleanup for visual defects and produce detached — rather than true — Figma component instances.
@@ -1083,7 +1083,7 @@ sections:
       * **Autonomous AI design**: A fully automated approach where AI tools create complete designs and ship coded prototypes without designer intervention in the process
   - id: design-8
     title: "Autopilot, agentic AI, and the dangers of imperfect metaphors (14 minute read)"
-    link: https://uxdesign.cc/autopilot-agentic-ai-and-the-dangers-of-imperfect-metaphors-d94e96575153?utm_source=tldrdesign
+    link: https://uxdesign.cc/autopilot-agentic-ai-and-the-dangers-of-imperfect-metaphors-d94e96575153
     image: https://miro.medium.com/v2/resize:fit:1200/0*i0Vq4U8GDgTp8XZU.jpg
     description: |
       Comparing AI—especially agentic AI—to autopilot is misleading: autopilot systems operate within strict, transparent rules, while AI is far less explainable and depends heavily on context, prompting, and interpretation. Describing AI as “magic” or autonomous obscures its limitations, shapes public perception, and can lead to misplaced trust. AI is most effective when constrained to specific, well-defined tasks with human oversight, functioning more like controlled systems than independent intelligence—making clear understanding and honest framing essential.
@@ -1119,7 +1119,7 @@ sections:
   - id: design-9
     content-template-path: full-content/2026-04-21/design-9
     title: Org Design in the Age of AI (3 minute read)
-    link: https://robonomics.substack.com/p/org-design-in-the-age-of-ai?utm_source=tldrdesign
+    link: https://robonomics.substack.com/p/org-design-in-the-age-of-ai
     image: "https://substackcdn.com/image/fetch/$s_!fdpb!,f_auto,q_auto:best,fl_progressive:steep/https%3A%2F%2Frobonomics.substack.com%2Ftwitter%2Fsubscribe-card.jpg%3Fv%3D-1893433751%26version%3D9"
     description: |
       Companies are adding AI to workflows without rethinking why those workflows exist in the first place, missing the bigger opportunity to redesign organizational structures. Traditional hierarchies exist primarily to route information between people, but AI eliminates the costly translation layers between roles like product management, design, engineering, and QA. This transformation will shift organizations from sequential handoff models to small, autonomous squads while compressing middle management and enabling real-time decision making.
@@ -1152,7 +1152,7 @@ sections:
   articles:
   - id: crypto-1
     title: $13 Billion DeFi TVL Wipeout in Two Days Following Kelp DAO Hack (3 minute read)
-    link: https://www.coindesk.com/markets/2026/04/20/defi-tvl-drops-more-than-usd13-billion-in-two-days-following-kelp-dao-hack?utm_source=tldrcrypto
+    link: https://www.coindesk.com/markets/2026/04/20/defi-tvl-drops-more-than-usd13-billion-in-two-days-following-kelp-dao-hack
     image: https://cdn.sanity.io/images/s3y3vcno/production/53146c7f279ff15edcf3711943534682f7607697-1920x1080.jpg?auto=format&w=960&h=540&crop=focalpoint&fit=clip&q=75&fm=jpg
     description: |
       A $292 million exploit of KelpDAO's rsETH via the LayerZero bridge triggered a 48-hour DeFi-wide panic that erased $13.21 billion in TVL, pulling the sector from $26.4 billion to roughly $20 billion by April 20. Aave absorbed the sharpest blow, losing $8.45 billion in deposits as withdrawals cascaded into protocols unconnected to the original attack, driving the AAVE token down 18%. Liquidity constraints pushed multiple lending pools to 100% utilization and borrow rates to 10-15%, compressing margins for leveraged strategies across the sector.
@@ -1180,7 +1180,7 @@ sections:
       * **Utilization rate**: percentage of available funds in a lending pool that are currently borrowed; 100% means no liquidity remains for withdrawals
   - id: crypto-2
     title: Bitmine Nears 5% of ETH Supply Target (1 minute read)
-    link: https://www.theblock.co/post/398096/tom-lee-says-crypto-winter-is-much-closer-to-ending-as-bitmine-buys-another-101627-eth?utm_source=tldrcrypto
+    link: https://www.theblock.co/post/398096/tom-lee-says-crypto-winter-is-much-closer-to-ending-as-bitmine-buys-another-101627-eth
     tags:
     - crypto
     description: |
@@ -1191,7 +1191,7 @@ sections:
       why: "This mirrors the corporate Bitcoin treasury strategy but for Ethereum, signaling that institutions are treating ETH as a strategic reserve asset driven by staking yields and tokenization use cases, not just speculative investment."
   - id: crypto-3
     title: Recent Aave rsETH Exploit can be eliminated by a new n-VM architecture (3 minute read)
-    link: https://ethresear.ch/t/bridge-attacks-like-the-recent-aave-rseth-exploit-can-be-eliminated-by-a-new-n-vm-architecture/24690?utm_source=tldrcrypto
+    link: https://ethresear.ch/t/bridge-attacks-like-the-recent-aave-rseth-exploit-can-be-eliminated-by-a-new-n-vm-architecture/24690
     image: https://ethresear.ch/uploads/default/original/2X/6/6097a53a28665397488e4a3ae79aa3c6384d6cc3.png
     tags:
     - crypto
@@ -1228,7 +1228,7 @@ sections:
       * **OCP**: Open Computation Primitive, a protocol for making execution independently referenceable
   - id: crypto-4
     title: Permissionless Perpetuals Market Creation (4 minute read)
-    link: https://threadreaderapp.com/thread/2044840184169075165.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2044840184169075165.html
     image: https://threadreaderapp.com/images/screenshots/thread/2044840184169075165.jpg
     tags:
     - crypto
@@ -1247,7 +1247,7 @@ sections:
       * **Permissionless**: Anyone can participate without needing approval from a central authority
   - id: crypto-5
     title: How Freeport Users Made 11.7% on $27M in 45 Days (6 minute read)
-    link: https://x.com/freeportmrkts/status/2045623405739667955?utm_source=tldrcrypto
+    link: https://x.com/freeportmrkts/status/2045623405739667955
     tags:
     - ai
     - fintech
@@ -1282,7 +1282,7 @@ sections:
   - id: crypto-6
     content-template-path: full-content/2026-04-21/crypto-6
     title: Coinbase Ventures Maps Four Frontier Themes for 2026 (4 minute read)
-    link: https://www.dlnews.com/articles/deals/coinbase-ventures-maps-four-frontier-themes-set-to-define-crypto-in-2026/?utm_source=tldrcrypto
+    link: https://www.dlnews.com/articles/deals/coinbase-ventures-maps-four-frontier-themes-set-to-define-crypto-in-2026/
     image: https://dl-production-assets.s3.eu-central-1.amazonaws.com/images/1776423587521-asset.webp
     tags:
     - crypto
@@ -1317,7 +1317,7 @@ sections:
   - id: crypto-7
     content-template-path: full-content/2026-04-21/crypto-7
     title: Block's MoneyBot and ManagerBot Target Agentic Finance (2 minute read)
-    link: https://threadreaderapp.com/thread/2045809791541416218.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2045809791541416218.html
     image: https://threadreaderapp.com/images/screenshots/thread/2045809791541416218.jpg
     description: |
       Block's open-source agent framework Goose underpins MoneyBot and ManagerBot, the company's agentic AI products targeting consumer and SMB financial workflows.
@@ -1336,7 +1336,7 @@ sections:
       * **Claude Code**: Anthropic's AI coding assistant that can autonomously execute complex development tasks
   - id: crypto-8
     title: "The Web2.5 Kill Chain (Part 1): The Oracle's Whisper (6 minute read)"
-    link: https://infosecwriteups.com/%EF%B8%8F-the-web2-5-kill-chain-part-1-the-oracles-whisper-d2e603c43676?utm_source=tldrcrypto
+    link: https://infosecwriteups.com/%EF%B8%8F-the-web2-5-kill-chain-part-1-the-oracles-whisper-d2e603c43676
     image: https://miro.medium.com/v2/resize:fit:1200/1*0C9J7Lp_pClmE9nyB4tFjQ.jpeg
     tags:
     - security
@@ -1370,7 +1370,7 @@ sections:
       * **Foundry/forge**: Ethereum development framework for testing and simulating smart contract interactions in a local environment
   - id: crypto-9
     title: Visa and Mastercard Sell Access to the Payment Rails (1 minute read)
-    link: https://threadreaderapp.com/thread/2045864998820323582.html?utm_source=tldrcrypto
+    link: https://threadreaderapp.com/thread/2045864998820323582.html
     image: https://threadreaderapp.com/images/screenshots/thread/2045864998820323582.jpg
     tags:
     - fintech
@@ -1390,7 +1390,7 @@ sections:
       * **Assessment fees**: The fees Visa and Mastercard charge for using their payment networks to route transactions
   - id: crypto-10
     title: North Korea's Lazarus is likely behind the $292M Kelp DAO Hack (2 minute read)
-    link: https://www.theblock.co/post/398028/layerzero-kelp-dao-lazarus?utm_source=tldrcrypto
+    link: https://www.theblock.co/post/398028/layerzero-kelp-dao-lazarus
     description: |
       LayerZero identified North Korean hacker group Lazarus as the likely perpetrator of the $292 million Kelp DAO exploit.
     tags:

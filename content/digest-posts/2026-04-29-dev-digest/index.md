@@ -11,7 +11,7 @@ sections:
     articles:
       - id: tech-1
         title: "Musk Testifies He's Suing OpenAI to Stop Altman's ‘Looting' (8 minute read)"
-        link: https://www.bloomberg.com/news/articles/2026-04-28/musk-lawyer-says-altman-made-mockery-of-openai-public-mission?accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzb3VyY2UiOiJTdWJzY3JpYmVyR2lmdGVkQXJ0aWNsZSIsImlhdCI6MTc3NzQzNjcwMCwiZXhwIjoxNzc4MDQxNTAwLCJhcnRpY2xlSWQiOiJURTdSRTZLSzNOWTkwMCIsImJjb25uZWN0SWQiOiJCMzZENUE5QzIxMDQ0NjU4OTFBMTc1MTVDRDNBQkZFNiJ9.Vmp8keSnmoLgBiND9IghO3fieMbkedWND_2trW15z6w&utm_source=tldrnewsletter
+        link: https://www.bloomberg.com/news/articles/2026-04-28/musk-lawyer-says-altman-made-mockery-of-openai-public-mission
         image: https://assets.bwbx.io/images/users/iqjWHBFdfxIU/iwZ0E2wMlLzw/v1/1200x800.jpg
         tags: [ai, startup, legal]
         description: |
@@ -41,7 +41,7 @@ sections:
       - id: tech-2
         content-template-path: full-content/2026-04-29/tech-2
         title: "OpenAI brings its models to Amazon's cloud after ending exclusivity with Microsoft (3 minute read)"
-        link: https://www.cnbc.com/2026/04/28/openai-brings-models-to-aws-after-ending-exclusivity-with-microsoft.html?utm_source=tldrnewsletter
+        link: https://www.cnbc.com/2026/04/28/openai-brings-models-to-aws-after-ending-exclusivity-with-microsoft.html
         image: https://image.cnbcfm.com/api/v1/image/108298439-1777392364603-gettyimages-2270257492-myv05072_0pwv4wqk.jpeg?v=1777392668&w=1920&h=1080
         tags: [ai, infrastructure, cloud]
         description: |
@@ -53,7 +53,7 @@ sections:
           takeaway: "If you're building on AWS, you'll be able to access OpenAI's models natively through Bedrock instead of routing through Microsoft Azure or third-party APIs."
       - id: tech-3
         title: "Curious cases of financial engineering in biotech (32 minute read)"
-        link: https://www.owlposting.com/p/curious-cases-of-financial-engineering?utm_source=tldrnewsletter
+        link: https://www.owlposting.com/p/curious-cases-of-financial-engineering
         image: https://substackcdn.com/image/fetch/$s_!1yJN!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Feaa075cf-253c-4e2e-b2f5-605bfa9af0bd_2912x1632.png
         tags: [biotech, finance, drug-development]
         description: |
@@ -89,7 +89,7 @@ sections:
           * **Patent cliff**: Period when many drug patents expire simultaneously, exposing pharmaceutical companies to generic competition and massive revenue loss—2025-2030 cliff threatens $300B
       - id: tech-4
         title: "Antibiotics Are an Economic Failure (17 minute read)"
-        link: https://press.asimov.com/articles/antibiotics-failure?utm_source=tldrnewsletter
+        link: https://press.asimov.com/articles/antibiotics-failure
         image: https://cdn.prod.website-files.com/6518fc1601bb06d3facf5039/69f145c8822186af53c9e105_BB5838.jpeg
         tags: [healthcare, economics, policy]
         description: |
@@ -125,7 +125,7 @@ sections:
       - id: tech-5
         content-template-path: full-content/2026-04-29/tech-5
         title: "Long-running Agents (26 minute read)"
-        link: https://addyosmani.com/blog/long-running-agents/?utm_source=tldrnewsletter
+        link: https://addyosmani.com/blog/long-running-agents/
         image: https://addyosmani.com/assets/images/long-running.jpg
         tags: [ai, agents, infrastructure]
         description: |
@@ -162,7 +162,7 @@ sections:
           * **Worktree**: Git feature allowing multiple working directories for the same repository, useful for running long tasks without blocking the main workspace
       - id: tech-6
         title: "GitHub Actions is the weakest link (14 minute read)"
-        link: https://nesbitt.io/2026/04/28/github-actions-is-the-weakest-link.html?utm_source=tldrnewsletter
+        link: https://nesbitt.io/2026/04/28/github-actions-is-the-weakest-link.html
         image: https://nesbitt.io/images/boxes.png
         tags: [security, devops, supply-chain, infrastructure]
         description: |
@@ -201,7 +201,7 @@ sections:
       - id: tech-7
         content-template-path: full-content/2026-04-29/tech-7
         title: "How ChatGPT serves ads (5 minute read)"
-        link: https://www.buchodi.com/how-chatgpt-serves-ads-heres-the-full-attribution-loop/?utm_source=tldrnewsletter
+        link: https://www.buchodi.com/how-chatgpt-serves-ads-heres-the-full-attribution-loop/
         tags: [ai, advertising, privacy, security]
         description: |
           OpenAI's ad platform has two halves. The ChatGPT back end injects structured objects into the conversation while the model is responding. On the merchant side, a tracking SDK runs in the visitor's browser and reports product views back to OpenAI. These two parts are tied together by Fernet-encrypted click tokens. This post explains each part of the distribution loop in detail.
@@ -229,7 +229,7 @@ sections:
           * **First-party cookie**: Cookie set by the merchant's own domain (not a third-party tracker), which bypasses some browser privacy protections and lasts across sessions
       - id: tech-8
         title: "Software Is Eating the World (But Actually This Time) (32 minute read)"
-        link: https://x.com/siddharthvader_/status/2049161016156762441?utm_source=tldrnewsletter
+        link: https://x.com/siddharthvader_/status/2049161016156762441
         tags: [ai, agents, llm, infrastructure]
         description: |
           Software ate distribution, but most of the work was still done by humans. AI changes that - the work is now becoming software. Agents can read, reason, call tools, verify, revise, and perform long-running tasks. As models commoditize, the apps that capture messy operational data will be the ones to improve fastest and defend their position longest.
@@ -263,7 +263,7 @@ sections:
       - id: tech-9
         content-template-path: full-content/2026-04-29/tech-9
         title: "Warp (GitHub Repo)"
-        link: https://github.com/warpdotdev/warp?utm_source=tldrnewsletter
+        link: https://github.com/warpdotdev/warp
         image: https://repository-images.githubusercontent.com/384219990/b575e759-fc36-4fd6-b41f-ece62db004fe
         tags: [ai, agents, devops, terminal]
         description: |
@@ -279,7 +279,7 @@ sections:
           * **AGPL v3**: GNU Affero General Public License version 3, a copyleft license requiring source code distribution even for network-accessible software
       - id: tech-10
         title: "Before GitHub (15 minute read)"
-        link: https://lucumr.pocoo.org/2026/4/28/before-github/?utm_source=tldrnewsletter
+        link: https://lucumr.pocoo.org/2026/4/28/before-github/
         image: https://lucumr.pocoo.org/social/2026-04-28-before-github-social.png
         tags: [opensource, infrastructure, github]
         description: |
@@ -312,7 +312,7 @@ sections:
       - id: tech-11
         content-template-path: full-content/2026-04-29/tech-11
         title: "AI rewards strict APIs (4 minute read)"
-        link: https://dri.es/ai-rewards-strict-apis?utm_source=tldrnewsletter
+        link: https://dri.es/ai-rewards-strict-apis
         image: https://dri.es/files/cache/blog/drupal-ai-advantage-1280w.jpg
         tags: [ai, php, api, drupal]
         description: |
@@ -342,7 +342,7 @@ sections:
           * **Tight feedback loop**: The time between writing code and receiving precise error information, critical for both human and AI debugging efficiency
       - id: tech-12
         title: "Ghostty Is Leaving GitHub (4 minute read)"
-        link: https://mitchellh.com/writing/ghostty-leaving-github?utm_source=tldrnewsletter
+        link: https://mitchellh.com/writing/ghostty-leaving-github
         tags: [infrastructure, opensource, devops]
         description: |
           GitHub outages have gotten so common that they are negatively impacting developers' ability to work.
@@ -365,7 +365,7 @@ sections:
       - id: tech-13
         content-template-path: full-content/2026-04-29/tech-13
         title: "Are Prediction Markets Good for Anything? (32 minute read)"
-        link: https://asteriskmag.com/issues/14/are-prediction-markets-good-for-anything?utm_source=tldrnewsletter
+        link: https://asteriskmag.com/issues/14/are-prediction-markets-good-for-anything
         image: https://asteriskmag.com/media/pages/issues/14/are-prediction-markets-good-for-anything/d248692542-1777393260/dan-schwarz-prediction-markets-asterisk-1600x900-crop-sharpen50.png
         tags: [prediction-markets, ai, forecasting]
         description: |
@@ -400,7 +400,7 @@ sections:
       - id: tech-14
         content-template-path: full-content/2026-04-29/tech-14
         title: "A New Type of Neuroplasticity Rewires the Brain After a Single Experience (16 minute read)"
-        link: https://www.quantamagazine.org/a-new-type-of-neuroplasticity-rewires-the-brain-after-a-single-experience-20260424/?utm_source=tldrnewsletter
+        link: https://www.quantamagazine.org/a-new-type-of-neuroplasticity-rewires-the-brain-after-a-single-experience-20260424/
         image: https://www.quantamagazine.org/wp-content/uploads/2026/04/NewNeuroplasticity-crMarkBelan_YaseminSaplakoglu-Social.jpg
         tags: [neuroscience, ai, biology]
         description: |
@@ -440,7 +440,7 @@ sections:
       - id: devops-1
         content-template-path: full-content/2026-04-29/devops-1
         title: "How we built the most performant DeepSeek V3.2, MiniMax-M2.5 and Qwen 3.5 397B on DigitalOcean NVIDIA HGX™ B300 GPU Droplets (5 minute read)"
-        link: https://www.digitalocean.com/blog/how-we-built-fastest-deepseek-minimax-qwen-on-blackwell-ultra?utm_source=tldrdevops
+        link: https://www.digitalocean.com/blog/how-we-built-fastest-deepseek-minimax-qwen-on-blackwell-ultra
         image: https://doimages.nyc3.cdn.digitaloceanspaces.com/002Blog/2026%20banner%20433029.png
         tags: [ai, infrastructure, performance]
         description: |
@@ -474,7 +474,7 @@ sections:
           * **TP4/TP8**: Tensor parallelism configurations splitting work across 4 or 8 GPUs respectively
       - id: devops-2
         title: "Kubernetes v1.36: Mutable Pod Resources for Suspended Jobs (beta) (3 minute read)"
-        link: https://kubernetes.io/blog/2026/04/27/kubernetes-v1-36-mutable-pod-resources-for-suspended-jobs/?utm_source=tldrdevops
+        link: https://kubernetes.io/blog/2026/04/27/kubernetes-v1-36-mutable-pod-resources-for-suspended-jobs/
         tags: [kubernetes, devops, infrastructure]
         description: |
           Kubernetes v1.36 promoted to beta the ability to modify CPU, memory, GPU, and other resource requests in suspended Jobs' pod templates, eliminating the need to delete and recreate Jobs when resource requirements change. The feature, enabled by default, lets queue controllers and administrators adjust resources before Jobs start running. It is particularly useful for batch and machine learning workloads where optimal allocation depends on current cluster conditions.
@@ -502,7 +502,7 @@ sections:
           * **DRA (Dynamic Resource Allocation)**: A Kubernetes mechanism for managing specialized hardware resources beyond standard CPU and memory
       - id: devops-3
         title: "An update on GitHub availability (6 minute read)"
-        link: https://github.blog/news-insights/company-news/an-update-on-github-availability/?utm_source=tldrdevops
+        link: https://github.blog/news-insights/company-news/an-update-on-github-availability/
         image: https://github.blog/wp-content/uploads/2025/07/wallpaper-generic-blue.png
         tags: [infrastructure, ai]
         description: |
@@ -514,7 +514,7 @@ sections:
       - id: devops-4
         content-template-path: full-content/2026-04-29/devops-4
         title: "The Autonomy Problem: Why AI Agents Demand a New Security Playbook (4 minute read)"
-        link: https://www.devopsdigest.com/the-autonomy-problem-why-ai-agents-demand-a-new-security-playbook?utm_source=tldrdevops
+        link: https://www.devopsdigest.com/the-autonomy-problem-why-ai-agents-demand-a-new-security-playbook
         tags: [ai, security, agents]
         description: |
           AI agents automate development and business tasks but introduce new risks like prompt injection, privilege escalation, and cascading failures that expand attack surfaces, prompting NIST concern. Effective mitigation requires layered controls across model design, system permissions, and human oversight to ensure secure deployment.
@@ -544,7 +544,7 @@ sections:
       - id: devops-5
         content-template-path: full-content/2026-04-29/devops-5
         title: "How it feels to run an incident with AI SRE (8 minute read)"
-        link: https://incident.io/blog/how-it-feels-to-run-an-incident-with-ai-sre?utm_source=tldrdevops
+        link: https://incident.io/blog/how-it-feels-to-run-an-incident-with-ai-sre
         image: https://incident.io/socialcard/blog/how-it-feels-to-run-an-incident-with-ai-sre?1776975195000
         tags: [ai, devops, infrastructure]
         description: |
@@ -573,7 +573,7 @@ sections:
           * **Telemetry**: Automated monitoring data collection from systems for analysis and debugging
       - id: devops-6
         title: "How GitHub uses eBPF to improve deployment safety (7 minute read)"
-        link: https://github.blog/engineering/infrastructure/how-github-uses-ebpf-to-improve-deployment-safety/?utm_source=tldrdevops
+        link: https://github.blog/engineering/infrastructure/how-github-uses-ebpf-to-improve-deployment-safety/
         tags: [infrastructure, devops, security]
         description: |
           GitHub mitigates circular deployment dependencies, where outages could block their own recovery, by using eBPF to monitor and restrict deployment scripts' network access and detect hidden, direct, and transient dependencies. This enables per-process control, DNS interception, and real-time auditing of risky calls like GitHub API usage during incident recovery.
@@ -595,7 +595,7 @@ sections:
           * **Circular dependency**: A scenario where system A needs system B to recover, but system B depends on system A being healthy, creating an unresolvable deadlock during outages
       - id: devops-7
         title: "Kubernetes for platform teams: Leveraging k0s and k0rdent (6 minute read)"
-        link: https://www.cncf.io/blog/2026/04/27/kubernetes-for-platform-teams-leveraging-k0s-and-k0rdent/?utm_source=tldrdevops
+        link: https://www.cncf.io/blog/2026/04/27/kubernetes-for-platform-teams-leveraging-k0s-and-k0rdent/
         image: https://www.cncf.io/wp-content/uploads/2026/04/Kubernetes-for-platform-teams-Leveraging-k0s-and-k0rdent.png
         tags: [kubernetes, infrastructure, devops, platform]
         description: |
@@ -627,7 +627,7 @@ sections:
           * **ClusterDeployment**: A k0rdent custom resource that declaratively defines the desired state of a Kubernetes cluster, including worker count, machine flavors, and network configuration
       - id: devops-8
         title: "From air-gapped to private cloud: Security that adapts to your environment (3 minute read)"
-        link: https://www.sysdig.com/blog/from-air-gapped-to-private-cloud-security-that-adapts-to-your-environment?utm_source=tldrdevops
+        link: https://www.sysdig.com/blog/from-air-gapped-to-private-cloud-security-that-adapts-to-your-environment
         image: https://cdn.prod.website-files.com/681e366f54a6e3ce87159ca4/69e17fe539e0da0f343c5210_On-prem%20blog%20header%20(1).jpg
         tags: [security, kubernetes, infrastructure]
         description: |
@@ -644,7 +644,7 @@ sections:
           * **Data sovereignty**: Legal requirement that data be stored and processed within specific geographic or jurisdictional boundaries
       - id: devops-9
         title: "Ghostty Is Leaving GitHub (3 minute read)"
-        link: https://mitchellh.com/writing/ghostty-leaving-github#user-content-fn-3?utm_source=tldrdevops
+        link: https://mitchellh.com/writing/ghostty-leaving-github#user-content-fn-3
         tags: [opensource, infrastructure, devops]
         description: |
           Mitchell Hashimoto, cofounder of HashiCorp, has announced that he is moving the Ghostty project off GitHub after 18 years of deep personal and professional attachment, citing growing frustration and disappointment with the platform.
@@ -655,7 +655,7 @@ sections:
           takeaway: "Ghostty will maintain a read-only mirror on GitHub at its current URL during the transition, with the new hosting destination to be announced in coming months."
       - id: devops-10
         title: "Cloud Cost Optimization: Principles that still matter (5 minute read)"
-        link: https://azure.microsoft.com/en-us/blog/cloud-cost-optimization-principles-that-still-matter/?utm_source=tldrdevops
+        link: https://azure.microsoft.com/en-us/blog/cloud-cost-optimization-principles-that-still-matter/
         image: https://azure.microsoft.com/en-us/blog/wp-content/uploads/2026/04/Build-smarter-AI-investments-2.jpg
         tags: [cloud, ai, devops]
         description: |
@@ -687,7 +687,7 @@ sections:
       - id: design-1
         content-template-path: full-content/2026-04-29/design-1
         title: "Snapchat brings AI-powered conversational advertising to its app (1 minute read)"
-        link: https://techcrunch.com/2026/04/28/snapchat-brings-ai-powered-conversational-advertising-to-its-app/?utm_source=tldrdesign
+        link: https://techcrunch.com/2026/04/28/snapchat-brings-ai-powered-conversational-advertising-to-its-app/
         image: https://techcrunch.com/wp-content/uploads/2024/06/snapchat-getty.jpg?w=1200
         tags: [ai, social]
         description: |
@@ -698,7 +698,7 @@ sections:
           why: "This shift toward conversational commerce reflects how messaging and AI chat are becoming primary interfaces for product discovery and purchasing, potentially redefining how mobile advertising works."
       - id: design-2
         title: "Xbox Gets a New \"North Star\" and a Branding Shift, Exclusives Also Being Reconsidered (2 minute read)"
-        link: https://www.neowin.net/news/xbox-gets-a-new-north-star-and-a-branding-shift-exclusives-also-being-reconsidered/?utm_source=tldrdesign
+        link: https://www.neowin.net/news/xbox-gets-a-new-north-star-and-a-branding-shift-exclusives-also-being-reconsidered/
         tags: [gaming, platform, ai]
         description: |
           Under new leadership, Xbox is redefining its strategy around being "affordable, personal, and open," targeting daily active players as its north star and expanding across console, PC, mobile, and cloud. CEO Asha Sharma and Xbox Game Studios head Matt Booty have acknowledged failures in areas like pricing, PC presence, and core platform features, while flagging rising development costs and indie competition as growing challenges. Exclusivity, windowing, and AI are also under review. The Microsoft Gaming brand is being retired in favor of the Xbox name.
@@ -722,7 +722,7 @@ sections:
       - id: design-3
         content-template-path: full-content/2026-04-29/design-3
         title: "Lovable launches its vibe-coding app on iOS and Android (1 minute read)"
-        link: https://techcrunch.com/2026/04/28/lovable-launches-its-vibe-coding-app-on-ios-and-android/?utm_source=tldrdesign
+        link: https://techcrunch.com/2026/04/28/lovable-launches-its-vibe-coding-app-on-ios-and-android/
         image: https://techcrunch.com/wp-content/uploads/2018/02/tc-backlight-e1689786273147.png?w=1200
         tags: [ai, mobile, no-code]
         description: |
@@ -737,7 +737,7 @@ sections:
           * **App Store guidelines violation**: Apple prohibits apps from downloading and executing code that wasn't part of the original app review, as it creates security risks and circumvents their vetting process
       - id: design-4
         title: "Apple UX Principle: How Simplicity Drives Apple's 5–10% Conversion Rates (8 minute read)"
-        link: https://raw.studio/blog/apple-ux-principle/?utm_source=tldrdesign
+        link: https://raw.studio/blog/apple-ux-principle/
         image: https://raw.studio/wp-content/uploads/Freemium-UX-Strategies-1.jpg
         tags: [design, ux, product, conversion]
         description: |
@@ -770,7 +770,7 @@ sections:
       - id: design-5
         content-template-path: full-content/2026-04-29/design-5
         title: "Why AI Design Tools that Ignore Your Design System Create More Problems than They Solve (9 minute read)"
-        link: https://www.uxpin.com/studio/blog/ai-design-tools-ignore-design-system/?utm_source=tldrdesign
+        link: https://www.uxpin.com/studio/blog/ai-design-tools-ignore-design-system/
         image: https://studio.uxpincdn.com/studio/wp-content/uploads/2026/04/fe6a9275-3bd6-44f6-b848-c766320cd2c6.png.webp
         tags: [ai, design, enterprise]
         description: |
@@ -800,7 +800,7 @@ sections:
           * **Design tokens**: Named values for design attributes like colors, spacing, typography, and elevation that ensure consistency when referenced across components
       - id: design-6
         title: "Output isn't design (4 minute read)"
-        link: https://linear.app/now/output-isn-t-design?utm_source=tldrdesign
+        link: https://linear.app/now/output-isn-t-design
         image: https://webassets.linear.app/images/ornj730p/production/268952dc5fd763bf9cbf87b7b2aa9463dabb6e55-1200x675.png?q=95&auto=format&dpr=2
         tags: [design, ai, product]
         description: |
@@ -826,7 +826,7 @@ sections:
           * **Misfits**: Points where the form doesn't properly address the contextual forces, resulting in bad design
       - id: design-7
         title: "Doodles AI (Website)"
-        link: https://stoodio.doodles.app/ai?utm_source=tldrdesign
+        link: https://stoodio.doodles.app/ai
         image: https://stoodio.doodles.app/doodles-ai/og-doodlesai-cover.jpg
         tags: [ai, design]
         description: |
@@ -836,7 +836,7 @@ sections:
           what: "Prism 1.0 is an AI-powered image generator from Doodles that takes any input image and transforms it into \"studio-grade visuals\" using what they call the \"Doodles lens.\" The workflow involves uploading an image, generating the transformed result, and sharing it."
       - id: design-8
         title: "Design Terminal UIs (Website)"
-        link: https://tui.studio/?utm_source=tldrdesign
+        link: https://tui.studio/
         tags: [design, terminal, devtools]
         description: |
           TUIStudio is a Figma-like visual editor for designing terminal user interfaces (TUIs) with drag-and-drop components and real-time ANSI preview.
@@ -855,7 +855,7 @@ sections:
           * **Tview**: Go library providing terminal UI widgets and layouts
       - id: design-9
         title: "FigClaw (Figma plugin)"
-        link: https://www.figma.com/community/plugin/1610744892832367485/figclaw?utm_source=tldrdesign
+        link: https://www.figma.com/community/plugin/1610744892832367485/figclaw
         image: https://www.figma.com/community/thumbnail?resource_id=1610744892832367485&resource_type=plugin
         tags: [ai, design, agents, automation]
         description: |
@@ -882,7 +882,7 @@ sections:
           * **Claude API key**: Authentication credential for accessing Anthropic's Claude AI service, which users must provide themselves
       - id: design-10
         title: "How Apple Filmed its Flashy MacBook Neo Video Using Handmade Props (3 minute read)"
-        link: https://petapixel.com/2026/04/24/how-apple-filmed-its-flashy-macbook-neo-video-using-handmade-props/?utm_source=tldrdesign
+        link: https://petapixel.com/2026/04/24/how-apple-filmed-its-flashy-macbook-neo-video-using-handmade-props/
         image: https://petapixel.com/assets/uploads/2026/04/macbook-neo-bts-featured.jpg
         tags: [apple, marketing, design]
         description: |
@@ -893,7 +893,7 @@ sections:
           why: "In an era where companies increasingly turn to generative AI for marketing content, Apple's choice to invest in traditional artistry and practical effects represents a deliberate commitment to real craftsmanship over algorithmic shortcuts."
       - id: design-11
         title: "Why Pentagram's Samar Maakaroun designed a logo that just won't settle (7 minute read)"
-        link: https://www.creativeboom.com/news/why-pentagrams-samar-maakaroun-designed-a-logo-that-just-wont-settle/?utm_source=tldrdesign
+        link: https://www.creativeboom.com/news/why-pentagrams-samar-maakaroun-designed-a-logo-that-just-wont-settle/
         image: https://www.creativeboom.com/upload/articles/85/850f6b2871cc4f117f5c4716e1f22ee5c8361250_800.jpg
         tags: [branding, design]
         description: |
@@ -918,7 +918,7 @@ sections:
           * **Monogram**: A design combining or overlapping initials or letters into a single unified mark
       - id: design-12
         title: "Can AI Detect Usability Problems? (7 minute read)"
-        link: https://measuringu.com/can-ai-detect-usability-problems/?utm_source=tldrdesign
+        link: https://measuringu.com/can-ai-detect-usability-problems/
         tags: [ai, design]
         description: |
           AI can analyze usability test videos by sampling frames, transcribing audio, and generating plausible descriptions of user behavior — though this process is "lossy" and prone to inconsistency. In a test using a six-minute OpenTable usability session, ChatGPT identified seven specific problems, including a search field that dropped cuisine selections when the location was changed and results that surfaced non-sushi restaurants. Whether those findings hold up in terms of accuracy, reliability, and alignment with what human researchers would catch remains an open question to be addressed in follow-up research.
@@ -930,7 +930,7 @@ sections:
           * **Lossy**: In this context, information is lost when AI samples video frames rather than processing every frame continuously, potentially missing important user interactions or subtle usability issues between sampled moments.
       - id: design-13
         title: "Ikea's new ad is pure satisfaction in a billboard (3 minute read)"
-        link: https://www.creativebloq.com/design/advertising/ikeas-new-ad-is-pure-satisfaction-in-a-billboard?utm_source=tldrdesign
+        link: https://www.creativebloq.com/design/advertising/ikeas-new-ad-is-pure-satisfaction-in-a-billboard
         image: https://cdn.mos.cms.futurecdn.net/vVt5duEEYBzUGys2KXrCHF-1920-80.png
         tags: [design, advertising]
         description: |
@@ -943,7 +943,7 @@ sections:
           * **OOH**: Out-of-home advertising, meaning billboards, transit ads, and other public display advertising
       - id: design-14
         title: "How to Make a Custom Favicon for Your Brand Website (14 minute read)"
-        link: https://www.zilliondesigns.com/blog/favicon-guide/?utm_source=tldrdesign
+        link: https://www.zilliondesigns.com/blog/favicon-guide/
         image: https://www.zilliondesigns.com/blog/wp-content/uploads/Favicon-Design.png
         tags: [design, frontend, branding]
         description: |
@@ -961,7 +961,7 @@ sections:
           * **Apple Touch Icon**: Larger favicon variant (180×180 pixels) used when websites are added to iOS home screens
       - id: design-15
         title: "Pitaka is Letting the World Design its Next Phone Cases, Royalties Included. Here's How to Participate (3 minute read)"
-        link: https://www.yankodesign.com/2026/04/24/pitaka-is-letting-the-world-design-its-next-phone-cases-royalties-included-heres-how-to-participate/?utm_source=tldrdesign
+        link: https://www.yankodesign.com/2026/04/24/pitaka-is-letting-the-world-design-its-next-phone-cases-royalties-included-heres-how-to-participate/
         image: https://www.yankodesign.com/images/design_news/2025/12/draft-pitaka/Pitaka_Challenge_01.jpg
         tags: [design, hardware, competition]
         description: |
@@ -979,7 +979,7 @@ sections:
     articles:
       - id: crypto-1
         title: "White House Crypto Advisor Hints at Trump's Strategic Bitcoin Reserve (3 minute read)"
-        link: https://www.theblock.co/post/399087/white-house-crypto-advisor-trump-strategic-bitcoin-reserve-coming-weeks?utm_source=tldrcrypto
+        link: https://www.theblock.co/post/399087/white-house-crypto-advisor-trump-strategic-bitcoin-reserve-coming-weeks
         tags: [crypto, policy]
         description: |
           Patrick Witt, executive director of the President's Council of Advisors for Digital Assets, previewed a "big announcement" on next steps for Trump's strategic bitcoin reserve in the coming weeks, noting the team has been working through the legal interpretations needed to solidify and protect the reserve's digital assets. The reserve currently faces a durability problem as executive orders don't carry the staying power of legislation, which is why Sen. Lummis and Rep. Begich have reintroduced the BITCOIN Act to codify it.
@@ -993,7 +993,7 @@ sections:
           * **Executive order**: A presidential directive that lacks the permanence of legislation and can be reversed by future administrations
       - id: crypto-2
         title: "DOJ Confirms 'Code Is Not a Crime' (3 minute read)"
-        link: https://cointelegraph.com/news/acting-ag-blanche-signals-doj-pivot-code-is-not-a-crime?utm_source=tldrcrypto
+        link: https://cointelegraph.com/news/acting-ag-blanche-signals-doj-pivot-code-is-not-a-crime
         image: https://payload.cointelegraph.com/api/article-covers/file/HI%20IRS%20crypto%20broker%20rules%20explained.jpg?prefix=media%2Farticle-covers
         tags: [crypto, security, policy]
         description: |
@@ -1023,7 +1023,7 @@ sections:
           * **Pre-enforcement clarity**: Legal guidance sought before taking action to determine if that action would violate laws
       - id: crypto-3
         title: "Aave Publishes Technical Implementation Plan to Restore rsETH Backing (3 minute read)"
-        link: https://x.com/aave/status/2048958367658332413?utm_source=tldrcrypto
+        link: https://x.com/aave/status/2048958367658332413
         tags: [defi, security, crypto]
         description: |
           DeFi United, a coalition of ecosystem participants, has published the full technical implementation plan to restore KelpDAO's rsETH backing following the April 18 bridge exploit, where a forged inbound packet on the Unichain-to-Ethereum route released 116,500 rsETH without a corresponding burn. The exploiter distributed the rsETH across multiple addresses, supplied portions as collateral on Aave V3 (Ethereum and Arbitrum) and Compound, with seven addresses still holding active rsETH-backed positions. The plan covers the full path to making rsETH whole and resuming normal market operations, a critical test of DeFi's ability to coordinate post-exploit recovery at scale.
@@ -1056,7 +1056,7 @@ sections:
           * **DeFi United**: An ad-hoc coalition formed by affected ecosystem participants (Aave, Compound, KelpDAO, LayerZero, others) to coordinate recovery
       - id: crypto-4
         title: "Japan's Bitbank Launch Crypto-Linked Credit Card: Pays Bills in Bitcoin (3 minute read)"
-        link: https://www.theblock.co/post/399102/japans-bitbank-crypto-credit-card?utm_source=tldrcrypto
+        link: https://www.theblock.co/post/399102/japans-bitbank-crypto-credit-card
         tags: [crypto, fintech]
         description: |
           The EPOS CRYPTO Card for bitbank is a Visa credit card that lets users settle monthly payments by selling BTC from their bitbank holdings at a predetermined rate, a first-of-its-kind product in Japan. The card offers 0.5% crypto rewards (payable in BTC, ETH, or ASTR), has no annual fee, and includes a ¥2,000 crypto welcome bonus. It's a notable consumer product that bridges crypto holdings and everyday card spending in Japan's regulated market. The card is a potential template for similar products in other jurisdictions.
@@ -1068,7 +1068,7 @@ sections:
           * **ASTR**: Astar token, a cryptocurrency from the Astar blockchain network
       - id: crypto-5
         title: "The Hitchhiker's Guide to Onchain Credit (6 minute read)"
-        link: https://x.com/Solofunk/status/2048827810295218642?utm_source=tldrcrypto
+        link: https://x.com/Solofunk/status/2048827810295218642
         tags: [defi, crypto, infrastructure]
         description: |
           There are over 160 startups, protocols, and institutions across the onchain credit ecosystem, categorized into four main layers. These are Credit Issuance, Capital Allocation, Infrastructure, and Risk Management, with 19 sub-categories. The Credit Issuance layer spans institutional credit funds, tokenized offchain credit, and onchain origination models, including overcollateralized lending, P2P, InfraFi, and PayFi. This report provides a useful mental model for anyone trying to understand who the players are, which categories matter, and where the gaps remain in the onchain credit stack.
@@ -1104,7 +1104,7 @@ sections:
           * **Vault Curator**: An entity that actively manages and allocates capital across different DeFi positions on behalf of depositors
       - id: crypto-6
         title: "The Capital Suck: Stablecoin Flywheel Economics (6 minute read)"
-        link: https://x.com/jonah_b/status/2048837866038415690?utm_source=tldrcrypto
+        link: https://x.com/jonah_b/status/2048837866038415690
         tags: [crypto, stablecoins, defi, infrastructure]
         description: |
           Onchain stablecoins generate 122x annual economic velocity per dollar deployed, compared to PayPal's ~40x turnover and US M2's 1.4x, with each $1B in stablecoin supply producing roughly $19M in annualized protocol revenue (excluding issuer float). Supply has grown 60x since 2020 to ~$300B, still just 1.4% of US M2, while tokenized RWAs have tripled to ~$25B over two years, led by BlackRock's BUIDL crossing $2B. The flywheel is now showing in market-hours displacement: during the Iran escalation, traders routed volume to onchain perps on platforms like Hyperliquid rather than waiting for traditional venues to reopen.
@@ -1137,7 +1137,7 @@ sections:
           * **BUIDL**: BlackRock's tokenized US Treasury money market fund (wordplay on "build" popular in crypto culture)
       - id: crypto-7
         title: "No One Cares About Crypto Research (6 minute read)"
-        link: https://x.com/100y_eth/status/2048950366574915975?utm_source=tldrcrypto
+        link: https://x.com/100y_eth/status/2048950366574915975
         tags: [crypto, ai]
         description: |
           AI has pushed the cost of producing average crypto research to near zero, flooding the market with low-quality content and eroding the price-moving influence that early firms like Messari and Delphi Digital once carried. Institutional advisory demand has nonetheless accelerated through 2026, as organizations entering blockchain seek judgment and perspective rather than information aggregation. Four Pillars is responding by restructuring into five divisions (Crypto, Asia, Institution, Investment, and Tech) and announcing a Series A to reposition around perspective-driven, high-conviction coverage.
@@ -1152,7 +1152,7 @@ sections:
           * **Stablecoins**: Cryptocurrencies pegged to stable assets like the US dollar
       - id: crypto-8
         title: "Circle Ventures Buys AAVE Tokens in DeFi United Show of Support (1 minute read)"
-        link: https://threadreaderapp.com/thread/2048765469512106044.html?utm_source=tldrcrypto
+        link: https://threadreaderapp.com/thread/2048765469512106044.html
         image: https://threadreaderapp.com/images/screenshots/thread/2048765469512106044.jpg
         tags: [crypto, defi]
         description: |
@@ -1167,7 +1167,7 @@ sections:
           * **Circle**: The company behind USDC stablecoin; Circle Ventures is its investment arm focusing on blockchain and crypto projects
       - id: crypto-9
         title: "Institutions Have Lost Trust in Pool/Hub DeFi Models (2 minute read)"
-        link: https://threadreaderapp.com/thread/2048657935845200240.html?utm_source=tldrcrypto
+        link: https://threadreaderapp.com/thread/2048657935845200240.html
         image: https://threadreaderapp.com/images/screenshots/thread/2048657935845200240.jpg
         tags: [defi, infrastructure, enterprise]
         description: |
@@ -1182,7 +1182,7 @@ sections:
           * **Isolated risk controls**: Separate vaults or contracts that allow institutions to customize parameters and limit exposure to other participants
       - id: crypto-10
         title: "Block Reports 28,355 BTC in Q1 2026 Proof of Reserves (2 minute read)"
-        link: https://www.theblock.co/post/399123/block-q1-bitcoin?utm_source=tldrcrypto
+        link: https://www.theblock.co/post/399123/block-q1-bitcoin
         tags: [crypto, finance]
         description: |
           Block (formerly Square) disclosed 28,355 BTC in its Q1 2026 proof of reserves filing alongside preliminary Cash App Bitcoin Ecosystem Revenue, continuing the company's policy of investing 10% of bitcoin profits into BTC purchases each month.
@@ -1193,7 +1193,7 @@ sections:
           * **Proof of Reserves**: A transparency practice where companies publicly verify their cryptocurrency holdings through cryptographic attestation or audits, showing they actually possess the assets they claim.
       - id: crypto-11
         title: "Multiliquid Launches Carry for Institutional RWA Liquidity (1 minute read)"
-        link: https://threadreaderapp.com/thread/2048750373733855461.html?utm_source=tldrcrypto
+        link: https://threadreaderapp.com/thread/2048750373733855461.html
         image: https://threadreaderapp.com/images/screenshots/thread/2048750373733855461.jpg
         tags: [crypto, defi, infrastructure]
         description: |

@@ -12,7 +12,7 @@ sections:
   - id: ai-1
     content-template-path: full-content/2026-04-27/ai-1
     title: Google will invest as much as $40 billion in Anthropic (2 minute read)
-    link: https://arstechnica.com/ai/2026/04/google-will-invest-as-much-as-40-billion-in-anthropic/?utm_source=tldrai
+    link: https://arstechnica.com/ai/2026/04/google-will-invest-as-much-as-40-billion-in-anthropic/
     image: https://cdn.arstechnica.net/wp-content/uploads/2026/04/TPU-8i-rack-2560x1440.jpg
     description: |
       Google will invest between $10 billion and $40 billion in Anthropic. The amount depends on whether Anthropic can meet certain performance targets. Anthropic recently received a $5 billion investment from Amazon, with an option for more investment based on performance. The investments value Anthropic at $350 billion. The funds will help the startup close the gap between demand and supply of compute for AI training and inference.
@@ -31,7 +31,7 @@ sections:
       * **Agentic workflows**: AI systems that can autonomously plan and execute multi-step tasks rather than just responding to single prompts
   - id: ai-2
     title: What Happens When AI Runs a Store in San Francisco? (7 minute read)
-    link: https://www.nytimes.com/2026/04/21/us/san-francisco-store-managed-ai-agent.html?unlocked_article_code=1.eFA.7jVB.5i5HUjjcUKyj&smid=url-share&utm_source=tldrai
+    link: https://www.nytimes.com/2026/04/21/us/san-francisco-store-managed-ai-agent.html?unlocked_article_code=1.eFA.7jVB.5i5HUjjcUKyj&smid=url-share
     image: https://static01.nyt.com/images/2026/04/21/multimedia/21nat-sf-ai-store-02-gqzc/21nat-sf-ai-store-02-gqzc-facebookJumbo.jpg
     tags:
     - ai
@@ -60,7 +60,7 @@ sections:
   - id: ai-3
     content-template-path: full-content/2026-04-27/ai-3
     title: Anthropic launches Memory in Claude Agents for enterprise (1 minute read)
-    link: https://www.testingcatalog.com/anthropic-launches-memory-in-claude-agents-for-enterprise/?utm_source=tldrai
+    link: https://www.testingcatalog.com/anthropic-launches-memory-in-claude-agents-for-enterprise/
     image: https://storage.ghost.io/c/2a/1b/2a1b1782-8506-4d7d-bf53-ad3fb52e2a0f/content/images/size/w1200/2026/04/69e911b25f02df256c8cba87_Claude-Blog-CMA-Memory.webp
     description: |
       Anthropic has released a feature for Claude Managed Agents called Memory. It allows agents to remember and use information from prior sessions and accumulate knowledge over time without requiring manual prompt updates. Memory is a filesystem-based layer, so data is stored as files that can be exported, managed through APIs, and scoped with permissions for various organizational needs. The feature is available now in public beta to all Managed Agents users.
@@ -80,7 +80,7 @@ sections:
   - id: ai-4
     content-template-path: full-content/2026-04-27/ai-4
     title: Google prepares credits system for Gemini (2 minute read)
-    link: https://www.testingcatalog.com/google-prepares-credit-system-for-gemini-and-new-image-tools-2/?utm_source=tldrai
+    link: https://www.testingcatalog.com/google-prepares-credit-system-for-gemini-and-new-image-tools-2/
     image: https://storage.ghost.io/c/2a/1b/2a1b1782-8506-4d7d-bf53-ad3fb52e2a0f/content/images/size/w1200/2026/04/Google-Gemini-04-21-2026_02_04_AM-1.jpg
     tags:
     - ai
@@ -113,7 +113,7 @@ sections:
   - id: ai-5
     content-template-path: full-content/2026-04-27/ai-5
     title: Your AI Might Be Lying to Your Boss (22 minute read)
-    link: https://williamoconnell.me/blog/post/ai-ide/?utm_source=tldrai
+    link: https://williamoconnell.me/blog/post/ai-ide/
     image: https://williamoconnell.me/_assets/header_8a05ab.webp
     description: |
       It's very hard to measure the contribution that AI models make to a codebase. Sometimes the best use cases for AI are inquisitive prompts that don't necessarily produce any code at all. Lines of code isn't a very good measure of code quality, and it can be difficult to separate the work engineers did vs what AI has done. The bias appears to be towards reporting a higher AI percentage, which is great for AI companies, but skewed metrics can be harmful.
@@ -151,7 +151,7 @@ sections:
       * **FedRAMP/HIPAA**: Federal security and healthcare compliance certifications that some enterprise customers require
   - id: ai-6
     title: "Monitoring LLM behavior: Drift, retries, and refusal patterns (11 minute read)"
-    link: https://venturebeat.com/infrastructure/monitoring-llm-behavior-drift-retries-and-refusal-patterns?utm_source=tldrai
+    link: https://venturebeat.com/infrastructure/monitoring-llm-behavior-drift-retries-and-refusal-patterns
     image: https://images.ctfassets.net/jdtwqhzvc2n1/4IEiKF5i3wgiKwmJw8UOtf/8a415ee33ad42c0cb72ceb0aec1155dc/u7277289442_AI_robots_with_hardhats._An_office_setting._They__5df79da3-f7e2-43fa-a9cb-8d27ca6939c9_2.png?w=800&q=75
     tags:
     - ai
@@ -189,7 +189,7 @@ sections:
   - id: ai-7
     content-template-path: full-content/2026-04-27/ai-7
     title: The World Can't Keep Up With AI Labs (9 minute read)
-    link: https://www.greaterwrong.com/posts/fewDbvpKMZLgGuWT2/the-world-can-t-keep-up-with-ai-labs?utm_source=tldrai
+    link: https://www.greaterwrong.com/posts/fewDbvpKMZLgGuWT2/the-world-can-t-keep-up-with-ai-labs
     description: |
       Coding agents are the first AI product people are paying for at volume and regularly. However, compute demand has started to grow faster than anyone can build it out. The industry isn't ready for the agent boom. The most obvious move for AI labs now is to cut limits and raise prices.
     tags:
@@ -223,7 +223,7 @@ sections:
   - id: ai-8
     content-template-path: full-content/2026-04-27/ai-8
     title: Vision Banana Generalist Model (39 minute read)
-    link: https://arxiv.org/abs/2604.20329?utm_source=tldrai
+    link: https://arxiv.org/abs/2604.20329
     tags:
     - ai
     - vision
@@ -257,7 +257,7 @@ sections:
   - id: ai-9
     content-template-path: full-content/2026-04-27/ai-9
     title: Stash (GitHub Repo)
-    link: https://github.com/alash3al/stash?utm_source=tldrai
+    link: https://github.com/alash3al/stash
     image: https://opengraph.githubassets.com/ecc8cb0e03ddbad6f732fa10e8a8b7050e069815bee4679c0d47ca87c6cde5c9/alash3al/stash
     description: |
       Stash is a tool that gives agents persistent memory. It enables agents to remember, recall, consolidate memories, and learn across sessions. Stash is open source, self-hosted, and works with any MCP-compatible agent.
@@ -286,7 +286,7 @@ sections:
   - id: ai-10
     content-template-path: full-content/2026-04-27/ai-10
     title: Efficient Video Intelligence in 2026 (21 minute read)
-    link: https://v-chandra.github.io/efficient-video-intelligence/?utm_source=tldrai
+    link: https://v-chandra.github.io/efficient-video-intelligence/
     description: |
       Efficient video intelligence advances include compact universal vision encoders like EUPE, which distill capabilities from specialized models such as DINO and SAM. Techniques like LongVU use adaptive token allocation and compression for long-form video understanding while edge and on-device deployment handle real-time processing. Persistent challenges include streaming understanding, sparse-event detection, real-time sub-watt inference for AR glasses, and robust multi-modal reasoning.
     tags:
@@ -336,7 +336,7 @@ sections:
   - id: ai-11
     content-template-path: full-content/2026-04-27/ai-11
     title: Scaling Long-Horizon Coding Agents (28 minute read)
-    link: https://arxiv.org/abs/2604.16529?utm_source=tldrai
+    link: https://arxiv.org/abs/2604.16529
     tags:
     - ai
     - agents
@@ -367,7 +367,7 @@ sections:
   - id: ai-12
     content-template-path: full-content/2026-04-27/ai-12
     title: Meta's loss is Thinking Machines' gain (3 minute read)
-    link: https://techcrunch.com/2026/04/24/metas-loss-is-thinking-machines-gain/?utm_source=tldrai
+    link: https://techcrunch.com/2026/04/24/metas-loss-is-thinking-machines-gain/
     image: "https://techcrunch.com/wp-content/uploads/2025/04/GettyImages-1730510668.jpg?resize=1200,800"
     tags:
     - ai
@@ -396,7 +396,7 @@ sections:
       * **Pre-training and post-training**: The two main phases of developing large language models—pre-training on massive datasets, then post-training for specific tasks and safety
   - id: ai-13
     title: "OpenAI Posts Five-Principle Framework for AGI, Altman Concedes Bigger Role (2 minute read)"
-    link: https://www.implicator.ai/openai-posts-five-principle-framework-for-agi-altman-concedes-bigger-role-2/?utm_source=tldrai
+    link: https://www.implicator.ai/openai-posts-five-principle-framework-for-agi-altman-concedes-bigger-role-2/
     tags:
     - ai
     - policy
@@ -412,7 +412,7 @@ sections:
   - id: ai-14
     content-template-path: full-content/2026-04-27/ai-14
     title: Cursor's $60 Billion Escape Hatch (5 minute read)
-    link: https://contraryresearch.substack.com/p/cursors-60-billion-escape-hatch?utm_source=tldrai
+    link: https://contraryresearch.substack.com/p/cursors-60-billion-escape-hatch
     image: "https://substackcdn.com/image/fetch/$s_!tqR4!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F68be6fff-f022-404e-839d-ccff25a5efe5_2400x1260.png"
     tags:
     - ai
@@ -449,7 +449,7 @@ sections:
   - id: ai-15
     content-template-path: full-content/2026-04-27/ai-15
     title: Cohere Aleph Alpha Join Forces (3 minute read)
-    link: https://cohere.com/blog/cohere-alephalpha-join-forces?utm_source=tldrai
+    link: https://cohere.com/blog/cohere-alephalpha-join-forces
     image: "https://cdn.sanity.io/images/rjtqmwfu/web3-prod/1508dfd50b261880ef0b67e1ade51f6e51b93d03-3840x1920.png?rect=92,0,3657,1920&w=1200&h=630"
     description: |
       Cohere and Aleph Alpha are partnering to create a sovereign, enterprise-grade AI alternative, combining Canadian AI scale with German research expertise.
@@ -469,7 +469,7 @@ sections:
   - id: ai-16
     content-template-path: full-content/2026-04-27/ai-16
     title: An amateur just solved a 60-year-old math problem—by asking AI (7 minute read)
-    link: https://www.scientificamerican.com/article/amateur-armed-with-chatgpt-vibe-maths-a-60-year-old-problem/?utm_source=tldrai
+    link: https://www.scientificamerican.com/article/amateur-armed-with-chatgpt-vibe-maths-a-60-year-old-problem/
     image: https://static.scientificamerican.com/dam/asset/124ad289-58c2-4d51-87e8-aee854d10fc7/abstract-rubiks-cube.jpg?m=1777033076.511&w=1200
     tags:
     - ai
@@ -500,7 +500,7 @@ sections:
   - id: ai-17
     content-template-path: full-content/2026-04-27/ai-17
     title: Meta signs agreement with AWS to power agentic AI on Amazon's Graviton chips (1 minute read)
-    link: https://www.aboutamazon.com/news/aws/meta-aws-graviton-ai-partnership?utm_source=tldrai
+    link: https://www.aboutamazon.com/news/aws/meta-aws-graviton-ai-partnership
     image: https://assets.aboutamazon.com/dims4/default/56e1ac7/2147483647/strip/true/crop/1919x960+0+73/resize/1200x600!/quality/90/?url=https%3A%2F%2Famazon-blogs-brightspot.s3.amazonaws.com%2F8b%2F04%2F03d9e1cb492390a8115eddabbe1d%2Faws-meta-hero-amazonnews-ck042326.jpg
     tags:
     - ai
@@ -532,7 +532,7 @@ sections:
       * **3nm chip technology**: Manufacturing process that creates smaller, more power-efficient transistors (3 nanometers wide)
   - id: ai-18
     title: Sovereign Labs Are Overkill for Enterprise AI (7 minute read)
-    link: https://x.com/anshublog/status/2048173187054387527?utm_source=tldrai
+    link: https://x.com/anshublog/status/2048173187054387527
     tags:
     - ai
     - enterprise
@@ -565,7 +565,7 @@ sections:
   - id: ai-19
     content-template-path: full-content/2026-04-27/ai-19
     title: Anthropic tests new Bugcrawl tool for Claude Code bug detection (2 minute read)
-    link: https://www.testingcatalog.com/anthropic-tests-new-bugcrawl-tool-for-claude-code-bug-detection/?utm_source=tldrai
+    link: https://www.testingcatalog.com/anthropic-tests-new-bugcrawl-tool-for-claude-code-bug-detection/
     image: https://storage.ghost.io/c/2a/1b/2a1b1782-8506-4d7d-bf53-ad3fb52e2a0f/content/images/size/w1200/2026/04/Claude-04-24-2026_12_42_AM.jpg
     tags:
     - ai
@@ -589,7 +589,7 @@ sections:
   articles:
   - id: devops-1
     title: HashiCorp Vault 2.0 Marks Shift to IBM Lifecycle with New Identity Federation (3 minute read)
-    link: https://www.infoq.com/news/2026/04/vault-2-0-ibm-identity/?utm_source=tldrdevops
+    link: https://www.infoq.com/news/2026/04/vault-2-0-ibm-identity/
     image: https://res.infoq.com/news/2026/04/vault-2-0-ibm-identity/en/card_header_image/generatedCard-1776890720319.jpg
     tags:
     - security
@@ -624,7 +624,7 @@ sections:
   - id: devops-2
     content-template-path: full-content/2026-04-27/devops-2
     title: "DigitalOcean Dedicated Inference: A Technical Deep Dive (6 minute read)"
-    link: https://www.digitalocean.com/blog/dedicated-inference-technical-deep-dive?utm_source=tldrdevops
+    link: https://www.digitalocean.com/blog/dedicated-inference-technical-deep-dive
     image: https://doimages.nyc3.cdn.digitaloceanspaces.com/007BlogBanners2024/engineering-2(vivid-sky).png
     description: |
       DigitalOcean Dedicated Inference is a managed LLM hosting service that deploys AI models on dedicated GPUs with Kubernetes-native orchestration, targeting teams that need predictable performance and economics for high-volume inference workloads beyond simple pay-per-token pricing. The service handles day-two operations like cluster lifecycle management and routing while giving users control over model choice, capacity, and scaling, using industry-standard components like vLLM for serving and the Kubernetes Gateway API for intelligent, KV cache-aware load balancing.
@@ -661,7 +661,7 @@ sections:
       * **Day-two operations**: Ongoing operational tasks after initial deployment—monitoring, scaling, upgrades, incident response
   - id: devops-3
     title: "Building a PCI-DSS Compliant GKE Framework for Financial Institutions: Data Protection, Governance… (6 minute read)"
-    link: https://blog.devops.dev/building-a-pci-dss-compliant-gke-framework-for-financial-institutions-data-protection-governance-0deaa1b72893?source=rss------kubernetes-5&utm_source=tldrdevops
+    link: https://blog.devops.dev/building-a-pci-dss-compliant-gke-framework-for-financial-institutions-data-protection-governance-0deaa1b72893?source=rss------kubernetes-5
     image: https://miro.medium.com/v2/resize:fit:1200/1*zGlJNdPRmZDm0be4wp9JQA.png
     tags:
     - security
@@ -701,7 +701,7 @@ sections:
       * **etcd**: Kubernetes' backing store for cluster data including Secrets
   - id: devops-4
     title: On Software Quality (5 minute read)
-    link: https://peteshima.com/2026/04/01/on-software-quality/?utm_source=tldrdevops
+    link: https://peteshima.com/2026/04/01/on-software-quality/
     image: https://peteshima.com/wp-content/uploads/2026/04/pete-shima-69cd4ca28e946.png
     tags:
     - devops
@@ -735,7 +735,7 @@ sections:
       * **CSAT/NPS**: Customer Satisfaction and Net Promoter Score—survey metrics that indirectly measure software quality through user sentiment rather than technical defects
   - id: devops-5
     title: How we built Elasticsearch simdvec to make vector search one of the fastest in the world (11 minute read)
-    link: https://www.elastic.co/search-labs/blog/elasticsearch-vector-search-simdvec-engine?utm_source=tldrdevops
+    link: https://www.elastic.co/search-labs/blog/elasticsearch-vector-search-simdvec-engine
     image: "https://cdn.sanity.io/images/me0ej585/search-labs-import-testing/df9646091bafbbf0a6dfd212ff8a6bd1e8589708-1280x720.png?rect=0,24,1280,672&w=1200&h=630"
     tags:
     - vector
@@ -772,7 +772,7 @@ sections:
       * **Cache miss**: When requested data isn't in CPU cache and must be fetched from slower DRAM, causing pipeline stalls
   - id: devops-6
     title: "Spotting CI/CD misconfigurations before the bots do: Securing GitHub Actions with Datadog IaC Security (7 minute read)"
-    link: https://www.datadoghq.com/blog/github-actions-iac-security/?utm_source=tldrdevops
+    link: https://www.datadoghq.com/blog/github-actions-iac-security/
     tags:
     - security
     - devops
@@ -791,7 +791,7 @@ sections:
       * **Pre-merge scanning**: Security checks that run during code review before changes reach production
   - id: devops-7
     title: Evolving Media CDN for the world's most demanding broadcast and streaming workloads (4 minute read)
-    link: https://cloud.google.com/blog/products/networking/media-cdn-and-trends-in-content-delivery/?utm_source=tldrdevops
+    link: https://cloud.google.com/blog/products/networking/media-cdn-and-trends-in-content-delivery/
     image: https://storage.googleapis.com/gweb-cloudblog-publish/images/24_-_Networking_vCB4Wjq.max-2600x2600.jpg
     tags:
     - infrastructure
@@ -819,7 +819,7 @@ sections:
   - id: devops-8
     content-template-path: full-content/2026-04-27/devops-8
     title: LLM-assisted coding is not deterministic. Does it matter? (4 minute read)
-    link: https://blog.vrypan.net/2026/04/23/llm-assisted-coding-is-not-deterministic-does-it-matter/?utm_source=tldrdevops
+    link: https://blog.vrypan.net/2026/04/23/llm-assisted-coding-is-not-deterministic-does-it-matter/
     image: https://blog.vrypan.net/2026/04/23/llm-assisted-coding-is-not-deterministic-does-it-matter/not-random.png
     tags:
     - ai
@@ -849,7 +849,7 @@ sections:
   - id: devops-9
     content-template-path: full-content/2026-04-27/devops-9
     title: Databricks partners with OpenAI on GPT-5.5 (2 minute read)
-    link: https://www.databricks.com/blog/databricks-partners-openai-gpt-55?utm_source=tldrdevops
+    link: https://www.databricks.com/blog/databricks-partners-openai-gpt-55
     image: https://www.databricks.com/sites/default/files/2026-04/Announcement-OpenAI-GPT-5-5-Databricks-PR-OG-01-1.png
     description: |
       OpenAI's GPT-5.5 achieved a state-of-the-art 64.66% score on Databricks' OfficeQA benchmark, representing a 13% improvement over GPT-5.4.
@@ -879,7 +879,7 @@ sections:
       * **Agent harness**: A framework that allows AI models to autonomously execute multi-step workflows including tool use and decision-making
   - id: devops-10
     title: Amazon ECR Pull Through Cache Now Supports Referrer Discovery and Sync (2 minute read)
-    link: https://aws.amazon.com/about-aws/whats-new/2026/04/amazon-ecr-pull-through-cache-referrers/?utm_source=tldrdevops
+    link: https://aws.amazon.com/about-aws/whats-new/2026/04/amazon-ecr-pull-through-cache-referrers/
     description: |
       Amazon Elastic Container Registry now automatically syncs OCI referrers like signatures, SBOMs, and attestations via pull through cache, eliminating manual retrieval and enabling seamless verification workflows across supported AWS regions.
     tags:
@@ -896,7 +896,7 @@ sections:
   articles:
   - id: data-1
     title: How Airtable Saved Millions by Cutting Archive Storage Costs by 100x (11 minute read)
-    link: https://www.datatinkerer.io/p/how-airtable-saved-millions-by-cutting?utm_source=tldrdata
+    link: https://www.datatinkerer.io/p/how-airtable-saved-millions-by-cutting
     image: "https://substackcdn.com/image/fetch/$s_!wYyo!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0887cd3f-fd83-4fbd-93df-e009c31ed22b_1536x1024.png"
     tags:
     - data
@@ -935,7 +935,7 @@ sections:
       * **Metadata pruning**: Query optimization that uses file statistics to skip reading data blocks that can't contain matching results
   - id: data-2
     title: "Internal vs. External Storage: What's the Limit of External Tables? (26 minute read)"
-    link: https://motherduck.com/blog/internal-vs-external-storage-whats-the-limit-of-external-tables/?utm_source=tldrdata
+    link: https://motherduck.com/blog/internal-vs-external-storage-whats-the-limit-of-external-tables/
     image: https://motherduck-com-web-prod.s3.us-east-1.amazonaws.com/assets/img/internal_vs_external_0bc9bcc7b6.png
     tags:
     - database
@@ -979,7 +979,7 @@ sections:
   - id: data-3
     content-template-path: full-content/2026-04-27/data-3
     title: "Background Coding Agents: Supercharging Downstream Consumer Dataset Migrations (5 minute read)"
-    link: https://engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4?utm_source=tldrdata
+    link: https://engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4
     image: https://images.ctfassets.net/p762jor363g1/4MrDzyHeO9i2u2ljLNJhzo/8f52a39d6ded6343f59a94320612133c/honk-pt4-rnd.png
     tags:
     - ai
@@ -1015,7 +1015,7 @@ sections:
       * **Endpoint lineage**: Visualization of data dependencies showing which downstream services consume a particular dataset
   - id: data-4
     title: "Measure Less to Learn More: Using Fewer, Higher-quality Metrics to Capture What Matters (8 minute read)"
-    link: https://discord.com/blog/measure-less-to-learn-more-using-fewer-higher-quality-metrics-to-capture-what-matters?utm_source=tldrdata
+    link: https://discord.com/blog/measure-less-to-learn-more-using-fewer-higher-quality-metrics-to-capture-what-matters
     image: https://cdn.prod.website-files.com/5f9072399b2640f14d6a2bf4/6806ad72843df60c11e54f23_image4.png
     description: |
       Discord improved experimentation by removing redundant metrics, grouping related ones, and focusing on a small set of clearly defined “north-star” and guardrail metrics. Adding too many metrics to experiments increases multiple-testing issues and metric correlation, which can require stricter statistical corrections and make real effects harder to detect.
@@ -1037,7 +1037,7 @@ sections:
   - id: data-5
     content-template-path: full-content/2026-04-27/data-5
     title: Databases Were Not Designed For This (16 minute read)
-    link: https://arpitbhayani.me/blogs/defensive-databases/?utm_source=tldrdata
+    link: https://arpitbhayani.me/blogs/defensive-databases/
     image: https://edge.arpitbhayani.me/img/covers/general-cover.jpg
     tags:
     - ai
@@ -1077,7 +1077,7 @@ sections:
       * **Blast radius**: The scope of potential damage if a component fails or behaves incorrectly, limited through access controls and architectural boundaries
   - id: data-6
     title: "When a Cloud Region Fails: Rethinking High Availability in a Geopolitically Unstable World (15 minute read)"
-    link: https://www.infoq.com/articles/sovereign-fault-domains-cloud-resilience/?utm_source=tldrdata
+    link: https://www.infoq.com/articles/sovereign-fault-domains-cloud-resilience/
     image: https://res.infoq.com/articles/sovereign-fault-domains-cloud-resilience/en/headerimage/sovereign-fault-domains-cloud-resilience-header-1776430533702.jpg
     description: |
       Cloud high availability can no longer assume regions are safe, independent failure domains: sanctions, data localization laws, conflict zones, and submarine cable cuts can take out an entire region or make it noncompliant. Treat region-level disruption as a first-class risk, with multi-region, jurisdiction-aware data placement, control-plane separation, and dependency audits. The added cost and complexity should be justified with Annual Loss Expectancy modeling rather than assumed.
@@ -1119,7 +1119,7 @@ sections:
       * **Network Partition**: A failure mode where parts of a distributed system can't communicate with each other, forcing decisions about consistency versus availability
   - id: data-7
     title: Stop Letting Tools Lead Your Platform Decisions (3 minute read)
-    link: https://andreaskretz.substack.com/p/stop-letting-tools-lead-your-platform?utm_source=tldrdata
+    link: https://andreaskretz.substack.com/p/stop-letting-tools-lead-your-platform
     image: "https://substackcdn.com/image/fetch/$s_!jp22!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F77f8b5fa-34cf-42f2-9112-25bd8ceaefaf_1536x1024.png"
     tags:
     - data
@@ -1146,7 +1146,7 @@ sections:
   - id: data-8
     content-template-path: full-content/2026-04-27/data-8
     title: tda-mapper (GitHub Repo)
-    link: https://github.com/lucasimi/tda-mapper-python?utm_source=tldrdata
+    link: https://github.com/lucasimi/tda-mapper-python
     image: https://opengraph.githubassets.com/cca5c086cd4685d596623d8be0ff19b295405c5c1932b1fbb383b02c66aa5cf7/lucasimi/tda-mapper-python
     description: |
       tda-mapper is a Python library that helps find hidden shapes, clusters, and patterns in messy data using the Mapper algorithm from topological data analysis. It's built to scale to large datasets, works with scikit-learn pipelines, and includes visual tools to explore complex data more clearly.
@@ -1177,7 +1177,7 @@ sections:
   - id: data-9
     content-template-path: full-content/2026-04-27/data-9
     title: DuckDB Extension - Whisper (Tool)
-    link: https://duckdb.org/community_extensions/extensions/whisper.html?utm_source=tldrdata
+    link: https://duckdb.org/community_extensions/extensions/whisper.html
     image: https://duckdb.org/images/community_extensions/social_preview/preview_community_extension_whisper.png
     tags:
     - ai
@@ -1197,7 +1197,7 @@ sections:
   - id: data-10
     content-template-path: full-content/2026-04-27/data-10
     title: Jaeger adopts OpenTelemetry at its core to solve the AI agent observability gap (4 minute read)
-    link: https://thenewstack.io/jaeger-v2-ai-observability/?utm_source=tldrdata
+    link: https://thenewstack.io/jaeger-v2-ai-observability/
     image: https://cdn.thenewstack.io/media/2026/04/a0c28895-vladimira-slyusarenko-fhimt82yppk-unsplash-scaled.jpg
     tags:
     - observability
@@ -1232,7 +1232,7 @@ sections:
   - id: data-11
     content-template-path: full-content/2026-04-27/data-11
     title: Fixing What LLMs Get Wrong (22 minute read)
-    link: https://thebigdataguy.substack.com/p/fixing-what-llms-get-wrong?utm_source=tldrdata
+    link: https://thebigdataguy.substack.com/p/fixing-what-llms-get-wrong
     image: "https://substackcdn.com/image/fetch/$s_!0HiA!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F90c13f2a-de2e-4038-9f9d-412d6ac0745b_2960x1554.png"
     tags:
     - ai
@@ -1274,7 +1274,7 @@ sections:
   - id: data-12
     content-template-path: full-content/2026-04-27/data-12
     title: "Measurement Engineering: The Part of Data Science That Will Thrive in AI (13 minute read)"
-    link: https://ericdataproduct.substack.com/p/measurement-engineering-the-part?utm_source=tldrdata
+    link: https://ericdataproduct.substack.com/p/measurement-engineering-the-part
     image: "https://substackcdn.com/image/fetch/$s_!GKZ5!,f_auto,q_auto:best,fl_progressive:steep/https%3A%2F%2Fericdataproduct.substack.com%2Ftwitter%2Fsubscribe-card.jpg%3Fv%3D-1523719502%26version%3D9"
     tags:
     - ai
@@ -1306,7 +1306,7 @@ sections:
       * **Power analysis**: Statistical technique for determining whether a test has enough data to detect effects that actually matter to the business
   - id: data-13
     title: HDFS Lost. How Object Storage and Table Formats Won the Data Lake (3 minute read)
-    link: https://podostack.com/p/data-lake-evolution-decoupled-storage-compute?utm_source=tldrdata
+    link: https://podostack.com/p/data-lake-evolution-decoupled-storage-compute
     image: "https://substackcdn.com/image/fetch/$s_!inC_!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa16c2d21-7345-4d36-844a-d70d2107c169_2752x1536.png"
     description: |
       Data systems evolved to decouple storage and compute, making it cheaper and easier to scale.
@@ -1342,7 +1342,7 @@ sections:
       * **Parquet**: A columnar file format commonly used for analytics workloads
   - id: data-14
     title: Airflow 2 reaches end of life (2 minute read)
-    link: https://xebia.com/blog/airflow-2-reaches-end-of-life/?utm_source=tldrdata
+    link: https://xebia.com/blog/airflow-2-reaches-end-of-life/
     image: https://xebia.com/media/2026/04/airflow-2-reaches-end-of-life-banner.jpg
     tags:
     - devops
@@ -1378,7 +1378,7 @@ sections:
   articles:
   - id: design-1
     title: Court sides with iyO in trademark fight against OpenAI and Jony Ive (3 minute read)
-    link: https://9to5mac.com/2026/04/24/court-sides-with-iyo-in-trademark-fight-against-openai-and-jony-ive/?utm_source=tldrdesign
+    link: https://9to5mac.com/2026/04/24/court-sides-with-iyo-in-trademark-fight-against-openai-and-jony-ive/
     tags:
     - ai
     - legal
@@ -1391,7 +1391,7 @@ sections:
   - id: design-2
     content-template-path: full-content/2026-04-27/design-2
     title: This Adobe Sneak Uses AI to Rethink Website Personalization (7 minute read)
-    link: https://thelettertwo.com/2026/04/21/adobe-ai-website-personalization-project-page-turner/?utm_source=tldrdesign
+    link: https://thelettertwo.com/2026/04/21/adobe-ai-website-personalization-project-page-turner/
     image: https://thelettertwo.com/wp-content/uploads/2026/04/adobe-ai-summit-2026-shantanu-narayen-keynote-01-kenyeung-960x540-1.jpg
     description: |
       Adobe's new Project Page Turner uses AI to create personalized websites in real time for individual visitors, moving beyond traditional cookie- and segment-based personalization. The technology generates tailored web pages in under 100 milliseconds using large language models, allowing websites to essentially create themselves based on what they know about each user. This approach was developed in response to customer feedback and aims to replace static websites with dynamically generated experiences that feel custom-made for every visitor.
@@ -1425,7 +1425,7 @@ sections:
   - id: design-3
     content-template-path: full-content/2026-04-27/design-3
     title: SpaceX is Working with Cursor and has an Option to Buy the Startup for $60B (2 minute read)
-    link: https://techcrunch.com/2026/04/21/spacex-is-working-with-cursor-and-has-an-option-to-buy-the-startup-for-60-billion/?_bhlid=c443e7c10e7de03db8d9abc7df89dd293887db1f&amp;utm_source=tldrdesign
+    link: https://techcrunch.com/2026/04/21/spacex-is-working-with-cursor-and-has-an-option-to-buy-the-startup-for-60-billion/?_bhlid=c443e7c10e7de03db8d9abc7df89dd293887db1f
     image: https://techcrunch.com/wp-content/uploads/2026/02/GettyImages-2256968212.jpg?w=1024
     tags:
     - ai
@@ -1456,7 +1456,7 @@ sections:
   - id: design-4
     content-template-path: full-content/2026-04-27/design-4
     title: "The UX Designer's Nightmare: When “Production-ready” Becomes a Design Deliverable (7 minute read)"
-    link: https://www.smashingmagazine.com/2026/04/production-ready-becomes-design-deliverable-ux/?utm_source=tldrdesign
+    link: https://www.smashingmagazine.com/2026/04/production-ready-becomes-design-deliverable-ux/
     image: https://files.smashing.media/articles/ux-designer-nightmare-production-ready-becomes-design-deliverable/production-ready-becomes-design-deliverable-ux.jpg
     description: |
       The UX design industry in 2026 has shifted to demand AI-augmented development skills and production-ready prototyping, forcing designers to deliver both design vision and functional code. This "role creep" creates a competency gap in which experienced designers are judged on technical coding skills rather than traditional UX expertise, such as user research and accessibility. Companies now prioritize speed of output over experience quality, fundamentally redefining what it means to be a successful UX designer.
@@ -1491,7 +1491,7 @@ sections:
       * **Pull request (PR)**: Proposed code changes submitted for review before merging into the main codebase
   - id: design-5
     title: Designing with AI without losing your mind (8 minute read)
-    link: https://uxdesign.cc/designing-with-ai-without-losing-your-mind-0cfba48f6309?utm_source=tldrdesign
+    link: https://uxdesign.cc/designing-with-ai-without-losing-your-mind-0cfba48f6309
     image: https://miro.medium.com/v2/resize:fit:1200/1*joB_uXhHUkWS5LNqYLaf2w.png
     tags:
     - ai
@@ -1524,7 +1524,7 @@ sections:
       * **Cognitive friction**: The mental effort required for deep thinking and evaluation, which the author argues should be preserved rather than eliminated
   - id: design-6
     title: Working in the open (9 minute read)
-    link: https://uxdesign.cc/working-in-the-open-learnings-from-designing-open-source-technology-67a7f71bc450?utm_source=tldrdesign
+    link: https://uxdesign.cc/working-in-the-open-learnings-from-designing-open-source-technology-67a7f71bc450
     description: |
       Working in open source—especially on large-scale projects like ODK—pushes designers beyond simply shipping features toward designing transparently, collaborating closely with users, and thinking long-term about maintenance and impact. Open collaboration, public roadmaps, and constant community feedback improve decision-making while forcing clarity, accountability, and trust. A key lesson is embracing the “un/learning loop”: slowing down, staying open to uncertainty, and learning in public leads to better, more inclusive solutions—especially in complex or high-stakes environments—while prioritizing stewardship over speed.
     tags:
@@ -1550,7 +1550,7 @@ sections:
   - id: design-7
     content-template-path: full-content/2026-04-27/design-7
     title: AI Model Accessibility checker (Website)
-    link: https://aimac.ai/?utm_source=tldrdesign
+    link: https://aimac.ai/
     tags:
     - ai
     - accessibility
@@ -1590,7 +1590,7 @@ sections:
       * **WebAIM Million**: Annual audit of the top 1 million websites for accessibility compliance
   - id: design-8
     title: Control Lottie Animations with Real Data (Website)
-    link: https://lottiefiles.com/motion-tokens?utm_source=tldrdesign
+    link: https://lottiefiles.com/motion-tokens
     image: https://framerusercontent.com/assets/tsLQdaqWORTUc8tar976enjvaPc.png
     tags:
     - frontend
@@ -1621,7 +1621,7 @@ sections:
       * **Runtime API**: The programming interface that allows developers to control token values while the application is running, changing animation properties on the fly
   - id: design-9
     title: Learning Agentic Design Systems (8 minute read)
-    link: https://brandstructure.figma.site/learning-agentic-design-systems?utm_source=tldrdesign
+    link: https://brandstructure.figma.site/learning-agentic-design-systems
     image: https://brandstructure.figma.site/_assets/v11/4c74638f06907288a648cf20e73d617398b04f72.png
     tags:
     - ai
@@ -1660,7 +1660,7 @@ sections:
   - id: design-10
     content-template-path: full-content/2026-04-27/design-10
     title: Your UX Skills Were Built for One Kind of Intelligence (6 minute read)
-    link: https://marieclairedean.substack.com/p/your-ux-skills-were-built-for-a-world?utm_source=tldrdesign
+    link: https://marieclairedean.substack.com/p/your-ux-skills-were-built-for-a-world
     image: "https://substackcdn.com/image/fetch/$s_!J_Hz!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa54567b9-b94c-400d-85de-1df1dbd4b600_4000x2250.jpeg"
     tags:
     - ai
@@ -1695,7 +1695,7 @@ sections:
       * **Interaction choreography**: Designing when agents take initiative versus hold back, how they resolve conflicts, express uncertainty, and recover from mistakes
   - id: design-11
     title: Color is finally OK (8 minute read)
-    link: https://medium.com/design-bootcamp/color-is-finally-ok-82f368f3408c?utm_source=tldrdesign
+    link: https://medium.com/design-bootcamp/color-is-finally-ok-82f368f3408c
     image: https://miro.medium.com/v2/resize:fit:1200/1*8OKLrknhqmEYxfMzmjfO8Q.png
     description: |
       OKLCH is emerging as a replacement for older color systems like HSL because it aligns with human perception—maintaining consistent brightness, stable hues, and more accurate color intensity. Created by Björn Ottosson, it simplifies tasks like building color scales, gradients, and accessible contrast, removing much of the manual tweaking designers have long relied on. Although already adopted in modern tools, browsers, and frameworks, the shift has gone largely unnoticed—even as it quietly fixes long-standing issues in digital color design.
@@ -1731,7 +1731,7 @@ sections:
   articles:
   - id: crypto-1
     title: Western Union Enters Stablecoin Race with two new products (2 minute read)
-    link: https://www.theblock.co/post/398905/western-union-stablecoin-next-month?utm_source=tldrcrypto
+    link: https://www.theblock.co/post/398905/western-union-stablecoin-next-month
     description: |
       Western Union plans to launch its Solana-based stablecoin USDPT next month, initially for internal settlement to replace SWIFT rails and enable faster, always-on cross-border transactions. The company is also rolling out a Digital Asset Network to connect crypto wallets with its global retail network, alongside a “Stable Card” that lets consumers hold and spend stablecoins worldwide, signaling a full-stack push into onchain payments.
     tags:
@@ -1759,7 +1759,7 @@ sections:
   - id: crypto-2
     content-template-path: full-content/2026-04-27/crypto-2
     title: How Anthropic's Mythos model is forcing the crypto industry to rethink everything about security (5 minute read)
-    link: https://www.coindesk.com/tech/2026/04/25/how-anthropic-s-mythos-model-is-forcing-the-crypto-industry-to-rethink-everything-about-security?utm_source=tldrcrypto
+    link: https://www.coindesk.com/tech/2026/04/25/how-anthropic-s-mythos-model-is-forcing-the-crypto-industry-to-rethink-everything-about-security
     image: https://cdn.sanity.io/images/s3y3vcno/production/f5e8e2558cc728a86d8769f5fab88b0d0a2a34a8-6000x4000.jpg?auto=format&w=960&h=540&crop=focalpoint&fit=clip&q=75&fm=jpg
     tags:
     - ai
@@ -1793,7 +1793,7 @@ sections:
       * **Key management**: Systems and processes for protecting cryptographic keys that control access to crypto assets
   - id: crypto-3
     title: "Binance AI Wallet: Keyless ‘Agentic Wallet' for Web3 Automation (3 minute read)"
-    link: https://cryptonews.com/news/binance-new-agentic-ai-wallet/?utm_source=tldrcrypto
+    link: https://cryptonews.com/news/binance-new-agentic-ai-wallet/
     image: https://cimg.co/wp-content/uploads/2026/04/24145723/ai-trading-wallet-wet-market.jpg
     tags:
     - ai
@@ -1827,7 +1827,7 @@ sections:
   - id: crypto-4
     content-template-path: full-content/2026-04-27/crypto-4
     title: Revolut Built a Foundation Model for Money (8 minute read)
-    link: https://www.fintechbrainfood.com/p/revolut-foundation-model?utm_source=tldrcrypto
+    link: https://www.fintechbrainfood.com/p/revolut-foundation-model
     image: https://beehiiv-images-production.s3.amazonaws.com/uploads/asset/file/988b18bf-25b5-4014-a97e-4399d1a4edac/Revolut_Chart.png?t=1776957502
     tags:
     - ai
@@ -1867,7 +1867,7 @@ sections:
   - id: crypto-5
     content-template-path: full-content/2026-04-27/crypto-5
     title: How to Automate MEV Blockchain Analysis Using OpenClaw and MCP (6 minute read)
-    link: https://pawelurbanek.com/openclaw-mev-mcp?utm_source=tldrcrypto
+    link: https://pawelurbanek.com/openclaw-mev-mcp
     image: https://pawelurbanek.com/assets/openclaw-mev-agent-addd6644308a927418669f704cf0d63210e32236ea5b82b0707e3f2a69786fa8.jpg
     description: |
       Automate MEV blockchain analysis by integrating the mevlog-rs MCP server with Claude Code or OpenClaw agents. This setup enables natural language queries for transaction data, supports remote NGINX-secured RPC endpoints for performance, and facilitates automated Telegram reporting for monitoring high-value token transfers and gas usage.
@@ -1900,7 +1900,7 @@ sections:
       * **EVM tracing**: Advanced blockchain query features that show detailed execution steps of smart contract transactions, often disabled on free endpoints
   - id: crypto-6
     title: Ethereum Didn't Kill Blizzard; It Moved Control to the Verification Layer (3 minute read)
-    link: https://ethresear.ch/t/ethereum-didn-t-kill-blizzard-it-moved-control-to-the-verification-layer/24733?utm_source=tldrcrypto
+    link: https://ethresear.ch/t/ethereum-didn-t-kill-blizzard-it-moved-control-to-the-verification-layer/24733
     image: https://ethresear.ch/uploads/default/original/2X/6/6097a53a28665397488e4a3ae79aa3c6384d6cc3.png
     tags:
     - ethereum
@@ -1934,7 +1934,7 @@ sections:
       * **Deterministic execution**: Computation that produces the same output given the same input, ensuring all nodes reach consensus
   - id: crypto-7
     title: Stablecoins are going local (5 minute read)
-    link: https://a16zcrypto.substack.com/p/stablecoins-are-going-local?utm_source=tldrcrypto
+    link: https://a16zcrypto.substack.com/p/stablecoins-are-going-local
     image: "https://substackcdn.com/image/fetch/$s_!pHYI!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F253cb275-235f-442c-92ac-f0dabcf9f46f_2000x1380.jpeg"
     description: |
       Stablecoins are shifting from trading tools to core financial infrastructure. Q1 2026 volume reached $4.5 trillion, with consumer-to-business transactions growing 128% year-over-year. Velocity doubled to 6x, while intra-country payments now account for 75% of volume, signaling a transition toward local, general-purpose payment rails on global blockchain networks.
@@ -1968,7 +1968,7 @@ sections:
       * **BRLA**: Brazilian-real-backed stablecoin gaining adoption in Brazil
   - id: crypto-8
     title: The Missing Key to x402 (5 minute read)
-    link: https://olshansky.substack.com/p/the-missing-key-to-x402?utm_source=tldrcrypto
+    link: https://olshansky.substack.com/p/the-missing-key-to-x402
     image: "https://substackcdn.com/image/fetch/$s_!VnMT!,w_1200,h_675,c_fill,f_jpg,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F94983082-b950-4493-8db9-79031bba62ce_1402x1122.png"
     tags:
     - payments
@@ -2004,7 +2004,7 @@ sections:
       * **Multi-sig**: Multi-signature wallets requiring multiple approvals to move funds, used to reduce the risk of holding "hot keys" connected to the internet
   - id: crypto-9
     title: What prevents cryptocurrencies from functioning as daily money (3 minute read)
-    link: https://ethresear.ch/t/two-paradoxes-that-prevent-current-cryptocurrencies-from-functioning-as-daily-money/24710?utm_source=tldrcrypto
+    link: https://ethresear.ch/t/two-paradoxes-that-prevent-current-cryptocurrencies-from-functioning-as-daily-money/24710
     image: https://ethresear.ch/uploads/default/original/2X/6/6097a53a28665397488e4a3ae79aa3c6384d6cc3.png
     tags:
     - crypto
@@ -2039,7 +2039,7 @@ sections:
       * **Gas**: Transaction fees on networks like Ethereum, paid in the native token (ETH), required to move any assets including stablecoins
   - id: crypto-10
     title: Bitcoin Reclaims $79K as Risk Sentiment Stabilizes (2 minute read)
-    link: https://www.theblock.co/post/398908/bitcoin-climbs-above-79000?utm_source=tldrcrypto
+    link: https://www.theblock.co/post/398908/bitcoin-climbs-above-79000
     description: |
       Bitcoin climbed above $79,000 alongside gains in Ethereum and Asian equities, driven by steady ETF inflows, technical breakouts, and easing geopolitical tensions that pushed market sentiment back to neutral.
     tags:
@@ -2051,7 +2051,7 @@ sections:
   - id: crypto-11
     content-template-path: full-content/2026-04-27/crypto-11
     title: "Crypto is built for AI agents, not humans, says Alchemy's CEO (3 minute read)"
-    link: https://www.coindesk.com/tech/2026/04/25/crypto-is-built-for-ai-agents-not-humans-says-alchemy-s-ceo?utm_source=tldrcrypto
+    link: https://www.coindesk.com/tech/2026/04/25/crypto-is-built-for-ai-agents-not-humans-says-alchemy-s-ceo
     image: https://cdn.sanity.io/images/s3y3vcno/production/bfea78edd09840fea6d4e50d429e4feaed3126b7-5700x3800.jpg?auto=format&w=960&h=540&crop=focalpoint&fit=clip&q=75&fm=jpg
     tags:
     - crypto
@@ -2082,7 +2082,7 @@ sections:
       * **Node infrastructure**: The network of computers that maintain and validate blockchain networks, which developers typically don't want to run themselves
   - id: crypto-12
     title: Stablecoin B2B Payments Set for Large Growth by 2026 (1 minute read)
-    link: https://x.com/obchakevich_/status/2048403649064288719?s=20&utm_source=tldrcrypto
+    link: https://x.com/obchakevich_/status/2048403649064288719?s=20
     tags:
     - crypto
     - payments
