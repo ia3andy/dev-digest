@@ -527,14 +527,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  if (localStorage.getItem('digest-swipe-active') === '1') {
-    localStorage.removeItem('digest-swipe-active');
-    var container = document.querySelector('.digest-articles');
-    if (container && container.dataset.ready === undefined) {
-      var loader = showLoading();
-      waitForReady(function() { loader.remove(); enter(); });
-    } else {
-      waitForReady(enter);
-    }
-  }
+  // TODO: auto-entry disabled until iOS navigation issues are resolved
+  localStorage.removeItem('digest-swipe-active');
 });

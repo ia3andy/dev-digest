@@ -815,8 +815,9 @@ nav.topbar .dark-mode-toggle:hover {
 /* --- Swipe Mode --- */
 
 /* Entry CTA: mobile only */
+/* TODO: swipe mode disabled until iOS navigation issues are resolved */
 .swipe-cta {
-  @apply hidden;
+  @apply hidden !important;
 }
 
 @media (max-width: 768px) {
@@ -939,8 +940,7 @@ body.swipe-active {
 /* Each vertical frame */
 .swipe-frame {
   width: 100%;
-  height: 100dvh;
-  height: -webkit-fill-available;
+  height: 100%;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   position: relative;
