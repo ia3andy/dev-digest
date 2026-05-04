@@ -380,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!articles.length) return;
     var meta = extractPostMeta(document);
 
-    history.pushState({ swipe: true }, '', window.location.pathname + '#swipe');
+    history.replaceState(null, '', window.location.pathname + '#swipe');
     savedScrollY = window.scrollY;
     document.body.classList.add('swipe-active');
     document.body.style.top = -savedScrollY + 'px';
@@ -492,12 +492,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function exit() {
     closeOverlay();
-    if (window.location.hash === '#swipe') history.back();
+    if (window.location.hash === '#swipe') {
+      history.replaceState(null, '', window.location.pathname);
+    }
   }
-
-  window.addEventListener('popstate', function() {
-    if (overlay && window.location.hash !== '#swipe') closeOverlay();
-  });
 
   // --- Entry points ---
 
