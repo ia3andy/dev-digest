@@ -8,7 +8,9 @@ A daily developer news digest site built with [Roq](https://iamroq.dev), a stati
 roq start
 ```
 
-Starts live-reload dev server on http://localhost:8080. Content and template changes are auto-detected.
+Starts live-reload dev server on http://localhost:8080. Content and template changes are auto-detected. Press `s` to force a soft restart if needed.
+
+Other commands: `roq generate` (build to `target/roq/`), `roq serve` (preview built site), `roq update` (update deps to latest), `roq add plugin:name` (add a plugin).
 
 ## Project Structure
 
@@ -18,6 +20,9 @@ content/                    # Pages and collections
   digest-posts/             # Digest collection (one dir per day)
     2026-04-28-dev-digest/
       index.md              # YAML frontmatter + markdown body
+  digest-articles/           # Article pages collection (generated)
+    2026-04-28/
+      ai-1.html             # Individual article page
 config/
   application.properties    # Roq/Quarkus config
 data/                       # YAML/JSON data files
@@ -30,6 +35,7 @@ templates/
     digest-post.html        # Individual digest post layout
   partials/
     digest-articles.html    # Article rendering partial
+    digest-article.html     # Single article page layout
 public/images/              # Static assets
 web/                        # CSS/JS (bundled by Quarkus Web Bundler)
   _custom.css
@@ -77,6 +83,7 @@ Commands:
 - `clean-all <postsDir> <cacheDir> <feeds.yml>` - clean all posts
 - `refresh-html <postsDir> <cacheDir>` - refresh cached HTML
 - `sync-tags <postsDir> <feeds.yml>` - synchronize tags
+- `generate-pages <postDir|postsDir> <articlesDir>` - generate article page files for sharing
 
 Use `--help` on any command for parameter details.
 
@@ -116,7 +123,15 @@ YAML/JSON in `data/` become CDI beans: `{cdi:feeds}`, `{cdi:authors}`.
 
 Configured in `application.properties`: `site.collections.digest-posts=true`. Iterate with `{#for post in site.collections.digest-posts}`.
 
+### Updating Roq skills
+
+After updating Roq version, re-extract skill files from deployment JARs:
+```bash
+unzip -p ~/.m2/repository/io/quarkiverse/roq/ARTIFACT-deployment/VERSION/ARTIFACT-deployment-VERSION.jar META-INF/quarkus-skill.md > .claude/skills/SHORT_NAME.md
+```
+
 ### Key references
 
+- Roq LLM reference: https://iamroq.dev/llms.txt
 - Roq docs: https://iamroq.dev/docs/
 - Qute reference: https://quarkus.io/guides/qute-reference
