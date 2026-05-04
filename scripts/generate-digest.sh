@@ -85,17 +85,22 @@ find_daily_url() {
     | head -1
 }
 
-# Scrape, enrich, and summarize a single feed. Writes YAML output to $4.
-summarize_feed() {
-  local name="$1" daily_url="$2" target_date="$3" output_file="$4"
+# Phase 1: scrape + enrich a single feed (no summarization yet)
+enrich_feed() {
+  local name="$1" daily_url="$2" target_date="$3" enriched_file="$4"
 
   local feed_file="$TEMP_DIR/feed-${name}-${target_date}.xml"
   echo "  [$name] Scraping..." >&2
   jbang "$SCRIPT_DIR/DigestHelper.java" tldr-articles "$daily_url" > "$feed_file"
 
   echo "  [$name] Enriching..." >&2
-  local enriched_file="$TEMP_DIR/enriched-${name}-${target_date}.json"
   jbang "$SCRIPT_DIR/DigestHelper.java" enrich "$feed_file" "$enriched_file" "$CACHE_DIR"
+  echo "  [$name] Enriched." >&2
+}
+
+# Phase 3: summarize a single feed
+summarize_feed() {
+  local enriched_file="$1" name="$2" output_file="$3"
 
   echo "  [$name] Summarizing..." >&2
   jbang "$SCRIPT_DIR/DigestHelper.java" summarize "$enriched_file" "$name" > "$output_file"
@@ -113,9 +118,10 @@ generate_post() {
 
   echo "Generating digest for $target_date..."
 
-  # Launch each feed in parallel: scrape + enrich + summarize
+  # Phase 1: scrape + enrich all feeds in parallel
   local pids=()
-  local feed_outputs=()
+  local enriched_files=()
+  local feed_names=()
   local feed_index=0
 
   while IFS='|' read -r name url; do
@@ -128,11 +134,12 @@ generate_post() {
     fi
 
     echo "  $name: $daily_url"
-    local output_file="$TEMP_DIR/section-${feed_index}.yml"
-    feed_outputs+=("$output_file")
+    local enriched_file="$TEMP_DIR/enriched-${feed_index}-${name}.json"
+    enriched_files+=("$enriched_file")
+    feed_names+=("$name")
     feed_index=$((feed_index + 1))
 
-    summarize_feed "$name" "$daily_url" "$target_date" "$output_file" &
+    enrich_feed "$name" "$daily_url" "$target_date" "$enriched_file" &
     pids+=($!)
   done < <(parse_feeds)
 
@@ -141,12 +148,33 @@ generate_post() {
     return
   fi
 
-  echo "  Waiting for ${#pids[@]} feeds..."
+  echo "  Waiting for ${#pids[@]} feeds to enrich..."
   local failed=0
   for pid in "${pids[@]}"; do
     wait "$pid" || failed=$((failed + 1))
   done
-  [[ $failed -gt 0 ]] && echo "  Warning: $failed feed(s) failed" >&2
+  [[ $failed -gt 0 ]] && echo "  Warning: $failed feed(s) failed enrichment" >&2
+
+  # Phase 2: deduplicate across all enriched files
+  echo "  Deduplicating across feeds..."
+  jbang "$SCRIPT_DIR/DigestHelper.java" dedup "${enriched_files[@]}"
+
+  # Phase 3: summarize all feeds in parallel
+  pids=()
+  local feed_outputs=()
+  for i in "${!enriched_files[@]}"; do
+    local output_file="$TEMP_DIR/section-${i}.yml"
+    feed_outputs+=("$output_file")
+    summarize_feed "${enriched_files[$i]}" "${feed_names[$i]}" "$output_file" &
+    pids+=($!)
+  done
+
+  echo "  Waiting for ${#pids[@]} feeds to summarize..."
+  failed=0
+  for pid in "${pids[@]}"; do
+    wait "$pid" || failed=$((failed + 1))
+  done
+  [[ $failed -gt 0 ]] && echo "  Warning: $failed feed(s) failed summarization" >&2
 
   # Combine sections
   local all_sections=""

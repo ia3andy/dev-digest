@@ -20,6 +20,7 @@ import java.security.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
+import java.util.stream.*;
 import java.util.regex.*;
 import picocli.CommandLine;
 import picocli.CommandLine.*;
@@ -35,6 +36,7 @@ import picocli.CommandLine.*;
         DigestHelper.ResummarizeCmd.class,
         DigestHelper.ResummarizeAllCmd.class,
         DigestHelper.GeneratePagesCmd.class,
+        DigestHelper.DedupCmd.class,
 }, mixinStandardHelpOptions = true)
 public class DigestHelper implements Runnable {
 
@@ -263,6 +265,70 @@ public class DigestHelper implements Runnable {
             System.err.println(date + ": " + count + " articles");
         }
         System.err.println("Generated " + totalPages + " article pages in " + articlesDir);
+    }
+
+    @Command(name = "dedup", description = "Remove duplicate articles across enriched JSON files")
+    static class DedupCmd implements Callable<Integer> {
+        @Parameters(description = "Enriched JSON files") List<String> files;
+
+        @Override
+        public Integer call() throws Exception {
+            dedup(files);
+            return 0;
+        }
+    }
+
+    static void dedup(List<String> filePaths) throws Exception {
+        Set<String> seen = new LinkedHashSet<>();
+        int totalRemoved = 0;
+
+        for (String filePath : filePaths) {
+            Path path = Path.of(filePath);
+            if (!Files.exists(path)) continue;
+
+            JsonArray articles = GSON.fromJson(Files.readString(path), JsonArray.class);
+            if (articles == null || articles.isEmpty()) continue;
+
+            JsonArray kept = new JsonArray();
+            int removed = 0;
+            for (var el : articles) {
+                var article = el.getAsJsonObject();
+                String link = jsonStr(article, "link");
+                String normalized = normalizeUrl(link);
+                if (seen.contains(normalized)) {
+                    System.err.println("    [dedup] removing: " + jsonStr(article, "title"));
+                    removed++;
+                } else {
+                    seen.add(normalized);
+                    kept.add(article);
+                }
+            }
+
+            if (removed > 0) {
+                Files.writeString(path, GSON.toJson(kept));
+                System.err.println("  " + Path.of(filePath).getFileName() + ": removed " + removed + " duplicate(s)");
+                totalRemoved += removed;
+            }
+        }
+
+        if (totalRemoved > 0) {
+            System.err.println("  Dedup total: removed " + totalRemoved + " duplicate(s) across " + filePaths.size() + " files");
+        }
+    }
+
+    static String normalizeUrl(String url) {
+        try {
+            var uri = java.net.URI.create(url);
+            String query = uri.getQuery();
+            if (query == null || query.isEmpty()) return url;
+            String filtered = Arrays.stream(query.split("&"))
+                    .filter(p -> !p.startsWith("utm_") && !p.startsWith("ref=") && !p.startsWith("accessToken="))
+                    .collect(java.util.stream.Collectors.joining("&"));
+            String base = url.substring(0, url.indexOf('?'));
+            return filtered.isEmpty() ? base : base + "?" + filtered;
+        } catch (Exception e) {
+            return url;
+        }
     }
 
     static void logCost(String command) {
@@ -1024,7 +1090,7 @@ public class DigestHelper implements Runnable {
 
             index++;
             String id = sectionId + "-" + index;
-            String link = sanitizeUrl(jsonStr(a, "link"));
+            String link = normalizeUrl(sanitizeUrl(jsonStr(a, "link")));
             String image = sanitizeUrl(ai != null && ai.has("image") ? jsonStr(ai, "image") : jsonStr(a, "ogImage"));
             String desc = sanitizeMarkdown(jsonStr(a, "description"));
 
