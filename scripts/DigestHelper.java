@@ -2,15 +2,11 @@
 //DEPS org.jsoup:jsoup:1.18.3
 //DEPS com.microsoft.playwright:playwright:1.49.0
 //DEPS com.google.code.gson:gson:2.11.0
-//DEPS com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2
 //DEPS info.picocli:picocli:4.7.6
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.*;
 import com.google.gson.*;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.node.*;
-import com.fasterxml.jackson.dataformat.yaml.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
@@ -29,6 +25,7 @@ import picocli.CommandLine.*;
         DigestHelper.TldrArticlesCmd.class,
         DigestHelper.EnrichCmd.class,
         DigestHelper.SummarizeCmd.class,
+        DigestHelper.AddPostCmd.class,
         DigestHelper.WriteContentCmd.class,
         DigestHelper.CleanAllCmd.class,
         DigestHelper.RefreshHtmlCmd.class,
@@ -41,12 +38,37 @@ public class DigestHelper implements Runnable {
 
     static final int CONTENT_MIN_LENGTH = 500;
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    static final ObjectMapper YAML_MAPPER = new ObjectMapper(
-            YAMLFactory.builder()
-                    .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                    .enable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE)
-                    .disable(YAMLGenerator.Feature.SPLIT_LINES)
-                    .build());
+
+    static class PostStore {
+        final Path dataFile;
+        JsonArray posts;
+
+        PostStore(String dataFilePath) { dataFile = Path.of(dataFilePath); }
+
+        void load() throws IOException {
+            if (Files.exists(dataFile)) {
+                posts = GSON.fromJson(Files.readString(dataFile), JsonArray.class);
+            }
+            if (posts == null) posts = new JsonArray();
+        }
+
+        void save() throws IOException { Files.writeString(dataFile, GSON.toJson(posts)); }
+
+        JsonObject findByDate(String date) {
+            for (var el : posts) {
+                if (date.equals(jsonStr(el.getAsJsonObject(), "date"))) return el.getAsJsonObject();
+            }
+            return null;
+        }
+
+        List<JsonObject> all() {
+            var list = new ArrayList<JsonObject>();
+            for (var el : posts) list.add(el.getAsJsonObject());
+            return list;
+        }
+
+        void addPost(JsonObject post) throws IOException { posts.add(post); save(); }
+    }
 
     static final DoubleAdder totalCostUsd = new DoubleAdder();
     static final AtomicInteger totalCalls = new AtomicInteger();
@@ -119,14 +141,29 @@ public class DigestHelper implements Runnable {
         }
     }
 
-    @Command(name = "write-content", description = "Write digest post content from JSON")
-    static class WriteContentCmd implements Callable<Integer> {
-        @Parameters(index = "0", description = "JSON input file") String jsonFile;
-        @Parameters(index = "1", description = "Cache directory") String cacheDir;
-        @Parameters(index = "2", description = "Posts directory") String postsDir;
+    @Command(name = "add-post", description = "Add a new post to the data file from section JSON files")
+    static class AddPostCmd implements Callable<Integer> {
+        @Option(names = "--data-file", required = true, description = "Data JSON file") String dataFile;
+        @Option(names = "--date", required = true, description = "Post date (YYYY-MM-DD)") String date;
+        @Option(names = "--title", required = true, description = "Post title") String title;
+        @Option(names = "--description", defaultValue = "Daily developer news digest", description = "Post description") String description;
+        @Option(names = "--image", description = "Post image URL") String image;
+        @Parameters(description = "Section JSON files") List<String> sectionFiles;
         public Integer call() throws Exception {
-            costContext = Path.of(jsonFile).getParent().getFileName().toString();
-            writeContent(jsonFile, cacheDir, postsDir);
+            addPost(dataFile, date, title, description, image, sectionFiles);
+            return 0;
+        }
+    }
+
+    @Command(name = "write-content", description = "Write digest post content from cached HTML")
+    static class WriteContentCmd implements Callable<Integer> {
+        @Parameters(index = "0", description = "Data JSON file") String dataFile;
+        @Parameters(index = "1", description = "Post date") String date;
+        @Parameters(index = "2", description = "Cache directory") String cacheDir;
+        @Parameters(index = "3", description = "Feeds file") String feedsFile;
+        public Integer call() throws Exception {
+            costContext = date;
+            writeContent(dataFile, date, cacheDir, feedsFile);
             reportCost("write-content");
             return 0;
         }
@@ -134,12 +171,12 @@ public class DigestHelper implements Runnable {
 
     @Command(name = "clean-all", description = "Clean all digest posts")
     static class CleanAllCmd implements Callable<Integer> {
-        @Parameters(index = "0", description = "Posts directory") String postsDir;
+        @Parameters(index = "0", description = "Data JSON file") String dataFile;
         @Parameters(index = "1", description = "Cache directory") String cacheDir;
-        @Parameters(index = "2", description = "JSON input file") String jsonFile;
+        @Parameters(index = "2", description = "Feeds file") String feedsFile;
         public Integer call() throws Exception {
             costContext = "all";
-            cleanAll(postsDir, cacheDir, jsonFile);
+            cleanAll(dataFile, cacheDir, feedsFile);
             reportCost("clean-all");
             return 0;
         }
@@ -147,31 +184,33 @@ public class DigestHelper implements Runnable {
 
     @Command(name = "refresh-html", description = "Refresh HTML content for articles")
     static class RefreshHtmlCmd implements Callable<Integer> {
-        @Parameters(index = "0", description = "Posts directory") String postsDir;
-        @Parameters(index = "1", description = "Cache directory") String cacheDir;
+        @Parameters(index = "0", description = "Data JSON file") String dataFile;
+        @Parameters(index = "1", description = "Post date") String date;
+        @Parameters(index = "2", description = "Cache directory") String cacheDir;
         public Integer call() throws Exception {
-            refreshHtml(postsDir, cacheDir);
+            refreshHtml(dataFile, date, cacheDir);
             return 0;
         }
     }
 
     @Command(name = "sync-tags", description = "Synchronize tags across posts")
     static class SyncTagsCmd implements Callable<Integer> {
-        @Parameters(index = "0", description = "Posts directory") String postsDir;
-        @Parameters(index = "1", description = "Cache directory") String cacheDir;
+        @Parameters(index = "0", description = "Data JSON file") String dataFile;
+        @Parameters(index = "1", description = "Feeds file") String feedsFile;
         public Integer call() throws Exception {
-            syncTags(postsDir, cacheDir);
+            syncTags(dataFile, feedsFile);
             return 0;
         }
     }
 
     @Command(name = "resummarize", description = "Re-summarize a single post with resume support")
     static class ResummarizeCmd implements Callable<Integer> {
-        @Parameters(index = "0", description = "Post directory") String postDir;
-        @Parameters(index = "1", description = "Cache directory") String cacheDir;
+        @Parameters(index = "0", description = "Data JSON file") String dataFile;
+        @Parameters(index = "1", description = "Post date") String date;
+        @Parameters(index = "2", description = "Cache directory") String cacheDir;
         public Integer call() throws Exception {
-            costContext = Path.of(postDir).getFileName().toString();
-            resummarize(postDir, cacheDir);
+            costContext = date;
+            resummarize(dataFile, date, cacheDir);
             reportCost("resummarize");
             return 0;
         }
@@ -179,11 +218,11 @@ public class DigestHelper implements Runnable {
 
     @Command(name = "resummarize-all", description = "Re-summarize all posts")
     static class ResummarizeAllCmd implements Callable<Integer> {
-        @Parameters(index = "0", description = "Posts directory") String postsDir;
+        @Parameters(index = "0", description = "Data JSON file") String dataFile;
         @Parameters(index = "1", description = "Cache directory") String cacheDir;
         public Integer call() throws Exception {
             costContext = "all";
-            resummarizeAll(postsDir, cacheDir);
+            resummarizeAll(dataFile, cacheDir);
             reportCost("resummarize-all");
             return 0;
         }
@@ -706,11 +745,16 @@ public class DigestHelper implements Runnable {
         return data;
     }
 
-    static List<String> extractPostUrls(List<String> lines) {
+    static List<String> extractPostUrls(JsonObject post) {
         List<String> urls = new ArrayList<>();
-        for (String line : lines) {
-            if (line.matches("\\s+link:.*")) {
-                urls.add(line.replaceFirst("\\s+link:\\s*", "").replaceAll("^\"|\"$", "").trim());
+        var sections = post.getAsJsonArray("sections");
+        if (sections == null) return urls;
+        for (var s : sections) {
+            var articles = s.getAsJsonObject().getAsJsonArray("articles");
+            if (articles == null) continue;
+            for (var a : articles) {
+                String link = jsonStr(a.getAsJsonObject(), "link");
+                if (!link.isEmpty()) urls.add(link);
             }
         }
         return urls;
@@ -752,23 +796,6 @@ public class DigestHelper implements Runnable {
         s = s.trim();
         if (s.startsWith("http://") || s.startsWith("https://")) return s;
         return "";
-    }
-
-    static String yamlEscape(String s) {
-        if (s == null) return "\"\"";
-        s = s.replace("---", "&#45;&#45;&#45;");
-        s = s.replace("...", "&#46;&#46;&#46;");
-        s = s.replace("\\", "\\\\").replace("\"", "\\\"");
-        return "\"" + s + "\"";
-    }
-
-    static String yamlBlockScalar(String s, String indent) {
-        if (s == null || s.isEmpty()) return "";
-        s = s.replaceAll("(?m)^---", "&#45;&#45;&#45;");
-        s = s.replaceAll("(?m)^\\.\\.\\.", "&#46;&#46;&#46;");
-        var sb = new StringBuilder();
-        for (String line : s.split("\n")) sb.append(indent).append(line).append("\n");
-        return sb.toString();
     }
 
     static final org.jsoup.safety.Safelist PROSE_SAFELIST = org.jsoup.safety.Safelist.none()
@@ -934,48 +961,68 @@ public class DigestHelper implements Runnable {
     }
 
 
-    static void appendArticleYaml(StringBuilder out, String id, String contentTemplatePath,
-            String title, String link, String image, String desc, JsonObject ai) {
+    static JsonObject buildArticleJson(String id, String title, String link, String image, String desc, JsonObject ai) {
+        var article = new JsonObject();
+        article.addProperty("id", id);
+        article.addProperty("title", sanitizeText(title));
+        if (!link.isEmpty()) article.addProperty("link", link);
+        if (!image.isEmpty()) article.addProperty("image", image);
+
+        if (ai != null && ai.has("tags")) {
+            var tags = new JsonArray();
+            for (var t : ai.getAsJsonArray("tags"))
+                tags.add(t.getAsString().toLowerCase().replaceAll("[^a-z0-9-]", ""));
+            article.add("tags", tags);
+        }
+
+        if (!desc.isEmpty()) article.addProperty("description", desc);
+
         String oneLiner = ai != null ? sanitizeText(jsonStr(ai, "one-liner")) : "";
+        if (!oneLiner.isEmpty()) article.addProperty("one-liner", oneLiner);
+
         String what = ai != null ? sanitizeText(jsonStr(ai, "what")) : "";
         String why = ai != null ? sanitizeText(jsonStr(ai, "why")) : "";
         String takeaway = ai != null ? sanitizeText(jsonStr(ai, "takeaway")) : "";
-        String deepSummary = ai != null ? markdownList(sanitizeMarkdown(jsonStr(ai, "deep-summary"))) : "";
-        String decoder = ai != null ? markdownList(sanitizeMarkdown(jsonStr(ai, "decoder"))) : "";
-
-        List<String> tags = new ArrayList<>();
-        if (ai != null && ai.has("tags")) {
-            for (var t : ai.getAsJsonArray("tags")) tags.add(t.getAsString().toLowerCase().replaceAll("[^a-z0-9-]", ""));
-        }
-
-        out.append("      - id: ").append(id).append("\n");
-        if (contentTemplatePath != null && !contentTemplatePath.isEmpty()
-                && contentTemplatePath.matches("[a-zA-Z0-9/_-]+")) {
-            out.append("        content-template-path: ").append(contentTemplatePath).append("\n");
-        }
-        out.append("        title: ").append(yamlEscape(title)).append("\n");
-        if (!link.isEmpty()) out.append("        link: ").append(link).append("\n");
-        if (!image.isEmpty()) out.append("        image: ").append(image).append("\n");
-        if (!tags.isEmpty()) out.append("        tags: [").append(String.join(", ", tags)).append("]\n");
-        if (!desc.isEmpty()) {
-            out.append("        description: |\n");
-            out.append(yamlBlockScalar(desc, "          "));
-        }
-        if (!oneLiner.isEmpty()) out.append("        one-liner: ").append(yamlEscape(oneLiner)).append("\n");
         if (!what.isEmpty() || !why.isEmpty() || !takeaway.isEmpty()) {
-            out.append("        summary:\n");
-            if (!what.isEmpty()) out.append("          what: ").append(yamlEscape(what)).append("\n");
-            if (!why.isEmpty()) out.append("          why: ").append(yamlEscape(why)).append("\n");
-            if (!takeaway.isEmpty()) out.append("          takeaway: ").append(yamlEscape(takeaway)).append("\n");
+            var summary = new JsonObject();
+            if (!what.isEmpty()) summary.addProperty("what", what);
+            if (!why.isEmpty()) summary.addProperty("why", why);
+            if (!takeaway.isEmpty()) summary.addProperty("takeaway", takeaway);
+            article.add("summary", summary);
         }
-        if (!deepSummary.isEmpty()) {
-            out.append("        deep-summary: |\n");
-            out.append(yamlBlockScalar(deepSummary, "          "));
+
+        String deepSummary = ai != null ? markdownList(sanitizeMarkdown(jsonStr(ai, "deep-summary"))) : "";
+        if (!deepSummary.isEmpty()) article.addProperty("deep-summary", deepSummary);
+
+        String decoder = ai != null ? markdownList(sanitizeMarkdown(jsonStr(ai, "decoder"))) : "";
+        if (!decoder.isEmpty()) article.addProperty("decoder", decoder);
+
+        return article;
+    }
+
+    static void setAiFieldsOnArticle(JsonObject article, JsonObject ai) {
+        if (ai.has("tags")) {
+            var tags = new JsonArray();
+            for (var t : ai.getAsJsonArray("tags"))
+                tags.add(t.getAsString().toLowerCase().replaceAll("[^a-z0-9-]", ""));
+            article.add("tags", tags);
         }
-        if (!decoder.isEmpty()) {
-            out.append("        decoder: |\n");
-            out.append(yamlBlockScalar(decoder, "          "));
+        String oneLiner = sanitizeText(jsonStr(ai, "one-liner"));
+        if (!oneLiner.isEmpty()) article.addProperty("one-liner", oneLiner);
+        String what = sanitizeText(jsonStr(ai, "what"));
+        String why = sanitizeText(jsonStr(ai, "why"));
+        String takeaway = sanitizeText(jsonStr(ai, "takeaway"));
+        if (!what.isEmpty() || !why.isEmpty() || !takeaway.isEmpty()) {
+            var summary = new JsonObject();
+            if (!what.isEmpty()) summary.addProperty("what", what);
+            if (!why.isEmpty()) summary.addProperty("why", why);
+            if (!takeaway.isEmpty()) summary.addProperty("takeaway", takeaway);
+            article.add("summary", summary);
         }
+        String deepSummary = markdownList(sanitizeMarkdown(jsonStr(ai, "deep-summary")));
+        if (!deepSummary.isEmpty()) article.addProperty("deep-summary", deepSummary);
+        String decoder = markdownList(sanitizeMarkdown(jsonStr(ai, "decoder")));
+        if (!decoder.isEmpty()) article.addProperty("decoder", decoder);
     }
 
     static void summarize(String enrichedFile, String feedName) throws Exception {
@@ -1000,10 +1047,11 @@ public class DigestHelper implements Runnable {
         var aiMap = callClaudeForSummaryParallel(articleInputs);
         if (aiMap.isEmpty()) return;
 
-        var out = new StringBuilder();
+        var section = new JsonObject();
         String sectionId = feedName.toLowerCase().replaceAll("[^a-z0-9]", "-");
-        out.append("  - name: ").append(feedName).append("\n");
-        out.append("    articles:\n");
+        section.addProperty("name", feedName);
+        var sectionArticles = new JsonArray();
+
         int index = 0;
         for (int i = 0; i < articles.size(); i++) {
             var a = articles.get(i).getAsJsonObject();
@@ -1016,11 +1064,43 @@ public class DigestHelper implements Runnable {
             String image = sanitizeUrl(ai != null && ai.has("image") ? jsonStr(ai, "image") : jsonStr(a, "ogImage"));
             String desc = sanitizeMarkdown(jsonStr(a, "description"));
 
-            appendArticleYaml(out, id, null, sanitizeText(jsonStr(a, "title")), link, image, desc, ai);
+            sectionArticles.add(buildArticleJson(id, jsonStr(a, "title"), link, image, desc, ai));
         }
 
-        System.out.print(out);
+        section.add("articles", sectionArticles);
+        System.out.print(GSON.toJson(section));
         System.err.println("  Output " + index + " articles for " + feedName);
+    }
+
+    static void addPost(String dataFile, String date, String title, String description,
+                        String image, List<String> sectionFiles) throws Exception {
+        var store = new PostStore(dataFile);
+        store.load();
+
+        if (store.findByDate(date) != null) {
+            System.err.println("Post for " + date + " already exists, skipping.");
+            return;
+        }
+
+        var post = new JsonObject();
+        post.addProperty("title", title);
+        post.addProperty("description", description);
+        post.addProperty("layout", "digest-post");
+        post.addProperty("date", date);
+        post.addProperty("tags", "digest");
+        post.addProperty("author", "ia3andy");
+        if (image != null && !image.isEmpty()) post.addProperty("image", image);
+
+        var sections = new JsonArray();
+        for (String file : sectionFiles) {
+            if (!Files.exists(Path.of(file)) || Files.size(Path.of(file)) == 0) continue;
+            var section = GSON.fromJson(Files.readString(Path.of(file)), JsonObject.class);
+            sections.add(section);
+        }
+        post.add("sections", sections);
+
+        store.addPost(post);
+        System.err.println("Added post for " + date + " with " + sections.size() + " sections");
     }
 
     static Map<String, Integer> parseTagPriorities(String feedsFile) throws IOException {
@@ -1058,45 +1138,66 @@ public class DigestHelper implements Runnable {
 
     record ArticleInfo(String id, String link, List<String> tags, int priority) {}
 
-    static List<ArticleInfo> parseArticles(List<String> lines, Map<String, Integer> tagPriorities, int unsortedPriority) {
+    static List<ArticleInfo> parseArticles(JsonObject post, Map<String, Integer> tagPriorities, int unsortedPriority) {
         var articles = new ArrayList<ArticleInfo>();
-        String id = null, link = null;
-        List<String> tags = new ArrayList<>();
-
-        for (String line : lines) {
-            var idMatch = Pattern.compile("\\s+- id:\\s*(.+)").matcher(line);
-            if (idMatch.matches()) {
-                if (id != null) articles.add(new ArticleInfo(id, link, tags, computePriority(tags, tagPriorities, unsortedPriority)));
-                id = idMatch.group(1).trim();
-                link = null;
-                tags = new ArrayList<>();
-                continue;
-            }
-            if (id != null) {
-                var linkMatch = Pattern.compile("\\s+link:\\s*(.+)").matcher(line);
-                if (linkMatch.matches()) { link = linkMatch.group(1).replaceAll("^\"|\"$", "").trim(); continue; }
-                var tagsMatch = Pattern.compile("\\s+tags:\\s*\\[(.+)]").matcher(line);
-                if (tagsMatch.matches()) {
-                    tags = Arrays.stream(tagsMatch.group(1).split(",")).map(String::trim).toList();
+        var sections = post.getAsJsonArray("sections");
+        if (sections == null) return articles;
+        for (var s : sections) {
+            var sectionArticles = s.getAsJsonObject().getAsJsonArray("articles");
+            if (sectionArticles == null) continue;
+            for (var a : sectionArticles) {
+                var obj = a.getAsJsonObject();
+                String id = jsonStr(obj, "id");
+                String link = jsonStr(obj, "link");
+                var tags = new ArrayList<String>();
+                if (obj.has("tags") && obj.get("tags").isJsonArray()) {
+                    for (var t : obj.getAsJsonArray("tags")) tags.add(t.getAsString());
                 }
+                articles.add(new ArticleInfo(id, link.isEmpty() ? null : link, tags, computePriority(tags, tagPriorities, unsortedPriority)));
             }
         }
-        if (id != null) articles.add(new ArticleInfo(id, link, tags, computePriority(tags, tagPriorities, unsortedPriority)));
         return articles;
     }
 
-    static void writeContent(String postFile, String cacheDir, String feedsFile) throws Exception {
+    static JsonObject findArticleInPost(JsonObject post, String articleId) {
+        var sections = post.getAsJsonArray("sections");
+        if (sections == null) return null;
+        for (var s : sections) {
+            var articles = s.getAsJsonObject().getAsJsonArray("articles");
+            if (articles == null) continue;
+            for (var a : articles) {
+                if (articleId.equals(jsonStr(a.getAsJsonObject(), "id"))) return a.getAsJsonObject();
+            }
+        }
+        return null;
+    }
+
+    static List<String> collectArticleTags(JsonObject post) {
+        var tags = new ArrayList<String>();
+        var sections = post.getAsJsonArray("sections");
+        if (sections == null) return tags;
+        for (var s : sections) {
+            var articles = s.getAsJsonObject().getAsJsonArray("articles");
+            if (articles == null) continue;
+            for (var a : articles) {
+                var obj = a.getAsJsonObject();
+                if (obj.has("tags") && obj.get("tags").isJsonArray()) {
+                    for (var t : obj.getAsJsonArray("tags")) tags.add(t.getAsString());
+                }
+            }
+        }
+        return tags;
+    }
+
+    static void writeContent(String dataFile, String date, String cacheDir, String feedsFile) throws Exception {
+        var store = new PostStore(dataFile);
+        store.load();
+        var post = store.findByDate(date);
+        if (post == null) { System.err.println("  No post found for " + date); return; }
+
         var tagPriorities = parseTagPriorities(feedsFile);
         int unsortedPriority = parseUnsortedPriority(feedsFile);
-        var lines = new ArrayList<>(Files.readAllLines(Path.of(postFile)));
-
-        String date = "";
-        for (String line : lines) {
-            var m = Pattern.compile("date:\\s*(\\d{4}-\\d{2}-\\d{2})").matcher(line);
-            if (m.find()) { date = m.group(1); break; }
-        }
-
-        var articles = parseArticles(lines, tagPriorities, unsortedPriority);
+        var articles = parseArticles(post, tagPriorities, unsortedPriority);
         Path contentDir = Path.of("templates/full-content/" + date);
         Files.createDirectories(contentDir);
 
@@ -1154,47 +1255,33 @@ public class DigestHelper implements Runnable {
             }
         }
 
-        var written = new HashSet<String>();
+        int written = 0;
         for (var a : eligible) {
-            if (Files.exists(contentDir.resolve(a.id() + ".html"))) written.add(a.id());
-        }
-
-        var output = new ArrayList<String>();
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
-            output.add(line);
-            var idMatch = Pattern.compile("(\\s+)- id:\\s*(.+)").matcher(line);
-            if (idMatch.matches()) {
-                String articleId = idMatch.group(2).trim();
-                String indent = idMatch.group(1) + "  ";
-                if (written.contains(articleId)) {
-                    boolean alreadyPresent = (i + 1 < lines.size())
-                            && lines.get(i + 1).trim().startsWith("content-template-path:");
-                    if (!alreadyPresent) {
-                        output.add(indent + "content-template-path: full-content/" + date + "/" + articleId);
-                    }
+            if (Files.exists(contentDir.resolve(a.id() + ".html"))) {
+                var articleObj = findArticleInPost(post, a.id());
+                if (articleObj != null) {
+                    articleObj.addProperty("content-template-path", "full-content/" + date + "/" + a.id());
                 }
+                written++;
             }
         }
 
-        Files.writeString(Path.of(postFile), String.join("\n", output) + "\n");
-        System.err.println("  Wrote " + written.size() + " HTML files to " + contentDir);
+        store.save();
+        System.err.println("  Wrote " + written + " HTML files to " + contentDir);
         int skipped = articles.size() - eligible.size();
         System.err.println("  Skipped " + skipped + " articles (priority >= 4)");
     }
 
-    static void cleanAll(String postsDir, String cacheDir, String feedsFile) throws Exception {
-        var postDirs = Files.list(Path.of(postsDir))
-                .filter(Files::isDirectory)
-                .sorted()
-                .toList();
+    static void cleanAll(String dataFile, String cacheDir, String feedsFile) throws Exception {
+        var store = new PostStore(dataFile);
+        store.load();
+        var posts = store.all();
 
-        System.err.println("Processing " + postDirs.size() + " posts...");
-        for (Path postDir : postDirs) {
-            Path postFile = postDir.resolve("index.md");
-            if (!Files.exists(postFile)) continue;
-            System.err.println("\n=== " + postDir.getFileName() + " ===");
-            writeContent(postFile.toString(), cacheDir, feedsFile);
+        System.err.println("Processing " + posts.size() + " posts...");
+        for (var post : posts) {
+            String date = jsonStr(post, "date");
+            System.err.println("\n=== " + date + " ===");
+            writeContent(dataFile, date, cacheDir, feedsFile);
         }
         System.err.println("\nDone processing all posts.");
     }
@@ -1209,9 +1296,13 @@ public class DigestHelper implements Runnable {
         }
     }
 
-    static void refreshHtml(String postFile, String cacheDir) throws Exception {
-        var urls = new LinkedHashSet<>(extractPostUrls(Files.readAllLines(Path.of(postFile))));
+    static void refreshHtml(String dataFile, String date, String cacheDir) throws Exception {
+        var store = new PostStore(dataFile);
+        store.load();
+        var post = store.findByDate(date);
+        if (post == null) { System.err.println("  No post found for " + date); return; }
 
+        var urls = new LinkedHashSet<>(extractPostUrls(post));
         System.err.println("  Found " + urls.size() + " article URLs in post");
         int refreshed = 0;
 
@@ -1262,48 +1353,50 @@ public class DigestHelper implements Runnable {
         return tag;
     }
 
-    static void syncTags(String postsDir, String feedsFile) throws IOException {
+    static void syncTags(String dataFile, String feedsFile) throws IOException {
+        var store = new PostStore(dataFile);
+        store.load();
         var existing = parseTagPriorities(feedsFile);
         var allTags = new TreeSet<String>();
         var renames = new LinkedHashMap<String, String>();
+        boolean modified = false;
 
-        var postDirs = Files.list(Path.of(postsDir))
-                .filter(Files::isDirectory)
-                .sorted()
-                .toList();
-
-        for (Path postDir : postDirs) {
-            Path postFile = postDir.resolve("index.md");
-            if (!Files.exists(postFile)) continue;
-            for (String line : Files.readAllLines(postFile)) {
-                var m = Pattern.compile("\\s+tags:\\s*\\[(.+)]").matcher(line);
-                if (m.matches()) {
-                    for (String t : m.group(1).split(",")) {
-                        String tag = t.trim().toLowerCase().replaceAll("[^a-z0-9-]", "");
-                        if (!tag.isEmpty() && !tag.equals("default")) {
-                            String canonical = canonicalizeTag(tag, existing);
-                            allTags.add(canonical);
-                            if (!canonical.equals(tag)) renames.put(tag, canonical);
-                        }
-                    }
+        for (var post : store.all()) {
+            for (String rawTag : collectArticleTags(post)) {
+                String tag = rawTag.toLowerCase().replaceAll("[^a-z0-9-]", "");
+                if (!tag.isEmpty() && !tag.equals("default")) {
+                    String canonical = canonicalizeTag(tag, existing);
+                    allTags.add(canonical);
+                    if (!canonical.equals(tag)) renames.put(tag, canonical);
                 }
             }
         }
 
         if (!renames.isEmpty()) {
             System.err.println("  Normalizing tag variants: " + renames);
-            for (Path postDir : postDirs) {
-                Path postFile = postDir.resolve("index.md");
-                if (!Files.exists(postFile)) continue;
-                String content = Files.readString(postFile);
-                String updated = content;
-                for (var entry : renames.entrySet()) {
-                    updated = updated.replaceAll(
-                            "(tags:\\s*\\[[^\\]]*)\\b" + Pattern.quote(entry.getKey()) + "\\b",
-                            "$1" + entry.getValue());
+            for (var post : store.all()) {
+                var sections = post.getAsJsonArray("sections");
+                if (sections == null) continue;
+                for (var s : sections) {
+                    var articles = s.getAsJsonObject().getAsJsonArray("articles");
+                    if (articles == null) continue;
+                    for (var a : articles) {
+                        var obj = a.getAsJsonObject();
+                        if (!obj.has("tags") || !obj.get("tags").isJsonArray()) continue;
+                        var tags = obj.getAsJsonArray("tags");
+                        var updated = new JsonArray();
+                        boolean changed = false;
+                        for (var t : tags) {
+                            String val = t.getAsString();
+                            String canonical = renames.getOrDefault(val, val);
+                            updated.add(canonical);
+                            if (!canonical.equals(val)) changed = true;
+                        }
+                        if (changed) { obj.add("tags", updated); modified = true; }
+                    }
                 }
-                if (!updated.equals(content)) Files.writeString(postFile, updated);
             }
+            if (modified) store.save();
         }
 
         var newTags = new ArrayList<String>();
@@ -1354,169 +1447,106 @@ public class DigestHelper implements Runnable {
         System.err.println(msg);
     }
 
-    static String[] splitFrontmatter(String content) {
-        if (!content.startsWith("---")) return null;
-        int end = content.indexOf("\n---", 3);
-        if (end < 0) return null;
-        int bodyStart = end + 4;
-        return new String[] {
-            content.substring(4, end + 1),
-            bodyStart < content.length() ? content.substring(bodyStart) : ""
-        };
-    }
-
-    static String nodeText(JsonNode node) {
-        return node != null && node.isTextual() ? node.asText() : "";
-    }
-
-    static void setAiFields(ObjectNode article, JsonObject ai) {
-        if (ai.has("tags")) {
-            var tagsArray = article.putArray("tags");
-            for (var t : ai.getAsJsonArray("tags"))
-                tagsArray.add(t.getAsString().toLowerCase().replaceAll("[^a-z0-9-]", ""));
-        }
-        if (ai.has("one-liner")) article.put("one-liner", sanitizeText(jsonStr(ai, "one-liner")));
-        String what = sanitizeText(jsonStr(ai, "what"));
-        String why = sanitizeText(jsonStr(ai, "why"));
-        String takeaway = sanitizeText(jsonStr(ai, "takeaway"));
-        if (!what.isEmpty() || !why.isEmpty() || !takeaway.isEmpty()) {
-            var summary = article.putObject("summary");
-            if (!what.isEmpty()) summary.put("what", what);
-            if (!why.isEmpty()) summary.put("why", why);
-            if (!takeaway.isEmpty()) summary.put("takeaway", takeaway);
-        }
-        String deepSummary = sanitizeMarkdown(jsonStr(ai, "deep-summary"));
-        if (!deepSummary.isEmpty()) article.put("deep-summary", markdownList(deepSummary));
-        String decoder = sanitizeMarkdown(jsonStr(ai, "decoder"));
-        if (!decoder.isEmpty()) article.put("decoder", markdownList(decoder));
-    }
-
-    static void copyDir(Path src, Path dst) throws IOException {
-        try (var stream = Files.walk(src)) {
-            for (var path : stream.toList()) {
-                Path target = dst.resolve(src.relativize(path));
-                if (Files.isDirectory(path)) Files.createDirectories(target);
-                else Files.copy(path, target, StandardCopyOption.REPLACE_EXISTING);
-            }
-        }
-    }
-
-    static void deleteDir(Path dir) throws IOException {
-        if (!Files.exists(dir)) return;
-        try (var stream = Files.walk(dir)) {
-            stream.sorted(Comparator.reverseOrder()).forEach(p -> {
-                try { Files.delete(p); } catch (IOException e) { throw new UncheckedIOException(e); }
-            });
-        }
-    }
-
-    static int countArticles(JsonNode sections) {
+    static int countArticles(JsonObject post) {
         int count = 0;
-        for (var section : sections) {
-            var articles = section.get("articles");
-            if (articles != null && articles.isArray()) count += articles.size();
+        var sections = post.getAsJsonArray("sections");
+        if (sections == null) return 0;
+        for (var s : sections) {
+            var articles = s.getAsJsonObject().getAsJsonArray("articles");
+            if (articles != null) count += articles.size();
         }
         return count;
     }
 
-    static List<String> collectIds(JsonNode sections) {
-        var ids = new ArrayList<String>();
-        for (var section : sections) {
-            var articles = section.get("articles");
+    static int countSummarized(JsonObject post) {
+        int count = 0;
+        var sections = post.getAsJsonArray("sections");
+        if (sections == null) return 0;
+        for (var s : sections) {
+            var articles = s.getAsJsonObject().getAsJsonArray("articles");
             if (articles == null) continue;
-            for (var article : articles) ids.add(nodeText(article.get("id")));
+            for (var a : articles) if (a.getAsJsonObject().has("one-liner")) count++;
+        }
+        return count;
+    }
+
+    static List<String> collectIds(JsonObject post) {
+        var ids = new ArrayList<String>();
+        var sections = post.getAsJsonArray("sections");
+        if (sections == null) return ids;
+        for (var s : sections) {
+            var articles = s.getAsJsonObject().getAsJsonArray("articles");
+            if (articles == null) continue;
+            for (var a : articles) ids.add(jsonStr(a.getAsJsonObject(), "id"));
         }
         return ids;
     }
 
-    static List<String> collectSectionNames(JsonNode sections) {
+    static List<String> collectSectionNames(JsonObject post) {
         var names = new ArrayList<String>();
-        for (var section : sections) names.add(nodeText(section.get("name")));
+        var sections = post.getAsJsonArray("sections");
+        if (sections == null) return names;
+        for (var s : sections) names.add(jsonStr(s.getAsJsonObject(), "name"));
         return names;
     }
 
-    static int countSummarized(JsonNode sections) {
-        int count = 0;
-        for (var section : sections) {
-            var articles = section.get("articles");
-            if (articles == null) continue;
-            for (var article : articles) if (article.has("one-liner")) count++;
-        }
-        return count;
-    }
-
-    static boolean restoreFromBackup(PrintWriter log, Path postPath, Path backupDir, String reason) throws IOException {
-        log(log, "  VALIDATION FAILED: " + reason);
-        deleteDir(postPath);
-        Files.move(backupDir, postPath);
-        log(log, "  Restored from backup.");
-        return false;
-    }
-
-    static void resummarize(String postDir, String cacheDir) throws Exception {
+    static void resummarize(String dataFile, String date, String cacheDir) throws Exception {
         long startTime = System.currentTimeMillis();
-        Path postPath = Path.of(postDir);
-        String postName = postPath.getFileName().toString();
-        Path postFile = postPath.resolve("index.md");
+        var store = new PostStore(dataFile);
+        store.load();
+        var post = store.findByDate(date);
 
-        try (var log = openLog(postName)) {
-            log.println("=== " + postName + " " + java.time.LocalDateTime.now().format(
+        try (var log = openLog(date)) {
+            log.println("=== " + date + " " + java.time.LocalDateTime.now().format(
                     java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " ===");
 
-            if (!Files.exists(postFile)) {
-                log(log, "  No index.md found in " + postDir);
+            if (post == null) {
+                log(log, "  No post found for " + date);
                 return;
             }
 
-            String fileContent = Files.readString(postFile);
-            var parts = splitFrontmatter(fileContent);
-            if (parts == null) {
-                log(log, "  No valid frontmatter in " + postFile);
-                return;
-            }
-            var root = (ObjectNode) YAML_MAPPER.readTree(parts[0]);
-            String markdownBody = parts[1];
-            var sections = root.get("sections");
-            if (sections == null || !sections.isArray() || sections.isEmpty()) {
-                log(log, "  No sections found in " + postFile);
+            var sections = post.getAsJsonArray("sections");
+            if (sections == null || sections.isEmpty()) {
+                log(log, "  No sections found for " + date);
                 return;
             }
 
-            // Backup: copy dir to _<dirname> (skip if exists = resume)
-            Path backupDir = postPath.resolveSibling("_" + postName);
-            boolean isResume = Files.exists(backupDir);
+            // Backup: save pre-state to .bak file (skip if exists = resume)
+            Path backupFile = store.dataFile.resolveSibling(store.dataFile.getFileName() + "." + date + ".bak");
+            boolean isResume = Files.exists(backupFile);
             if (!isResume) {
-                copyDir(postPath, backupDir);
-                log(log, "  Backed up to " + backupDir.getFileName());
+                Files.writeString(backupFile, GSON.toJson(post));
+                log(log, "  Backed up post to " + backupFile.getFileName());
             } else {
-                log(log, "  Resuming (backup at " + backupDir.getFileName() + ")");
+                log(log, "  Resuming (backup at " + backupFile.getFileName() + ")");
             }
 
-            // Count articles and identify which need processing
             int totalArticles = 0;
             int alreadySummarized = 0;
             var articleInputs = new ArrayList<Map.Entry<Integer, String>>();
             int cachedCount = 0, templateCount = 0, noContentCount = 0;
             int articleIndex = 0;
 
-            for (var section : sections) {
-                String sectionName = nodeText(section.get("name"));
-                var articles = section.get("articles");
-                if (articles == null || !articles.isArray()) continue;
+            for (var s : sections) {
+                var sectionObj = s.getAsJsonObject();
+                String sectionName = jsonStr(sectionObj, "name");
+                var articles = sectionObj.getAsJsonArray("articles");
+                if (articles == null) continue;
                 int sectionCount = articles.size();
                 totalArticles += sectionCount;
 
-                for (var article : articles) {
+                for (var a : articles) {
+                    var article = a.getAsJsonObject();
                     articleIndex++;
                     if (article.has("one-liner")) {
                         alreadySummarized++;
                         continue;
                     }
 
-                    String title = nodeText(article.get("title"));
-                    String link = nodeText(article.get("link"));
-                    String desc = nodeText(article.get("description"));
-                    String ctp = nodeText(article.get("content-template-path"));
+                    String title = jsonStr(article, "title");
+                    String link = jsonStr(article, "link");
+                    String desc = jsonStr(article, "description");
+                    String ctp = jsonStr(article, "content-template-path");
 
                     var sb = new StringBuilder();
                     if (!title.isEmpty()) sb.append(title).append("\n");
@@ -1557,12 +1587,11 @@ public class DigestHelper implements Runnable {
             }
             if (toProcess == 0) {
                 log(log, "  All articles already summarized. Cleaning up backup.");
-                deleteDir(backupDir);
+                Files.deleteIfExists(backupFile);
                 return;
             }
             log(log, "  Content sources: " + cachedCount + " cached, " + templateCount + " templates, " + noContentCount + " title+desc only");
 
-            // Call Claude for articles needing summaries
             double costBefore = totalCostUsd.sum();
             int callsBefore = totalCalls.get();
             var aiMap = callClaudeForSummaryParallel(articleInputs, log);
@@ -1571,70 +1600,36 @@ public class DigestHelper implements Runnable {
 
             if (aiMap.isEmpty()) {
                 log(log, "  All Claude calls failed. Restoring from backup.");
-                deleteDir(postPath);
-                Files.move(backupDir, postPath);
+                var backup = GSON.fromJson(Files.readString(backupFile), JsonObject.class);
+                int idx = -1;
+                for (int i = 0; i < store.posts.size(); i++) {
+                    if (date.equals(jsonStr(store.posts.get(i).getAsJsonObject(), "date"))) { idx = i; break; }
+                }
+                if (idx >= 0) store.posts.set(idx, backup);
+                store.save();
                 return;
             }
 
-            // Apply AI results to the YAML tree
             articleIndex = 0;
-            for (var section : sections) {
-                var articles = section.get("articles");
-                if (articles == null || !articles.isArray()) continue;
-                for (var article : articles) {
+            for (var s : sections) {
+                var sectionArticles = s.getAsJsonObject().getAsJsonArray("articles");
+                if (sectionArticles == null) continue;
+                for (var a : sectionArticles) {
                     articleIndex++;
                     var ai = aiMap.get(articleIndex);
-                    if (ai != null) setAiFields((ObjectNode) article, ai);
+                    if (ai != null) setAiFieldsOnArticle(a.getAsJsonObject(), ai);
                 }
             }
 
-            // Write back
-            String yaml = YAML_MAPPER.writeValueAsString(root);
-            Files.writeString(postFile, yaml + "---" + markdownBody);
+            store.save();
 
-            // Validation: re-parse and compare sections, article count, ids
-            String newContent = Files.readString(postFile);
-            var newParts = splitFrontmatter(newContent);
-            if (newParts == null) {
-                restoreFromBackup(log, postPath, backupDir, "cannot re-parse frontmatter");
-                return;
-            }
-            var newRoot = YAML_MAPPER.readTree(newParts[0]);
-            var newSections = newRoot.get("sections");
-            if (newSections == null || !newSections.isArray()) {
-                restoreFromBackup(log, postPath, backupDir, "no sections after write");
-                return;
-            }
-
-            var origSectionNames = collectSectionNames(sections);
-            var newSectionNames = collectSectionNames(newSections);
-            if (!origSectionNames.equals(newSectionNames)) {
-                restoreFromBackup(log, postPath, backupDir, "section names changed: " + origSectionNames + " vs " + newSectionNames);
-                return;
-            }
-
-            int newTotal = countArticles(newSections);
-            if (newTotal != totalArticles) {
-                restoreFromBackup(log, postPath, backupDir, "expected " + totalArticles + " articles, got " + newTotal);
-                return;
-            }
-
-            var origIds = collectIds(sections);
-            var newIds = collectIds(newSections);
-            for (int i = 0; i < origIds.size(); i++) {
-                if (!origIds.get(i).equals(newIds.get(i))) {
-                    restoreFromBackup(log, postPath, backupDir, "article " + i + " id mismatch: " + origIds.get(i) + " vs " + newIds.get(i));
-                    return;
-                }
-            }
-
-            int nowSummarized = countSummarized(newSections);
+            int nowSummarized = countSummarized(post);
             long elapsed = (System.currentTimeMillis() - startTime) / 1000;
             log(log, String.format("  Done: %d new summaries in %ds (%d/%d total), cost $%.4f (%d calls)",
                     aiMap.size(), elapsed, nowSummarized, totalArticles, sessionCost, sessionCalls));
 
             if (nowSummarized >= totalArticles) {
-                deleteDir(backupDir);
+                Files.deleteIfExists(backupFile);
                 log(log, "  All articles done, backup removed.");
             } else {
                 log(log, "  " + (totalArticles - nowSummarized) + " articles remaining, re-run to resume.");
@@ -1642,15 +1637,13 @@ public class DigestHelper implements Runnable {
         }
     }
 
-    static void resummarizeAll(String postsDir, String cacheDir) throws Exception {
+    static void resummarizeAll(String dataFile, String cacheDir) throws Exception {
         long startAll = System.currentTimeMillis();
-        var postDirs = Files.list(Path.of(postsDir))
-                .filter(Files::isDirectory)
-                .filter(p -> !p.getFileName().toString().startsWith("_"))
-                .sorted()
-                .toList();
+        var store = new PostStore(dataFile);
+        store.load();
+        var posts = store.all();
 
-        int total = postDirs.size();
+        int total = posts.size();
         try (var log = openLog("resummarize-all")) {
             log.println("\n=== resummarize-all " + java.time.LocalDateTime.now().format(
                     java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " ===");
@@ -1658,13 +1651,12 @@ public class DigestHelper implements Runnable {
 
             int done = 0;
             int errors = 0;
-            for (Path postDir : postDirs) {
-                Path postFile = postDir.resolve("index.md");
-                if (!Files.exists(postFile)) { total--; continue; }
+            for (var post : posts) {
+                String date = jsonStr(post, "date");
                 done++;
-                log(log, "[" + done + "/" + total + "] " + postDir.getFileName());
+                log(log, "[" + done + "/" + total + "] " + date);
                 try {
-                    resummarize(postDir.toString(), cacheDir);
+                    resummarize(dataFile, date, cacheDir);
                 } catch (Exception e) {
                     errors++;
                     log(log, "  ERROR: " + e.getMessage());

@@ -4,7 +4,7 @@ set -eu
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 FEEDS_FILE="$PROJECT_DIR/data/feeds.yml"
-POSTS_DIR="$PROJECT_DIR/content/digest-posts"
+DATA_FILE="$PROJECT_DIR/data/digest-posts.json"
 TEMP_DIR=$(mktemp -d)
 CACHE_DIR="$PROJECT_DIR/.digest-cache"
 mkdir -p "$CACHE_DIR"
@@ -27,16 +27,16 @@ done
 
 if [[ "$CLEAN_ALL" == true ]]; then
   echo "Re-cleaning all posts..."
-  jbang "$SCRIPT_DIR/DigestHelper.java" clean-all "$POSTS_DIR" "$CACHE_DIR" "$FEEDS_FILE"
+  jbang "$SCRIPT_DIR/DigestHelper.java" clean-all "$DATA_FILE" "$CACHE_DIR" "$FEEDS_FILE"
   exit 0
 fi
 
 find_last_date() {
-  ls -d "$POSTS_DIR"/*-dev-digest 2>/dev/null \
-    | sort \
-    | tail -1 \
-    | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}' \
-    || echo ""
+  if [[ -f "$DATA_FILE" ]]; then
+    grep '"date"' "$DATA_FILE" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}' | sort | tail -1 || echo ""
+  else
+    echo ""
+  fi
 }
 
 yesterday() {
@@ -109,9 +109,9 @@ summarize_feed() {
 
 generate_post() {
   local target_date="$1"
-  local post_dir="$POSTS_DIR/${target_date}-dev-digest"
 
-  if [[ -d "$post_dir" ]]; then
+  # Check if post already exists in data file
+  if [[ -f "$DATA_FILE" ]] && grep -q "\"date\": \"$target_date\"" "$DATA_FILE"; then
     echo "Post for $target_date already exists, skipping."
     return
   fi
@@ -159,11 +159,11 @@ generate_post() {
   echo "  Deduplicating across feeds..."
   jbang "$SCRIPT_DIR/DigestHelper.java" dedup "${enriched_files[@]}"
 
-  # Phase 3: summarize all feeds in parallel
+  # Phase 3: summarize all feeds in parallel (outputs JSON)
   pids=()
   local feed_outputs=()
   for i in "${!enriched_files[@]}"; do
-    local output_file="$TEMP_DIR/section-${i}.yml"
+    local output_file="$TEMP_DIR/section-${i}.json"
     feed_outputs+=("$output_file")
     summarize_feed "${enriched_files[$i]}" "${feed_names[$i]}" "$output_file" &
     pids+=($!)
@@ -176,59 +176,53 @@ generate_post() {
   done
   [[ $failed -gt 0 ]] && echo "  Warning: $failed feed(s) failed summarization" >&2
 
-  # Combine sections
-  local all_sections=""
+  # Filter to non-empty section files
+  local valid_sections=()
   for output_file in "${feed_outputs[@]}"; do
-    [[ -s "$output_file" ]] && all_sections+="$(cat "$output_file")"$'\n'
+    [[ -s "$output_file" ]] && valid_sections+=("$output_file")
   done
 
-  if [[ -z "$all_sections" ]]; then
+  if [[ ${#valid_sections[@]} -eq 0 ]]; then
     echo "  Error: no output for $target_date" >&2
     return
   fi
 
-  # Generate digest summary
+  # Generate digest summary from section JSON files
   echo "  Generating digest summary..."
   local digest_desc
-  digest_desc=$(echo "$all_sections" | timeout 120 claude -p "Write a 1-2 sentence summary of the most important news for developers from these sections. Output ONLY the text, no quotes, no prefix." 2>/dev/null) || digest_desc=""
+  digest_desc=$(cat "${valid_sections[@]}" | timeout 120 claude -p "Write a 1-2 sentence summary of the most important news for developers from these sections. Output ONLY the text, no quotes, no prefix." 2>/dev/null) || digest_desc=""
   [[ -z "$digest_desc" ]] && digest_desc="Daily developer news digest"
   digest_desc="${digest_desc//\"/}"
   digest_desc="${digest_desc//\\/}"
 
-  local claude_output="sections:"$'\n'"$all_sections"
-
+  # Extract first image from section JSON
   local post_image
-  post_image=$(echo "$claude_output" | grep '^ *image:' | head -1 | sed 's/.*image: *//; s/^"//; s/"$//')
+  post_image=$(grep -h '"image"' "${valid_sections[@]}" 2>/dev/null | head -1 | sed 's/.*"image": *"//; s/".*//' || echo "")
 
   local title_date
   title_date=$(LC_ALL=en_US.UTF-8 date -j -f "%Y-%m-%d" "$target_date" "+%B %d, %Y" 2>/dev/null \
     || date -d "$target_date" "+%B %d, %Y" 2>/dev/null \
     || echo "$target_date")
 
-  mkdir -p "$post_dir"
-  local image_line=""
-  [[ -n "$post_image" ]] && image_line="image: \"${post_image}\""
+  # Add post to data file via DigestHelper
+  local image_args=""
+  [[ -n "$post_image" ]] && image_args="--image $post_image"
 
-  cat > "$post_dir/index.md" <<FRONTMATTER
----
-title: "Devoured - ${title_date}"
-description: "${digest_desc}"
-layout: digest-post
-date: ${target_date}
-tags: digest
-author: ia3andy
-${image_line}
-${claude_output}
----
-FRONTMATTER
+  jbang "$SCRIPT_DIR/DigestHelper.java" add-post \
+    --data-file "$DATA_FILE" \
+    --date "$target_date" \
+    --title "Devoured - ${title_date}" \
+    --description "${digest_desc}" \
+    $image_args \
+    "${valid_sections[@]}"
 
   echo "  Writing article content files..."
-  jbang "$SCRIPT_DIR/DigestHelper.java" write-content "$post_dir/index.md" "$CACHE_DIR" "$FEEDS_FILE"
+  jbang "$SCRIPT_DIR/DigestHelper.java" write-content "$DATA_FILE" "$target_date" "$CACHE_DIR" "$FEEDS_FILE"
 
   echo "  Syncing new tags..."
-  jbang "$SCRIPT_DIR/DigestHelper.java" sync-tags "$POSTS_DIR" "$FEEDS_FILE"
+  jbang "$SCRIPT_DIR/DigestHelper.java" sync-tags "$DATA_FILE" "$FEEDS_FILE"
 
-  echo "  Written to $post_dir/index.md"
+  echo "  Added post for $target_date"
 }
 
 # Main flow
@@ -262,14 +256,12 @@ if [[ "$DRY_RUN" == true ]]; then
 fi
 
 cd "$PROJECT_DIR"
-if git diff --quiet content/digest-posts/ 2>/dev/null && git diff --cached --quiet content/digest-posts/ 2>/dev/null; then
-  if [[ -z "$(git ls-files --others --exclude-standard content/digest-posts/)" ]]; then
-    echo "No changes to commit."
-    exit 0
-  fi
+if git diff --quiet data/digest-posts.json 2>/dev/null && git diff --cached --quiet data/digest-posts.json 2>/dev/null; then
+  echo "No changes to commit."
+  exit 0
 fi
 
-git add content/digest-posts/
+git add data/digest-posts.json
 git commit -m "feat: add dev digest posts"
 
 if [[ "$NO_PUSH" == true ]]; then
