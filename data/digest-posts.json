@@ -3258,7 +3258,7 @@
             "title": "Market Making in Prediction Markets Sucks (5 minute read)",
             "link": "https://x.com/uselotusai/status/2046639095531614455",
             "tags": [
-              "predictionmarkets",
+              "prediction-markets",
               "trading",
               "infrastructure",
               "defi"
@@ -3353,7 +3353,7 @@
             "tags": [
               "ai",
               "llm",
-              "open-source"
+              "opensource"
             ],
             "one-liner": "DeepSeek released its V4 AI model series claiming to match leading US models at a fraction of the cost, intensifying the debate over necessary AI infrastructure spending.",
             "summary": {
@@ -4358,7 +4358,7 @@
             "tags": [
               "crypto",
               "privacy",
-              "stablecoin",
+              "stablecoins",
               "security"
             ],
             "one-liner": "Anti-money laundering enforcement has surpassed SEC securities violations as the top regulatory threat to crypto companies, with AML fines exceeding $1 billion while SEC penalties dropped 97% year-over-year.",
@@ -5076,7 +5076,7 @@
             "image": "https://edge.arpitbhayani.me/img/covers/general-cover.jpg",
             "tags": [
               "ai",
-              "databases",
+              "database",
               "infrastructure"
             ],
             "description": "Databases were built for predictable apps and human-written queries, not AI agents that generate queries on the fly, retry automatically, and can make silent mistakes at scale. Teams now need stronger guardrails like tighter permissions, timeouts, audit logs, idempotent writes, and clearer schemas so databases stay safe when AI becomes the caller.\n",
@@ -5383,7 +5383,7 @@
             "description": "Working in open source—especially on large-scale projects like ODK—pushes designers beyond simply shipping features toward designing transparently, collaborating closely with users, and thinking long-term about maintenance and impact. Open collaboration, public roadmaps, and constant community feedback improve decision-making while forcing clarity, accountability, and trust. A key lesson is embracing the “un/learning loop”: slowing down, staying open to uncertainty, and learning in public leads to better, more inclusive solutions—especially in complex or high-stakes environments—while prioritizing stewardship over speed.\n",
             "tags": [
               "design",
-              "open-source",
+              "opensource",
               "product"
             ],
             "one-liner": "Working in open source transforms the design process from shipping features to designing transparently with community feedback, public roadmaps, and long-term stewardship.",
@@ -5403,7 +5403,7 @@
             "tags": [
               "ai",
               "accessibility",
-              "benchmark",
+              "benchmarks",
               "llm"
             ],
             "description": "AIMAC is an AI accessibility checker that tests 43 AI models by prompting them to build web pages across 28 categories and auditing them for accessibility violations.\n",
@@ -6121,7 +6121,7 @@
             "link": "https://worksinprogress.co/issue/the-worlds-most-complex-machine/",
             "image": "https://worksinprogress.co/wip-image/uploads/2026/04/WIP_i23-Share_Cards-asml.jpg",
             "tags": [
-              "semiconductors",
+              "semiconductor",
               "hardware",
               "infrastructure"
             ],
