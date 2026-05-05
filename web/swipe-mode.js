@@ -99,6 +99,20 @@ document.addEventListener('DOMContentLoaded', () => {
     return clone.textContent.trim();
   }
 
+  function smoothScroll(element, delta, duration) {
+    var start = element.scrollTop;
+    var target = Math.max(0, Math.min(start + delta, element.scrollHeight - element.clientHeight));
+    var startTime = null;
+    function step(time) {
+      if (!startTime) startTime = time;
+      var t = Math.min((time - startTime) / duration, 1);
+      var ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      element.scrollTop = start + (target - start) * ease;
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   function extractPostMeta(root) {
     var page = root.querySelector('.article-page[data-post-date]');
     var prev = root.querySelector('.digest-post-nav-prev');
@@ -199,16 +213,16 @@ document.addEventListener('DOMContentLoaded', () => {
       btnDown.classList.toggle('is-hidden', atBottom);
     }
 
-    var pageSize = function() { return viewport.clientHeight * 0.4; };
+    var pageSize = function() { return viewport.clientHeight * 0.6; };
 
     btnDown.addEventListener('click', function(e) {
       e.stopPropagation();
-      viewport.scrollBy({ top: pageSize(), behavior: 'smooth' });
+      smoothScroll(viewport, pageSize(), 600);
     });
 
     btnUp.addEventListener('click', function(e) {
       e.stopPropagation();
-      viewport.scrollBy({ top: -pageSize(), behavior: 'smooth' });
+      smoothScroll(viewport, -pageSize(), 600);
     });
 
     viewport.addEventListener('scroll', updateButtons);
@@ -258,16 +272,16 @@ document.addEventListener('DOMContentLoaded', () => {
       btnDown.classList.toggle('is-hidden', atBottom);
     }
 
-    var pageSize = function() { return viewport.clientHeight * 0.4; };
+    var pageSize = function() { return viewport.clientHeight * 0.6; };
 
     btnDown.addEventListener('click', function(e) {
       e.stopPropagation();
-      viewport.scrollBy({ top: pageSize(), behavior: 'smooth' });
+      smoothScroll(viewport, pageSize(), 600);
     });
 
     btnUp.addEventListener('click', function(e) {
       e.stopPropagation();
-      viewport.scrollBy({ top: -pageSize(), behavior: 'smooth' });
+      smoothScroll(viewport, -pageSize(), 600);
     });
 
     viewport.addEventListener('scroll', updateButtons);
