@@ -35,7 +35,6 @@ import picocli.CommandLine.*;
         DigestHelper.SyncTagsCmd.class,
         DigestHelper.ResummarizeCmd.class,
         DigestHelper.ResummarizeAllCmd.class,
-        DigestHelper.GeneratePagesCmd.class,
         DigestHelper.DedupCmd.class,
 }, mixinStandardHelpOptions = true)
 public class DigestHelper implements Runnable {
@@ -188,83 +187,6 @@ public class DigestHelper implements Runnable {
             reportCost("resummarize-all");
             return 0;
         }
-    }
-
-    @Command(name = "generate-pages", description = "Generate individual article pages for sharing")
-    static class GeneratePagesCmd implements Callable<Integer> {
-        @Parameters(index = "0", description = "Posts directory") String postsDir;
-        @Parameters(index = "1", description = "Articles output directory") String articlesDir;
-        public Integer call() throws Exception {
-            generatePages(postsDir, articlesDir);
-            return 0;
-        }
-    }
-
-    static void generatePages(String postsDir, String articlesDir) throws Exception {
-        Path postsPath = Path.of(postsDir);
-        List<Path> postDirs;
-        if (Files.exists(postsPath.resolve("index.md"))) {
-            postDirs = List.of(postsPath);
-        } else {
-            postDirs = Files.list(postsPath)
-                    .filter(Files::isDirectory)
-                    .filter(p -> !p.getFileName().toString().startsWith("_"))
-                    .sorted()
-                    .toList();
-        }
-
-        int totalPages = 0;
-        for (Path postDir : postDirs) {
-            Path postFile = postDir.resolve("index.md");
-            if (!Files.exists(postFile)) continue;
-
-            String content = Files.readString(postFile);
-            var parts = splitFrontmatter(content);
-            if (parts == null) continue;
-
-            var root = YAML_MAPPER.readTree(parts[0]);
-            String date = nodeText(root.get("date"));
-            if (date.isEmpty()) {
-                var m = Pattern.compile("(\\d{4}-\\d{2}-\\d{2})").matcher(postDir.getFileName().toString());
-                if (m.find()) date = m.group(1);
-                else continue;
-            }
-
-            var sections = root.get("sections");
-            if (sections == null || !sections.isArray()) continue;
-
-            Path outDir = Path.of(articlesDir, date);
-            Files.createDirectories(outDir);
-
-            int count = 0;
-            for (var section : sections) {
-                var articles = section.get("articles");
-                if (articles == null || !articles.isArray()) continue;
-                for (var article : articles) {
-                    String id = nodeText(article.get("id"));
-                    String title = nodeText(article.get("title"));
-                    String oneLiner = nodeText(article.get("one-liner"));
-                    if (id.isEmpty() || title.isEmpty()) continue;
-
-                    String desc = oneLiner.isEmpty() ? title : oneLiner;
-
-                    var page = new StringBuilder();
-                    page.append("---\n");
-                    page.append("layout: digest-article\n");
-                    page.append("title: ").append(yamlEscape(title)).append("\n");
-                    page.append("description: ").append(yamlEscape(desc)).append("\n");
-                    page.append("article-id: ").append(id).append("\n");
-                    page.append("date: ").append(date).append("\n");
-                    page.append("---\n");
-
-                    Files.writeString(outDir.resolve(id + ".html"), page.toString());
-                    count++;
-                }
-            }
-            totalPages += count;
-            System.err.println(date + ": " + count + " articles");
-        }
-        System.err.println("Generated " + totalPages + " article pages in " + articlesDir);
     }
 
     @Command(name = "dedup", description = "Remove duplicate articles across enriched JSON files")

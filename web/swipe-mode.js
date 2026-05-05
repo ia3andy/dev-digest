@@ -73,8 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         takeaway: qAfterStrong(node, '.digest-summary-takeaway div'),
         deepDive: html(node, '.digest-deep-content'),
         decoder: html(node, '.digest-decoder-content'),
-        original: html(node, '.digest-description-content'),
-        pageUrl: node.dataset.pageUrl || ''
+        original: html(node, '.digest-description-content')
       };
     });
   }
@@ -317,8 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
     var frame = el('div', 'swipe-frame');
     frame.dataset.articleId = article.id;
     frame.dataset.postDate = postDate;
-    if (article.pageUrl) frame.dataset.pageUrl = article.pageUrl;
-
     var img = article.image && !article.image.endsWith(PLACEHOLDER_SUFFIX) ? article.image : fallbackBg(article.id);
 
     var layers = el('div', 'swipe-layers');
@@ -400,13 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     var frame = frames[idx];
     if (!frame) return;
-    if (frame.dataset.pageUrl) {
-      shareBtn.dataset.shareUrl = frame.dataset.pageUrl;
-      delete shareBtn.dataset.shareArticle;
-    } else {
-      shareBtn.dataset.shareArticle = frame.dataset.articleId;
-      delete shareBtn.dataset.shareUrl;
-    }
+    shareBtn.dataset.shareArticle = frame.dataset.articleId;
     shareBtn.title = (frame.querySelector('.swipe-card-title') || {}).textContent || '';
   }
 

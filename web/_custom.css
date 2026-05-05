@@ -703,59 +703,6 @@ nav.topbar .dark-mode-toggle:hover {
     transition-colors;
 }
 
-/* --- Article page (single article view) --- */
-
-.digest-article-back {
-  @apply inline-flex items-center gap-1 text-sm no-underline mb-4
-    text-gray-400 dark:text-gray-500
-    hover:text-accent-500 dark:hover:text-accent-400
-    transition-colors;
-}
-
-.digest-article-hero {
-  @apply rounded-xl overflow-hidden mb-6;
-}
-
-.digest-article-hero img {
-  @apply w-full max-h-96 object-cover;
-}
-
-.digest-article-page-title {
-  @apply text-2xl sm:text-3xl font-bold mb-4
-    text-gray-900 dark:text-gray-100;
-}
-
-.digest-article-page-meta {
-  @apply flex items-center gap-2 flex-wrap mb-6;
-}
-
-.digest-article-source-link {
-  @apply inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-md no-underline
-    text-accent-600 dark:text-accent-400
-    hover:bg-accent-50 dark:hover:bg-accent-950
-    border border-accent-200 dark:border-accent-800
-    transition-colors;
-}
-
-.digest-article-one-liner {
-  @apply text-lg text-gray-700 dark:text-gray-300 mb-6 leading-relaxed
-    border-l-4 border-accent-400 pl-4 italic;
-}
-
-.digest-article-full-summary {
-  @apply space-y-3 mb-6 p-5 rounded-xl
-    bg-blue-50/50 dark:bg-blue-950/30
-    border border-blue-200 dark:border-blue-800;
-}
-
-.digest-article-full-summary .digest-summary-item {
-  @apply text-base;
-}
-
-.digest-article-full-summary .digest-summary-icon {
-  @apply mt-1;
-}
-
 /* Share button */
 .digest-share-btn {
   @apply inline-flex items-center gap-1.5 px-3 py-1 text-sm font-medium rounded-md cursor-pointer
@@ -769,35 +716,6 @@ nav.topbar .dark-mode-toggle:hover {
 .digest-share-btn.is-copied {
   @apply text-emerald-600 dark:text-emerald-400
     border-emerald-300 dark:border-emerald-700;
-}
-
-/* Article page navigation */
-.digest-article-nav {
-  @apply grid grid-cols-2 gap-4 mt-8 mb-4;
-}
-
-.digest-article-nav-link {
-  @apply flex flex-col gap-1 p-4 rounded-xl no-underline
-    border border-gray-200 dark:border-gray-700
-    bg-white dark:bg-gray-800
-    hover:border-accent-300 dark:hover:border-accent-700
-    transition-colors duration-200;
-}
-
-.digest-article-nav-prev {
-  @apply text-left col-start-1;
-}
-
-.digest-article-nav-next {
-  @apply text-right col-start-2;
-}
-
-.digest-article-nav-label {
-  @apply inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500;
-}
-
-.digest-article-nav-title {
-  @apply text-sm font-semibold text-accent-600 dark:text-accent-400;
 }
 
 /* Share button on post page (per-article, icon only) */

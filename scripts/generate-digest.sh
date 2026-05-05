@@ -228,9 +228,6 @@ FRONTMATTER
   echo "  Syncing new tags..."
   jbang "$SCRIPT_DIR/DigestHelper.java" sync-tags "$POSTS_DIR" "$FEEDS_FILE"
 
-  echo "  Generating article pages..."
-  jbang "$SCRIPT_DIR/DigestHelper.java" generate-pages "$post_dir" "$PROJECT_DIR/content/digest-articles"
-
   echo "  Written to $post_dir/index.md"
 }
 
@@ -272,7 +269,7 @@ if git diff --quiet content/digest-posts/ 2>/dev/null && git diff --cached --qui
   fi
 fi
 
-git add content/digest-posts/ content/digest-articles/
+git add content/digest-posts/
 git commit -m "feat: add dev digest posts"
 
 if [[ "$NO_PUSH" == true ]]; then

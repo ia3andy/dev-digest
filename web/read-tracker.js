@@ -244,10 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.digest-share-btn');
     if (!btn) return;
-    const shareUrlAttr = btn.dataset.shareUrl;
-    if (shareUrlAttr) {
-      shareUrl(btn.title, window.location.origin + shareUrlAttr);
-    } else if (btn.dataset.shareArticle) {
+    if (btn.dataset.shareArticle) {
       const base = window.location.origin + window.location.pathname;
       shareUrl(btn.title, base + '#' + btn.dataset.shareArticle);
     } else {
