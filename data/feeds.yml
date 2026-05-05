@@ -236,3 +236,27 @@ tag-priorities:
   vue: 0
   workflow: 0
   zk: 0
+  acquisition: 0
+  actuators: 0
+  amazon: 0
+  assistant: 0
+  automotive: 0
+  brazil: 0
+  computer-vision: 0
+  dataviz: 0
+  developer-productivity: 0
+  drug-discovery: 0
+  malware: 0
+  music: 0
+  openai: 0
+  packaging: 0
+  product-design: 0
+  redis: 0
+  ruby: 0
+  spotify: 0
+  staking: 0
+  telegram: 0
+  venture-capital: 0
+  verification: 0
+  voice: 0
+  webrtc: 0

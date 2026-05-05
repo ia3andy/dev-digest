@@ -41,4 +41,9 @@
 2026-05-04 12:37  summarize Tech                 14 calls  $0,6824
 2026-05-04 12:37  summarize AI                   17 calls  $0,9167
 2026-05-04 12:53  write-content 2026-05-01-dev-digest 21 calls  $0,7680
-TOTAL: $36,7680
+2026-05-05 17:35  summarize Crypto               12 calls  $0,4916
+2026-05-05 17:36  summarize Design               13 calls  $0,4737
+2026-05-05 17:36  summarize Tech                 13 calls  $0,5556
+2026-05-05 17:36  summarize AI                   15 calls  $0,6625
+2026-05-05 17:40  write-content 2026-05-05       15 calls  $0,5231
+TOTAL: $36,5231

@@ -1,11 +1,8 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 //DEPS org.jsoup:jsoup:1.18.3
-//DEPS com.microsoft.playwright:playwright:1.49.0
 //DEPS com.google.code.gson:gson:2.11.0
 //DEPS info.picocli:picocli:4.7.6
 
-import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.*;
 import com.google.gson.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.*;
@@ -33,6 +30,7 @@ import picocli.CommandLine.*;
         DigestHelper.ResummarizeCmd.class,
         DigestHelper.ResummarizeAllCmd.class,
         DigestHelper.DedupCmd.class,
+        DigestHelper.TestFetchCmd.class,
 }, mixinStandardHelpOptions = true)
 public class DigestHelper implements Runnable {
 
@@ -74,7 +72,7 @@ public class DigestHelper implements Runnable {
     static final AtomicInteger totalCalls = new AtomicInteger();
     static String costContext = "";
 
-    // TLDR page selectors (shared between Jsoup and Playwright)
+    // TLDR page selectors
     static final String SEL_SECTION = "section";
     static final String SEL_SECTION_HEADER = "header h3";
     static final String SEL_ARTICLE = "article";
@@ -88,10 +86,6 @@ public class DigestHelper implements Runnable {
     static final String SEL_CONTENT_MAIN = "[role=main]";
     static final String SEL_CONTENT_MAIN_TAG = "main";
 
-    // Browser querySelector needs quoted attribute values
-    static String browserSelector(String sel) {
-        return sel.replaceAll("\\[([\\w-]+)=([^\"\\]]+)]", "[$1=\"$2\"]");
-    }
 
     @Override
     public void run() {
@@ -237,6 +231,23 @@ public class DigestHelper implements Runnable {
             dedup(files);
             return 0;
         }
+    }
+
+    @Command(name = "test-fetch", description = "Test the fetch chain (Jsoup + Facebook) for a single URL")
+    static class TestFetchCmd implements Callable<Integer> {
+        @Parameters(index = "0", description = "URL to fetch") String url;
+
+        @Override
+        public Integer call() throws Exception {
+            testFetch(url);
+            return 0;
+        }
+    }
+
+    static void testFetch(String url) {
+        System.err.println("Fetching: " + url);
+        JsonObject data = fetchAndResolveImage(url);
+        System.out.println(GSON.toJson(data));
     }
 
     static void dedup(List<String> filePaths) throws Exception {
@@ -442,45 +453,10 @@ public class DigestHelper implements Runnable {
             }
         }
 
-        List<String> playwrightFallbackUrls = new ArrayList<>();
         for (String url : uncachedUrls) {
-            if (needsBrowser(url)) {
-                System.err.println("    [browser-only] " + url);
-                playwrightFallbackUrls.add(url);
-                continue;
-            }
             System.err.println("    [jsoup] " + url);
-            JsonObject data = fetchWithJsoup(url);
-            if (data.has("skipped") && data.get("skipped").getAsBoolean()) {
-                cacheAndStore(cacheMap, data, url, cacheDir);
-                continue;
-            }
-            String content = jsonStr(data, "content");
-            if (content.length() < CONTENT_MIN_LENGTH || isJunkContent(content)) {
-                System.err.println("      -> queuing for Playwright fallback");
-                playwrightFallbackUrls.add(url);
-            } else {
-                cacheAndStore(cacheMap, data, url, cacheDir);
-            }
-        }
-
-        if (!playwrightFallbackUrls.isEmpty()) {
-            System.err.println("  Fetching " + playwrightFallbackUrls.size() + " article(s) via Playwright...");
-            try (Playwright pw = Playwright.create()) {
-                Browser browser = pw.chromium().launch(new BrowserType.LaunchOptions()
-                        .setChannel("chrome").setHeadless(false));
-                Page page = browser.newPage();
-                for (String url : playwrightFallbackUrls) {
-                    System.err.println("    [playwright] " + url);
-                    JsonObject data = fetchWithPlaywright(page, url);
-                    if (isJunkContent(jsonStr(data, "content"))) {
-                        System.err.println("      -> still junk, skipping");
-                        data.addProperty("skipped", true);
-                    }
-                    cacheAndStore(cacheMap, data, url, cacheDir);
-                }
-                browser.close();
-            }
+            JsonObject data = fetchAndResolveImage(url);
+            cacheAndStore(cacheMap, data, url, cacheDir);
         }
 
         var enriched = new JsonArray();
@@ -507,12 +483,6 @@ public class DigestHelper implements Runnable {
         Files.writeString(Path.of(outputFile), GSON.toJson(enriched));
         System.err.println("  Enriched " + enriched.size() + " article(s) to JSON.");
     }
-
-    static final List<String> BROWSER_ONLY_DOMAINS = List.of(
-            "x.com", "twitter.com",
-            "bloomberg.com", "wsj.com",
-            "nytimes.com", "ft.com"
-    );
 
     static final List<String> JUNK_PATTERNS = List.of(
             "enable cookies", "you have been blocked", "unable to access",
@@ -577,9 +547,24 @@ public class DigestHelper implements Runnable {
         return false;
     }
 
-    static boolean needsBrowser(String url) {
-        String lower = url.toLowerCase();
-        return BROWSER_ONLY_DOMAINS.stream().anyMatch(d -> lower.contains(d + "/"));
+    static JsonObject fetchAndResolveImage(String url) {
+        JsonObject data = fetchWithJsoup(url);
+        if (data.has("skipped") && data.get("skipped").getAsBoolean()) return data;
+        String content = jsonStr(data, "content");
+        if (isJunkContent(content)) {
+            data.addProperty("skipped", true);
+            data.addProperty("skipReason", "junk content detected");
+        } else if (content.length() < CONTENT_MIN_LENGTH) {
+            data.addProperty("skipReason", "content too short (" + content.length() + " chars)");
+        }
+        if (jsonStr(data, "ogImage").isEmpty()) {
+            String fbImage = fetchOgImageFromFacebook(url);
+            if (!fbImage.isEmpty()) {
+                System.err.println("      [fb] found image");
+                data.addProperty("ogImage", fbImage);
+            }
+        }
+        return data;
     }
 
     static JsonObject fetchWithJsoup(String url) {
@@ -594,7 +579,7 @@ public class DigestHelper implements Runnable {
 
             if (response.statusCode() == 404 || response.statusCode() == 410) {
                 System.err.println("      Skipping (HTTP " + response.statusCode() + ")");
-                return skippedEntry();
+                return skippedEntry("HTTP " + response.statusCode());
             }
 
             Document doc = response.parse();
@@ -632,48 +617,42 @@ public class DigestHelper implements Runnable {
         return data;
     }
 
-    static JsonObject fetchWithPlaywright(Page page, String url) {
-        JsonObject data = new JsonObject();
+    static String fetchOgImageFromFacebook(String url) {
         try {
-            Response response = page.navigate(url, new Page.NavigateOptions()
-                    .setWaitUntil(WaitUntilState.DOMCONTENTLOADED)
-                    .setTimeout(30000));
-
-            if (response != null && (response.status() == 404 || response.status() == 410)) {
-                System.err.println("      Skipping (HTTP " + response.status() + ")");
-                return skippedEntry();
+            String appId = System.getenv("FB_APP");
+            String appSecret = System.getenv("FB_SECRET");
+            if (appId == null || appSecret == null || appId.isEmpty() || appSecret.isEmpty()) {
+                return "";
             }
-
-            page.waitForTimeout(4000);
-
-            String ogImage = (String) page.evaluate(
-                    "() => { const m = document.querySelector('" + browserSelector(SEL_OG_IMAGE) + "'); return m ? m.content : ''; }");
-            if (ogImage == null || ogImage.isEmpty()) {
-                ogImage = (String) page.evaluate(
-                        "() => { const m = document.querySelector('" + browserSelector(SEL_TWITTER_IMAGE) + "'); return m ? m.content : ''; }");
-            }
-            data.addProperty("ogImage", ogImage != null ? ogImage : "");
-
-            String content = (String) page.evaluate(
-                    "() => {"
-                    + "const article = document.querySelector('" + browserSelector(SEL_CONTENT_ARTICLE) + "')"
-                    + " || document.querySelector('" + browserSelector(SEL_CONTENT_MAIN) + "')"
-                    + " || document.querySelector('" + browserSelector(SEL_CONTENT_MAIN_TAG) + "');"
-                    + "if (article) return article.innerText;"
-                    + "const body = document.body;"
-                    + "const nav = body.querySelector('nav');"
-                    + "const footer = body.querySelector('footer');"
-                    + "if (nav) nav.remove();"
-                    + "if (footer) footer.remove();"
-                    + "return body.innerText.substring(0, 50000);"
-                    + "}");
-            data.addProperty("content", content != null ? content : "");
+            String encodedUrl = java.net.URLEncoder.encode(url, "UTF-8");
+            String token = appId + "|" + appSecret;
+            String encodedToken = java.net.URLEncoder.encode(token, "UTF-8");
+            String baseUrl = "https://graph.facebook.com/v19.0/?id=" + encodedUrl
+                    + "&fields=og_object%7Bimage%7D&access_token=" + encodedToken;
+            var client = java.net.http.HttpClient.newBuilder()
+                    .connectTimeout(java.time.Duration.ofSeconds(10))
+                    .build();
+            var getRequest = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create(baseUrl))
+                    .timeout(java.time.Duration.ofSeconds(15))
+                    .GET()
+                    .build();
+            var response = client.send(getRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
+            return extractFbImage(response);
         } catch (Exception e) {
-            System.err.println("      Error fetching " + url + ": " + e.getMessage());
-            data.addProperty("ogImage", "");
-            data.addProperty("content", "");
+            System.err.println("      Facebook API error for " + url + ": " + e.getMessage());
+            return "";
         }
-        return data;
+    }
+
+    static String extractFbImage(java.net.http.HttpResponse<String> response) {
+        if (response.statusCode() != 200) return "";
+        JsonObject json = GSON.fromJson(response.body(), JsonObject.class);
+        JsonObject ogObject = json.has("og_object") ? json.getAsJsonObject("og_object") : null;
+        if (ogObject == null) return "";
+        JsonArray images = ogObject.has("image") ? ogObject.getAsJsonArray("image") : null;
+        if (images == null || images.isEmpty()) return "";
+        return jsonStr(images.get(0).getAsJsonObject(), "url");
     }
 
     static void cacheAndStore(Map<String, JsonObject> fetched, JsonObject data, String url,
@@ -737,11 +716,12 @@ public class DigestHelper implements Runnable {
         return el.getAsString();
     }
 
-    static JsonObject skippedEntry() {
+    static JsonObject skippedEntry(String reason) {
         JsonObject data = new JsonObject();
         data.addProperty("ogImage", "");
         data.addProperty("content", "");
         data.addProperty("skipped", true);
+        data.addProperty("skipReason", reason);
         return data;
     }
 
@@ -1313,11 +1293,6 @@ public class DigestHelper implements Runnable {
             JsonObject data = GSON.fromJson(Files.readString(cachePath), JsonObject.class);
             if (data.has("skipped") && data.get("skipped").getAsBoolean()) continue;
             if (jsonStr(data, "contentHtml").length() > 100) continue;
-
-            if (needsBrowser(url)) {
-                System.err.println("    [skip browser-only] " + url);
-                continue;
-            }
 
             System.err.println("    [jsoup] " + url);
             JsonObject fresh = fetchWithJsoup(url);

@@ -1,0 +1,179 @@
+<h1>TUNA-2: Pixel Embeddings Beat Vision Encoders for Unified Understanding and Generation</h1>
+<h2>Overview</h2>
+<p>We simplify <a href="https://arxiv.org/abs/2501.10441">Tuna</a> by progressively stripping away its visual encoding components. By removing the VAE, we first derive <strong>Tuna-R</strong>, a pixel-space unified multimodal model (UMM) that relies solely on a representation encoder. <strong>Tuna-2</strong> further streamlines the design by bypassing the representation encoder entirely, utilizing direct patch embedding layers for raw image inputs. Tuna-2 using pixel embeddings outperforms both Tuna-R and Tuna across a diverse suite of multimodal benchmarks.</p>
+<h2>Generation Results</h2>
+<h2>Installation</h2>
+<pre><code>git clone https://github.com/facebookresearch/tuna-2.git
+cd tuna-2
+bash scripts/setup_uv.sh   # creates .venv with all dependencies
+source .venv/bin/activate</code></pre>
+<p>Manual setup (if you prefer to drive uv yourself)</p>
+<pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh
+uv sync
+uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+uv pip install -e .
+source .venv/bin/activate</code></pre>
+<h2>Inference</h2>
+<p>All inference is done through a single unified script:</p>
+<pre><code>bash scripts/launch/predict.sh --ckpt &lt;PATH&gt; --prompt &lt;TEXT&gt; [OPTIONS]</code></pre>
+<h3>Options</h3>
+<table>
+ <thead>
+  <tr>
+   <th>Flag</th>
+   <th>Values</th>
+   <th>Default</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>--ckpt</code></td>
+   <td>path</td>
+   <td><em>(required)</em></td>
+   <td>Path to the model checkpoint</td>
+  </tr>
+  <tr>
+   <td><code>--prompt</code></td>
+   <td>text</td>
+   <td><em>(required)</em></td>
+   <td>Text prompt (t2i) or editing instruction (edit)</td>
+  </tr>
+  <tr>
+   <td><code>--task</code></td>
+   <td><code>t2i</code>, <code>edit</code></td>
+   <td><code>t2i</code></td>
+   <td>Inference task</td>
+  </tr>
+  <tr>
+   <td><code>--variant</code></td>
+   <td><code>none_encoder</code>, <code>siglip_pixel</code>, <code>vae</code></td>
+   <td><code>none_encoder</code></td>
+   <td>Model variant: <strong>Tuna-2</strong>, <strong>Tuna-R</strong>, or <strong>Tuna</strong></td>
+  </tr>
+  <tr>
+   <td><code>--size</code></td>
+   <td><code>7b</code>, <code>2b</code></td>
+   <td><code>7b</code></td>
+   <td>Model size (2b only available for <code>--variant vae</code>)</td>
+  </tr>
+  <tr>
+   <td><code>--resolution</code></td>
+   <td>See table below</td>
+   <td><code>512x512</code></td>
+   <td>Output resolution (HxW)</td>
+  </tr>
+  <tr>
+   <td><code>--gpu</code></td>
+   <td>int</td>
+   <td><code>0</code></td>
+   <td>GPU device index</td>
+  </tr>
+  <tr>
+   <td><code>--image</code></td>
+   <td>path</td>
+   <td>—</td>
+   <td>Source image (required for <code>--task edit</code>)</td>
+  </tr>
+  <tr>
+   <td><code>--steps</code></td>
+   <td>int</td>
+   <td><code>50</code></td>
+   <td>Number of diffusion steps</td>
+  </tr>
+  <tr>
+   <td><code>--guidance</code></td>
+   <td>float</td>
+   <td><em>(from config)</em></td>
+   <td>Classifier-free guidance scale</td>
+  </tr>
+  <tr>
+   <td><code>--seed</code></td>
+   <td>int</td>
+   <td><code>42</code></td>
+   <td>Random seed</td>
+  </tr>
+  <tr>
+   <td><code>--negative</code></td>
+   <td>text</td>
+   <td><em>(from config)</em></td>
+   <td>Negative prompt</td>
+  </tr>
+ </tbody>
+</table>
+<h3>Supported Resolutions</h3>
+<table>
+ <thead>
+  <tr>
+   <th>512-class</th>
+   <th>1024-class</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td><code>512x512</code></td>
+   <td><code>1024x1024</code></td>
+  </tr>
+  <tr>
+   <td><code>448x576</code></td>
+   <td><code>896x1152</code></td>
+  </tr>
+  <tr>
+   <td><code>576x448</code></td>
+   <td><code>1152x896</code></td>
+  </tr>
+  <tr>
+   <td><code>384x672</code></td>
+   <td><code>768x1344</code></td>
+  </tr>
+  <tr>
+   <td><code>672x384</code></td>
+   <td><code>1344x768</code></td>
+  </tr>
+ </tbody>
+</table>
+<h3>Examples</h3>
+<p>See <code>assets/prompts.txt</code> for sample prompts.</p>
+<pre><code># Tuna-2 (7B, no encoder, 512px)
+bash scripts/launch/predict.sh \
+    --ckpt /path/to/tuna_2_pixel_7b.pt \
+    --prompt "A highly realistic beauty portrait in extreme close-up, showing the face of a young woman from just above the eyebrows down to the lips. Her skin is natural, luminous, and textured, with visible pores, fine facial hairs, subtle unevenness, and a slightly dewy finish, without heavy retouching or artificial smoothing."
+
+# Tuna (2B, VAE latent, 512px)
+bash scripts/launch/predict.sh \
+    --variant vae --size 2b \
+    --ckpt /path/to/tuna_2b.pt \
+    --prompt "A brutally realistic cinematic close-up inside a real space station cupola, side profile of a blonde female astronaut floating in zero gravity beside the window, her loose braid drifting naturally, looking out at Earth in silence."</code></pre>
+<h3>Video</h3>
+<p>Due to policy constraints, we are unable to release the video generation model at this time. However, we provide the complete video training and inference codebase. If you are interested in training your own video model, this is a ready-to-use starting point — see <code>configs/train/video_t2v.yaml</code> for training configuration and <code>configs/predict/t2v_2b.yaml</code> for inference.</p>
+<h2>TODO</h2>
+<ul>
+ <li>Release some of the Tuna-2 model weights.</li>
+ <li>Release some of the Tuna model weights.</li>
+ <li>Release the fully restored model weights (fine-tuned on external data to recover the missing layers).</li>
+</ul>
+<h3>A Note on Model Release</h3>
+<p>Due to organizational policy constraints, we are unable to release the full production-trained model weights. To support the research community, we plan to release a <strong>foundation checkpoint</strong> with a small number of layers removed from both the LLM backbone and the diffusion head (flow head). The remaining layers and all other components (vision encoder, projections, embeddings, etc.) are fully preserved. With a short fine-tuning pass on your own data, the removed layers can be quickly re-learned and the model restored to full quality.</p>
+<p>For detailed fine-tuning instructions, please refer to the training guide.</p>
+<p>Meanwhile, we are also actively working on fine-tuning the removed layers using external data, and plan to release the complete weights as soon as possible.</p>
+<h2>Citation</h2>
+<pre><code>@article\{tuna2,
+  title=\{TUNA-2: Pixel Embeddings Beat Vision Encoders
+         for Unified Understanding and Generation},
+  author=\{Liu, Zhiheng and Ren, Weiming and Huang, Xiaoke
+          and Chen, Shoufa and Li, Tianhong and Chen, Mengzhao
+          and Ji, Yatai and He, Sen and Schult, Jonas
+          and Xiang, Tao and Chen, Wenhu and Luo, Ping
+          and Zettlemoyer, Luke and Cong, Yuren},
+  journal=\{arXiv preprint arXiv:2604.24763},
+  year=\{2026}
+}
+
+@article\{liu2025tuna,
+  title=\{Tuna: Taming unified visual representations for native unified multimodal models},
+  author=\{Liu, Zhiheng and Ren, Weiming and Liu, Haozhe and Zhou, Zijian and Chen, Shoufa and Qiu, Haonan and Huang, Xiaoke and An, Zhaochong and Yang, Fanny and Patel, Aditya and others},
+  journal=\{CVPR2026},
+  year=\{2026}
+}</code></pre>
+<h2>License</h2>
+<p>This project is licensed under the Apache License 2.0. See LICENSE for details.</p>

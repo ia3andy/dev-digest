@@ -1,0 +1,117 @@
+<h1>GPT-5.5 Price Increase: What It Actually Costs</h1>
+<p>We replicated the cost analysis we did on Opus on the new GPT-5.5 model. GPT-5.5 launched with a 2x price increase over GPT-5.4: input tokens increased from $2.50/M to $5.00/M and output tokens from $15/M to $30/M. OpenAI has also noted that the model is less verbose, producing shorter completions for the same tasks. Just as we did with Opus 4.7 we wanted to know what is the net impact on costs to users by analyzing usage that shifted from GPT-5.4 to GPT-5.5.</p>
+<p><strong>We observed cost increases between 49-92%. The price increase is mitigated by the model generating 19-34% fewer completion tokens for longer prompts.</strong></p>
+<h2>Methodology: Same Switcher Cohort Approach</h2>
+<p>We used the same approach as our Opus 4.7 analysis. We identified users whose top model by request count was GPT-5.4 prior to the 5.5 launch, who then switched to GPT-5.5 as their top model. This "switcher cohort" gives us a controlled before-and-after comparison of the same user base across model versions.</p>
+<p>Since GPT-5.4 and 5.5 use the same tokenizer family, we don't need to control for tokenizer differences. The comparison is direct: same users, same workflows, different model version.</p>
+<h2>GPT-5.5 Is Less Verbose, But Only for Longer Prompts</h2>
+<p>Using OpenRouter's consistent token counts, we measured how completion lengths changed between models:</p>
+<table>
+ <thead>
+  <tr>
+   <th>Prompt Size</th>
+   <th>Median Completion (5.4)</th>
+   <th>Median Completion (5.5)</th>
+   <th>Change</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>&lt; 2K tokens</td>
+   <td>121</td>
+   <td>129</td>
+   <td><strong>+7%</strong></td>
+  </tr>
+  <tr>
+   <td>2K – 10K</td>
+   <td>140</td>
+   <td>213</td>
+   <td><strong>+52%</strong></td>
+  </tr>
+  <tr>
+   <td>10K – 25K</td>
+   <td>211</td>
+   <td>143</td>
+   <td><strong>-32%</strong></td>
+  </tr>
+  <tr>
+   <td>25K – 50K</td>
+   <td>185</td>
+   <td>150</td>
+   <td><strong>-19%</strong></td>
+  </tr>
+  <tr>
+   <td>50K – 128K</td>
+   <td>188</td>
+   <td>136</td>
+   <td><strong>-28%</strong></td>
+  </tr>
+  <tr>
+   <td>128K+</td>
+   <td>215</td>
+   <td>143</td>
+   <td><strong>-34%</strong></td>
+  </tr>
+ </tbody>
+</table>
+<p>For prompts above 10K tokens, GPT-5.5 produces 19-34% fewer tokens. For shorter prompts, the pattern reverses: under 2K tokens completions are roughly the same length, and in the 2K-10K range they are 52% longer.</p>
+<h2>Actual Cost Impact</h2>
+<p>Using billed costs from requests in the switcher cohort, we calculated the average cost per million OpenRouter tokens. This normalizes for prompt length, allowing a direct comparison of cost efficiency.</p>
+<table>
+ <thead>
+  <tr>
+   <th>Prompt Size</th>
+   <th>Avg $/M OR Tokens (5.4)</th>
+   <th>Avg $/M OR Tokens (5.5)</th>
+   <th>Change</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>&lt; 2K tokens</td>
+   <td>$4.89</td>
+   <td>$9.37</td>
+   <td><strong>+92%</strong></td>
+  </tr>
+  <tr>
+   <td>2K – 10K</td>
+   <td>$2.25</td>
+   <td>$3.81</td>
+   <td><strong>+69%</strong></td>
+  </tr>
+  <tr>
+   <td>10K – 25K</td>
+   <td>$1.42</td>
+   <td>$2.15</td>
+   <td><strong>+51%</strong></td>
+  </tr>
+  <tr>
+   <td>25K – 50K</td>
+   <td>$1.02</td>
+   <td>$1.65</td>
+   <td><strong>+62%</strong></td>
+  </tr>
+  <tr>
+   <td>50K – 128K</td>
+   <td>$0.74</td>
+   <td>$1.10</td>
+   <td><strong>+49%</strong></td>
+  </tr>
+  <tr>
+   <td>128K+</td>
+   <td>$0.71</td>
+   <td>$1.31</td>
+   <td><strong>+85%</strong></td>
+  </tr>
+ </tbody>
+</table>
+<p>Our analysis shows that GPT-5.5 actual costs increased 49% to 92%. Longer prompts, over 10k tokens, saw costs offset by shorter completions. Shorter prompts, under 10k, experience a higher cost increase where completions did not get shorter.</p>
+<h2>Methodology</h2>
+<ul>
+ <li><strong>Source</strong>: OpenRouter's request logs</li>
+ <li><strong>Cohort</strong>: Users whose top model by request count was GPT-5.4, who then switched to GPT-5.5 as their top model</li>
+ <li><strong>Sample size</strong>: Text-only, non-cancelled requests split across 5.4 and 5.5</li>
+ <li><strong>Windows</strong>: GPT-5.4: April 21-23, 2026 (pre-launch); GPT-5.5: April 25-28, 2026 (post-launch, launch day excluded)</li>
+ <li><strong>Normalization</strong>: Cost per million OpenRouter tokens, bucketed by prompt token count. OpenRouter counts tokens independently from OpenAI, providing a consistent baseline across model versions.</li>
+ <li><strong>Controls</strong>: Excluded media (images, files, audio, video), cancelled requests, and zero-token requests</li>
+</ul>

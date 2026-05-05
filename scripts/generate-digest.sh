@@ -8,6 +8,12 @@ DATA_FILE="$PROJECT_DIR/data/digest-posts.json"
 TEMP_DIR=$(mktemp -d)
 CACHE_DIR="$PROJECT_DIR/.digest-cache"
 mkdir -p "$CACHE_DIR"
+ENV_FILE="$PROJECT_DIR/.env"
+if [[ -f "$ENV_FILE" ]]; then
+  set -a
+  source "$ENV_FILE"
+  set +a
+fi
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
 TARGET_DATE=""

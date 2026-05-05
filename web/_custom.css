@@ -133,6 +133,22 @@ nav.topbar .dark-mode-toggle:hover {
   @apply w-full min-h-44 object-cover md:w-[30%];
 }
 
+.digest-article:nth-child(15n+1) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/1.jpg'); }
+.digest-article:nth-child(15n+2) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/2.jpg'); }
+.digest-article:nth-child(15n+3) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/3.jpg'); }
+.digest-article:nth-child(15n+4) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/4.jpg'); }
+.digest-article:nth-child(15n+5) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/5.jpg'); }
+.digest-article:nth-child(15n+6) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/6.jpg'); }
+.digest-article:nth-child(15n+7) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/7.jpg'); }
+.digest-article:nth-child(15n+8) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/8.jpg'); }
+.digest-article:nth-child(15n+9) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/9.jpg'); }
+.digest-article:nth-child(15n+10) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/10.jpg'); }
+.digest-article:nth-child(15n+11) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/11.jpg'); }
+.digest-article:nth-child(15n+12) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/12.jpg'); }
+.digest-article:nth-child(15n+13) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/13.jpg'); }
+.digest-article:nth-child(15n+14) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/14.jpg'); }
+.digest-article:nth-child(15n+15) > .digest-article-img[src*="placeholder"] { content: url('/images/swipe-bg/15.jpg'); }
+
 .digest-article-content {
   @apply p-5 w-full md:w-[70%];
 }

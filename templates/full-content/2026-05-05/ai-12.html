@@ -1,0 +1,83 @@
+<h1>Powering the Inference Era: Inside the DigitalOcean AI-Native Cloud</h1>
+<p>I've spent the last fifteen years building cloud services: early days of AWS building S3 and EBS, helping launch Oracle Cloud Infrastructure from inception, and now building the agentic cloud at DigitalOcean for AI-natives. Every cloud I've worked on was designed for the workloads of its era. Those clouds were built for human-centric SaaS applications: a few users, a handful of requests per session, predictable data flows.</p>
+<p>AI workloads break every one of those assumptions.</p>
+<p>AI runs in loops. Agents think, then act, then think again. A single user task can span hundreds of thousands of tokens, traverse half a dozen tools, hit a knowledge base, write code, execute it, and persist state, all before returning an answer. The clouds we have weren't built for this. Hyperscalers give you hundreds of services built for yesterday's applications, and leave the integration to you. Inference-only providers sit on someone else's compute and stack their margin on top. GPU rental shops (frequently referred to as "Neoclouds") give you silicon, but not a system.</p>
+<p>This week at Deploy 2026, we launched the DigitalOcean AI-Native Cloud, a purpose-built platform for the inference and agentic era that integrates five layers from silicon to agents into a single open stack.</p>
+<p>We shipped fifteen products on Tuesday. Here's what's inside.</p>
+<h2>The shape of the stack</h2>
+<p>Our AI-Native Cloud is composed of five layers, each addressing a real workload pattern we've watched our customers wrestle with.</p>
+<p><img src="https://doimages.nyc3.cdn.digitaloceanspaces.com/002Blog/gradient_ai_platform_blog_headers/Paddy%20Blog%20Image%202.png" alt="image alt text"></p>
+<p>They're independently useful and beautifully integrated:</p>
+<ul>
+ <li><strong>Managed Agents:</strong> production runtime for agents, with sandboxes, durable state, and a universal data plane</li>
+ <li><strong>Data &amp; Learning:</strong> managed databases, vector stores, knowledge bases, and feedback loops</li>
+ <li><strong>Inference Engine:</strong> every open and frontier model on one endpoint, optimized at the kernel</li>
+ <li><strong>Core Cloud:</strong> compute, networking, and storage primitives, tuned for AI</li>
+ <li><strong>Infrastructure:</strong> DigitalOcean-owned silicon and facilities, co-engineered with the industry's best</li>
+</ul>
+<p>Open source isn't an add-on at any of these layers. It's the foundation: PostgreSQL, MySQL, MongoDB, Valkey, OpenSearch, Kafka, Weaviate, vLLM, SGLang, OpenCode, LangGraph, CrewAI. Open all the way down. You bring your weights, your harness, your tools. We provide the runtime.</p>
+<p>Let me walk through it, from the ground up.</p>
+<h2>Infrastructure: own the silicon, own the economics</h2>
+<p>Our global footprint now spans <strong>19 data centers</strong> and 200+ network points of presence, with future capacity coming online in <strong>Kansas City and Memphis</strong>. That includes our first <strong>liquid-cooled racks</strong>, purpose-built for next-generation high-density GPU workloads.</p>
+<p>Our <strong>Richmond data center</strong> <strong>is now generally available</strong>, with <strong>NVIDIA HGX™ B300</strong> and <strong>AMD Instinct™ MI350X</strong> GPUs available alongside the H100, H200, and MI300/MI325 silicon already running across our fleet. We co-engineer at the kernel level with both NVIDIA and AMD. We don't rent capacity. We own it. That's why your unit economics improve as you scale on us, instead of getting worse.</p>
+<h2>Core Cloud: the foundation under every agent</h2>
+<p>Hundreds of thousands of customers already run on our core cloud every day: Droplets, Kubernetes (DOKS), VPC networking, and object/block/network file storage. We've extended it for AI workloads with a non-blocking RDMA fabric, RDMA-enabled NFS, and VPC-native inference out of the box.</p>
+<p>At Deploy we announced Burstable CPU and MicroVM Droplets, currently in Private Preview. These are Firecracker-based instances that start in roughly 200 milliseconds, ideal for agent sandboxes and lightweight, spiky workloads. Agents need GPUs for thinking and CPUs for doing. We have both, and now they're sized for how agents actually behave.</p>
+<h2>Inference Engine: every model, one endpoint</h2>
+<p>This is the layer we've rebuilt from the ground up. We co-developed it with design partners like Hippocratic AI, and the result is one of the highest-performing inference engines on the market today: fastest inference for Qwen 3.5 and DeepSeek V3.2 in independent Artificial Analysis benchmarks for token throughput.</p>
+<p>Here's what's new:</p>
+<ul>
+ <li><strong>Inference Router</strong> (Public Preview): a preference-aware control plane that picks the right model for each request, balancing cost, latency, and quality with no code changes</li>
+ <li><strong>Dedicated Inference</strong> (General Availability): reserved capacity with predictable performance and economics for production workloads</li>
+ <li><strong>Bring Your Own Model (BYOM)</strong> (General Availability): a service for hosting your fine-tunes on our serving stack and inherit the kernel-level optimizations</li>
+ <li><strong>Multi-modal model support</strong> (General Availability): text, vision, audio, and video on a single API</li>
+ <li><strong>Batch Inference</strong> (General Availability): purpose-built for asynchronous workloads (document processing, eval runs, synthetic data generation) at roughly 50% of peak serverless pricing</li>
+ <li><strong>Content Safety Guardrails</strong> (General Availability): policy controls integrated at the inference layer</li>
+ <li><strong>Serverless Inference with multi-modal support</strong> (General Availability): single API, scale to zero, pay only for tokens consumed</li>
+ <li><strong>Evaluations</strong> (Public Preview): automated scoring against golden datasets or built-in judge models, so you can swap models without flying blind</li>
+</ul>
+<p>The Router deserves a closer look. It's a preference-aware control plane that picks the best model for each request, balancing cost, latency, and quality without touching application code. Unlike static routing rules, it runs on a purpose-built small language model that resolves intent in 200 milliseconds and ranks candidates against live cost and latency data, so the right model wins at 2am and at 2pm. Most AI builders start on a single frontier model. Then PMF happens, the bill scales linearly with usage, and the unit economics get painful fast. Most successful AI natives we work with run three or more models in production. The leading edge is running twenty or more. The Router makes that possible without a rewrite.</p>
+<p>Take <a href="http://celiums.ai">Celiums.AI</a>, across 29.2M tokens processed through the Inference Router, 83% of their traffic now lands on open-source models, up from zero.</p>
+<blockquote>
+ <p>"Our AI Ethics Engine was built with open-source AI, so running it on closed-source models felt backwards. DigitalOcean's Inference Router closed the loop: we swapped frontier closed-source models for open alternatives and cut per-token cost by 61% while pulling p95 latency under 400ms. Same API. Zero code changes. The Router routes to the optimal model on every request. We just build."</p>
+ <p>— <strong>Mario Gutiérrez</strong> CTO at Unity Financial Network and Founder of <a href="http://Celiums.AI">Celiums.AI</a></p>
+</blockquote>
+<p>We also expanded the Model Catalog with over 25 new models, including:</p>
+<ul>
+ <li><strong>NVIDIA Nemotron 3 Nano Omni</strong></li>
+ <li><strong>DeepSeek V3.2</strong></li>
+ <li><strong>Llama 3.3 70B</strong></li>
+ <li><strong>Qwen 3.5</strong></li>
+ <li><strong>MiniMax-M2.5</strong></li>
+</ul>
+<h2>Data &amp; Learning: AI-ready data, no rebuild required</h2>
+<p>Stateful agents need context, memory, and the ability to learn from what happens in production. The Data &amp; Learning layer is built on the managed services tens of thousands of customers already trust, extended for how AI systems actually run.</p>
+<p>What's new:</p>
+<ul>
+ <li><strong>Knowledge Bases</strong> (General Availability): managed retrieval with grounded, cited answers; every knowledge base is exposed as an MCP tool by default</li>
+ <li><strong>Learning &amp; Feedback Loops</strong> (General Availability): capture production signals and route them back into model improvement, without a separate data pipeline</li>
+ <li><strong>Managed Weaviate</strong> (Private Preview): open-source vector store, fully managed</li>
+ <li><strong>PostgreSQL Advanced Edition</strong> and <strong>MySQL Advanced Edition</strong> (Public Preview): capacity to 50 TiB, 1 TiB scaling in minutes, proxy-based failover in seconds, and 100+ observability metrics</li>
+</ul>
+<p>Transactional databases remain the foundation for AI. We made them production-grade for the agentic era.</p>
+<h2>Managed Agents: a production runtime, not a monolith</h2>
+<p>This is the newest layer of the stack, and the one where we've spent the most time listening. We've watched customers deploy tens of thousands of agents on App Platform as containers. We've also watched them hit a wall when the agent loop, tool calls, state, observability, and code execution all live tangled together inside a single monolith.</p>
+<p>So we asked a simple question: what would help you actually move faster? The answer became Managed Agents: five primitives that separate the plumbing from the business logic of your agent.</p>
+<p>What's new:</p>
+<ul>
+ <li><strong>Managed Agents</strong> (General Availability): the production runtime</li>
+ <li><strong>Open Harness</strong> (General Availability): bring your own agent framework, including OpenCode, LangGraph, CrewAI, or any other harness</li>
+ <li><strong>Managed Sandboxes</strong> (General Availability): E2B-compatible, Firecracker-based, sub-second cold start for safe execution of model-generated code</li>
+ <li><strong>Durable State Management</strong> (General Availability): checkpoints and memory primitives the harness can rely on</li>
+ <li><strong>Plano</strong> (General Availability): our orchestration framework and data plane for agents, released under Apache 2.0</li>
+ <li><strong>Launchpad</strong> (General Availability): go from prototype to deployed agent in clicks</li>
+ <li><strong>Model Context Protocol (MCP)</strong> (General Availability): expanded support across the platform</li>
+ <li><strong>ToolBox</strong> (Coming Soon): 3,000+ tool connectors so your agents can act on the systems your business actually runs on</li>
+</ul>
+<h2>The compounding effect of the full stack</h2>
+<p>Any single layer of this stack is useful on its own. The reason to run them together is that the optimization compounds.</p>
+<p>When your agents, your inference, your data, and your compute live in the same VPC, on the same silicon, billed on the same invoice, you eliminate the egress taxes, the margin stacking, and the integration debt that come from stitching across three vendors and three bills.</p>
+<p>We've seen customers like Workato run a trillion automation tasks at 67% lower cost. <a href="http://Character.AI">Character.AI</a> handle over a billion queries a day at 2x inference throughput. LawVo cut inference costs 42% with no code changes by routing through us. Hippocratic AI is powering 20M+ patient interactions with 40% lower latency. None of these are demos. They're production workloads at scale.</p>
+<h2>Start here. Scale here.</h2>
+<p>If you're an AI builder, whether you're writing your first line of code or accelerating past product-market fit, this stack is for you. You don't need to wait in a hyperscaler queue behind a frontier lab. You don't need to glue together a Neo Cloud, an inference wrapper, and a vector database vendor. You don't need to compromise on openness, on economics, or on developer experience.</p>
+<p>Welcome to the AI-Native Cloud. Let's build.</p>
