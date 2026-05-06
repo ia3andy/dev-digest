@@ -228,6 +228,9 @@ generate_post() {
   echo "  Syncing new tags..."
   jbang "$SCRIPT_DIR/DigestHelper.java" sync-tags "$DATA_FILE" "$FEEDS_FILE"
 
+  echo "  Syncing swipe data..."
+  jbang "$SCRIPT_DIR/DigestHelper.java" sync-swipe "$DATA_FILE" "$PROJECT_DIR/data/digest-swipe.json"
+
   echo "  Added post for $target_date"
 }
 
@@ -267,7 +270,7 @@ if git diff --quiet data/digest-posts.json 2>/dev/null && git diff --cached --qu
   exit 0
 fi
 
-git add data/digest-posts.json
+git add data/digest-posts.json data/digest-swipe.json
 git commit -m "feat: add dev digest posts"
 
 if [[ "$NO_PUSH" == true ]]; then

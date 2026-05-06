@@ -31,6 +31,7 @@ import picocli.CommandLine.*;
         DigestHelper.ResummarizeAllCmd.class,
         DigestHelper.DedupCmd.class,
         DigestHelper.TestFetchCmd.class,
+        DigestHelper.SyncSwipeCmd.class,
 }, mixinStandardHelpOptions = true)
 public class DigestHelper implements Runnable {
 
@@ -231,6 +232,37 @@ public class DigestHelper implements Runnable {
             dedup(files);
             return 0;
         }
+    }
+
+    @Command(name = "sync-swipe", description = "Sync digest-swipe.json from digest-posts.json")
+    static class SyncSwipeCmd implements Callable<Integer> {
+        @Parameters(index = "0", description = "Path to digest-posts.json") String dataFile;
+        @Parameters(index = "1", description = "Path to output digest-swipe.json") String outputFile;
+
+        @Override
+        public Integer call() throws Exception {
+            syncSwipe(dataFile, outputFile);
+            return 0;
+        }
+    }
+
+    static void syncSwipe(String dataFilePath, String outputFilePath) throws Exception {
+        Path dataFile = Path.of(dataFilePath);
+        if (!Files.exists(dataFile)) {
+            System.err.println("Data file not found: " + dataFilePath);
+            return;
+        }
+        JsonArray posts = GSON.fromJson(Files.readString(dataFile), JsonArray.class);
+        JsonArray swipe = new JsonArray();
+        for (var el : posts) {
+            var post = el.getAsJsonObject();
+            var entry = new JsonObject();
+            entry.addProperty("date", jsonStr(post, "date"));
+            entry.addProperty("title", jsonStr(post, "title"));
+            swipe.add(entry);
+        }
+        Files.writeString(Path.of(outputFilePath), GSON.toJson(swipe) + "\n");
+        System.err.println("Synced " + swipe.size() + " entries to " + outputFilePath);
     }
 
     @Command(name = "test-fetch", description = "Test the fetch chain (Jsoup + Facebook) for a single URL")

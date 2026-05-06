@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function scrollToReadingPosition() {
-    if (window.location.hash && window.location.hash !== '#swipe') {
+    if (window.location.hash) {
       const target = document.getElementById(window.location.hash.slice(1));
       if (target) {
         setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
@@ -284,13 +284,17 @@ document.addEventListener('DOMContentLoaded', () => {
           var prefetch = document.createElement('link');
           prefetch.rel = 'prefetch';
           prefetch.href = postLink.href;
-          document.head.appendChild(prefetch);
-          if (swipeCta) {
-            var swipeLink = swipeCta.querySelector('.swipe-cta-btn');
-            if (swipeLink) {
-              swipeLink.href = postLink.getAttribute('href') + '#swipe';
-            }
+        }
+        var swipeUrl = cards[i].dataset.swipeUrl;
+        if (swipeCta && swipeUrl) {
+          var swipeLink = swipeCta.querySelector('.swipe-cta-btn');
+          if (swipeLink) {
+            swipeLink.href = swipeUrl;
           }
+          var swipePrefetch = document.createElement('link');
+          swipePrefetch.rel = 'prefetch';
+          swipePrefetch.href = swipeUrl;
+          document.head.appendChild(swipePrefetch);
         }
         break;
       }

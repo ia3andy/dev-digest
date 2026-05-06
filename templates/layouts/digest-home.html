@@ -24,7 +24,7 @@ paginate:
 
 <div class="posts-list">
   {#for post in posts}
-  <article class="card post" data-post-date="{post.date.format('yyyy-MM-dd')}">
+  <article class="card post" data-post-date="{post.date.format('yyyy-MM-dd')}" data-swipe-url="{site.url('digest-swipe', post.title.slugify.toLowerCase)}">
     <div class="digest-ribbon">
       <span class="digest-ribbon-new">Fresh</span>
       <span class="digest-ribbon-done">Devoured</span>
