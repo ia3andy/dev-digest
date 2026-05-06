@@ -16,10 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   var defaultPriority = storedUnsorted !== null ? parseInt(storedUnsorted) : unsortedPri;
 
   function resolvePriority(tags) {
-    if (tags.length === 0) return defaultPriority;
-    var primary = priorities[tags[0]];
-    if (primary !== undefined && primary !== 0) return primary;
-    for (var i = 1; i < tags.length; i++) {
+    for (var i = 0; i < tags.length; i++) {
       var p = priorities[tags[i]];
       if (p !== undefined && p !== 0) return p;
     }
@@ -71,10 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
     else if (priority === 3) grouped.medium.push(frame);
     else grouped.other.push(frame);
 
-    // Store layer count before any DOM manipulation
     frame.dataset.layerCount = frame.querySelector('.swipe-layers').children.length;
 
-    // Swap placeholder backgrounds to fallback images
     var bgEls = frame.querySelectorAll('.swipe-card-bg, .swipe-layer-bg');
     for (var j = 0; j < bgEls.length; j++) {
       var bgStyle = bgEls[j].style.backgroundImage;
@@ -99,6 +94,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
   var regularFrames = grouped.high.concat(grouped.medium);
   for (var i = 0; i < regularFrames.length; i++) cloneFrameBg(regularFrames[i]);
+
+  // --- Dot indicators ---
+
+  function buildDots(dotsEl, count, activeIndex) {
+    dotsEl.textContent = '';
+    for (var d = 0; d < count; d++) {
+      var dot = document.createElement('span');
+      dot.className = d === activeIndex ? 'swipe-dot is-active' : 'swipe-dot';
+      dotsEl.appendChild(dot);
+    }
+  }
+
+  function initDotScroll(layersEl, dotsEl) {
+    layersEl.addEventListener('scroll', function() {
+      var idx = Math.round(layersEl.scrollLeft / layersEl.clientWidth);
+      var allDots = dotsEl.querySelectorAll('.swipe-dot');
+      for (var k = 0; k < allDots.length; k++) {
+        allDots[k].classList.toggle('is-active', k === idx);
+      }
+    });
+  }
 
   // --- Stash priority-4 frames, build bullet frames ---
 
@@ -172,13 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Remove all frames, reinsert in priority order ---
 
   for (var i = 0; i < frames.length; i++) frames[i].remove();
-  var ordered = grouped.high.concat(grouped.medium).concat(bulletFrames);
-  for (var i = 0; i < ordered.length; i++) track.insertBefore(ordered[i], completionFrame);
-
-  var visibleFrames = ordered;
+  var visibleFrames = grouped.high.concat(grouped.medium).concat(bulletFrames);
+  for (var i = 0; i < visibleFrames.length; i++) track.insertBefore(visibleFrames[i], completionFrame);
   var totalArticles = visibleFrames.length;
-
-  // --- Dot indicators (non-bullet frames) ---
 
   for (var i = 0; i < visibleFrames.length; i++) {
     if (visibleFrames[i].classList.contains('swipe-frame-bullets')) continue;
@@ -186,20 +198,8 @@ document.addEventListener('DOMContentLoaded', () => {
     var dotsEl = visibleFrames[i].querySelector('.swipe-dots');
     var layerCount = layersEl.children.length;
     if (layerCount > 1) {
-      for (var d = 0; d < layerCount; d++) {
-        var dot = document.createElement('span');
-        dot.className = d === 0 ? 'swipe-dot is-active' : 'swipe-dot';
-        dotsEl.appendChild(dot);
-      }
-      (function(layers, dots) {
-        layers.addEventListener('scroll', function() {
-          var idx = Math.round(layers.scrollLeft / layers.clientWidth);
-          var allDots = dots.querySelectorAll('.swipe-dot');
-          for (var k = 0; k < allDots.length; k++) {
-            allDots[k].classList.toggle('is-active', k === idx);
-          }
-        });
-      })(layersEl, dotsEl);
+      buildDots(dotsEl, layerCount, 0);
+      initDotScroll(layersEl, dotsEl);
     }
   }
 
@@ -215,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // Collapse previous article: move layers back to stash
     if (prevId && stash[prevId]) {
       var prevLayers = bfLayers.querySelectorAll('.swipe-layer:not(.swipe-layer-bullets)');
       var prevStash = stash[prevId].querySelector('.swipe-layers');
@@ -224,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (prevBg) prevBg.remove();
     }
 
-    // Move article layers into bullet frame
     var stashedFrame = stash[articleId];
     if (!stashedFrame) return;
     var articleLayersEl = stashedFrame.querySelector('.swipe-layers');
@@ -233,18 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cloneFrameBg(bulletFrame);
 
-    // Set dots: 1 (bullet list) + article layer count
     var layerCount = parseInt(stashedFrame.dataset.layerCount || '1');
-    bfDots.textContent = '';
-    for (var d = 0; d < 1 + layerCount; d++) {
-      var dot = document.createElement('span');
-      dot.className = d === 1 ? 'swipe-dot is-active' : 'swipe-dot';
-      bfDots.appendChild(dot);
-    }
+    buildDots(bfDots, 1 + layerCount, 1);
 
     bulletFrame.dataset.activeArticle = articleId;
 
-    // Init scroll buttons for newly added viewports
     var newViewports = bulletFrame.querySelectorAll('.swipe-layer:not(.swipe-layer-bullets) .swipe-text-viewport');
     for (var k = 0; k < newViewports.length; k++) initViewport(newViewports[k]);
 
@@ -258,16 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!item) return;
         expandArticle(bf, item.dataset.articleId);
       });
-
-      var bfLayers = bf.querySelector('.swipe-layers');
-      var bfDots = bf.querySelector('.swipe-dots');
-      bfLayers.addEventListener('scroll', function() {
-        var idx = Math.round(bfLayers.scrollLeft / bfLayers.clientWidth);
-        var allDots = bfDots.querySelectorAll('.swipe-dot');
-        for (var k = 0; k < allDots.length; k++) {
-          allDots[k].classList.toggle('is-active', k === idx);
-        }
-      });
+      initDotScroll(bf.querySelector('.swipe-layers'), bf.querySelector('.swipe-dots'));
     })(bulletFrames[i]);
   }
 
@@ -343,13 +325,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Read tracking ---
 
-  function getCurrentFrameIndex() {
-    var idx = 0;
+  function getCurrentFrame() {
     var allFrames = track.querySelectorAll('.swipe-frame');
-    for (var i = 0; i < allFrames.length; i++) {
-      if (allFrames[i].offsetTop <= track.scrollTop + track.clientHeight / 2) idx = i;
+    var current = allFrames[0];
+    for (var i = 1; i < allFrames.length; i++) {
+      if (allFrames[i].offsetTop <= track.scrollTop + track.clientHeight / 2) current = allFrames[i];
     }
-    return idx;
+    return current;
   }
 
   var obs = new IntersectionObserver(function(entries) {
@@ -378,7 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
   var allTrackFrames = track.querySelectorAll('.swipe-frame');
   for (var i = 0; i < allTrackFrames.length; i++) obs.observe(allTrackFrames[i]);
 
-  // Scroll to first unread article
   for (var i = 0; i < visibleFrames.length; i++) {
     if (visibleFrames[i].classList.contains('swipe-frame-bullets')) continue;
     var evt = new CustomEvent('digest-is-article-read', {
@@ -396,10 +377,9 @@ document.addEventListener('DOMContentLoaded', () => {
   var shareBtn = root.querySelector('.swipe-share-fab');
 
   function updateShare() {
-    var idx = getCurrentFrameIndex();
-    var allFrames = track.querySelectorAll('.swipe-frame:not(.swipe-frame-completion)');
-    var frame = allFrames[idx];
-    if (!frame || !shareBtn) return;
+    if (!shareBtn) return;
+    var frame = getCurrentFrame();
+    if (!frame || frame.classList.contains('swipe-frame-completion')) return;
     var aid = frame.dataset.articleId || frame.dataset.activeArticle;
     shareBtn.dataset.shareArticle = aid || '';
     shareBtn.title = (frame.querySelector('.swipe-card-title') || {}).textContent || '';
@@ -419,18 +399,18 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = root.dataset.backUrl;
       return;
     }
+
     if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
       e.preventDefault();
-      var allFrames = track.querySelectorAll('.swipe-frame');
-      var idx = getCurrentFrameIndex();
-      var next = e.key === 'ArrowDown' ? Math.min(idx + 1, allFrames.length - 1) : Math.max(idx - 1, 0);
-      allFrames[next].scrollIntoView({ behavior: 'smooth' });
+      var frame = getCurrentFrame();
+      var sibling = e.key === 'ArrowDown' ? frame.nextElementSibling : frame.previousElementSibling;
+      if (sibling) sibling.scrollIntoView({ behavior: 'smooth' });
+      return;
     }
+
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
       e.preventDefault();
-      var allFrames = track.querySelectorAll('.swipe-frame');
-      var idx = getCurrentFrameIndex();
-      var layers = allFrames[idx].querySelector('.swipe-layers');
+      var layers = getCurrentFrame().querySelector('.swipe-layers');
       if (!layers) return;
       var layerIdx = Math.round(layers.scrollLeft / layers.clientWidth);
       var target = e.key === 'ArrowRight' ? layerIdx + 1 : layerIdx - 1;

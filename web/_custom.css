@@ -1108,30 +1108,35 @@ nav.topbar .dark-mode-toggle:hover {
   z-index: 0;
 }
 
-/* Summary layer: transparent with image showing through */
-.swipe-layer-summary {
+/* Content layers: transparent so frame bg shows through */
+.swipe-layer-summary,
+.swipe-layer-deep,
+.swipe-layer-decoder,
+.swipe-layer-original {
   @apply bg-transparent;
 }
 
-.swipe-layer-summary .swipe-layer-title {
+.swipe-layer-summary .swipe-layer-title,
+.swipe-layer-deep .swipe-layer-title,
+.swipe-layer-decoder .swipe-layer-title,
+.swipe-layer-original .swipe-layer-title {
   @apply text-white;
 }
 
+.swipe-layer-deep .swipe-text-body,
+.swipe-layer-decoder .swipe-text-body,
+.swipe-layer-original .swipe-text-body {
+  @apply text-white/90;
+}
+
+/* Summary layer items */
 .swipe-summary-item {
   @apply flex items-start gap-3 mb-4 p-3 rounded-lg;
 }
 
-.swipe-summary-what {
-  @apply bg-blue-900/30;
-}
-
-.swipe-summary-why {
-  @apply bg-amber-900/30;
-}
-
-.swipe-summary-takeaway {
-  @apply bg-emerald-900/30;
-}
+.swipe-summary-what { @apply bg-blue-900/30; }
+.swipe-summary-why { @apply bg-amber-900/30; }
+.swipe-summary-takeaway { @apply bg-emerald-900/30; }
 
 .swipe-summary-icon {
   @apply shrink-0 mt-0.5;
@@ -1147,45 +1152,6 @@ nav.topbar .dark-mode-toggle:hover {
 
 .swipe-summary-item strong {
   @apply text-white;
-}
-
-/* Deep dive layer: transparent with image showing through */
-.swipe-layer-deep {
-  @apply bg-transparent;
-}
-
-.swipe-layer-deep .swipe-layer-title {
-  @apply text-white;
-}
-
-.swipe-layer-deep .swipe-text-body {
-  @apply text-white/90;
-}
-
-/* Decoder layer: transparent with image showing through */
-.swipe-layer-decoder {
-  @apply bg-transparent;
-}
-
-.swipe-layer-decoder .swipe-layer-title {
-  @apply text-white;
-}
-
-.swipe-layer-decoder .swipe-text-body {
-  @apply text-white/90;
-}
-
-/* Original article layer */
-.swipe-layer-original {
-  @apply bg-transparent;
-}
-
-.swipe-layer-original .swipe-layer-title {
-  @apply text-white;
-}
-
-.swipe-layer-original .swipe-text-body {
-  @apply text-white/90;
 }
 
 /* Dot indicators */
