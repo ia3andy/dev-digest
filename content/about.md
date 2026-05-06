@@ -1,6 +1,6 @@
 ---
 title: About
-description: Daily developer news digest, AI-curated
+description: Curated dev stories you swipe through in minutes
 layout: page
 ---
 
