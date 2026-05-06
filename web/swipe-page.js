@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   var PLACEHOLDER_SUFFIX = 'article-placeholder.svg';
   var FALLBACK_BG_COUNT = 15;
+  var BULLETS_PER_FRAME = 10;
 
   function fallbackBg(id) {
     var hash = 0;
@@ -36,9 +37,28 @@ document.addEventListener('DOMContentLoaded', () => {
     return '/images/swipe-bg/' + n + '.jpg';
   }
 
+  function createChevronSvg() {
+    var ns = 'http://www.w3.org/2000/svg';
+    var svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '16');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    var path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', 'm9 18 6-6-6-6');
+    svg.appendChild(path);
+    return svg;
+  }
+
+  // --- Classify frames by priority ---
+
   var frames = Array.from(track.querySelectorAll('.swipe-frame:not(.swipe-frame-completion)'));
   var completionFrame = track.querySelector('.swipe-frame-completion');
-  var grouped = { high: [], low: [], hidden: [] };
+  var grouped = { high: [], medium: [], other: [], hidden: [] };
 
   for (var i = 0; i < frames.length; i++) {
     var frame = frames[i];
@@ -46,13 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     var priority = resolvePriority(tags);
     frame.dataset.priority = priority;
 
-    if (priority === 5) {
-      grouped.hidden.push(frame);
-    } else if (priority <= 2) {
-      grouped.high.push(frame);
-    } else {
-      grouped.low.push(frame);
-    }
+    if (priority === 5) grouped.hidden.push(frame);
+    else if (priority <= 2) grouped.high.push(frame);
+    else if (priority === 3) grouped.medium.push(frame);
+    else grouped.other.push(frame);
+
+    // Store layer count before any DOM manipulation
+    frame.dataset.layerCount = frame.querySelector('.swipe-layers').children.length;
 
     // Swap placeholder backgrounds to fallback images
     var bgEls = frame.querySelectorAll('.swipe-card-bg, .swipe-layer-bg');
@@ -64,25 +84,112 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Remove all frames, reinsert in priority order
+  // --- Fixed background: clone card bg to frame level ---
+
+  function cloneFrameBg(frame) {
+    var existing = frame.querySelector(':scope > .swipe-frame-bg');
+    if (existing) existing.remove();
+    var cardBg = frame.querySelector('.swipe-card-bg');
+    if (!cardBg) return;
+    var bg = document.createElement('div');
+    bg.className = 'swipe-frame-bg';
+    bg.style.backgroundImage = cardBg.style.backgroundImage;
+    frame.insertBefore(bg, frame.firstChild);
+  }
+
+  var regularFrames = grouped.high.concat(grouped.medium);
+  for (var i = 0; i < regularFrames.length; i++) cloneFrameBg(regularFrames[i]);
+
+  // --- Stash priority-4 frames, build bullet frames ---
+
+  var stash = {};
+  for (var i = 0; i < grouped.other.length; i++) {
+    stash[grouped.other[i].dataset.articleId] = grouped.other[i];
+  }
+
+  var bulletFrames = [];
+
+  for (var start = 0; start < grouped.other.length; start += BULLETS_PER_FRAME) {
+    var chunk = grouped.other.slice(start, start + BULLETS_PER_FRAME);
+
+    var bf = document.createElement('div');
+    bf.className = 'swipe-frame swipe-frame-bullets';
+
+    var layers = document.createElement('div');
+    layers.className = 'swipe-layers';
+
+    var bulletLayer = document.createElement('div');
+    bulletLayer.className = 'swipe-layer swipe-layer-bullets';
+
+    var inner = document.createElement('div');
+    inner.className = 'swipe-bullets-inner';
+
+    var title = document.createElement('h3');
+    title.className = 'swipe-bullets-title';
+    title.textContent = 'Other News';
+    inner.appendChild(title);
+
+    var list = document.createElement('div');
+    list.className = 'swipe-bullets-list';
+
+    for (var j = 0; j < chunk.length; j++) {
+      var article = chunk[j];
+
+      var item = document.createElement('button');
+      item.className = 'swipe-bullet-item';
+      item.dataset.articleId = article.dataset.articleId;
+
+      var badge = document.createElement('span');
+      badge.className = 'swipe-bullet-badge';
+      badge.textContent = article.dataset.section || '';
+
+      var itemTitle = document.createElement('span');
+      itemTitle.className = 'swipe-bullet-title';
+      itemTitle.textContent = (article.querySelector('.swipe-card-title') || {}).textContent || '';
+
+      var chevron = document.createElement('span');
+      chevron.className = 'swipe-bullet-chevron';
+      chevron.appendChild(createChevronSvg());
+
+      item.appendChild(badge);
+      item.appendChild(itemTitle);
+      item.appendChild(chevron);
+      list.appendChild(item);
+    }
+
+    inner.appendChild(list);
+    bulletLayer.appendChild(inner);
+    layers.appendChild(bulletLayer);
+    bf.appendChild(layers);
+
+    var dotsEl = document.createElement('div');
+    dotsEl.className = 'swipe-dots';
+    bf.appendChild(dotsEl);
+
+    bulletFrames.push(bf);
+  }
+
+  // --- Remove all frames, reinsert in priority order ---
+
   for (var i = 0; i < frames.length; i++) frames[i].remove();
-  var ordered = grouped.high.concat(grouped.low);
+  var ordered = grouped.high.concat(grouped.medium).concat(bulletFrames);
   for (var i = 0; i < ordered.length; i++) track.insertBefore(ordered[i], completionFrame);
-  // Hidden frames stay removed
 
   var visibleFrames = ordered;
   var totalArticles = visibleFrames.length;
 
-  // Build dot indicators per frame
+  // --- Dot indicators (non-bullet frames) ---
+
   for (var i = 0; i < visibleFrames.length; i++) {
-    var layers = visibleFrames[i].querySelector('.swipe-layers');
-    var dots = visibleFrames[i].querySelector('.swipe-dots');
-    var layerCount = layers.children.length;
+    if (visibleFrames[i].classList.contains('swipe-frame-bullets')) continue;
+    var layersEl = visibleFrames[i].querySelector('.swipe-layers');
+    var dotsEl = visibleFrames[i].querySelector('.swipe-dots');
+    var layerCount = layersEl.children.length;
     if (layerCount > 1) {
       for (var d = 0; d < layerCount; d++) {
         var dot = document.createElement('span');
         dot.className = d === 0 ? 'swipe-dot is-active' : 'swipe-dot';
-        dots.appendChild(dot);
+        dotsEl.appendChild(dot);
       }
       (function(layers, dots) {
         layers.addEventListener('scroll', function() {
@@ -92,11 +199,80 @@ document.addEventListener('DOMContentLoaded', () => {
             allDots[k].classList.toggle('is-active', k === idx);
           }
         });
-      })(layers, dots);
+      })(layersEl, dotsEl);
     }
   }
 
-  // Update progress text and completion stats
+  // --- Bullet frame: expand article on click ---
+
+  function expandArticle(bulletFrame, articleId) {
+    var bfLayers = bulletFrame.querySelector('.swipe-layers');
+    var bfDots = bulletFrame.querySelector('.swipe-dots');
+    var prevId = bulletFrame.dataset.activeArticle;
+
+    if (prevId === articleId) {
+      bfLayers.scrollTo({ left: bfLayers.clientWidth, behavior: 'smooth' });
+      return;
+    }
+
+    // Collapse previous article: move layers back to stash
+    if (prevId && stash[prevId]) {
+      var prevLayers = bfLayers.querySelectorAll('.swipe-layer:not(.swipe-layer-bullets)');
+      var prevStash = stash[prevId].querySelector('.swipe-layers');
+      for (var k = 0; k < prevLayers.length; k++) prevStash.appendChild(prevLayers[k]);
+      var prevBg = bulletFrame.querySelector(':scope > .swipe-frame-bg');
+      if (prevBg) prevBg.remove();
+    }
+
+    // Move article layers into bullet frame
+    var stashedFrame = stash[articleId];
+    if (!stashedFrame) return;
+    var articleLayersEl = stashedFrame.querySelector('.swipe-layers');
+    var layersToMove = Array.from(articleLayersEl.children);
+    for (var k = 0; k < layersToMove.length; k++) bfLayers.appendChild(layersToMove[k]);
+
+    cloneFrameBg(bulletFrame);
+
+    // Set dots: 1 (bullet list) + article layer count
+    var layerCount = parseInt(stashedFrame.dataset.layerCount || '1');
+    bfDots.textContent = '';
+    for (var d = 0; d < 1 + layerCount; d++) {
+      var dot = document.createElement('span');
+      dot.className = d === 1 ? 'swipe-dot is-active' : 'swipe-dot';
+      bfDots.appendChild(dot);
+    }
+
+    bulletFrame.dataset.activeArticle = articleId;
+
+    // Init scroll buttons for newly added viewports
+    var newViewports = bulletFrame.querySelectorAll('.swipe-layer:not(.swipe-layer-bullets) .swipe-text-viewport');
+    for (var k = 0; k < newViewports.length; k++) initViewport(newViewports[k]);
+
+    bfLayers.scrollTo({ left: bfLayers.clientWidth, behavior: 'smooth' });
+  }
+
+  for (var i = 0; i < bulletFrames.length; i++) {
+    (function(bf) {
+      bf.addEventListener('click', function(e) {
+        var item = e.target.closest('.swipe-bullet-item');
+        if (!item) return;
+        expandArticle(bf, item.dataset.articleId);
+      });
+
+      var bfLayers = bf.querySelector('.swipe-layers');
+      var bfDots = bf.querySelector('.swipe-dots');
+      bfLayers.addEventListener('scroll', function() {
+        var idx = Math.round(bfLayers.scrollLeft / bfLayers.clientWidth);
+        var allDots = bfDots.querySelectorAll('.swipe-dot');
+        for (var k = 0; k < allDots.length; k++) {
+          allDots[k].classList.toggle('is-active', k === idx);
+        }
+      });
+    })(bulletFrames[i]);
+  }
+
+  // --- Progress ---
+
   var progressText = root.querySelector('.swipe-progress-text');
   var progressFill = root.querySelector('.swipe-progress-fill');
   var completionStats = root.querySelector('.swipe-completion-stats');
@@ -130,39 +306,40 @@ document.addEventListener('DOMContentLoaded', () => {
     smoothScroll(viewport, delta, 600);
   });
 
-  // Initialize scroll button visibility
-  var viewports = track.querySelectorAll('.swipe-text-viewport');
-  for (var i = 0; i < viewports.length; i++) {
-    (function(viewport) {
-      var layer = viewport.closest('.swipe-layer');
-      var btnUp = layer.querySelector('.swipe-scroll-up');
-      var btnDown = layer.querySelector('.swipe-scroll-down');
-      if (!btnUp || !btnDown) return;
+  function initViewport(viewport) {
+    if (viewport.dataset.scrollInit) return;
+    viewport.dataset.scrollInit = '1';
+    var layer = viewport.closest('.swipe-layer');
+    var btnUp = layer.querySelector('.swipe-scroll-up');
+    var btnDown = layer.querySelector('.swipe-scroll-down');
+    if (!btnUp || !btnDown) return;
 
-      function updateButtons() {
-        var atTop = viewport.scrollTop <= 1;
-        var atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
-        btnUp.classList.toggle('is-hidden', atTop);
-        btnDown.classList.toggle('is-hidden', atBottom);
+    function updateButtons() {
+      var atTop = viewport.scrollTop <= 1;
+      var atBottom = viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 1;
+      btnUp.classList.toggle('is-hidden', atTop);
+      btnDown.classList.toggle('is-hidden', atBottom);
+    }
+
+    viewport.addEventListener('scroll', updateButtons);
+    viewport.addEventListener('touchmove', function(e) {
+      if (viewport.scrollHeight > viewport.clientHeight + 2) e.stopPropagation();
+    }, { passive: true });
+
+    requestAnimationFrame(function check() {
+      if (!layer.parentNode) return requestAnimationFrame(check);
+      var overflows = viewport.scrollHeight > viewport.clientHeight + 2;
+      btnDown.classList.toggle('is-hidden', !overflows);
+      btnUp.classList.add('is-hidden');
+      if (!overflows) {
+        btnDown.classList.add('is-permanent-hidden');
+        btnUp.classList.add('is-permanent-hidden');
       }
-
-      viewport.addEventListener('scroll', updateButtons);
-      viewport.addEventListener('touchmove', function(e) {
-        if (viewport.scrollHeight > viewport.clientHeight + 2) e.stopPropagation();
-      }, { passive: true });
-
-      requestAnimationFrame(function check() {
-        if (!layer.parentNode) return requestAnimationFrame(check);
-        var overflows = viewport.scrollHeight > viewport.clientHeight + 2;
-        btnDown.classList.toggle('is-hidden', !overflows);
-        btnUp.classList.add('is-hidden');
-        if (!overflows) {
-          btnDown.classList.add('is-permanent-hidden');
-          btnUp.classList.add('is-permanent-hidden');
-        }
-      });
-    })(viewports[i]);
+    });
   }
+
+  var viewports = track.querySelectorAll('.swipe-text-viewport');
+  for (var i = 0; i < viewports.length; i++) initViewport(viewports[i]);
 
   // --- Read tracking ---
 
@@ -182,7 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (entry.target.classList.contains('swipe-frame-completion')) {
           document.dispatchEvent(new CustomEvent('digest-mark-read', { detail: { date: postDate } }));
         }
-        // Update progress
         var visIdx = visibleFrames.indexOf(entry.target);
         if (visIdx >= 0) {
           var n = visIdx + 1;
@@ -191,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
-        var aid = entry.target.dataset.articleId;
+        var aid = entry.target.dataset.articleId || entry.target.dataset.activeArticle;
         if (aid) {
           document.dispatchEvent(new CustomEvent('digest-mark-article-read', { detail: { date: postDate, articleId: aid } }));
         }
@@ -204,6 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Scroll to first unread article
   for (var i = 0; i < visibleFrames.length; i++) {
+    if (visibleFrames[i].classList.contains('swipe-frame-bullets')) continue;
     var evt = new CustomEvent('digest-is-article-read', {
       detail: { date: postDate, articleId: visibleFrames[i].dataset.articleId, result: false }
     });
@@ -216,14 +393,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Share button ---
 
-  var shareBtn = root.querySelector('.swipe-topbar .swipe-share-btn');
+  var shareBtn = root.querySelector('.swipe-share-fab');
 
   function updateShare() {
     var idx = getCurrentFrameIndex();
     var allFrames = track.querySelectorAll('.swipe-frame:not(.swipe-frame-completion)');
     var frame = allFrames[idx];
     if (!frame || !shareBtn) return;
-    shareBtn.dataset.shareArticle = frame.dataset.articleId;
+    var aid = frame.dataset.articleId || frame.dataset.activeArticle;
+    shareBtn.dataset.shareArticle = aid || '';
     shareBtn.title = (frame.querySelector('.swipe-card-title') || {}).textContent || '';
   }
 
