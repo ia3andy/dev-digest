@@ -788,9 +788,16 @@ public class DigestHelper implements Runnable {
             .addAttributes("a", "href")
             .addProtocols("a", "href", "https", "http");
 
+    static final Pattern READING_TIME = Pattern.compile("\\s*\\(\\d+\\s+minute\\s+read\\)\\s*$", Pattern.CASE_INSENSITIVE);
+
     static String sanitizeText(String s) {
         if (s == null || s.isEmpty()) return s;
         return Jsoup.clean(s, org.jsoup.safety.Safelist.none()).trim();
+    }
+
+    static String stripReadingTime(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return READING_TIME.matcher(s).replaceFirst("").trim();
     }
 
     static String sanitizeMarkdown(String s) {
@@ -976,7 +983,7 @@ public class DigestHelper implements Runnable {
     static JsonObject buildArticleJson(String id, String title, String link, String image, String desc, JsonObject ai) {
         var article = new JsonObject();
         article.addProperty("id", id);
-        article.addProperty("title", sanitizeText(title));
+        article.addProperty("title", stripReadingTime(sanitizeText(title)));
         if (!link.isEmpty()) article.addProperty("link", link);
         if (!image.isEmpty()) article.addProperty("image", image);
 
