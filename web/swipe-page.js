@@ -388,9 +388,19 @@ document.addEventListener('DOMContentLoaded', () => {
   track.addEventListener('scroll', updateShare);
   updateShare();
 
-  // --- Hide loading indicator ---
+  // --- Hide loading indicator once first background is ready ---
   var loader = root.querySelector('.swipe-loading');
-  if (loader) loader.remove();
+  if (loader) {
+    var firstBg = root.querySelector('.swipe-frame-bg');
+    var bgUrl = firstBg && firstBg.style.backgroundImage.replace(/^url\(["']?|["']?\)$/g, '');
+    if (bgUrl) {
+      var img = new Image();
+      img.onload = img.onerror = function() { loader.remove(); };
+      img.src = bgUrl;
+    } else {
+      loader.remove();
+    }
+  }
 
   // --- Keyboard navigation ---
 
