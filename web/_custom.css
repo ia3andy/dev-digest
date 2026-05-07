@@ -301,6 +301,10 @@ nav.topbar .dark-mode-toggle:hover {
   @apply flex items-center gap-1.5 shrink-0 flex-wrap justify-start sm:justify-end;
 }
 
+.digest-source {
+  @apply text-xs;
+}
+
 .digest-article-tag {
   @apply px-2.5 py-0.5 text-xs font-semibold rounded-full uppercase
     bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400;
@@ -308,7 +312,7 @@ nav.topbar .dark-mode-toggle:hover {
 
 /* Read article icon button */
 .digest-read-btn {
-  @apply inline-flex items-center justify-center p-1.5 rounded-md
+  @apply inline-flex items-center gap-1 p-1.5 rounded-md
     text-gray-400 dark:text-gray-500
     hover:text-accent-600 dark:hover:text-accent-400
     hover:bg-accent-50 dark:hover:bg-accent-950

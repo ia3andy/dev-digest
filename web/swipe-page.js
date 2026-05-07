@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   var PLACEHOLDER_SUFFIX = 'article-placeholder.svg';
   var FALLBACK_BG_COUNT = 15;
-  var BULLETS_PER_FRAME = 10;
+  var BULLETS_PER_FRAME = 7;
 
   function fallbackBg(id) {
     var hash = 0;
@@ -124,6 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   var bulletFrames = [];
+  var bulletPageTotal = Math.ceil(grouped.other.length / BULLETS_PER_FRAME);
 
   for (var start = 0; start < grouped.other.length; start += BULLETS_PER_FRAME) {
     var chunk = grouped.other.slice(start, start + BULLETS_PER_FRAME);
@@ -142,7 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var title = document.createElement('h3');
     title.className = 'swipe-bullets-title';
-    title.textContent = 'Other News';
+    var bulletPage = Math.floor(start / BULLETS_PER_FRAME) + 1;
+    title.textContent = bulletPageTotal > 1 ? 'Other News (' + bulletPage + '/' + bulletPageTotal + ')' : 'Other News';
     inner.appendChild(title);
 
     var list = document.createElement('div');

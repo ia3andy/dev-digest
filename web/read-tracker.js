@@ -245,7 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = e.target.closest('.digest-share-btn');
     if (!btn) return;
     if (btn.dataset.shareArticle) {
-      const base = window.location.origin + window.location.pathname;
+      const swipeRoot = document.querySelector('.swipe-page-root');
+      const basePath = swipeRoot ? swipeRoot.dataset.backUrl : window.location.pathname;
+      const base = window.location.origin + basePath;
       shareUrl(btn.title, base + '#' + btn.dataset.shareArticle);
     } else {
       shareUrl(document.title, window.location.href.split('#')[0]);

@@ -859,6 +859,7 @@ public class DigestHelper implements Runnable {
             "- takeaway: concrete next step a developer could take (omit if none)\n" +
             "- deep-summary: single string with markdown list using * prefix, 5-15 items of readable analysis (only for important/technical articles, omit for most)\n" +
             "- decoder: single string with markdown list using * prefix, each item: * **Term**: short definition (omit for simple articles)\n" +
+            "- source: clean publisher name derived from the article URL (e.g., \"Bloomberg\", \"TechCrunch\", \"Ars Technica\", \"GitHub\"). Capitalize properly. For personal blogs use the author name if known, otherwise the domain.\n" +
             "- skip: true for ads/sponsored/job postings\n" +
             "No filler. Omit optional fields entirely rather than leaving them empty.";
 
@@ -871,8 +872,9 @@ public class DigestHelper implements Runnable {
             "takeaway":{"type":"string"},\
             "deep-summary":{"type":"string"},\
             "decoder":{"type":"string"},\
+            "source":{"type":"string"},\
             "skip":{"type":"boolean"}\
-            },"required":["tags","one-liner","what"]}""";
+            },"required":["tags","one-liner","what","source"]}""";
 
     record ClaudeResult(JsonObject data, String error) {
         static ClaudeResult ok(JsonObject data) { return new ClaudeResult(data, null); }
@@ -986,6 +988,8 @@ public class DigestHelper implements Runnable {
         article.addProperty("title", stripReadingTime(sanitizeText(title)));
         if (!link.isEmpty()) article.addProperty("link", link);
         if (!image.isEmpty()) article.addProperty("image", image);
+        String source = ai != null ? sanitizeText(jsonStr(ai, "source")) : "";
+        if (!source.isEmpty()) article.addProperty("source", source);
 
         if (ai != null && ai.has("tags")) {
             var tags = new JsonArray();
@@ -1056,6 +1060,8 @@ public class DigestHelper implements Runnable {
             var a = articles.get(i).getAsJsonObject();
             var sb = new StringBuilder();
             sb.append(jsonStr(a, "title")).append("\n");
+            String link = jsonStr(a, "link");
+            if (!link.isEmpty()) sb.append("URL: ").append(link).append("\n");
             String desc = jsonStr(a, "description");
             if (!desc.isEmpty()) sb.append(desc).append("\n");
             String content = jsonStr(a, "content");
