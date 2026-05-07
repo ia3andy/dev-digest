@@ -1,0 +1,20 @@
+name: Test GitHub Models API
+
+on:
+  push:
+    branches: [poc/github-models]
+
+permissions:
+  contents: read
+  models: read
+
+jobs:
+  test-models:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Test GitHub Models API
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bash scripts/test-github-models.sh
