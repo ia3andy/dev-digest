@@ -39,6 +39,32 @@ extract_content() {
   echo "$body" | jq -r '.choices[0].message.content // empty'
 }
 
+# ─── Test 0: List available models ───
+
+echo "═══════════════════════════════════════════════════"
+echo "TEST 0: List available models"
+echo "═══════════════════════════════════════════════════"
+
+MODELS_RAW=$(curl -s -w "\n%{http_code}" \
+  "https://models.github.ai/inference/models" \
+  -H "Authorization: Bearer $GITHUB_TOKEN")
+MODELS_HTTP=$(echo "$MODELS_RAW" | tail -1)
+MODELS_BODY=$(echo "$MODELS_RAW" | sed '$d')
+
+if [ "$MODELS_HTTP" = "200" ]; then
+  echo "Available models (filtering for claude/anthropic):"
+  echo "$MODELS_BODY" | jq -r '[.data[].id] | sort | .[]' | grep -i 'claude\|anthropic' || echo "  (none found)"
+  echo ""
+  echo "All models:"
+  echo "$MODELS_BODY" | jq -r '[.data[].id] | sort | .[]' | head -30
+  MODEL_COUNT=$(echo "$MODELS_BODY" | jq '[.data[].id] | length')
+  echo "  ... ($MODEL_COUNT total)"
+else
+  echo "Could not list models (HTTP $MODELS_HTTP), continuing with hardcoded names"
+fi
+
+echo ""
+
 # ─── Test 1: Basic access + system prompt ───
 
 echo "═══════════════════════════════════════════════════"
@@ -142,7 +168,7 @@ echo "════════════════════════�
 CLAUDE_MODEL=""
 CLAUDE_STRUCTURED=false
 
-for model in "anthropic/claude-sonnet-4" "anthropic/claude-3.5-sonnet" "anthropic/claude-3-5-sonnet-20241022"; do
+for model in "anthropic/claude-sonnet-4" "anthropic/claude-sonnet-4-20250514" "anthropic/claude-3.5-sonnet" "anthropic/claude-3-5-sonnet-20241022" "Anthropic-Claude-sonnet" "Claude-sonnet-4"; do
   echo "Trying model: $model"
   PAYLOAD=$(jq -n --arg model "$model" '{
     model: $model,
@@ -270,7 +296,7 @@ FULL_SCHEMA='{
     "source": {"type": "string"},
     "skip": {"type": "boolean"}
   },
-  "required": ["tags", "one-liner", "what", "source"],
+  "required": ["tags", "one-liner", "what", "why", "takeaway", "deep-summary", "decoder", "source", "skip"],
   "additionalProperties": false
 }'
 
