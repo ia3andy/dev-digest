@@ -1272,8 +1272,9 @@ nav.topbar .dark-mode-toggle:hover {
 }
 
 .swipe-bullet-badge {
-  @apply shrink-0 px-2 py-0.5 text-[10px] font-semibold rounded-full uppercase
+  @apply shrink-0 py-0.5 text-[10px] font-semibold rounded-full uppercase text-center
     bg-accent-500/90 text-white;
+  min-width: 3.5rem;
 }
 
 .swipe-bullet-title {
