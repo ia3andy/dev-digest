@@ -373,46 +373,35 @@ echo "════════════════════════�
 echo "TEST 5: Batch summarize with full content (gpt-4o-mini)"
 echo "═══════════════════════════════════════════════════"
 
-# Real articles with full scraped content from the digest cache.
-# These are the same articles Claude CLI summarized, so we can compare quality.
+# Build batch input from real cached content (same data Claude CLI used).
+# test-articles.json is generated from the digest cache before committing.
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ARTICLES_FILE="$SCRIPT_DIR/test-articles.json"
 
-read -r -d '' ARTICLE_1_CONTENT << 'ENDCONTENT' || true
-Anthropic and OpenAI are both launching joint ventures for enterprise AI services
+if [ ! -f "$ARTICLES_FILE" ]; then
+  echo "FAIL: $ARTICLES_FILE not found"
+  exit 1
+fi
 
-Anthropic and OpenAI have each announced new joint ventures focused on deploying AI solutions for enterprise customers. Anthropic's venture, backed by Blackstone, Hellman & Friedman, Goldman Sachs, and others, is valued at $1.5 billion and will deploy forward-deployed engineers to build custom AI solutions at portfolio companies. OpenAI is raising $4 billion for a similar $10 billion venture called The Development Company, with investors like TPG and Brookfield. Both ventures signal a strategic shift from pure API access toward embedding AI engineers directly into enterprises. Anthropic CEO Dario Amodei said the venture will "bring AI capabilities directly to where they're needed most." The model mirrors Palantir's forward-deployed engineering approach, where engineers work onsite with customers rather than selling standardized products. Both ventures give the AI labs preferred access to investors' portfolio companies, creating a new distribution channel that aligns financial incentives between AI labs, investors, and enterprises. The moves come as both companies face pressure to demonstrate sustainable revenue beyond API subscriptions, with OpenAI reportedly still not profitable despite massive funding rounds.
-ENDCONTENT
+BATCH_INPUT=""
+ARTICLE_COUNT=$(jq 'length' "$ARTICLES_FILE")
+for i in $(seq 0 $((ARTICLE_COUNT - 1))); do
+  id=$(jq -r ".[$i].id" "$ARTICLES_FILE")
+  title=$(jq -r ".[$i].title" "$ARTICLES_FILE")
+  link=$(jq -r ".[$i].link" "$ARTICLES_FILE")
+  desc=$(jq -r ".[$i].description" "$ARTICLES_FILE")
+  content=$(jq -r ".[$i].content" "$ARTICLES_FILE")
+  BATCH_INPUT="${BATCH_INPUT}--- ARTICLE ---
+Article id: ${id}
+Title: ${title}
+URL: ${link}
+${desc}
+${content}
 
-read -r -d '' ARTICLE_2_CONTENT << 'ENDCONTENT' || true
-Anthropic is working on Orbit, its upcoming proactive assistant
+"
+done
 
-Anthropic is developing a new product called Orbit, described as a briefing and insights system integrated into Claude and Claude Code. Orbit will produce personalized briefings with actionable insights drawn from connected work tools like email, calendars, documents, and project management systems. The feature was spotted in Anthropic's Code with Claude developer event materials. Unlike traditional chatbot interactions where users must initiate every conversation, Orbit is designed to proactively surface relevant information and recommendations based on the user's work context. This represents Anthropic's push toward "ambient intelligence" where AI actively monitors and synthesizes information across tools rather than waiting for explicit prompts. The system would compete with similar features from Google (Gemini workspace integrations) and Microsoft (Copilot proactive suggestions). Anthropic has not officially announced Orbit or provided a timeline, but the developer event materials suggest it is actively under development.
-ENDCONTENT
-
-read -r -d '' ARTICLE_3_CONTENT << 'ENDCONTENT' || true
-Y Combinator's Stake in OpenAI
-
-John Gruber writes about the little-known connection between Y Combinator and OpenAI. OpenAI was seeded by an offshoot of Y Combinator called YC Research in 2016, when Sam Altman was running YC. Y Combinator owns about 0.6 percent of OpenAI. At OpenAI's current valuation of roughly $300 billion, that stake is worth approximately $1.8 billion. This makes it potentially the most valuable single investment in YC's history, despite not being a traditional YC batch company. Gruber notes the irony that YC's biggest financial win may come not from one of the thousands of startups that went through its accelerator program, but from a research lab that its former president helped create as a side project. The piece also discusses how this relationship has been largely overlooked in coverage of both organizations, and how it creates interesting dynamics given Altman's continued involvement with both entities despite stepping down from YC in 2019.
-ENDCONTENT
-
-BATCH_INPUT="--- ARTICLE ---
-Article id: ai-1
-Title: Anthropic and OpenAI Launch Enterprise AI Ventures
-URL: https://techcrunch.com/2026/05/04/anthropic-and-openai-are-both-launching-joint-ventures-for-enterprise-ai-services/
-$ARTICLE_1_CONTENT
-
---- ARTICLE ---
-Article id: ai-2
-Title: Anthropic is working on Orbit, its upcoming proactive assistant
-URL: https://www.testingcatalog.com/anthropic-is-working-on-orbit-its-upcoming-proactive-assistant/
-$ARTICLE_2_CONTENT
-
---- ARTICLE ---
-Article id: ai-3
-Title: Y Combinator's Stake in OpenAI
-URL: https://daringfireball.net/2026/05/y_combinators_stake_in_openai
-$ARTICLE_3_CONTENT"
-
-echo "Input: 3 articles, ${#BATCH_INPUT} chars total"
+echo "Input: $ARTICLE_COUNT articles, ${#BATCH_INPUT} chars total"
 echo ""
 
 PAYLOAD=$(jq -n \
@@ -528,17 +517,7 @@ echo "TEST 7: Quality comparison (article ai-1)"
 echo "═══════════════════════════════════════════════════"
 
 echo "── Existing summary (Claude Sonnet via CLI) ──"
-cat <<'EXISTING'
-{
-  "tags": ["ai", "enterprise", "startup"],
-  "one-liner": "Anthropic and OpenAI are each launching separate enterprise AI joint ventures backed by major financial firms to deploy engineers directly at portfolio companies.",
-  "source": "techcrunch.com",
-  "what": "Anthropic announced a $1.5 billion joint venture with Blackstone, Hellman & Friedman, Goldman Sachs, and others to deliver enterprise AI services, while OpenAI is raising $4 billion for a similar $10 billion venture called The Development Company with investors like TPG and Brookfield.",
-  "why": "This signals a strategic shift in how AI companies monetize their technology, moving beyond API access to embed engineers directly in enterprises.",
-  "takeaway": "If your company is in a portfolio of these investors, expect AI lab engineers to potentially engage directly with your team.",
-  "decoder": "* **Forward-deployed engineer (FDE)**: Engineering model popularized by Palantir where engineers work onsite with customers to build custom solutions."
-}
-EXISTING
+jq '.[0].existing_summary' "$ARTICLES_FILE"
 
 if [ -n "$MINI_RESULT" ]; then
   echo ""
